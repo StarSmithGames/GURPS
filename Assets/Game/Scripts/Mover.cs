@@ -3,246 +3,281 @@ using CMF;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+
+using Zenject;
 
 public class Mover : MonoBehaviour
 {
-	public bool IsGrounded { get; private set; }
+	public bool IsHasTarget { get; protected set; }
 
-	[HideInInspector] public Vector3[] raycastArrayPreviewPositions;
-
-	[SerializeField] private CapsuleCollider collider;
-	[SerializeField] private Rigidbody rigidbody;
-	
 	[SerializeField] private Settings settings;
 
-	private int currentLayer;
+	private float currentTimeOutTime = 1f;
+	private float currentVerticalSpeed = 0f;
 
-	private bool IsUsingExtendedSensorRange = true;
-	private float baseSensorRange = 0f;
+	private float currentYRotation = 0f;
+	[Tooltip("Если достигнут угл разварота в fallOffAngle, то turnSpeed стремится к 0. Эффект сглаживания к вращению.")]
+	private float fallOffAngle = 90f;
 
-	//Current upwards (or downwards) velocity necessary to keep the correct distance to the ground;
-	private Vector3 currentGroundAdjustmentVelocity = Vector3.zero;
+	private float magnitudeThreshold = 0.001f;
 
-	private Sensor sensor;
+	private Vector3 lastPosition;
+	private Vector3 lastVelocity;
+	private Vector3 lastMovementVelocity;
+	private Vector3 currentDestination;
 
-	private void Awake()
+	private Vector3 rootMotion;
+
+	[Inject(Id ="Root")] private Transform root;
+	[Inject(Id = "Model")] private Transform model;
+	private Rigidbody rigidbody;
+	private NavMeshAgent navMeshAgent;
+	private Animator animator;
+	private PointClickController controller;
+	private SensorHandler sensor;
+
+	[Inject]
+	private void Construct(Rigidbody rigidbody, Animator animator, NavMeshAgent navMeshAgent, PointClickController controller, SensorHandler sensor)
+	{
+		this.rigidbody = rigidbody;
+		this.animator = animator;
+		this.navMeshAgent = navMeshAgent;
+		this.controller = controller;
+		this.sensor = sensor;
+	}
+
+	private void Start()
 	{
 		rigidbody.freezeRotation = true;
 		rigidbody.useGravity = false;
 
-		sensor = new Sensor(transform, collider);
-		RecalculateColliderDimensions();
-		RecalibrateSensor();
+		navMeshAgent.updatePosition = false;
+		navMeshAgent.speed = settings.movementSpeed;
+		navMeshAgent.angularSpeed = 0;
+		navMeshAgent.stoppingDistance = settings.reachTargetThreshold;
+
+		currentYRotation = model.localEulerAngles.y;
 	}
 
-	private void OnValidate()
+	private void OnAnimatorMove()
 	{
-		//Recalculate collider dimensions;
-		if (gameObject.activeInHierarchy)
-			RecalculateColliderDimensions();
+		navMeshAgent.nextPosition = root.position;
 
-		//Recalculate raycast array preview positions;
-		if (settings.sensorType == Sensor.CastType.RaycastArray)
-			raycastArrayPreviewPositions = Sensor.GetRaycastStartPositions(settings.sensorArrayRows, settings.sensorArrayRayCount, settings.sensorArrayRowsAreOffset, 1f);
+		//rootMotion += animator.deltaPosition;
+
+		//root.position = animator.rootPosition;
+		//model.rotation = animator.rootRotation;
 	}
 
+	//Movement
+	private void FixedUpdate()
+	{
+		HandleTimeOut();
+
+		//Calculate the final velocity for this frame;
+		Vector3 velocity = CalculateMovementVelocity();
+		lastMovementVelocity = velocity;
+
+		ApplyGravity();
+		velocity += root.up * currentVerticalSpeed;
+
+		rigidbody.velocity = velocity + sensor.CurrentGroundAdjustmentVelocity;
+
+		rootMotion = Vector3.zero;
+
+		lastVelocity = velocity;
+	}
+
+	//Turn
 	private void LateUpdate()
 	{
-		if (settings.isInDebugMode)
-			sensor.DrawDebug();
+		Vector3 velocity = settings.ignoreMomentum ? lastMovementVelocity : lastVelocity;
+		//Project velocity onto a plane defined by the 'up' direction of the parent transform;
+		velocity = Vector3.ProjectOnPlane(velocity, root.up);
+
+		if (velocity.magnitude < magnitudeThreshold) return;
+
+		velocity.Normalize();
+
+		//Calculate (signed) angle between velocity and forward direction;
+		float angleDifference = VectorMath.GetAngle(model.forward, velocity, model.up);
+
+		//Calculate angle factor;
+		float factor = Mathf.InverseLerp(0f, fallOffAngle, Mathf.Abs(angleDifference));
+
+		//Calculate this frame's step;
+		float step = Mathf.Sign(angleDifference) * factor * Time.deltaTime * settings.turnSpeed;
+
+		if (angleDifference < 0f && step < angleDifference) step = angleDifference;
+		else if (angleDifference > 0f && step > angleDifference) step = angleDifference;
+
+		currentYRotation += step;
+
+		if (currentYRotation > 360f) currentYRotation -= 360f;
+		if (currentYRotation < -360f) currentYRotation += 360f;
+
+
+		model.localRotation = Quaternion.Euler(0f, currentYRotation, 0f);
 	}
 
+	public Vector3 GetVelocity() => lastVelocity;
 
-	//Recalculate collider height/width/thickness;
-	public void RecalculateColliderDimensions()
+	public bool IsReachedDestination()
 	{
-		collider.height = settings.colliderHeight;
-		collider.center = settings.colliderOffset * settings.colliderHeight;
-		collider.radius = settings.colliderThickness / 2f;
-
-		collider.center = collider.center + new Vector3(0f, settings.stepHeightRatio * collider.height / 2f, 0f);
-		collider.height *= (1f - settings.stepHeightRatio);
-
-		if (collider.height / 2f < collider.radius)
-			collider.radius = collider.height / 2f;
-
-		if (sensor != null)
-			RecalibrateSensor();
+		return (navMeshAgent.remainingDistance < settings.reachTargetThreshold) && !navMeshAgent.pathPending;
+	}
+	public bool IsReachesDestination()
+	{
+		return (navMeshAgent.remainingDistance >= settings.reachTargetThreshold) && !navMeshAgent.pathPending;
 	}
 
-	public void CheckForGround()
+	public bool SetDestination(Vector3 destination)
 	{
-		if (currentLayer != gameObject.layer)
-			RecalculateSensorLayerMask();
-
-		Check();
-	}
-
-	public void SetVelocity(Vector3 velocity)
-	{
-		rigidbody.velocity = velocity + currentGroundAdjustmentVelocity;
-	}
-
-	//Set whether sensor range should be extended;
-	public void SetExtendSensorRange(bool isExtended)
-	{
-		IsUsingExtendedSensorRange = isExtended;
-	}
-	//Set height of collider;
-	public void SetColliderHeight(float newColliderHeight)
-	{
-		if (settings.colliderHeight == newColliderHeight)
-			return;
-
-		settings.colliderHeight = newColliderHeight;
-		RecalculateColliderDimensions();
-	}
-	//Set thickness/width of collider;
-	public void SetColliderThickness(float newColliderThickness)
-	{
-		if (settings.colliderThickness == newColliderThickness)
-			return;
-
-		if (newColliderThickness < 0f)
-			newColliderThickness = 0f;
-
-		settings.colliderThickness = newColliderThickness;
-		RecalculateColliderDimensions();
-	}
-	//Set acceptable step height;
-	public void SetStepHeightRatio(float newStepHeightRatio)
-	{
-		newStepHeightRatio = Mathf.Clamp(newStepHeightRatio, 0f, 1f);
-		settings.stepHeightRatio = newStepHeightRatio;
-		RecalculateColliderDimensions();
-	}
-
-	//Recalibrate sensor variables;
-	private void RecalibrateSensor()
-	{
-		//Set sensor ray origin and direction;
-		sensor.SetCastOrigin(collider.bounds.center);
-		sensor.SetCastDirection(Sensor.CastDirection.Down);
-
-		//Calculate sensor layermask;
-		RecalculateSensorLayerMask();
-
-		//Set sensor cast type;
-		sensor.castType = settings.sensorType;
-
-		//Calculate sensor radius/width;
-		float radius = settings.colliderThickness / 2f * settings.sensorRadiusModifier;
-
-		//Multiply all sensor lengths with '_safetyDistanceFactor' to compensate for floating point errors;
-		float _safetyDistanceFactor = 0.001f;
-
-		//Fit collider height to sensor radius;
-		radius = Mathf.Clamp(radius, _safetyDistanceFactor, collider.radius * (1f - _safetyDistanceFactor));
-
-		//Set sensor radius;
-		sensor.sphereCastRadius = radius * transform.localScale.x;
-
-		//Calculate and set sensor length;
-		float length = 0f;
-		length += (settings.colliderHeight * (1f - settings.stepHeightRatio)) * 0.5f;
-		length += settings.colliderHeight * settings.stepHeightRatio;
-		baseSensorRange = length * (1f + _safetyDistanceFactor) * transform.localScale.x;
-		sensor.castLength = length * transform.localScale.x;
-
-		//Set sensor array variables;
-		sensor.ArrayRows = settings.sensorArrayRows;
-		sensor.arrayRayCount = settings.sensorArrayRayCount;
-		sensor.offsetArrayRows = settings.sensorArrayRowsAreOffset;
-		sensor.isInDebugMode = settings.isInDebugMode;
-
-		//Set sensor spherecast variables;
-		sensor.calculateRealDistance = true;
-		sensor.calculateRealSurfaceNormal = true;
-
-		//Recalibrate sensor to the new values;
-		sensor.RecalibrateRaycastArrayPositions();
-	}
-
-	private void RecalculateSensorLayerMask()
-	{
-		int layerMask = 0;
-		int objectLayer = gameObject.layer;
-
-		//Calculate layermask;
-		for (int i = 0; i < 32; i++)
+		if (destination != Vector3.zero && IsPathValid(destination))
 		{
-			if (!Physics.GetIgnoreLayerCollision(objectLayer, i))
-				layerMask = layerMask | (1 << i);
+			IsHasTarget = navMeshAgent.SetDestination(destination);
+
+			currentDestination = IsHasTarget ? destination : Vector3.zero;
+
+			return IsHasTarget;
 		}
 
-		//Make sure that the calculated layermask does not include the 'Ignore Raycast' layer;
-		if (layerMask == (layerMask | (1 << LayerMask.NameToLayer("Ignore Raycast"))))
-		{
-			layerMask ^= (1 << LayerMask.NameToLayer("Ignore Raycast"));
-		}
+		currentDestination = Vector3.zero;
 
-		//Set sensor layermask;
-		sensor.layermask = layerMask;
+		IsHasTarget = false;
 
-		//Save current layer;
-		currentLayer = objectLayer;
+		return false;
+	}
+	public bool IsPathValid(Vector3 destination)
+	{
+		NavMeshPath path = new NavMeshPath();
+		navMeshAgent.CalculatePath(destination, path);
+
+		return path.status == NavMeshPathStatus.PathComplete;
 	}
 
-	//Check if mover is grounded;
-	//Store all relevant collision information for later;
-	//Calculate necessary adjustment velocity to keep the correct distance to the ground;
-	private void Check()
+	//-180 to 180
+	public float CalculateAngleToDesination()
 	{
-		//Reset ground adjustment velocity;
-		currentGroundAdjustmentVelocity = Vector3.zero;
+		Vector3 desiredDiff = navMeshAgent.destination - model.position;
+		Vector3 direction = Quaternion.Inverse(model.rotation) * desiredDiff.normalized;
+		return Mathf.Atan2(direction.x, direction.z) * 180.0f / Mathf.PI;
+	}
 
-		//Set sensor length;
-		if (IsUsingExtendedSensorRange)
-			sensor.castLength = baseSensorRange + (settings.colliderHeight * transform.localScale.x) * settings.stepHeightRatio;
+
+	private Vector3 CalculateMovementVelocity()
+	{
+		if (!IsHasTarget) return Vector3.zero;
+
+		Vector3 direction = currentDestination - root.position;
+
+		//Remove all vertical parts of vector;
+		direction = VectorMath.RemoveDotVector(direction, root.up);
+
+		float distanceToTarget = direction.magnitude;
+
+		if (IsReachedDestination())
+		{
+			IsHasTarget = false;
+
+			return Vector3.zero;
+		}
+
+		Vector3 velocity = direction.normalized * settings.movementSpeed;
+
+		//Check for overshooting;
+		if (settings.movementSpeed * Time.fixedDeltaTime > distanceToTarget)
+		{
+			velocity = direction.normalized * distanceToTarget;
+			IsHasTarget = false;
+		}
+
+		return settings.useNavMesh ? navMeshAgent.desiredVelocity : velocity;
+	}
+
+	private void ApplyGravity()
+	{
+		if (!sensor.IsGrounded)
+		{
+			currentVerticalSpeed -= settings.gravity * Time.deltaTime;
+		}
 		else
-			sensor.castLength = baseSensorRange;
-
-		sensor.Cast();
-
-		//If sensor has not detected anything, set flags and return;
-		if (!sensor.HasDetectedHit())
 		{
-			IsGrounded = false;
+			if (currentVerticalSpeed < 0f)
+			{
+				//if (OnLand != null)
+				//	OnLand(tr.up * currentVerticalSpeed);
+			}
+
+			currentVerticalSpeed = 0f;
+		}
+	}
+
+	//Handle timeout (stop controller if it is stuck);
+	private void HandleTimeOut()
+	{
+		if (!IsHasTarget)
+		{
+			currentTimeOutTime = 0f;
 			return;
 		}
 
-		IsGrounded = true;
+		//If controller has moved enough distance, reset time;
+		if (Vector3.Distance(root.position, lastPosition) > settings.timeOutDistanceThreshold || controller.IsMouseHolded)
+		{
+			currentTimeOutTime = 0f;
+			lastPosition = root.position;
+		}
+		else
+		{
+			currentTimeOutTime += Time.deltaTime;
 
-		//Get distance that sensor ray reached;
-		float _distance = sensor.GetDistance();
+			//If current timeout time has reached limit, stop controller from moving;
+			if (currentTimeOutTime >= settings.timeOutTime)
+			{
+				IsHasTarget = false;
+			}
+		}
+	}
 
-		//Calculate how much mover needs to be moved up or down;
-		float _upperLimit = ((settings.colliderHeight * transform.localScale.x) * (1f - settings.stepHeightRatio)) * 0.5f;
-		float _middle = _upperLimit + (settings.colliderHeight * transform.localScale.x) * settings.stepHeightRatio;
-		float _distanceToGo = _middle - _distance;
 
-		//Set new ground adjustment velocity for the next frame;
-		currentGroundAdjustmentVelocity = transform.up * (_distanceToGo / Time.fixedDeltaTime);
+	private void OnDrawGizmos()
+	{
+		if (!Application.isPlaying) return;
+
+		Gizmos.color = Color.red;
+
+		Gizmos.DrawWireSphere(root.position, settings.reachTargetThreshold);
+
+		if (!IsHasTarget) return;
+
+		Gizmos.DrawSphere(currentDestination, 0.1f);
+
+		Vector3[] corners = navMeshAgent.path.corners;
+
+		for (int i = 0; i < corners.Length - 1; i++)
+		{
+			Gizmos.DrawLine(corners[i], corners[i + 1]);
+		}
 	}
 
 
 	[System.Serializable]
 	public class Settings
 	{
-		[Header("Collider Options :")]
-		[Range(0f, 1f)]
-		public float stepHeightRatio = 0.25f;
-		public float colliderHeight = 2f;
-		public float colliderThickness = 1f;
-		public Vector3 colliderOffset = Vector3.zero;
-		[Header("Sensor Options :")]
-		public bool isInDebugMode = false;
-		public Sensor.CastType sensorType = Sensor.CastType.Raycast;
-		public float sensorRadiusModifier = 0.8f;
-		[Range(1, 5)]
-		public int sensorArrayRows = 1;
-		[Range(3, 10)]
-		public int sensorArrayRayCount = 6;
-		public bool sensorArrayRowsAreOffset = false;
+		public bool useNavMesh = true;
+		public bool ignoreMomentum = false;//Whether the current controller momentum should be ignored when calculating the new direction;
+		[Space]
+		public float movementSpeed = 5f;
+		public float turnSpeed = 2000f;
+		public float gravity = 30f;
+		[Space]
+		public float reachTargetThreshold = 0.1f;
+
+		[Tooltip("Если контроллер застрял при ходьбе у стены, движение будет отменено, если он не продвинулся хотя бы на определенное расстояние за определенное время")]
+		public float timeOutTime = 1f;
+		[Tooltip("This controls the minimum amount of distance needed to be moved (or else the controller stops moving)")]
+		public float timeOutDistanceThreshold = 0.05f;
 	}
 }

@@ -1,14 +1,11 @@
 using CMF;
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+using Zenject;
 
 public class AnimatorControl : MonoBehaviour
 {
-	[SerializeField] private Animator animator;
-	[SerializeField] private BaseController controller;
-
 	//Whether the character is using the strafing blend tree;
 	public bool useStrafeAnimations = false;
 
@@ -17,7 +14,19 @@ public class AnimatorControl : MonoBehaviour
 	public float landVelocityThreshold = 5f;
 
 	private float smoothingFactor = 40f;
-	Vector3 oldMovementVelocity = Vector3.zero;
+	private Vector3 oldMovementVelocity = Vector3.zero;
+
+	private Animator animator;
+	private Mover controller;
+	private SensorHandler sensor;
+
+	[Inject]
+	private void Construct(Animator animator, Mover controller, SensorHandler sensor)
+	{
+		this.animator = animator;
+		this.controller = controller;
+		this.sensor = sensor;
+	}
 
 	private void Update()
 	{
@@ -25,12 +34,13 @@ public class AnimatorControl : MonoBehaviour
 
 		Vector3 horizontalVelocity = VectorMath.RemoveDotVector(velocity, transform.up);
 		Vector3 verticalVelocity = velocity - horizontalVelocity;
-		Vector3 localVelocity = transform.InverseTransformVector(horizontalVelocity);
 
-		animator.SetFloat("ForwardSpeed", Mathf.Abs(velocity.normalized.z));
+		animator.SetFloat("ForwardSpeed", velocity.normalized.magnitude);
 		animator.SetFloat("VerticalSpeed", verticalVelocity.magnitude * VectorMath.GetDotProduct(verticalVelocity.normalized, transform.up));
+		//animator.SetFloat("HorizontalSpeed", Mathf.Clamp(controller.CalculateAngleToDesination(), -90, 90) / 90);
 
-		animator.SetBool("IsIdle", velocity.normalized.magnitude == 0);
-		animator.SetBool("IsGrounded", controller.IsGrounded);
+
+		animator.SetBool("IsIdle", !controller.IsHasTarget && sensor.IsGrounded && velocity.normalized.magnitude == 0);
+		animator.SetBool("IsGrounded", sensor.IsGrounded);
 	}
 }
