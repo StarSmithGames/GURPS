@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 717580979b32075428a04a5ba4e15451
+guid: 1b54b5e1fb68f7347969bd7cf12374cd
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: IdleShakingHeadNo
+    second: IdleFalling
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -35,20 +35,20 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: IdleShakingHeadNo
+      name: IdleFalling
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 54
+      lastFrame: 21
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 0
+      loopBlendOrientation: 1
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0

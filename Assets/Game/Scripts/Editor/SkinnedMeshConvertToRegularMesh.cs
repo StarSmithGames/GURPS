@@ -5,7 +5,7 @@ using UnityEditor;
 
 using UnityEngine;
 
-public class ConvertToRegularMesh : MonoBehaviour
+public class SkinnedMeshConvertToRegularMesh : MonoBehaviour
 {
 	[MenuItem("CONTEXT/SkinnedMeshRenderer/Convert from skinned mesh to regular mesh")]
 	static void Convert(MenuCommand command)

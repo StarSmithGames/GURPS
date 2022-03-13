@@ -9,7 +9,7 @@ namespace CMF
 	public class TurnTowardControllerVelocity : MonoBehaviour {
 
 		//Target controller;
-		public PointClickController controller;
+		public Controller controller;
 
 		//Speed at which this gameobject turns toward the controller's velocity;
 		public float turnSpeed = 500f;
@@ -37,7 +37,7 @@ namespace CMF
 		private void LateUpdate () {
 
 			//Get controller velocity;
-			Vector3 _velocity = ignoreControllerMomentum ? controller.LastMovementVelocity : controller.LastVelocity;
+			Vector3 _velocity = ignoreControllerMomentum ? controller.GetMovementVelocity() : controller.GetVelocity();
 
 			//Project velocity onto a plane defined by the 'up' direction of the parent transform;
 			_velocity = Vector3.ProjectOnPlane(_velocity, parentTransform.up);

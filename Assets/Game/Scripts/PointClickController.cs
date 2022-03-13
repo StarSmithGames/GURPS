@@ -2,129 +2,180 @@ using CMF;
 
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
+
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Assertions;
 
-public class PointClickController : MonoBehaviour
+public class PointClickController : BaseController
 {
-	public Camera playerCamera;
-	public Mover mover;
-	[Space]
-	[Tooltip("Можно ли зажимать кнопку мыши")]
-	public bool isCanHoldMouse = false;
-	[Space]
-	public float movementSpeed = 10f;
-	public float gravity = 30f;
+	[SerializeField] private Camera camera;
+	[SerializeField] private NavMeshAgent navMeshAgent;
+	[SerializeField] private Mover mover;
 
-	public MouseDetectionType mouseDetectionType = MouseDetectionType.AbstractPlane;
-	public LayerMask raycastLayerMask = ~0;
+	[SerializeField] private Settings settings;
+	
+	public override bool IsGrounded { get; protected set; }
 
-	private float currentVerticalSpeed = 0f;
-	private bool isGrounded = false;
-
-	[Tooltip("Если контроллер застрял при ходьбе у стены, движение будет отменено, если он не продвинулся хотя бы на определенное расстояние за определенное время")]
-	public float timeOutTime = 1f;
-	//This controls the minimum amount of distance needed to be moved (or else the controller stops moving);
-	public float timeOutDistanceThreshold = 0.05f;
+	private bool isHasTarget = false;
 
 	private float currentTimeOutTime = 1f;
+	private float currentVerticalSpeed = 0f;
 
-	private Vector3 lastPosition;
-	public Vector3 LastVelocity { get; private set; }
-	public Vector3 LastMovementVelocity { get; private set; }
-	private Vector3 currentTargetPosition;
-	private bool hasTarget = false;
+	private float currentYRotation = 0f;
+	[Tooltip("Если достигнут угл разварота в fallOffAngle, то turnSpeed стремится к 0. Эффект сглаживания к вращению.")]
+	private float fallOffAngle = 90f;
 
 	private float reachTargetThreshold = 0.001f;
+	private float magnitudeThreshold = 0.001f;
 
-	private Plane groundPlane;
+	private Vector3 lastPosition;
+	private Vector3 lastVelocity;
+	private Vector3 lastMovementVelocity;
+	private Vector3 currentDestination;
+
+	protected Vector3 rootMotion;
 
 	private void Start()
 	{
-		Assert.IsNotNull(playerCamera);
-		Assert.IsNotNull(mover);
+		Assert.IsNotNull(camera);
+
+		navMeshAgent.updatePosition = false;
+		navMeshAgent.speed = settings.movementSpeed;
+		navMeshAgent.angularSpeed = 0;
+		navMeshAgent.stoppingDistance = reachTargetThreshold;
 
 		lastPosition = transform.position;
-		currentTargetPosition = transform.position;
-		groundPlane = new Plane(transform.up, transform.position);
+		currentDestination = transform.position;
+
+		currentYRotation = transform.localEulerAngles.y;
 	}
 
+	private void OnAnimatorMove()
+	{
+		navMeshAgent.nextPosition = transform.position;
+	}
+
+	//Mouse
 	private void Update()
 	{
-		HandleMouseInput();
+		if (!settings.isCanHoldMouse && Mouse.IsMouseButtonDown() || settings.isCanHoldMouse && Mouse.IsMouseButtonPressed())
+		{
+			Ray mouseRay = camera.ScreenPointToRay(Mouse.GetMousePosition());
+
+			if (Physics.Raycast(mouseRay, out RaycastHit hit, 100f, settings.raycastLayerMask, QueryTriggerInteraction.Ignore))
+			{
+				currentDestination = hit.point;
+
+				isHasTarget = SetDestination(currentDestination);
+			}
+			else
+			{
+				isHasTarget = false;
+			}
+		}
+
+		//if (!IsReachedDestination())
+		//{
+		//	controller.Move(navMeshAgent.desiredVelocity, false, false);
+		//}
+		//else
+		//{
+		//	controller.Move(Vector3.zero, false, false);
+		//}
 	}
 
+	//Movement
 	private void FixedUpdate()
 	{
-		//Run initial mover ground check;
 		mover.CheckForGround();
+		IsGrounded = mover.IsGrounded;
 
-		//Check whether the character is grounded;
-		isGrounded = mover.IsGrounded();
-
-		//Handle timeout (stop controller if it is stuck);
 		HandleTimeOut();
 
-		Vector3 _velocity = Vector3.zero;
-
 		//Calculate the final velocity for this frame;
-		_velocity = CalculateMovementVelocity();
-		LastMovementVelocity = _velocity;
+		Vector3 velocity = CalculateMovementVelocity();
+		lastMovementVelocity = velocity;
 
-		//Calculate and apply gravity;
-		HandleGravity();
-		_velocity += transform.up * currentVerticalSpeed;
+		ApplyGravity();
+		velocity += transform.up * currentVerticalSpeed;
 
 		//If the character is grounded, extend ground detection sensor range;
-		mover.SetExtendSensorRange(isGrounded);
-		//Set mover velocity;
-		mover.SetVelocity(_velocity);
+		mover.SetExtendSensorRange(IsGrounded);
+		mover.SetVelocity(velocity);
 
-		//Save velocity for later;
-		LastVelocity = _velocity;
+		lastVelocity = velocity;
 	}
 
-	//Calculate movement velocity based on the current target position;
+	//Turn
+	private void LateUpdate()
+	{
+		Vector3 velocity = settings.ignoreMomentum ? lastMovementVelocity : lastVelocity;
+
+		//Project velocity onto a plane defined by the 'up' direction of the parent transform;
+		velocity = Vector3.ProjectOnPlane(velocity, transform.up);
+
+		if (velocity.magnitude < magnitudeThreshold) return;
+
+		velocity.Normalize();
+
+		//Calculate (signed) angle between velocity and forward direction;
+		float angleDifference = VectorMath.GetAngle(transform.forward, velocity, transform.up);
+
+		//Calculate angle factor;
+		float factor = Mathf.InverseLerp(0f, fallOffAngle, Mathf.Abs(angleDifference));
+
+		//Calculate this frame's step;
+		float step = Mathf.Sign(angleDifference) * factor * Time.deltaTime * settings.turnSpeed;
+
+		if (angleDifference < 0f && step < angleDifference) step = angleDifference;
+		else if (angleDifference > 0f && step > angleDifference) step = angleDifference;
+
+		currentYRotation += step;
+
+		if (currentYRotation > 360f) currentYRotation -= 360f;
+		if (currentYRotation < -360f) currentYRotation += 360f;
+
+
+		transform.localRotation = Quaternion.Euler(0f, currentYRotation, 0f);
+	}
+
 	private Vector3 CalculateMovementVelocity()
 	{
-		//Return no velocity if controller currently has no target;	
-		if (!hasTarget)
-			return Vector3.zero;
+		if (!isHasTarget) return Vector3.zero;
 
-		//Calculate vector to target position;
-		Vector3 _toTarget = currentTargetPosition - transform.position;
+		Vector3 direction = currentDestination - transform.position;
 
 		//Remove all vertical parts of vector;
-		_toTarget = VectorMath.RemoveDotVector(_toTarget, transform.up);
+		direction = VectorMath.RemoveDotVector(direction, transform.up);
 
-		//Calculate distance to target;
-		float _distanceToTarget = _toTarget.magnitude;
+		float distanceToTarget = direction.magnitude;
 
-		//If controller has already reached target position, return no velocity;
-		if (_distanceToTarget <= reachTargetThreshold)
+		if (IsReachedDestination())
 		{
-			hasTarget = false;
+			isHasTarget = false;
 			return Vector3.zero;
 		}
 
-		Vector3 _velocity = _toTarget.normalized * movementSpeed;
+		Vector3 velocity = direction.normalized * settings.movementSpeed;
 
 		//Check for overshooting;
-		if (movementSpeed * Time.fixedDeltaTime > _distanceToTarget)
+		if (settings.movementSpeed * Time.fixedDeltaTime > distanceToTarget)
 		{
-			_velocity = _toTarget.normalized * _distanceToTarget;
-			hasTarget = false;
+			velocity = direction.normalized * distanceToTarget;
+			isHasTarget = false;
 		}
 
-		return _velocity;
+		return settings.useNavMesh ? navMeshAgent.desiredVelocity : velocity;
 	}
 
-	//Calculate current gravity;
-	private void HandleGravity()
+	private void ApplyGravity()
 	{
-		//Handle gravity;
-		if (!isGrounded)
-			currentVerticalSpeed -= gravity * Time.deltaTime;
+		if (!IsGrounded)
+		{
+			currentVerticalSpeed -= settings.gravity * Time.deltaTime;
+		}
 		else
 		{
 			if (currentVerticalSpeed < 0f)
@@ -137,76 +188,106 @@ public class PointClickController : MonoBehaviour
 		}
 	}
 
-	private void HandleMouseInput()
-	{
-		//If no camera has been assigned, stop function execution;
-		if (playerCamera == null)
-			return;
-
-		//If a valid mouse press has been detected, raycast to determine the new target position;
-		if (!isCanHoldMouse && Mouse.IsMouseButtonDown() || isCanHoldMouse && Mouse.IsMouseButtonPressed())
-		{
-			//Set up mouse ray (based on screen position);
-			Ray _mouseRay = playerCamera.ScreenPointToRay(Mouse.GetMousePosition());
-
-			if (mouseDetectionType == MouseDetectionType.AbstractPlane)
-			{
-				//Set up abstract ground plane;
-				groundPlane.SetNormalAndPosition(transform.up, transform.position);
-				float _enter = 0f;
-
-				//Raycast against ground plane;
-				if (groundPlane.Raycast(_mouseRay, out _enter))
-				{
-					currentTargetPosition = _mouseRay.GetPoint(_enter);
-					hasTarget = true;
-				}
-				else
-					hasTarget = false;
-			}
-			else if (mouseDetectionType == MouseDetectionType.Raycast)
-			{
-				RaycastHit _hit;
-
-				//Raycast against level geometry;
-				if (Physics.Raycast(_mouseRay, out _hit, 100f, raycastLayerMask, QueryTriggerInteraction.Ignore))
-				{
-					currentTargetPosition = _hit.point;
-					hasTarget = true;
-				}
-				else
-					hasTarget = false;
-			}
-		}
-	}
-
-	//Handle timeout (stop controller from moving if it is stuck against level geometry);
+	//Handle timeout (stop controller if it is stuck);
 	private void HandleTimeOut()
 	{
-		//If controller currently has no target, reset time and return;
-		if (!hasTarget)
+		if (!isHasTarget)
 		{
 			currentTimeOutTime = 0f;
 			return;
 		}
 
 		//If controller has moved enough distance, reset time;
-		if (Vector3.Distance(transform.position, lastPosition) > timeOutDistanceThreshold)
+		if (Vector3.Distance(transform.position, lastPosition) > settings.timeOutDistanceThreshold)
 		{
 			currentTimeOutTime = 0f;
 			lastPosition = transform.position;
 		}
-		//If controller hasn't moved a sufficient distance, increment current timeout time;
 		else
 		{
 			currentTimeOutTime += Time.deltaTime;
 
 			//If current timeout time has reached limit, stop controller from moving;
-			if (currentTimeOutTime >= timeOutTime)
+			if (currentTimeOutTime >= settings.timeOutTime)
 			{
-				hasTarget = false;
+				isHasTarget = false;
 			}
 		}
+	}
+
+
+	public bool IsReachedDestination()
+	{
+		return (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
+	}
+	public bool IsReachesDestination()
+	{
+		return (navMeshAgent.remainingDistance >= navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
+	}
+
+	public bool SetDestination(Vector3 destination)
+	{
+		if (IsPathValid(destination))
+		{
+			navMeshAgent.SetDestination(destination);
+
+			return true;
+		}
+		return false;
+	}
+	public bool IsPathValid(Vector3 destination)
+	{
+		NavMeshPath path = new NavMeshPath();
+		navMeshAgent.CalculatePath(destination, path);
+
+		return path.status == NavMeshPathStatus.PathComplete;
+	}
+
+	//-180 to 180
+	public float CalculateAngleToDesination()
+	{
+		Vector3 desiredDiff = navMeshAgent.destination - transform.position;
+		Vector3 direction = Quaternion.Inverse(transform.rotation) * desiredDiff.normalized;
+		return Mathf.Atan2(direction.x, direction.z) * 180.0f / Mathf.PI;
+	}
+
+
+	public override Vector3 GetVelocity() => lastVelocity;
+	public override Vector3 GetMovementVelocity() => lastMovementVelocity;
+
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = Color.red;
+
+		Gizmos.DrawSphere(currentDestination, 0.1f);
+
+		Vector3[] corners = navMeshAgent.path.corners;
+
+		for (int i = 0; i < corners.Length - 1; i++)
+		{
+			Gizmos.DrawLine(corners[i], corners[i + 1]);
+		}
+	}
+
+
+	[System.Serializable]
+	public class Settings
+	{
+		public bool useNavMesh = true;
+		[Tooltip("Можно ли зажимать кнопку мыши")]
+		public bool isCanHoldMouse = false;
+		public bool ignoreMomentum = false;//Whether the current controller momentum should be ignored when calculating the new direction;
+		[Space]
+		public LayerMask raycastLayerMask = ~0;
+		[Space]
+		public float movementSpeed = 5f;
+		public float turnSpeed = 2000f;
+		public float gravity = 30f;
+		[Space]
+		[Tooltip("Если контроллер застрял при ходьбе у стены, движение будет отменено, если он не продвинулся хотя бы на определенное расстояние за определенное время")]
+		public float timeOutTime = 1f;
+		[Tooltip("This controls the minimum amount of distance needed to be moved (or else the controller stops moving)")]
+		public float timeOutDistanceThreshold = 0.05f;
 	}
 }
 
@@ -225,14 +306,4 @@ public static class Mouse
 	{
 		return Input.GetMouseButton(0);
 	}
-}
-
-
-//Whether the target position is determined by raycasting against an abstract plane or the actual level geometry;
-//'AbstractPlane' is less accurate, but simpler (and will automatically ignore colliders between the camera and target position);
-//'Raycast' is more accurate, but ceilings or intersecting geometry (between camera and target position) must be handled separately;
-public enum MouseDetectionType
-{
-	AbstractPlane,
-	Raycast
 }
