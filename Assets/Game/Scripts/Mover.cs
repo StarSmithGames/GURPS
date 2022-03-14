@@ -9,7 +9,18 @@ using Zenject;
 
 public class Mover : MonoBehaviour
 {
-	public bool IsHasTarget { get; protected set; }
+	public bool IsHasTarget
+	{
+		get => isHasTarget;
+		private set
+		{
+			isHasTarget = value;
+		}
+	}
+	private bool isHasTarget = false;
+
+	[SerializeField] private Transform target;
+	[SerializeField] private LineRenderer line;
 
 	[SerializeField] private Settings settings;
 
@@ -38,7 +49,12 @@ public class Mover : MonoBehaviour
 	private SensorHandler sensor;
 
 	[Inject]
-	private void Construct(Rigidbody rigidbody, Animator animator, NavMeshAgent navMeshAgent, PointClickController controller, SensorHandler sensor)
+	private void Construct(
+		Rigidbody rigidbody,
+		Animator animator,
+		NavMeshAgent navMeshAgent,
+		PointClickController controller,
+		SensorHandler sensor)
 	{
 		this.rigidbody = rigidbody;
 		this.animator = animator;
@@ -58,6 +74,8 @@ public class Mover : MonoBehaviour
 		navMeshAgent.stoppingDistance = settings.reachTargetThreshold;
 
 		currentYRotation = model.localEulerAngles.y;
+
+		line.positionCount = 0;
 	}
 
 	private void OnAnimatorMove()
@@ -119,6 +137,11 @@ public class Mover : MonoBehaviour
 
 
 		model.localRotation = Quaternion.Euler(0f, currentYRotation, 0f);
+
+		if (IsHasTarget)
+		{
+			DrawPath();
+		}
 	}
 
 	public Vector3 GetVelocity() => lastVelocity;
@@ -139,6 +162,8 @@ public class Mover : MonoBehaviour
 			IsHasTarget = navMeshAgent.SetDestination(destination);
 
 			currentDestination = IsHasTarget ? destination : Vector3.zero;
+
+			target.position = currentDestination;
 
 			return IsHasTarget;
 		}
@@ -239,6 +264,16 @@ public class Mover : MonoBehaviour
 				IsHasTarget = false;
 			}
 		}
+	}
+
+
+	private void DrawPath()
+	{
+		target.gameObject.SetActive(isHasTarget);
+
+		line.positionCount = navMeshAgent.path.corners.Length;
+		line.SetPosition(0, root.position);
+		line.SetPositions(navMeshAgent.path.corners);
 	}
 
 
