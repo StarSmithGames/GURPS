@@ -17,30 +17,29 @@ public class AnimatorControl : MonoBehaviour
 	private Vector3 oldMovementVelocity = Vector3.zero;
 
 	private Animator animator;
-	private Mover controller;
+	private Mover mover;
 	private SensorHandler sensor;
 
 	[Inject]
 	private void Construct(Animator animator, Mover controller, SensorHandler sensor)
 	{
 		this.animator = animator;
-		this.controller = controller;
+		this.mover = controller;
 		this.sensor = sensor;
 	}
 
 	private void Update()
 	{
-		Vector3 velocity = controller.GetVelocity();
+		Vector3 velocity = mover.GetVelocity();
 
 		Vector3 horizontalVelocity = VectorMath.RemoveDotVector(velocity, transform.up);
 		Vector3 verticalVelocity = velocity - horizontalVelocity;
 
 		animator.SetFloat("ForwardSpeed", velocity.normalized.magnitude);
-		animator.SetFloat("VerticalSpeed", verticalVelocity.magnitude * VectorMath.GetDotProduct(verticalVelocity.normalized, transform.up));
+		//animator.SetFloat("VerticalSpeed", verticalVelocity.magnitude * VectorMath.GetDotProduct(verticalVelocity.normalized, transform.up));
 		//animator.SetFloat("HorizontalSpeed", Mathf.Clamp(controller.CalculateAngleToDesination(), -90, 90) / 90);
 
-
-		animator.SetBool("IsIdle", !controller.IsHasTarget && sensor.IsGrounded && velocity.normalized.magnitude == 0);
+		animator.SetBool("IsIdle", !mover.IsHasTarget && sensor.IsGrounded && velocity.normalized.magnitude == 0);
 		animator.SetBool("IsGrounded", sensor.IsGrounded);
 	}
 }

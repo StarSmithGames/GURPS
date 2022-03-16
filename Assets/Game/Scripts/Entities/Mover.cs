@@ -19,9 +19,6 @@ public class Mover : MonoBehaviour
 	}
 	private bool isHasTarget = false;
 
-	[SerializeField] private Transform target;
-	[SerializeField] private LineRenderer line;
-
 	[SerializeField] private Settings settings;
 
 	private float currentTimeOutTime = 1f;
@@ -74,8 +71,10 @@ public class Mover : MonoBehaviour
 		navMeshAgent.stoppingDistance = settings.reachTargetThreshold;
 
 		currentYRotation = model.localEulerAngles.y;
+		lastPosition = root.position;
+		currentDestination = root.position;
 
-		line.positionCount = 0;
+		//line.positionCount = 0;
 	}
 
 	private void OnAnimatorMove()
@@ -163,7 +162,7 @@ public class Mover : MonoBehaviour
 
 			currentDestination = IsHasTarget ? destination : Vector3.zero;
 
-			target.position = currentDestination;
+			//target.position = currentDestination;
 
 			return IsHasTarget;
 		}
@@ -269,11 +268,11 @@ public class Mover : MonoBehaviour
 
 	private void DrawPath()
 	{
-		target.gameObject.SetActive(isHasTarget);
+		//target.gameObject.SetActive(isHasTarget);
 
-		line.positionCount = navMeshAgent.path.corners.Length;
-		line.SetPosition(0, root.position);
-		line.SetPositions(navMeshAgent.path.corners);
+		//line.positionCount = navMeshAgent.path.corners.Length;
+		//line.SetPosition(0, root.position);
+		//line.SetPositions(navMeshAgent.path.corners);
 	}
 
 

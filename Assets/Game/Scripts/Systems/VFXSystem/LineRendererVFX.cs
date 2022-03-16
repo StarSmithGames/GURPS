@@ -2,16 +2,18 @@ using Sirenix.OdinInspector;
 
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class LineRendererSystem : MonoBehaviour
+public class LineRendererVFX : VFX
 {
 	public LineRenderer line;
 	[OnValueChanged("DrawCircle")]
 	[Min(0)]
 	public int steps;
 	[OnValueChanged("DrawCircle")]
+	[Min(0)]
 	public float radius;
 
 	public Vector3 lookFrom = new Vector3(0, 1f, 0);
@@ -21,6 +23,7 @@ public class LineRendererSystem : MonoBehaviour
 	public bool useRaycast = true;
 	public float rayLength = 100f;
 	public LayerMask raycastLayerMask = ~0;
+
 
 	[Button("Update")]
 	private void DrawCircle()
