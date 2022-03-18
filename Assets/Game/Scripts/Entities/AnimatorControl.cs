@@ -17,29 +17,27 @@ public class AnimatorControl : MonoBehaviour
 	private Vector3 oldMovementVelocity = Vector3.zero;
 
 	private Animator animator;
-	private Mover mover;
-	private MoverSensor sensor;
+	private CharacterThirdPersonController controller;
 
 	[Inject]
-	private void Construct(Animator animator, Mover controller, MoverSensor sensor)
+	private void Construct(Animator animator, CharacterThirdPersonController controller)
 	{
 		this.animator = animator;
-		this.mover = controller;
-		this.sensor = sensor;
+		this.controller = controller;
 	}
 
 	private void Update()
 	{
-		Vector3 velocity = mover.GetVelocity();
+		//Vector3 velocity = mover.GetVelocity();
 
-		Vector3 horizontalVelocity = VectorMath.RemoveDotVector(velocity, transform.up);
-		Vector3 verticalVelocity = velocity - horizontalVelocity;
+		//Vector3 horizontalVelocity = VectorMath.RemoveDotVector(velocity, transform.up);
+		//Vector3 verticalVelocity = velocity - horizontalVelocity;
 
-		animator.SetFloat("ForwardSpeed", velocity.normalized.magnitude);
+		//animator.SetFloat("ForwardSpeed", velocity.normalized.magnitude);
 		//animator.SetFloat("VerticalSpeed", verticalVelocity.magnitude * VectorMath.GetDotProduct(verticalVelocity.normalized, transform.up));
 		//animator.SetFloat("HorizontalSpeed", Mathf.Clamp(controller.CalculateAngleToDesination(), -90, 90) / 90);
 
-		animator.SetBool("IsIdle", !mover.IsHasTarget && sensor.IsGrounded && velocity.normalized.magnitude == 0);
-		animator.SetBool("IsGrounded", sensor.IsGrounded);
+		//animator.SetBool("IsIdle", !mover.IsHasTarget && sensor.IsGrounded && velocity.normalized.magnitude == 0);
+		//animator.SetBool("IsGrounded", sensor.IsGrounded);
 	}
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 using Zenject;
 
-public class PointClickController : MonoBehaviour
+public class PointClickInput : MonoBehaviour
 {
 	public bool IsMouseHolded { get; private set; }
 
@@ -12,13 +12,13 @@ public class PointClickController : MonoBehaviour
 	[SerializeField] private LayerMask raycastLayerMask = ~0;
 
 	private CinemachineBrain camera;
-	private Mover mover;
+	private CharacterThirdPersonController controller;
 
 	[Inject]
-	private void Construct(CinemachineBrain brain, Mover mover)
+	private void Construct(CinemachineBrain brain, CharacterThirdPersonController controller)
 	{
 		this.camera = brain;
-		this.mover = mover;
+		this.controller = controller;
 	}
 
 	private void Update()
@@ -31,11 +31,11 @@ public class PointClickController : MonoBehaviour
 
 			if (Physics.Raycast(mouseRay, out RaycastHit hit, 100f, raycastLayerMask, QueryTriggerInteraction.Ignore))
 			{
-				mover.SetDestination(hit.point);
+				controller.SetDestination(hit.point);
 			}
 			else
 			{
-				mover.SetDestination(Vector3.zero);
+				controller.SetDestination(Vector3.zero);
 			}
 		}
 	}

@@ -6,24 +6,20 @@ using Zenject;
 public class CharacterInstaller : MonoInstaller
 {
 	[SerializeField] private Animator animator;
-	[SerializeField] private CapsuleCollider collider;
-	[SerializeField] private Rigidbody rigidbody;
 	[SerializeField] private NavMeshAgent navMeshAgent;
+	[SerializeField] private CharacterController characterController;
 	[Space]
 	[SerializeField] private Transform model;
-	[SerializeField] private PointClickController controller;
-	[SerializeField] private Mover mover;
-	[SerializeField] private MoverSensor sensor;
+	[SerializeField] private PointClickInput input;
+	[SerializeField] private CharacterThirdPersonController controller;
 
 	public override void InstallBindings()
 	{
 		Container.BindInstance(animator);
-		Container.BindInstance(collider);
-		Container.BindInstance(rigidbody);
 		Container.BindInstance(navMeshAgent);
+		Container.BindInstance(characterController);
 		Container.BindInstance(model).WithId("Model");
+		Container.BindInstance(input);
 		Container.BindInstance(controller);
-		Container.BindInstance(mover);
-		Container.BindInstance(sensor);
 	}
 }
