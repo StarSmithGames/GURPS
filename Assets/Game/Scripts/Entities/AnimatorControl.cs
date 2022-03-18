@@ -18,10 +18,10 @@ public class AnimatorControl : MonoBehaviour
 
 	private Animator animator;
 	private Mover mover;
-	private SensorHandler sensor;
+	private MoverSensor sensor;
 
 	[Inject]
-	private void Construct(Animator animator, Mover controller, SensorHandler sensor)
+	private void Construct(Animator animator, Mover controller, MoverSensor sensor)
 	{
 		this.animator = animator;
 		this.mover = controller;

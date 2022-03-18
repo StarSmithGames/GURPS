@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+using Zenject;
+
 public class LineRendererVFX : VFX
 {
 	public LineRenderer line;
 	[OnValueChanged("DrawCircle")]
 	[Min(0)]
-	public int steps;
+	public int pointCount;
 	[OnValueChanged("DrawCircle")]
 	[Min(0)]
 	public float radius;
@@ -20,30 +22,41 @@ public class LineRendererVFX : VFX
 	public Vector3 offset = new Vector3(0, 0.01f, 0);
 
 	public bool isDebub = false;
+	[ShowIf("isDebub")]
+	public bool showLines = false;
+
 	public bool useRaycast = true;
 	public float rayLength = 100f;
 	public LayerMask raycastLayerMask = ~0;
 
+	private void Update()
+	{
+		DrawCircle();
+	}
 
 	[Button("Update")]
 	private void DrawCircle()
 	{
 		line.loop = true;
-		line.positionCount = steps;
+		line.positionCount = pointCount;
 
 		float TAU = 2 * Mathf.PI;
 
-		for (int i = 0; i < steps; i++)
+		for (int i = 0; i < pointCount; i++)
 		{
-			float radians = ((float)i / steps) * TAU;
+			float radians = ((float)i / pointCount) * TAU;
 			Vector3 position = new Vector3(Mathf.Cos(radians) * radius, 0, Mathf.Sin(radians) * radius);
 
 			if (useRaycast)
 			{
-				Ray ray = new Ray(transform.TransformPoint(position) + lookFrom, Vector3.down);
+				Ray ray = new Ray(transform.root.TransformPoint(position) + lookFrom, Vector3.down);
 				if (Physics.Raycast(ray, out RaycastHit hit, rayLength, raycastLayerMask, QueryTriggerInteraction.Ignore))
 				{
-					position.y = hit.point.y;
+					position.y = hit.point.y - transform.root.position.y;
+				}
+				else
+				{
+					position.y = 0;
 				}
 			}
 
@@ -157,7 +170,10 @@ public class LineRendererVFX : VFX
 
 	private void OnDrawGizmos()
 	{
-		DrawCircle();
+		if (Application.isEditor)
+		{
+			DrawCircle();
+		}
 
 		if (isDebub)
 		{
@@ -165,13 +181,16 @@ public class LineRendererVFX : VFX
 			Gizmos.DrawLine(transform.position + lookFrom, transform.position + lookFrom + transform.forward);
 
 			Gizmos.color = Color.red;
-			Gizmos.DrawSphere(transform.position + lookFrom, 0.1f);
+			Gizmos.DrawSphere(transform.position + lookFrom, 0.05f);
 			Gizmos.DrawLine(transform.position, transform.position + lookFrom);
 
-			Gizmos.color = Color.white;
-			for (int i = 0; i < line.positionCount; i++)
+			if (showLines)
 			{
-				Gizmos.DrawLine(transform.TransformPoint(line.GetPosition(i)) + new Vector3(0, lookFrom.y, 0), transform.TransformPoint(line.GetPosition(i)) + lookFrom + Vector3.down * rayLength);
+				Gizmos.color = Color.white;
+				for (int i = 0; i < line.positionCount; i++)
+				{
+					Gizmos.DrawLine(transform.TransformPoint(line.GetPosition(i)) + new Vector3(0, lookFrom.y, 0), transform.TransformPoint(line.GetPosition(i)) + lookFrom + Vector3.down * rayLength);
+				}
 			}
 		}
 	}

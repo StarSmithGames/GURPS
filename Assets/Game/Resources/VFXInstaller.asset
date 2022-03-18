@@ -12,4 +12,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c240616e62e57a749b5ffac04b38753b, type: 3}
   m_Name: VFXInstaller
   m_EditorClassIdentifier: 
-  characterMarker: {fileID: 0}

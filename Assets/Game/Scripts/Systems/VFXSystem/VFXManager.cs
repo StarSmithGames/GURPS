@@ -6,6 +6,11 @@ using Zenject;
 
 public class VFXManager : IInitializable
 {
+	[Inject]
+	private void Construct()
+	{
+	}
+
 	public void Initialize()
 	{
 		Debug.LogError("VFX");

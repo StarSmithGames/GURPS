@@ -37,13 +37,12 @@ public class Mover : MonoBehaviour
 
 	private Vector3 rootMotion;
 
-	[Inject(Id ="Root")] private Transform root;
 	[Inject(Id = "Model")] private Transform model;
 	private Rigidbody rigidbody;
 	private NavMeshAgent navMeshAgent;
 	private Animator animator;
 	private PointClickController controller;
-	private SensorHandler sensor;
+	private MoverSensor sensor;
 
 	[Inject]
 	private void Construct(
@@ -51,7 +50,7 @@ public class Mover : MonoBehaviour
 		Animator animator,
 		NavMeshAgent navMeshAgent,
 		PointClickController controller,
-		SensorHandler sensor)
+		MoverSensor sensor)
 	{
 		this.rigidbody = rigidbody;
 		this.animator = animator;
@@ -71,15 +70,15 @@ public class Mover : MonoBehaviour
 		navMeshAgent.stoppingDistance = settings.reachTargetThreshold;
 
 		currentYRotation = model.localEulerAngles.y;
-		lastPosition = root.position;
-		currentDestination = root.position;
+		lastPosition = transform.root.position;
+		currentDestination = transform.root.position;
 
 		//line.positionCount = 0;
 	}
 
 	private void OnAnimatorMove()
 	{
-		navMeshAgent.nextPosition = root.position;
+		navMeshAgent.nextPosition = transform.root.position;
 
 		//rootMotion += animator.deltaPosition;
 
@@ -97,7 +96,7 @@ public class Mover : MonoBehaviour
 		lastMovementVelocity = velocity;
 
 		ApplyGravity();
-		velocity += root.up * currentVerticalSpeed;
+		velocity += transform.root.up * currentVerticalSpeed;
 
 		rigidbody.velocity = velocity + sensor.CurrentGroundAdjustmentVelocity;
 
@@ -111,7 +110,7 @@ public class Mover : MonoBehaviour
 	{
 		Vector3 velocity = settings.ignoreMomentum ? lastMovementVelocity : lastVelocity;
 		//Project velocity onto a plane defined by the 'up' direction of the parent transform;
-		velocity = Vector3.ProjectOnPlane(velocity, root.up);
+		velocity = Vector3.ProjectOnPlane(velocity, transform.root.up);
 
 		if (velocity.magnitude < magnitudeThreshold) return;
 
@@ -194,10 +193,10 @@ public class Mover : MonoBehaviour
 	{
 		if (!IsHasTarget) return Vector3.zero;
 
-		Vector3 direction = currentDestination - root.position;
+		Vector3 direction = currentDestination - transform.root.position;
 
 		//Remove all vertical parts of vector;
-		direction = VectorMath.RemoveDotVector(direction, root.up);
+		direction = VectorMath.RemoveDotVector(direction, transform.root.up);
 
 		float distanceToTarget = direction.magnitude;
 
@@ -248,10 +247,10 @@ public class Mover : MonoBehaviour
 		}
 
 		//If controller has moved enough distance, reset time;
-		if (Vector3.Distance(root.position, lastPosition) > settings.timeOutDistanceThreshold || controller.IsMouseHolded)
+		if (Vector3.Distance(transform.root.position, lastPosition) > settings.timeOutDistanceThreshold || controller.IsMouseHolded)
 		{
 			currentTimeOutTime = 0f;
-			lastPosition = root.position;
+			lastPosition = transform.root.position;
 		}
 		else
 		{
@@ -271,7 +270,7 @@ public class Mover : MonoBehaviour
 		//target.gameObject.SetActive(isHasTarget);
 
 		//line.positionCount = navMeshAgent.path.corners.Length;
-		//line.SetPosition(0, root.position);
+		//line.SetPosition(0, transform.root.position);
 		//line.SetPositions(navMeshAgent.path.corners);
 	}
 
@@ -282,7 +281,7 @@ public class Mover : MonoBehaviour
 
 		Gizmos.color = Color.red;
 
-		Gizmos.DrawWireSphere(root.position, settings.reachTargetThreshold);
+		Gizmos.DrawWireSphere(transform.root.position, settings.reachTargetThreshold);
 
 		if (!IsHasTarget) return;
 
