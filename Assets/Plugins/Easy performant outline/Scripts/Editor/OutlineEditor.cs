@@ -43,7 +43,7 @@ public class OutlineEditor : OdinEditor
 
         if (GUILayout.Button("Refresh"))
         {
-            EditorUtility.SetDirty(target);
+            //AssetDatabase.ForceReserializeAssets();
         }
     }
 

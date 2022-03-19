@@ -21153,8 +21153,8 @@ Transform:
   - {fileID: 2042328164}
   - {fileID: 1347017732}
   - {fileID: 534111911}
-  - {fileID: 2074611288}
   - {fileID: 1566613152}
+  - {fileID: 2074611288}
   - {fileID: 1000543976}
   - {fileID: 1801955569}
   - {fileID: 1686100926}
@@ -23601,7 +23601,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1389709262}
-  m_RootOrder: 29
+  m_RootOrder: 28
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1569812429
 GameObject:
@@ -23773,7 +23773,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 604150623}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1592108588
 BoxCollider:
