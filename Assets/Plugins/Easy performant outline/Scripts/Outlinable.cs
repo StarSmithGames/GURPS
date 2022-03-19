@@ -1,106 +1,39 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Sirenix.OdinInspector;
 
 namespace EPOOutline
 {
-    public enum DilateRenderMode
-    {
-        PostProcessing,
-        EdgeShift
-    }
-
-    public enum RenderStyle
-    {
-        Single = 1,
-        FrontBack = 2
-    }
-
-    [Flags]
-    public enum OutlinableDrawingMode
-    {
-        Normal = 1,
-        ZOnly = 2,
-        GenericMask = 4,
-        Obstacle = 8,
-        Mask = 16
-    }
-
-    [Flags]
-    public enum RenderersAddingMode
-    {
-        All = -1,
-        None = 0,
-        MeshRenderer = 1,
-        SkinnedMeshRenderer = 2,
-        SpriteRenderer = 4,
-        Others = 4096
-    }
-
-    public enum BoundsMode
-    {
-        Default,
-        ForceRecalculate,
-        Manual
-    }
-
-    public enum ComplexMaskingMode
-    {
-        None,
-        ObstaclesMode,
-        MaskingMode
-    }
-
     [ExecuteAlways]
     public class Outlinable : MonoBehaviour
     {
-        private static List<TargetStateListener> tempListeners = new List<TargetStateListener>();
-        
-        private static HashSet<Outlinable> outlinables = new HashSet<Outlinable>();
-
+        public Settings Properties => isCustom ? settings : data?.settings ?? settings;
+        public bool IsCustom => isCustom;
         [SerializeField] private bool isCustom = true;
 
-        [SerializeField] private OutlineData data;
 
+        [SerializeField] private OutlineData data;
+        [HideLabel]
         [SerializeField] private Settings settings;
 
-        [SerializeField]
-        private ComplexMaskingMode complexMaskingMode;
-        
-        [SerializeField]
-        private OutlinableDrawingMode drawingMode = OutlinableDrawingMode.Normal;
-
-        [SerializeField]
-        private int outlineLayer = 0;
-
-        [SerializeField]
-        private List<OutlineTarget> outlineTargets = new List<OutlineTarget>();
-
-        [SerializeField]
-        private RenderStyle renderStyle = RenderStyle.Single;
+        [SerializeField] private List<OutlineTarget> outlineTargets = new List<OutlineTarget>();
 
 
-#pragma warning disable CS0649
-        [SerializeField]
-        private OutlineProperties outlineParameters = new OutlineProperties();
+        private static List<TargetStateListener> tempListeners = new List<TargetStateListener>();
 
-        [SerializeField]
-        private OutlineProperties backParameters = new OutlineProperties();
-
-        [SerializeField]
-        private OutlineProperties frontParameters = new OutlineProperties();
-#pragma warning restore CS0649
+        private static HashSet<Outlinable> outlinables = new HashSet<Outlinable>();
 
         public RenderStyle RenderStyle
         {
             get
             {
-                return renderStyle;
+                return Properties.renderStyle;
             }
 
             set
             {
-                renderStyle = value;
+                Properties.renderStyle = value;
             }
         }
 
@@ -108,12 +41,12 @@ namespace EPOOutline
         {
             get
             {
-                return complexMaskingMode;
+                return Properties.complexMaskingMode;
             }
 
             set
             {
-                complexMaskingMode = value;
+                Properties.complexMaskingMode = value;
             }
         }
 
@@ -121,7 +54,7 @@ namespace EPOOutline
         {
             get
             {
-                return complexMaskingMode != ComplexMaskingMode.None;
+                return Properties.complexMaskingMode != ComplexMaskingMode.None;
             }
         }
 
@@ -129,12 +62,12 @@ namespace EPOOutline
         {
             get
             {
-                return drawingMode;
+                return Properties.drawingMode;
             }
 
             set
             {
-                drawingMode = value;
+                Properties.drawingMode = value;
             }
         }
 
@@ -142,12 +75,12 @@ namespace EPOOutline
         {
             get
             {
-                return outlineLayer;
+                return Properties.outlineLayer;
             }
 
             set
             {
-                outlineLayer = value;
+                Properties.outlineLayer = value;
             }
         }
 
@@ -163,7 +96,7 @@ namespace EPOOutline
         {
             get
             {
-                return outlineParameters;
+                return Properties.outlineParameters;
             }
         }
 
@@ -171,7 +104,7 @@ namespace EPOOutline
         {
             get
             {
-                return backParameters;
+                return Properties.backParameters;
             }
         }
         
@@ -179,11 +112,11 @@ namespace EPOOutline
         {
             get
             {
-                if ((drawingMode & OutlinableDrawingMode.Normal) == 0)
+                if ((Properties.drawingMode & OutlinableDrawingMode.Normal) == 0)
                     return false;
 
-                if (renderStyle == RenderStyle.FrontBack)
-                    return backParameters.Enabled && backParameters.FillPass.Material != null;
+                if (Properties.renderStyle == RenderStyle.FrontBack)
+                    return Properties.backParameters.Enabled && Properties.backParameters.FillPass.Material != null;
                 else
                     return false;
             }
@@ -193,7 +126,7 @@ namespace EPOOutline
         {
             get
             {
-                return frontParameters;
+                return Properties.frontParameters;
             }
         }
 
@@ -201,7 +134,7 @@ namespace EPOOutline
         {
             get
             {
-                return (drawingMode & OutlinableDrawingMode.Obstacle) != 0;
+                return (Properties.drawingMode & OutlinableDrawingMode.Obstacle) != 0;
             }
         }
 
@@ -247,7 +180,7 @@ namespace EPOOutline
 
         private void OnValidate()
         {
-            outlineLayer = Mathf.Clamp(outlineLayer, 0, 63);
+            Properties.outlineLayer = Mathf.Clamp(Properties.outlineLayer, 0, 63);
             ValidateTargets();
         }
 
@@ -472,7 +405,76 @@ namespace EPOOutline
         [System.Serializable]
         public class Settings
         {
+            public ComplexMaskingMode complexMaskingMode;
 
+            public OutlinableDrawingMode drawingMode = OutlinableDrawingMode.Normal;
+
+            public int outlineLayer = 0;
+
+
+            public RenderStyle renderStyle = RenderStyle.Single;
+
+#pragma warning disable CS0649
+            [ShowIf("ShowOutlineParameters")]
+            public OutlineProperties outlineParameters = new OutlineProperties();
+
+            [ShowIf("ShowBackParameters")]
+            public OutlineProperties backParameters = new OutlineProperties();
+
+            [ShowIf("ShowFrontParameters")]
+            public OutlineProperties frontParameters = new OutlineProperties();
+#pragma warning restore CS0649
+
+            private bool ShowOutlineParameters => renderStyle == RenderStyle.Single && ((int)drawingMode & (int)OutlinableDrawingMode.Normal) != 0;
+            private bool ShowBackParameters => renderStyle == RenderStyle.FrontBack && ((int)drawingMode & (int)OutlinableDrawingMode.Normal) != 0;
+            private bool ShowFrontParameters => renderStyle == RenderStyle.FrontBack && ((int)drawingMode & (int)OutlinableDrawingMode.Normal) != 0;
         }
+    }
+
+    public enum DilateRenderMode
+    {
+        PostProcessing,
+        EdgeShift
+    }
+
+    public enum RenderStyle
+    {
+        Single = 1,
+        FrontBack = 2
+    }
+
+    [Flags]
+    public enum OutlinableDrawingMode
+    {
+        Normal = 1,
+        ZOnly = 2,
+        GenericMask = 4,
+        Obstacle = 8,
+        Mask = 16
+    }
+
+    [Flags]
+    public enum RenderersAddingMode
+    {
+        All = -1,
+        None = 0,
+        MeshRenderer = 1,
+        SkinnedMeshRenderer = 2,
+        SpriteRenderer = 4,
+        Others = 4096
+    }
+
+    public enum BoundsMode
+    {
+        Default,
+        ForceRecalculate,
+        Manual
+    }
+
+    public enum ComplexMaskingMode
+    {
+        None,
+        ObstaclesMode,
+        MaskingMode
     }
 }
