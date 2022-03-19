@@ -7,7 +7,6 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "InputManagerInstaller", menuName = "Installers/InputManagerInstaller")]
 public class InputManagerInstaller : ScriptableObjectInstaller<InputManagerInstaller>
 {
-	[TableList]
 	public List<KeyBinding> keyBindings = new List<KeyBinding>();
 
 	public override void InstallBindings()
@@ -30,34 +29,34 @@ public class KeyBinding
 	public KeyAction keyAction;
 	public KeyCode keyCode;
 }
-public enum KeyAction
+public enum KeyAction : int
 {
-	Interact,
-	ContextMenu,
+	Interact			= 10,
+	ContextMenu			= 15,
 
-	CancelAction,
+	CancelAction		= 20,
 
-	TacticalCamera,
+	CameraCenter		= 25,
+	TacticalCamera		= 26,
 
-	CameraZoomIn,
-	CameraZoomOut,
+	CameraZoomIn		= 27,
+	CameraZoomOut		= 28,
 
-	CameraRotate,
-	CameraRotateLeft,
-	CameraRotateRight,
+	CameraRotate		= 29,
+	CameraRotateLeft	= 30,
+	CameraRotateRight	= 31,
 
-	CameraCenter,
-	CameraForward,
-	CameraBackward,
-	CameraLeft,
-	CameraRight,
+	CameraForward		= 32,
+	CameraBackward		= 33,
+	CameraLeft			= 34,
+	CameraRight			= 35,
 
 
-	WorldTooltips,
+	WorldTooltips		= 45,
 
-	Inventory,
-	InGameMenu,
+	Inventory			= 50,
+	InGameMenu			= 55,
 
-	QuickSave,
-	QuickLoad,
+	QuickSave			= 65,
+	QuickLoad			= 66,
 }

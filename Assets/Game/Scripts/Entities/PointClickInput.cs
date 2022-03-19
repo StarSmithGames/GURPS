@@ -25,9 +25,9 @@ public class PointClickInput : MonoBehaviour
 
 	private void Update()
 	{
-		IsMouseHolded = isCanHoldMouse && inputManager.IsMouseButtonPressed();
+		IsMouseHolded = isCanHoldMouse && inputManager.IsLeftMouseButtonPressed();
 
-		if (!isCanHoldMouse && inputManager.IsMouseButtonDown() || IsMouseHolded)
+		if (!isCanHoldMouse && inputManager.IsLeftMouseButtonDown() || IsMouseHolded)
 		{
 			Ray mouseRay = camera.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
 

@@ -45,13 +45,21 @@ public class InputManager : IInitializable, IDisposable
 	{
 		return Input.mousePosition;
 	}
-
-	public bool IsMouseButtonDown()
+	public bool IsLeftMouseButtonDown()
 	{
 		return Input.GetMouseButtonDown(0);
 	}
-	public bool IsMouseButtonPressed()
+	public bool IsLeftMouseButtonPressed()
 	{
 		return Input.GetMouseButton(0);
+	}
+
+	public bool IsScroolWheelUp()
+	{
+		return Input.mouseScrollDelta.y > 0;
+	}
+	public bool IsScroolWheelDown()
+	{
+		return Input.mouseScrollDelta.y < 0;
 	}
 }
