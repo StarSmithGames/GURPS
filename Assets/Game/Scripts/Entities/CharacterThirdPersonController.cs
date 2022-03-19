@@ -14,6 +14,7 @@ public class CharacterThirdPersonController : MonoBehaviour
 
 	[SerializeField] private Settings settings;
 
+	private Vector3 lastPosition;
 	private Vector3 lastVelocity;
 	private Vector3 lastGravityVelocity;
 	private Vector3 currentDestination;
@@ -21,6 +22,10 @@ public class CharacterThirdPersonController : MonoBehaviour
 	private float currentYRotation = 0f;
 	private float fallOffAngle = 90f;
 	private float magnitudeThreshold = 0.001f;
+
+	private float timeOutTime = 1f;
+	private float currentTimeOutTime = 1f;
+	private float timeOutDistanceThreshold = 0.05f;
 
 	private Transform model;
 
@@ -79,6 +84,9 @@ public class CharacterThirdPersonController : MonoBehaviour
 		Movement();
 
 		Rotation();
+
+		//Handle timeout (stop controller if it is stuck);
+		HandleTimeOut();
 	}
 
 	public Vector3 GetVelocityNormalized()
@@ -148,6 +156,33 @@ public class CharacterThirdPersonController : MonoBehaviour
 
 		return settings.useNavMesh ? navMeshAgent.desiredVelocity : velocity;
 	}
+
+	private void HandleTimeOut()
+	{
+		if (!IsHasTarget)
+		{
+			currentTimeOutTime = 0f;
+			return;
+		}
+
+		if (Vector3.Distance(transform.root.position, lastPosition) > timeOutDistanceThreshold)
+		{
+			currentTimeOutTime = 0f;
+			lastPosition = transform.root.position;
+		}
+		else
+		{
+			currentTimeOutTime += Time.deltaTime;
+
+			//If current timeout time has reached limit, stop controller from moving;
+			if (currentTimeOutTime >= timeOutTime)
+			{
+				IsHasTarget = false;
+			}
+		}
+	}
+
+
 
 	#region Nav
 	public bool IsReachedDestination()

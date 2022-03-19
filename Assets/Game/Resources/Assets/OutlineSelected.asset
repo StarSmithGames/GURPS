@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99fdcd10ad5c4d3438dd79ff1bb986ea, type: 3}
+  m_Name: OutlineSelected
+  m_EditorClassIdentifier: 
+  settings:
+    complexMaskingMode: 0
+    drawingMode: 1
+    outlineLayer: 0
+    renderStyle: 2
+    outlineParameters:
+      enabled: 1
+      color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+      dilateShift: 1
+      blurShift: 1
+      fillPass:
+        shader: {fileID: 0}
+        serializedProperties: []
+    backParameters:
+      enabled: 1
+      color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+      dilateShift: 1
+      blurShift: 0
+      fillPass:
+        shader: {fileID: 4800000, guid: 213090e563021044c92d1c27258b93f0, type: 3}
+        serializedProperties:
+        - PropertyName: _PublicColor
+          Property:
+            ColorValue: {r: 1, g: 1, b: 0, a: 0.39215687}
+            FloatValue: 0
+            VectorValue: {x: 0, y: 0, z: 0, w: 0}
+            PropertyType: 0
+    frontParameters:
+      enabled: 1
+      color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+      dilateShift: 1
+      blurShift: 0
+      fillPass:
+        shader: {fileID: 0}
+        serializedProperties: []

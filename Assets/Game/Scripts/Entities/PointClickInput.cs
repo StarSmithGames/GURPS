@@ -12,22 +12,24 @@ public class PointClickInput : MonoBehaviour
 	[SerializeField] private LayerMask raycastLayerMask = ~0;
 
 	private CinemachineBrain camera;
+	private InputManager inputManager;
 	private CharacterThirdPersonController controller;
 
 	[Inject]
-	private void Construct(CinemachineBrain brain, CharacterThirdPersonController controller)
+	private void Construct(CinemachineBrain brain, InputManager inputManager, CharacterThirdPersonController controller)
 	{
 		this.camera = brain;
+		this.inputManager = inputManager;
 		this.controller = controller;
 	}
 
 	private void Update()
 	{
-		IsMouseHolded = isCanHoldMouse && Mouse.IsMouseButtonPressed();
+		IsMouseHolded = isCanHoldMouse && inputManager.IsMouseButtonPressed();
 
-		if (!isCanHoldMouse && Mouse.IsMouseButtonDown() || IsMouseHolded)
+		if (!isCanHoldMouse && inputManager.IsMouseButtonDown() || IsMouseHolded)
 		{
-			Ray mouseRay = camera.OutputCamera.ScreenPointToRay(Mouse.GetMousePosition());
+			Ray mouseRay = camera.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
 
 			if (Physics.Raycast(mouseRay, out RaycastHit hit, 100f, raycastLayerMask, QueryTriggerInteraction.Ignore))
 			{
@@ -38,22 +40,5 @@ public class PointClickInput : MonoBehaviour
 				controller.SetDestination(Vector3.zero);
 			}
 		}
-	}
-}
-
-public static class Mouse
-{
-	public static Vector2 GetMousePosition()
-	{
-		return Input.mousePosition;
-	}
-
-	public static bool IsMouseButtonDown()
-	{
-		return Input.GetMouseButtonDown(0);
-	}
-	public static bool IsMouseButtonPressed()
-	{
-		return Input.GetMouseButton(0);
 	}
 }

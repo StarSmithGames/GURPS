@@ -13,5 +13,7 @@ public class SceneInstaller : MonoInstaller
 	public override void InstallBindings()
 	{
 		Container.BindInstance(brainCamera);
+
+		Container.BindInterfacesAndSelfTo<CameraVision>().AsSingle();
 	}
 }

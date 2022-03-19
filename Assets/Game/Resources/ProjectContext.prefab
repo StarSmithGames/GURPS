@@ -44,7 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4e6589720da476459dc6dd71624b071, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scriptableObjectInstallers: []
+  _scriptableObjectInstallers:
+  - {fileID: 11400000, guid: 2a4bd727e72eba84390c22f56fc39abc, type: 2}
   _monoInstallers:
   - {fileID: -3076613229729817307}
   _installerPrefabs: []
@@ -73,3 +74,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3590a798e0c219042b55a1e73d8c3e5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  globalSettings:
+    cameraVision:
+      raycastLength: 100
+      raycastLayerMask:
+        serializedVersion: 2
+        m_Bits: 119

@@ -459,7 +459,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &96902062
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -516,7 +516,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1276,7 +1276,7 @@ GameObject:
   - component: {fileID: 231363815}
   - component: {fileID: 231363814}
   m_Layer: 0
-  m_Name: CubeBase
+  m_Name: OutlineCharacter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1306,8 +1306,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe91dc294731a9428c0941ea7579110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCustom: 1
-  data: {fileID: 0}
+  isCustom: 0
+  data: {fileID: 11400000, guid: c1f6fbbf015f03040a2807c58f4d2757, type: 2}
   settings:
     complexMaskingMode: 0
     drawingMode: 1
@@ -1819,6 +1819,7 @@ GameObject:
   - component: {fileID: 292194762}
   - component: {fileID: 292194764}
   - component: {fileID: 292194763}
+  - component: {fileID: 292194765}
   m_Layer: 0
   m_Name: Chest
   m_TagString: Untagged
@@ -1854,7 +1855,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isCustom: 0
-  data: {fileID: 11400000, guid: c1f6fbbf015f03040a2807c58f4d2757, type: 2}
+  data: {fileID: 11400000, guid: 2090a748b884fba4da463904d3569e3d, type: 2}
   settings:
     complexMaskingMode: 0
     drawingMode: 1
@@ -1885,7 +1886,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1901,7 +1902,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -1930,6 +1931,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.7921101, y: 1.2192612, z: 1.12831}
   m_Center: {x: 0, y: 0.5652815, z: -0.009428382}
+--- !u!114 &292194765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 292194761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e9cd2ab3c0163a45b7708e727bd0c89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outline: {fileID: 292194763}
 --- !u!1 &319027617
 GameObject:
   m_ObjectHideFlags: 0
@@ -7826,7 +7840,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1316808351}
-  m_LocalRotation: {x: 0.44721362, y: -0.000000015389857, z: 0.000000007694929, w: 0.89442724}
+  m_LocalRotation: {x: 0.44721362, y: 0.000000015389855, z: -0.000000007694927, w: 0.89442724}
   m_LocalPosition: {x: -9.3, y: 9.8, z: -4.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -7979,7 +7993,7 @@ GameObject:
   - component: {fileID: 1339309894}
   - component: {fileID: 1339309893}
   m_Layer: 0
-  m_Name: CubeChoose
+  m_Name: OutlineObjects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8009,8 +8023,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe91dc294731a9428c0941ea7579110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCustom: 1
-  data: {fileID: 0}
+  isCustom: 0
+  data: {fileID: 11400000, guid: 2090a748b884fba4da463904d3569e3d, type: 2}
   settings:
     complexMaskingMode: 0
     drawingMode: 1
@@ -12055,7 +12069,7 @@ GameObject:
   - component: {fileID: 2104132370}
   - component: {fileID: 2104132369}
   m_Layer: 0
-  m_Name: CubeLootLook
+  m_Name: OutlineSelected
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12085,8 +12099,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe91dc294731a9428c0941ea7579110, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCustom: 1
-  data: {fileID: 0}
+  isCustom: 0
+  data: {fileID: 11400000, guid: 8da6cbd86700e1c4eb39d1e1bf3cf740, type: 2}
   settings:
     complexMaskingMode: 0
     drawingMode: 1
@@ -12894,11 +12908,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000015389857
+      value: 0.000000015389855
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000007694929
+      value: -0.000000007694927
       objectReference: {fileID: 0}
     - target: {fileID: 1129835330179371825, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_RootOrder
@@ -17391,7 +17405,7 @@ CharacterController:
   m_Enabled: 1
   serializedVersion: 2
   m_Height: 2
-  m_Radius: 0.3
+  m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.75
   m_SkinWidth: 0.08
