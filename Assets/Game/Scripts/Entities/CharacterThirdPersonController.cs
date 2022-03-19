@@ -9,11 +9,13 @@ using Zenject;
 
 public class CharacterThirdPersonController : MonoBehaviour
 {
+	public bool IsGrounded => controller.isGrounded;
 	public bool IsHasTarget { get; private set; }
 
 	[SerializeField] private Settings settings;
 
 	private Vector3 lastVelocity;
+	private Vector3 lastGravityVelocity;
 	private Vector3 currentDestination;
 
 	private float currentYRotation = 0f;
@@ -44,13 +46,24 @@ public class CharacterThirdPersonController : MonoBehaviour
 
 	private void Start()
 	{
+		currentYRotation = model.localEulerAngles.y;
+		currentDestination = transform.root.position;
+	}
+
+	private void OnValidate()
+	{
+		if (navMeshAgent == null)
+		{
+			if (Application.isEditor)
+			{
+				navMeshAgent = GetComponentInParent<NavMeshAgent>();
+			}
+		}
+
 		navMeshAgent.updatePosition = false;
 		navMeshAgent.speed = settings.movementSpeed;
 		navMeshAgent.angularSpeed = 0;
 		navMeshAgent.stoppingDistance = settings.reachTargetThreshold;
-
-		currentYRotation = model.localEulerAngles.y;
-		currentDestination = transform.root.position;
 	}
 
 	private void OnAnimatorMove()
@@ -63,33 +76,39 @@ public class CharacterThirdPersonController : MonoBehaviour
 
 	private void Update()
 	{
-		ApplyGravity();
-		if (controller.isGrounded && lastVelocity.y < 0)
-		{
-			lastVelocity.y = 0f;
-		}
-
-		//if (Input.GetButtonDown("Jump")/* && groundedPlayer*/)
-		//{
-		//	lastVelocity.y += Mathf.Sqrt(settings.jumpHeight * -3.0f * settings.gravity);
-		//}
-
-		lastVelocity.y += settings.gravity * Time.deltaTime;
-		controller.Move(lastVelocity * Time.deltaTime);
-
 		Movement();
 
 		Rotation();
 	}
 
+	public Vector3 GetVelocityNormalized()
+	{
+		return lastVelocity.normalized;
+	}
+
+
 	private void Movement()
 	{
 		lastVelocity = CalculateMovementVelocity();
-		if (!controller.isGrounded)
-		{
-			lastVelocity += Physics.gravity;
-		}
 		controller.Move(lastVelocity * settings.movementSpeed * Time.deltaTime);
+
+		ApplyGravity();
+	}
+
+	private void ApplyGravity()
+	{
+		if (IsGrounded && lastGravityVelocity.y < 0)
+		{
+			lastGravityVelocity.y = 0f;
+		}
+
+		if (Input.GetButtonDown("Jump")/* && groundedPlayer*/)
+		{
+			lastGravityVelocity.y += Mathf.Sqrt(settings.jumpHeight * -3.0f * settings.gravity);
+		}
+
+		lastGravityVelocity.y += settings.gravity * Time.deltaTime;
+		controller.Move(lastGravityVelocity * Time.deltaTime);
 	}
 
 	private void Rotation()
@@ -113,11 +132,6 @@ public class CharacterThirdPersonController : MonoBehaviour
 		model.localRotation = Quaternion.Euler(0f, currentYRotation, 0f);
 	}
 
-	private void ApplyGravity()
-	{
-
-	}
-
 	private Vector3 CalculateMovementVelocity()
 	{
 		if (!IsHasTarget) return Vector3.zero;
@@ -131,16 +145,11 @@ public class CharacterThirdPersonController : MonoBehaviour
 		Vector3 direction = currentDestination - transform.root.position;
 		direction = VectorMath.RemoveDotVector(direction, transform.root.up);
 		Vector3 velocity = direction.normalized * settings.movementSpeed;
-		//Check for overshooting;
-		//if (settings.movementSpeed * Time.fixedDeltaTime > distanceToTarget)
-		//{
-		//	velocity = direction.normalized * distanceToTarget;
-		//	IsHasTarget = false;
-		//}
+
 		return settings.useNavMesh ? navMeshAgent.desiredVelocity : velocity;
 	}
 
-
+	#region Nav
 	public bool IsReachedDestination()
 	{
 		return (navMeshAgent.remainingDistance < settings.reachTargetThreshold) && !navMeshAgent.pathPending;
@@ -151,11 +160,20 @@ public class CharacterThirdPersonController : MonoBehaviour
 	}
 	public bool SetDestination(Vector3 destination)
 	{
-		if (destination != Vector3.zero && IsPathValid(destination))
+		//NavMeshHit hit;
+		//if (NavMesh.SamplePosition(destination, out hit, 1f, NavMesh.AllAreas))
+		//{
+		//	//Debug.LogError(IsPathValid(destination));
+
+		//	IsHasTarget = navMeshAgent.SetDestination(destination);
+		//	currentDestination = IsHasTarget ? destination : Vector3.zero;
+		//	return IsHasTarget;
+		//}
+
+		if (IsPathValid(destination))
 		{
 			IsHasTarget = navMeshAgent.SetDestination(destination);
 			currentDestination = IsHasTarget ? destination : Vector3.zero;
-			//target.position = currentDestination;
 			return IsHasTarget;
 		}
 		currentDestination = Vector3.zero;
@@ -175,7 +193,7 @@ public class CharacterThirdPersonController : MonoBehaviour
 		Vector3 direction = Quaternion.Inverse(model.rotation) * desiredDiff.normalized;
 		return Mathf.Atan2(direction.x, direction.z) * 180.0f / Mathf.PI;
 	}
-
+	#endregion
 
 
 	private void OnDrawGizmos()
@@ -186,6 +204,9 @@ public class CharacterThirdPersonController : MonoBehaviour
 		Gizmos.DrawWireSphere(transform.root.position, settings.reachTargetThreshold);
 		if (!IsHasTarget) return;
 		Gizmos.DrawSphere(currentDestination, 0.1f);
+
+		if (!settings.useNavMesh) return;
+
 		Vector3[] corners = navMeshAgent.path.corners;
 		for (int i = 0; i < corners.Length - 1; i++)
 		{
