@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 
 using Zenject;
 
-public class LineRendererVFX : VFX
+public class LineRendererVFX : MonoBehaviour
 {
 	public LineRenderer line;
 	[OnValueChanged("DrawCircle")]
