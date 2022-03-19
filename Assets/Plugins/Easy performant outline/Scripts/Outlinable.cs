@@ -62,6 +62,8 @@ namespace EPOOutline
 
         [SerializeField] private OutlineData data;
 
+        [SerializeField] private Settings settings;
+
         [SerializeField]
         private ComplexMaskingMode complexMaskingMode;
         
@@ -87,7 +89,6 @@ namespace EPOOutline
 
         [SerializeField]
         private OutlineProperties frontParameters = new OutlineProperties();
-        
 #pragma warning restore CS0649
 
         public RenderStyle RenderStyle
@@ -468,11 +469,10 @@ namespace EPOOutline
 #pragma warning restore CS0649
         }
 
+        [System.Serializable]
         public class Settings
         {
 
         }
     }
-
-    
 }

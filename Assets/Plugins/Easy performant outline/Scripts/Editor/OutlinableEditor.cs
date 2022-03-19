@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace EPOOutline
 {
-    [CustomEditor(typeof(Outlinable))]
+    //[CustomEditor(typeof(Outlinable))]
     public class OutlinableEditor : Editor
     {
         private UnityEditorInternal.ReorderableList targetsList;
