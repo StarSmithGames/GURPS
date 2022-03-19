@@ -5,7 +5,4 @@ using Zenject;
 
 public class VFX : PoolableObject
 {
-
-
-	public class Factory : PlaceholderFactory<VFX> { }
 }

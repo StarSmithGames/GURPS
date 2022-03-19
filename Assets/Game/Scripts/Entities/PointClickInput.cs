@@ -1,44 +1,52 @@
 using Cinemachine;
 
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 using Zenject;
 
-public class PointClickInput : MonoBehaviour
+public class PointClickInput : ITickable
 {
 	public bool IsMouseHolded { get; private set; }
 
-	[SerializeField] private bool isCanHoldMouse = true;
-	[SerializeField] private LayerMask raycastLayerMask = ~0;
-
 	private CinemachineBrain camera;
 	private InputManager inputManager;
-	private CharacterThirdPersonController controller;
+	private CharacterManager characterManager;
+	private Settings settings;
 
 	[Inject]
-	private void Construct(CinemachineBrain brain, InputManager inputManager, CharacterThirdPersonController controller)
+	private void Construct(CinemachineBrain brain, InputManager inputManager, CharacterManager characterManager, GlobalSettings settings)
 	{
 		this.camera = brain;
 		this.inputManager = inputManager;
-		this.controller = controller;
+		this.characterManager = characterManager;
+		this.settings = settings.pointClickInput;
 	}
 
-	private void Update()
+	public void Tick()
 	{
-		IsMouseHolded = isCanHoldMouse && inputManager.IsLeftMouseButtonPressed();
+		IsMouseHolded = settings.isCanHoldMouse && inputManager.IsLeftMouseButtonPressed();
 
-		if (!isCanHoldMouse && inputManager.IsLeftMouseButtonDown() || IsMouseHolded)
+		if (!settings.isCanHoldMouse && inputManager.IsLeftMouseButtonDown() || IsMouseHolded && !EventSystem.current.IsPointerOverGameObject())
 		{
 			Ray mouseRay = camera.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
 
-			if (Physics.Raycast(mouseRay, out RaycastHit hit, 100f, raycastLayerMask, QueryTriggerInteraction.Ignore))
+			if (Physics.Raycast(mouseRay, out RaycastHit hit, settings.rayLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore))
 			{
-				controller.SetDestination(hit.point);
+				characterManager.CurrentCharacter.SetTarget(hit.point);
 			}
 			else
 			{
-				controller.SetDestination(Vector3.zero);
+				characterManager.CurrentCharacter.SetTarget(Vector3.zero);
 			}
 		}
+	}
+
+	[System.Serializable]
+	public class Settings
+	{
+		public bool isCanHoldMouse = true;
+		public LayerMask raycastLayerMask = ~0;
+		public float rayLength = 100f;
 	}
 }

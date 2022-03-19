@@ -1,5 +1,8 @@
 using CMF;
 
+using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor.Validation;
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +15,7 @@ public class CharacterThirdPersonController : MonoBehaviour
 	public bool IsGrounded => controller.isGrounded;
 	public bool IsHasTarget { get; private set; }
 
+	[OnValueChanged("Validate", true)]
 	[SerializeField] private Settings settings;
 
 	private Vector3 lastPosition;
@@ -30,46 +34,26 @@ public class CharacterThirdPersonController : MonoBehaviour
 	private Transform model;
 
 	private NavMeshAgent navMeshAgent;
-	private Animator animator;
-	private PointClickInput input;
 	private CharacterController controller;
 
 	[Inject]
 	private void Construct(
-		Animator animator,
 		NavMeshAgent navMeshAgent,
-		PointClickInput input,
 		CharacterController controller)
 	{
-		this.animator = animator;
 		this.navMeshAgent = navMeshAgent;
-		this.input = input;
 		this.controller = controller;
-
-		model = transform;
 	}
 
 	private void Start()
 	{
+		Validate();
+		model = transform;
+
 		currentYRotation = model.localEulerAngles.y;
 		currentDestination = transform.root.position;
 	}
 
-	private void OnValidate()
-	{
-		if (navMeshAgent == null)
-		{
-			if (Application.isEditor)
-			{
-				navMeshAgent = GetComponentInParent<NavMeshAgent>();
-			}
-		}
-
-		navMeshAgent.updatePosition = false;
-		navMeshAgent.speed = settings.movementSpeed;
-		navMeshAgent.angularSpeed = 0;
-		navMeshAgent.stoppingDistance = settings.reachTargetThreshold;
-	}
 
 	private void OnAnimatorMove()
 	{
@@ -182,8 +166,6 @@ public class CharacterThirdPersonController : MonoBehaviour
 		}
 	}
 
-
-
 	#region Nav
 	public bool IsReachedDestination()
 	{
@@ -230,6 +212,21 @@ public class CharacterThirdPersonController : MonoBehaviour
 	}
 	#endregion
 
+	private void Validate()
+	{
+		if (navMeshAgent == null)
+		{
+			if (Application.isEditor)
+			{
+				navMeshAgent = GetComponentInParent<NavMeshAgent>();
+			}
+		}
+
+		navMeshAgent.updatePosition = false;
+		navMeshAgent.speed = settings.movementSpeed;
+		navMeshAgent.angularSpeed = 0;
+		navMeshAgent.stoppingDistance = settings.reachTargetThreshold;
+	}
 
 	private void OnDrawGizmos()
 	{

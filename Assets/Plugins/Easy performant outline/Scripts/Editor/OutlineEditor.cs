@@ -40,6 +40,11 @@ public class OutlineEditor : OdinEditor
 
         if (serializedObject.targetObjects.Count() == 1)
             targetsList.DoLayoutList();
+
+        if (GUILayout.Button("Refresh"))
+        {
+            EditorUtility.SetDirty(target);
+        }
     }
 
     private void CheckList(UnityEditor.SerializedProperty targets)

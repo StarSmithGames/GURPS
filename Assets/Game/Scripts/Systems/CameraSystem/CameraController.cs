@@ -3,17 +3,12 @@ using Cinemachine;
 using DG.Tweening;
 
 using UnityEngine;
+using System.Linq;
 
 using Zenject;
 
-using static CMF.SmoothPosition;
-
-public class CameraController : MonoBehaviour
+public class CameraController : IInitializable, ITickable
 {
-	[SerializeField] private CinemachineVirtualCamera camera;
-
-	private InputManager inputManager;
-
 	public float movementSpeed = 10f;
 
 	public float rotationSpeed = 1f;
@@ -25,32 +20,33 @@ public class CameraController : MonoBehaviour
 	private float currentYRotation;
 	private float currentZoom;
 
-	private CinemachineFramingTransposer transposer;
 	private Vector3 cameraPivotPosition;
 	private float cameraPivotYRotation;
 
-	[Inject]
-    private void Construct(InputManager inputManager)
+	private CinemachineFramingTransposer transposer;
+
+	private CinemachineBrain brain;
+	private InputManager inputManager;
+
+    public CameraController(CinemachineBrain brain, InputManager inputManager)
 	{
+		this.brain = brain;
 		this.inputManager = inputManager;
 	}
 
-	private void Start()
+	public void Initialize()
 	{
-		transposer = camera.GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachineFramingTransposer;
-
+		transposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachineFramingTransposer;
 		cameraPivotPosition = transposer.FollowTarget.localPosition;
 		cameraPivotYRotation = transposer.FollowTarget.rotation.eulerAngles.y;
 
 		SetZoom(zoomStandart);
 	}
-
-	private void Update()
+	public void Tick()
 	{
 		if (inputManager.GetKeyDown(KeyAction.CameraCenter))
 		{
-			transposer.FollowTarget.localPosition = cameraPivotPosition;
-			transposer.FollowTarget.rotation = Quaternion.Euler(0, cameraPivotYRotation, 0);
+			CameraHome();
 		}
 
 		if (inputManager.GetKey(KeyAction.CameraForward))
@@ -119,6 +115,18 @@ public class CameraController : MonoBehaviour
 			SetZoom(currentZoom);
 		}
 		#endregion
+	}
+
+	public void SetFollowTarget(Transform target)
+	{
+		brain.ActiveVirtualCamera.Follow = target;
+		brain.ActiveVirtualCamera.LookAt = target;
+	}
+
+	private void CameraHome()
+	{
+		transposer.FollowTarget.localPosition = cameraPivotPosition;
+		transposer.FollowTarget.rotation = Quaternion.Euler(0, cameraPivotYRotation, 0);
 	}
 
 	private void SetZoom(float zoom)

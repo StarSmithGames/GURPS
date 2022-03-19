@@ -10,7 +10,7 @@ public class CharacterInstaller : MonoInstaller
 	[SerializeField] private CharacterController characterController;
 	[Space]
 	[SerializeField] private Transform model;
-	[SerializeField] private PointClickInput input;
+	[SerializeField] private Transform cameraPivot;
 	[SerializeField] private CharacterThirdPersonController controller;
 
 	public override void InstallBindings()
@@ -19,7 +19,7 @@ public class CharacterInstaller : MonoInstaller
 		Container.BindInstance(navMeshAgent);
 		Container.BindInstance(characterController);
 		Container.BindInstance(model).WithId("Model");
-		Container.BindInstance(input);
+		Container.BindInstance(cameraPivot).WithId("CameraPivot");
 		Container.BindInstance(controller);
 	}
 }

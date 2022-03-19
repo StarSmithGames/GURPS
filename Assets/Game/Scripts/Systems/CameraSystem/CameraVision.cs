@@ -1,6 +1,7 @@
 using Cinemachine;
 
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 using Zenject;
 
@@ -46,7 +47,7 @@ public class CameraVision : IInitializable, ITickable
 	{
 		Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
 
-		if (Physics.Raycast(mouseRay, out RaycastHit hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore))
+		if (Physics.Raycast(mouseRay, out RaycastHit hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
 		{
 			CurrentEntity = hit.transform.root.GetComponent<IObservable>();
 		}
@@ -60,7 +61,7 @@ public class CameraVision : IInitializable, ITickable
 	[System.Serializable]
 	public class Settings
 	{
-		public float raycastLength = 100f;
 		public LayerMask raycastLayerMask = ~0;
+		public float raycastLength = 100f;
 	}
 }
