@@ -6,6 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Zenject;
+
 namespace Game.Systems.InventorySystem
 {
 	public class ContainerModel : MonoBehaviour, IInteractable, IObservable
@@ -22,10 +24,13 @@ namespace Game.Systems.InventorySystem
 		private Data data;
 
 		private UIManager uiManager;
+		private UIChestWindow.Factory factory;
 
-		private void Construct(UIManager uiManager)
+		[Inject]
+		private void Construct(UIManager uiManager, UIChestWindow.Factory factory)
 		{
 			this.uiManager = uiManager;
+			this.factory = factory;
 		}
 
 		private void Awake()
@@ -47,14 +52,19 @@ namespace Game.Systems.InventorySystem
 		{
 			collider.enabled = false;
 			outline.enabled = false;
-
-			//uiManager.Show<UIChest>();
 		}
 
 
 		public void StartObserve()
 		{
 			outline.enabled = true;
+
+			var window = factory.Create();
+			window.transform.parent = uiManager.WindowsRoot;
+
+			(window.transform as RectTransform).anchoredPosition = Vector3.zero;
+			window.transform.localScale = Vector3.one;
+			window.transform.rotation = Quaternion.Euler(Vector3.zero);
 		}
 		public void Observe()
 		{

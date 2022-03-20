@@ -1,3 +1,5 @@
+using Game.Managers.CharacterManager;
+
 using UnityEngine;
 
 using Zenject;
@@ -11,5 +13,7 @@ public class ProjectInstaller : MonoInstaller
 		SignalBusInstaller.Install(Container);
 
 		Container.BindInstance(globalSettings);
+
+		CharacterManagerInstaller.Install(Container);
 	}
 }

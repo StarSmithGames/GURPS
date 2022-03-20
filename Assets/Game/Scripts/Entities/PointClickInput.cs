@@ -1,5 +1,7 @@
 using Cinemachine;
 
+using Game.Managers.CharacterManager;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 

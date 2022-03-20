@@ -1,13 +1,12 @@
 using Cinemachine;
 
-using DG.Tweening;
-
 using UnityEngine;
-using System.Linq;
 
 using Zenject;
+using Game.Managers.CharacterManager;
+using System;
 
-public class CameraController : IInitializable, ITickable
+public class CameraController : IInitializable, ITickable, IDisposable
 {
 	public float movementSpeed = 10f;
 
@@ -25,11 +24,13 @@ public class CameraController : IInitializable, ITickable
 
 	private CinemachineFramingTransposer transposer;
 
+	private SignalBus signalBus;
 	private CinemachineBrain brain;
 	private InputManager inputManager;
 
-    public CameraController(CinemachineBrain brain, InputManager inputManager)
+    public CameraController(SignalBus signalBus, CinemachineBrain brain, InputManager inputManager)
 	{
+		this.signalBus = signalBus;
 		this.brain = brain;
 		this.inputManager = inputManager;
 	}
@@ -41,7 +42,15 @@ public class CameraController : IInitializable, ITickable
 		cameraPivotYRotation = transposer.FollowTarget.rotation.eulerAngles.y;
 
 		SetZoom(zoomStandart);
+
+		signalBus?.Subscribe<SignalCharacterChanged>(OnCharacterChanged);
 	}
+
+	public void Dispose()
+	{
+		signalBus?.Unsubscribe<SignalCharacterChanged>(OnCharacterChanged);
+	}
+
 	public void Tick()
 	{
 		if (inputManager.GetKeyDown(KeyAction.CameraCenter))
@@ -134,5 +143,11 @@ public class CameraController : IInitializable, ITickable
 		currentZoom = Mathf.Clamp(zoom, zoomMinMax.x, zoomMinMax.y);
 
 		transposer.m_CameraDistance = currentZoom;
+	}
+
+
+	private void OnCharacterChanged(SignalCharacterChanged signal)
+	{
+		SetFollowTarget(signal.character.CameraPivot);
 	}
 }
