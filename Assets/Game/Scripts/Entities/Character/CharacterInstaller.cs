@@ -11,7 +11,7 @@ public class CharacterInstaller : MonoInstaller
 	[Space]
 	[SerializeField] private Transform model;
 	[SerializeField] private Transform cameraPivot;
-	[SerializeField] private CharacterThirdPersonController controller;
+	[SerializeField] private CharacterController3D controller;
 
 	public override void InstallBindings()
 	{

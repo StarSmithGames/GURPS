@@ -77,13 +77,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalSettings:
     cameraVision:
+      isCanHoldMouse: 1
       raycastLayerMask:
         serializedVersion: 2
         m_Bits: 119
       raycastLength: 100
-    pointClickInput:
-      isCanHoldMouse: 1
-      raycastLayerMask:
-        serializedVersion: 2
-        m_Bits: 87
-      rayLength: 100

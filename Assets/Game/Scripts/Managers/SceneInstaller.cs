@@ -15,7 +15,6 @@ public class SceneInstaller : MonoInstaller
 		Container.BindInstance(brainCamera);
 
 		Container.BindInterfacesAndSelfTo<CameraVision>().AsSingle();
-		Container.BindInterfacesAndSelfTo<PointClickInput>().AsSingle();
 
 		Container.BindInterfacesAndSelfTo<CameraController>().AsSingle();
 	}

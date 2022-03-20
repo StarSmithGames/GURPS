@@ -2625,7 +2625,7 @@ GameObject:
   - component: {fileID: 4739440494138572721}
   - component: {fileID: 4739440494138572720}
   m_Layer: 5
-  m_Name: ChestWindow
+  m_Name: ContainerWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

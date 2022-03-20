@@ -7,10 +7,10 @@ using Zenject;
 public class AnimatorControl : MonoBehaviour
 {
 	private Animator animator;
-	private CharacterThirdPersonController controller;
+	private CharacterController3D controller;
 
 	[Inject]
-	private void Construct(Animator animator, CharacterThirdPersonController controller)
+	private void Construct(Animator animator, CharacterController3D controller)
 	{
 		this.animator = animator;
 		this.controller = controller;

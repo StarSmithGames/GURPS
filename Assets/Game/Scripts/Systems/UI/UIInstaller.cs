@@ -1,10 +1,12 @@
+using Game.Systems.InventorySystem;
+
 using UnityEngine;
 using Zenject;
 
 [CreateAssetMenu(fileName = "UIInstaller", menuName = "Installers/UIInstaller")]
 public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 {
-	[SerializeField] private UIChestWindow chestWindowPrefab;
+	[SerializeField] private UIContainerWindow containerWindowPrefab;
 
 	public override void InstallBindings()
 	{
@@ -12,10 +14,8 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 
 		Container.Bind<UIWindowsManager>().WhenInjectedInto<UIManager>();
 
-		Container.BindFactory<UIChestWindow, UIChestWindow.Factory>()
+		Container.BindFactory<UIContainerWindow, UIContainerWindow.Factory>()
 			.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
-			.FromComponentInNewPrefab(chestWindowPrefab));
-
-		Container.BindInterfacesAndSelfTo<UIHandlerTEST>().AsSingle();
+			.FromComponentInNewPrefab(containerWindowPrefab));
 	}
 }

@@ -10,7 +10,7 @@ using UnityEngine.AI;
 
 using Zenject;
 
-public class CharacterThirdPersonController : MonoBehaviour
+public class CharacterController3D : MonoBehaviour
 {
 	public bool IsGrounded => controller.isGrounded;
 	public bool IsHasTarget { get; private set; }
@@ -94,10 +94,10 @@ public class CharacterThirdPersonController : MonoBehaviour
 			lastGravityVelocity.y = 0f;
 		}
 
-		if (Input.GetButtonDown("Jump")/* && groundedPlayer*/)
-		{
-			lastGravityVelocity.y += Mathf.Sqrt(settings.jumpHeight * -3.0f * settings.gravity);
-		}
+		//if (Input.GetButtonDown("Jump")/* && groundedPlayer*/)
+		//{
+		//	lastGravityVelocity.y += Mathf.Sqrt(settings.jumpHeight * -3.0f * settings.gravity);
+		//}
 
 		lastGravityVelocity.y += settings.gravity * Time.deltaTime;
 		controller.Move(lastGravityVelocity * Time.deltaTime);
@@ -169,13 +169,23 @@ public class CharacterThirdPersonController : MonoBehaviour
 	#region Nav
 	public bool IsReachedDestination()
 	{
-		return (navMeshAgent.remainingDistance < settings.reachTargetThreshold) && !navMeshAgent.pathPending;
+		return (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
 	}
 	public bool IsReachesDestination()
 	{
-		return (navMeshAgent.remainingDistance >= settings.reachTargetThreshold) && !navMeshAgent.pathPending;
+		return (navMeshAgent.remainingDistance >= navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
 	}
+	
 	public bool SetDestination(Vector3 destination)
+	{
+		return SetDestination(destination, settings.reachTargetThreshold);
+	}
+	public bool SetDestination(Vector3 destination, float stoppingDistance)
+	{
+		navMeshAgent.stoppingDistance = stoppingDistance;
+		return SetTarget(destination);
+	}
+	private bool SetTarget(Vector3 destination)
 	{
 		//NavMeshHit hit;
 		//if (NavMesh.SamplePosition(destination, out hit, 1f, NavMesh.AllAreas))
@@ -197,6 +207,8 @@ public class CharacterThirdPersonController : MonoBehaviour
 		IsHasTarget = false;
 		return false;
 	}
+
+
 	public bool IsPathValid(Vector3 destination)
 	{
 		NavMeshPath path = new NavMeshPath();

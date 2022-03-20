@@ -24,10 +24,10 @@ public class UIAvatar : MonoBehaviour
 		background.onClick.RemoveListener(OnClick);
 	}
 
-	public void SetFrame(bool isMain)
+	public void SetFrame(bool isLeader)
 	{
-		frameMain.enabled = isMain;
-		frameSpare.enabled = !isMain;
+		frameMain.enabled = isLeader;
+		frameSpare.enabled = !isLeader;
 	}
 
 	private void OnClick()
