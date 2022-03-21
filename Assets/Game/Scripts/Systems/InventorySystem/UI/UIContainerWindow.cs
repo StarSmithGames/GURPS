@@ -1,4 +1,10 @@
+using Sirenix.OdinInspector;
+
+using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using Zenject;
@@ -7,19 +13,15 @@ namespace Game.Systems.InventorySystem
 {
 	public class UIContainerWindow : WindowBasePoolable<UIContainerWindow>
 	{
-		public Transform content;
+		public UIInventory Inventory => inventory;
+		[SerializeField] private UIInventory inventory;
 
 		public Button close;
 		public Button takeAll;
 
-
-		private UIManager uiManager;
-
 		[Inject]
-		private void Construct(UIManager uiManager)
+		private void Construct()
 		{
-			this.uiManager = uiManager;
-
 			close.onClick.AddListener(OnClose);
 			takeAll.onClick.AddListener(OnTakeAll);
 		}

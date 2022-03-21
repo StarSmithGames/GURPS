@@ -1,41 +1,42 @@
-using System.Collections;
-using System.Collections.Generic;
+using Game.Systems.InventorySystem;
 using UnityEngine;
 
 using Zenject;
 
-public class Character : MonoBehaviour, IEntity
+namespace Game.Entities
 {
-	public Transform Transform => transform;
-	public CharacterController3D Controller { get; private set; }
-
-	public Transform CameraPivot => cameraPivot;
-
-	private Transform cameraPivot;
-	
-
-	[Inject]
-	private void Construct(
-		[Inject(Id = "CameraPivot")] Transform cameraPivot,
-		CharacterController3D controller)
+	public class Character : MonoBehaviour, IEntity
 	{
-		this.cameraPivot = cameraPivot;
-		Controller = controller;
-	}
+		public CharacterData CharacterData => characterData;
+		[SerializeField] private CharacterData characterData;
 
-	public void SetTarget()
-	{
+		public IInventory Inventory { get; private set; }
 
-	}
+		public Transform Transform => transform;
+		public CharacterController3D Controller { get; private set; }
+		public Transform CameraPivot { get; private set; }
 
-	public void InteractWith(IObservable observable)
-	{
-		switch (observable)
+		[Inject]
+		private void Construct(CharacterController3D controller, [Inject(Id = "CameraPivot")] Transform cameraPivot)
 		{
-			case IInteractable interactable:
+			Controller = controller;
+			CameraPivot = cameraPivot;
+		}
+
+		private void Start()
+		{
+			Inventory = new Inventory(characterData.inventory);
+		}
+
+		public void InteractWith(IObservable observable)
+		{
+			switch (observable)
 			{
-				interactable.InteractFrom(this);
-				break;
+				case IInteractable interactable:
+				{
+					interactable.InteractFrom(this);
+					break;
+				}
 			}
 		}
 	}

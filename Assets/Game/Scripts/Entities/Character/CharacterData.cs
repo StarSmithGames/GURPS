@@ -1,19 +1,21 @@
+using Game.Systems.InventorySystem;
 using Sirenix.OdinInspector;
+
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Systems.InventorySystem
+namespace Game.Entities
 {
-    [CreateAssetMenu(fileName = "ContainerData", menuName = "Data/Inventory/Container")]
-    public class ContainerData : ScriptableObject
+    [CreateAssetMenu(fileName = "CharacterData", menuName = "Data/Character")]
+    public class CharacterData : ScriptableObject
     {
         [ListDrawerSettings(ListElementLabelName = "Tittle")]
         [InfoBox("@LocalizationInfo", InfoMessageType.Warning)]
         public List<Localization> localizations = new List<Localization>();
 
-		public InventorySettings inventory;
+        public InventorySettings inventory;
 
-		public Localization GetLocalization(SystemLanguage language)
+        public Localization GetLocalization(SystemLanguage language)
         {
             return localizations.Find((x) => x.language == language) ?? localizations[0];
         }
@@ -25,9 +27,9 @@ namespace Game.Systems.InventorySystem
         {
             public SystemLanguage language = SystemLanguage.English;
 
-            public string containerName;
+            public string characterName;
 
-            private string Tittle => language.ToString() + " " + (!(string.IsNullOrEmpty(containerName) || string.IsNullOrWhiteSpace(containerName)));
+            private string Tittle => language.ToString() + " " + (!(string.IsNullOrEmpty(characterName) || string.IsNullOrWhiteSpace(characterName)));
         }
     }
 }

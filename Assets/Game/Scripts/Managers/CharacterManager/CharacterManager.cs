@@ -1,14 +1,11 @@
-using Game.Systems.CharacterCutomization;
+using Game.Entities;
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-
 using UnityEngine;
-
 using Zenject;
+
 namespace Game.Managers.CharacterManager
 {
 	public class CharacterManager : IInitializable, IDisposable
@@ -45,11 +42,7 @@ namespace Game.Managers.CharacterManager
 
 		public void SetCharacter(int index)
 		{
-			if (CurrentCharacter != characters[index])
-			{
-				CurrentCharacter = characters[index];
-				signalBus?.Fire(new SignalCharacterChanged() { character = CurrentCharacter });
-			}
+			SetCharacter(characters[index]);
 		}
 	}
 }

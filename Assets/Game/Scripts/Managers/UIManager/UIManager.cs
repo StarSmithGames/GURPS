@@ -1,6 +1,7 @@
 using CMF;
 
 using Game.Managers.CharacterManager;
+using Game.Systems.InventorySystem;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -13,8 +14,9 @@ public class UIManager : MonoBehaviour
 	public UIVirtualSpace CurrentVirtualSpace { get; private set; }
 	public UIWindowsManager WindowsManager { get; private set; }
 
+	[SerializeField] private UIAvatars avatars;
+
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
-	[SerializeField] private List<UIAvatar> avatars = new List<UIAvatar>();
 
 	private List<UIVirtualSpace> virtualSpaces = new List<UIVirtualSpace>();
 
@@ -29,15 +31,12 @@ public class UIManager : MonoBehaviour
 
 		WindowsManager = windowsManager;
 
-		avatars.ForEach((x) => x.onClicked += OnAvatarClicked);
 
 		signalBus?.Subscribe<SignalCharacterChanged>(OnCharacterChanged);
 	}
 
 	private void OnDestroy()
 	{
-		avatars.ForEach((x) => x.onClicked -= OnAvatarClicked);
-
 		signalBus?.Unsubscribe<SignalCharacterChanged>(OnCharacterChanged);
 	}
 
@@ -61,24 +60,11 @@ public class UIManager : MonoBehaviour
 		CurrentVirtualSpace = virtualSpaces[index];
 	}
 
-	private void SetAvatarFrame(int index)
-	{
-		avatars.ForEach((x) => x.SetFrame(false));
-		avatars[index].SetFrame(true);
-	}
-
-
-	private void OnAvatarClicked(UIAvatar avatar)
-	{
-		int index = avatars.IndexOf(avatar);
-		characterManager.SetCharacter(index);
-	}
-
 	private void OnCharacterChanged(SignalCharacterChanged signal)
 	{
 		int index = characterManager.CurrentCharacterIndex;
 
 		SetVirtualSpace(index);
-		SetAvatarFrame(index);
+		avatars.SetAvatarFrame(index);
 	}
 }

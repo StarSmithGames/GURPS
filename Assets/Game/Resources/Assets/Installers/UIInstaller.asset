@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe3d0d1a81646d479ef4163a4de58f1, type: 3}
   m_Name: UIInstaller
   m_EditorClassIdentifier: 
+  itemCursorPrefab: {fileID: 4875044641302866099, guid: 37cc0004ebb681a44b6b3c29e81b96d3, type: 3}
   containerWindowPrefab: {fileID: 4739440494138572720, guid: de440f16446d4734b9acc39af6942dfb, type: 3}

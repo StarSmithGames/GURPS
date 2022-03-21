@@ -96,6 +96,8 @@ namespace Game.Systems.InventorySystem
 
 			currentChestWindow = factory.Create();
 			currentChestWindow.Hide();
+			currentChestWindow.Inventory.SetInventory(Inventory);
+
 			currentChestWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
 
 			(currentChestWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
