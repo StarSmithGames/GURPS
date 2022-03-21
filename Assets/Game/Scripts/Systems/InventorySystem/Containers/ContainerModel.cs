@@ -32,11 +32,11 @@ namespace Game.Systems.InventorySystem
 		}
 		private IInventory inventory;
 
-		public bool IsOpened => currentChestWindow?.IsShowing ?? false;
+		public bool IsOpened => containerWindow?.IsShowing ?? false;
 		public bool IsSearched => data.isSearched;
 		public bool IsInteractable => currentInteractor == null;
 
-		private UIContainerWindow currentChestWindow = null;
+		private UIContainerWindow containerWindow = null;
 		private IEntity currentInteractor = null;
 
 		private Data data;
@@ -98,18 +98,20 @@ namespace Game.Systems.InventorySystem
 		{
 			CloseWindow();
 
-			currentChestWindow = containerHandler.SpawnContainerWindow(Inventory);
-			currentChestWindow.Show();
+			var chestPopup = containerHandler.SpawnContainerWindow(Inventory);
+			chestPopup.onTakeAll += OnTakeAll;
+			chestPopup.ShowPopup();
 		}
 
 		private void CloseWindow()
 		{
-			if(currentChestWindow != null)
+			if(containerWindow != null)
 			{
-				currentChestWindow.Hide();
-				currentChestWindow.DespawnIt();
+				containerWindow.onTakeAll -= OnTakeAll;
+				containerWindow.Hide();
+				containerWindow.DespawnIt();
 			}
-			currentChestWindow = null;
+			containerWindow = null;
 		}
 
 
@@ -147,6 +149,12 @@ namespace Game.Systems.InventorySystem
 		{
 			if (currentInteractor == null) return false;
 			return Vector3.Distance(transform.position, currentInteractor.Transform.position) <= settings.maxRange;
+		}
+
+
+		private void OnTakeAll()
+		{
+			containerHandler.CharacterTakeAllFrom(Inventory);
 		}
 
 

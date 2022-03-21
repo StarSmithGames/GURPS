@@ -22,7 +22,7 @@ public abstract class WindowBase : MonoBehaviour, IWindow
 	}
 }
 
-public abstract class WindowBasePoolable<T> : PoolableObject, IWindow where T : IWindow
+public abstract class WindowBasePoolable : PoolableObject, IWindow
 {
 	private bool isShowing = false;
 	public bool IsShowing => isShowing;
@@ -40,7 +40,4 @@ public abstract class WindowBasePoolable<T> : PoolableObject, IWindow where T : 
 
 		isShowing = false;
 	}
-
-
-	public class Factory : PlaceholderFactory<T> { }
 }

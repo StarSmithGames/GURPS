@@ -710,7 +710,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4739440494138572722}
   - component: {fileID: 4739440494138572721}
-  - component: {fileID: 4739440494138572720}
+  - component: {fileID: 8388637833920730225}
   m_Layer: 5
   m_Name: ContainerWindow
   m_TagString: Untagged
@@ -751,7 +751,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4739440494138572723}
   m_CullTransparentMesh: 1
---- !u!114 &4739440494138572720
+--- !u!114 &8388637833920730225
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -763,9 +763,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 693b755b24d5fa74aaaaf987cc3942d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inventory: {fileID: 4083466180975707674}
   close: {fileID: 4739440493569509930}
   takeAll: {fileID: 4739440494797279988}
-  inventory: {fileID: 4083466180975707674}
 --- !u!1 &4739440494317376004
 GameObject:
   m_ObjectHideFlags: 0

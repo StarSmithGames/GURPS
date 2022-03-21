@@ -7,7 +7,7 @@ using Zenject;
 public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 {
 	[SerializeField] private UIItemCursor itemCursorPrefab;
-	[SerializeField] private UIContainerWindow containerWindowPrefab;
+	[SerializeField] private UIContainerWindow chestPopupWindowPrefab;
 
 	public override void InstallBindings()
 	{
@@ -17,7 +17,7 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 
 		Container.BindFactory<UIContainerWindow, UIContainerWindow.Factory>()
 			.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
-			.FromComponentInNewPrefab(containerWindowPrefab));
+			.FromComponentInNewPrefab(chestPopupWindowPrefab));
 
 		Container.BindInstance(Container.InstantiatePrefabForComponent<UIItemCursor>(itemCursorPrefab));
 

@@ -61,20 +61,30 @@ namespace Game.Systems.InventorySystem
 			});
 		}
 
-
 		public UIContainerWindow SpawnContainerWindow(IInventory inventory)
 		{
 			var containerWindow = containerFactory.Create();
 			containerWindow.Hide();
 			containerWindow.Inventory.SetInventory(inventory);
-
 			containerWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
-
 			(containerWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
-			containerWindow.transform.localScale = Vector3.one;
-			containerWindow.transform.rotation = Quaternion.Euler(Vector3.zero);
 
 			return containerWindow;
+		}
+
+
+		public void CharacterTakeAllFrom(IInventory inventory)
+		{
+			from = inventory;
+			to = characterManager.CurrentCharacter.Inventory;
+
+			for (int i = 0; i < from.Items.Count; i++)
+			{
+				to.Add(from.Items[i]);
+			}
+			from.Clear();
+
+			Dispose();
 		}
 
 

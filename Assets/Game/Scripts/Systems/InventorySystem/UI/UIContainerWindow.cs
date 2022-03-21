@@ -1,18 +1,12 @@
-using Sirenix.OdinInspector;
-
-using System.Collections.Generic;
-using System.Linq;
-
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class UIContainerWindow : WindowBasePoolable<UIContainerWindow>
+	public class UIContainerWindow : UIPoolableAnimatedWindow
 	{
 		public UnityAction onTakeAll;
 		public UnityAction onClose;
@@ -26,7 +20,7 @@ namespace Game.Systems.InventorySystem
 		[Inject]
 		private void Construct()
 		{
-			close.onClick.AddListener(OnClose);
+			close.onClick.AddListener(OnClosed);
 			takeAll.onClick.AddListener(OnTakeAll);
 		}
 
@@ -36,19 +30,26 @@ namespace Game.Systems.InventorySystem
 			takeAll.onClick.RemoveAllListeners();
 		}
 
+		private void OnClosed()
+		{
+			Popup.PopOut(onComplete: () =>
+			{
+				Hide();
+			});
+
+			onClose?.Invoke();
+		} 
+
 		private void OnTakeAll()
 		{
-			OnClose();
+			Popup.PopOut(onComplete: () =>
+			{
+				Hide();
+			});
 
 			onTakeAll?.Invoke();
 		}
 
-		private void OnClose()
-		{
-			Hide();
-			DespawnIt();
-
-			onClose?.Invoke();
-		}
+		public class Factory : PlaceholderFactory<UIContainerWindow> { }
 	}
 }

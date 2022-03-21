@@ -10,5 +10,7 @@ namespace Game.Systems.InventorySystem
         List<Item> Items { get; }
         bool Add(Item item);
         bool Remove(Item item);
+
+        void Clear();
     }
 }

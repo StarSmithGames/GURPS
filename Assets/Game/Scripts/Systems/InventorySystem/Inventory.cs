@@ -94,7 +94,13 @@ namespace Game.Systems.InventorySystem
 
             return items.Count > 0;
         }
-    }
+
+		public void Clear()
+		{
+            Items.Clear();
+            OnInventoryChanged?.Invoke();
+        }
+	}
 
     [System.Serializable]
     public class InventorySettings
