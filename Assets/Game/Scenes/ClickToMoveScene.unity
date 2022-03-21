@@ -8048,6 +8048,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avatars: {fileID: 343375322}
+  characterStatus: {fileID: 7294616120601723023}
   originalVirtualSpace: {fileID: 25328458}
 --- !u!1 &996950356
 GameObject:

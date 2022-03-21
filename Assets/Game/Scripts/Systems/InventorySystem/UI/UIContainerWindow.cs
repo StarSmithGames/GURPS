@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -13,6 +14,9 @@ namespace Game.Systems.InventorySystem
 {
 	public class UIContainerWindow : WindowBasePoolable<UIContainerWindow>
 	{
+		public UnityAction onTakeAll;
+		public UnityAction onClose;
+
 		public UIInventory Inventory => inventory;
 		[SerializeField] private UIInventory inventory;
 
@@ -35,12 +39,16 @@ namespace Game.Systems.InventorySystem
 		private void OnTakeAll()
 		{
 			OnClose();
+
+			onTakeAll?.Invoke();
 		}
 
 		private void OnClose()
 		{
 			Hide();
 			DespawnIt();
+
+			onClose?.Invoke();
 		}
 	}
 }

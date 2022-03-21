@@ -14,6 +14,7 @@ public class CharacterController3D : MonoBehaviour
 {
 	public bool IsGrounded => controller.isGrounded;
 	public bool IsHasTarget { get; private set; }
+	public bool IsFreezed { get; private set; }
 
 	[OnValueChanged("Validate", true)]
 	[SerializeField] private Settings settings;
@@ -30,6 +31,7 @@ public class CharacterController3D : MonoBehaviour
 	private float timeOutTime = 1f;
 	private float currentTimeOutTime = 1f;
 	private float timeOutDistanceThreshold = 0.05f;
+
 
 	private Transform model;
 
@@ -65,12 +67,24 @@ public class CharacterController3D : MonoBehaviour
 
 	private void Update()
 	{
+		if (IsFreezed) return;
+
 		Movement();
 
 		Rotation();
 
 		//Handle timeout (stop controller if it is stuck);
 		HandleTimeOut();
+	}
+
+	public void Freeze()
+	{
+		IsFreezed = true;
+	}
+
+	public void UnFreeze()
+	{
+		IsFreezed = false;
 	}
 
 	public Vector3 GetVelocityNormalized()
@@ -187,6 +201,8 @@ public class CharacterController3D : MonoBehaviour
 	}
 	private bool SetTarget(Vector3 destination)
 	{
+		if (IsFreezed) return false;
+
 		//NavMeshHit hit;
 		//if (NavMesh.SamplePosition(destination, out hit, 1f, NavMesh.AllAreas))
 		//{

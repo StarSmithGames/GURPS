@@ -10,7 +10,20 @@ namespace Game.Entities
 		public CharacterData CharacterData => characterData;
 		[SerializeField] private CharacterData characterData;
 
-		public IInventory Inventory { get; private set; }
+		public IInventory Inventory
+		{
+			get
+			{
+				if(inventory == null)
+				{
+					inventory = new Inventory(characterData.inventory);
+					//TODO Load data
+				}
+
+				return inventory;
+			}
+		}
+		private IInventory inventory;
 
 		public Transform Transform => transform;
 		public CharacterController3D Controller { get; private set; }
@@ -23,9 +36,14 @@ namespace Game.Entities
 			CameraPivot = cameraPivot;
 		}
 
-		private void Start()
+		public void Freeze()
 		{
-			Inventory = new Inventory(characterData.inventory);
+			Controller.Freeze();
+		}
+
+		public void UnFreeze()
+		{
+			Controller.UnFreeze();
 		}
 
 		public void InteractWith(IObservable observable)

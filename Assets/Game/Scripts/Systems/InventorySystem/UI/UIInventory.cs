@@ -5,6 +5,8 @@ using System.Linq;
 
 using UnityEngine;
 
+using Zenject;
+
 namespace Game.Systems.InventorySystem
 {
 	public class UIInventory : MonoBehaviour
@@ -12,11 +14,17 @@ namespace Game.Systems.InventorySystem
 		public Transform content;
 		public List<UISlot> slots = new List<UISlot>();
 
+		public IInventory CurrentInventory => currentInventory;
+		private IInventory currentInventory;
+
 		private InventoryContainerHandler containerHandler;
 
+		[Inject]
 		private void Construct(InventoryContainerHandler containerHandler)
 		{
 			this.containerHandler = containerHandler;
+
+			slots.ForEach((x) => x.SetOwner(this));
 
 			containerHandler.Subscribe(this);
 		}
@@ -28,17 +36,35 @@ namespace Game.Systems.InventorySystem
 
 		public void SetInventory(IInventory inventory)
 		{
+			if(currentInventory != null)
+			{
+				currentInventory.OnInventoryChanged -= OnInventoryChanged;
+			}
+			currentInventory = inventory;
+
+			UpdateSlots();
+
+			currentInventory.OnInventoryChanged += OnInventoryChanged;
+		}
+
+		private void UpdateSlots()
+		{
 			for (int i = 0; i < slots.Count; i++)
 			{
-				if (i < inventory.Items.Count)
+				if (i < currentInventory.Items.Count)
 				{
-					slots[i].SetItem(inventory.Items[i]);
+					slots[i].SetItem(currentInventory.Items[i]);
 				}
 				else
 				{
 					slots[i].SetItem(null);
 				}
 			}
+		}
+
+		private void OnInventoryChanged()
+		{
+			UpdateSlots();
 		}
 
 

@@ -11,6 +11,7 @@ namespace Game.Managers.CharacterManager
 	public class CharacterManager : IInitializable, IDisposable
 	{
 		public Character CurrentCharacter { get; private set; }
+
 		public int CurrentCharacterIndex => characters.IndexOf(CurrentCharacter);
 
 		private List<Character> characters = new List<Character>();
@@ -25,7 +26,6 @@ namespace Game.Managers.CharacterManager
 		public void Initialize()
 		{
 			characters = GameObject.FindObjectsOfType<Character>().ToList();//stub
-
 			SetCharacter(characters.FirstOrDefault());
 		}
 

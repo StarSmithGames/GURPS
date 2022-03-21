@@ -1,5 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using Game.Managers.CharacterManager;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -9,13 +9,25 @@ namespace Game.Systems.InventorySystem
 	{
 		public bool IsDraging { get; private set; }
 
+		private Item item;
+		private IInventory from;
+		private IInventory to;
+
 		private UIManager uiManager;
 		private UIItemCursor itemCursor;
+		private CharacterManager characterManager;
+		private UIContainerWindow.Factory containerFactory;
 
-		public InventoryContainerHandler(UIManager uiManager, UIItemCursor itemCursor)
+		public InventoryContainerHandler(
+			UIManager uiManager,
+			UIItemCursor itemCursor,
+			CharacterManager characterManager,
+			UIContainerWindow.Factory containerFactory)
 		{
 			this.uiManager = uiManager;
 			this.itemCursor = itemCursor;
+			this.characterManager = characterManager;
+			this.containerFactory = containerFactory;
 		}
 
 		public void Subscribe(UIInventory uiInventory)
@@ -50,6 +62,22 @@ namespace Game.Systems.InventorySystem
 		}
 
 
+		public UIContainerWindow SpawnContainerWindow(IInventory inventory)
+		{
+			var containerWindow = containerFactory.Create();
+			containerWindow.Hide();
+			containerWindow.Inventory.SetInventory(inventory);
+
+			containerWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
+
+			(containerWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
+			containerWindow.transform.localScale = Vector3.one;
+			containerWindow.transform.rotation = Quaternion.Euler(Vector3.zero);
+
+			return containerWindow;
+		}
+
+
 		public void OnPointerEnter(UISlot slot, PointerEventData eventData)
 		{
 			if (IsDraging) return;
@@ -62,6 +90,13 @@ namespace Game.Systems.InventorySystem
 		public void OnPointerClick(UISlot slot, PointerEventData eventData)
 		{
 			if (slot.IsEmpty) return;
+			item = slot.CurrentItem;
+			from = slot.Owner.CurrentInventory;
+			to = characterManager.CurrentCharacter.Inventory;
+			if (from == to) return;
+
+			to.Add(item);
+			from.Remove(item);
 		}
 
 		public void OnBeginDrag(UISlot slot, PointerEventData eventData)
@@ -70,7 +105,11 @@ namespace Game.Systems.InventorySystem
 
 			IsDraging = true;
 
-			itemCursor.SetSlot(slot);
+			characterManager.CurrentCharacter.Freeze();
+
+			item = slot.CurrentItem;
+			from = slot.Owner.CurrentInventory;
+
 			itemCursor.SetItem(slot.CurrentItem);
 			itemCursor.transform.parent = uiManager.transform.root;
 		}
@@ -78,26 +117,39 @@ namespace Game.Systems.InventorySystem
 		{
 			if (IsDraging)
 			{
-				if (slot.IsEmpty) return;
-
 				itemCursor.transform.position = eventData.position;
 			}
 		}
 		public void OnEndDrag(UISlot slot, PointerEventData eventData)
 		{
-			itemCursor.Dispose();
+			Dispose();
+
+			characterManager.CurrentCharacter.UnFreeze();
 
 			IsDraging = false;
 		}
 		public void OnDrop(UISlot slot, PointerEventData eventData)
 		{
-			if (itemCursor.Slot != slot)
+			to = slot.Owner.CurrentInventory;
+
+			if(from != null && item != null && from != to)
 			{
-				itemCursor.Slot.SetItem(null);
-				slot.SetItem(itemCursor.Item);
+				to.Add(item);
+				from.Remove(item);
 			}
 
+			characterManager.CurrentCharacter.UnFreeze();
+
+			Dispose();
+		}
+
+		private void Dispose()
+		{
 			itemCursor.Dispose();
+
+			item = null;
+			from = null;
+			to = null;
 		}
 	}
 }

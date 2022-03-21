@@ -1,17 +1,9 @@
-using DG.Tweening;
-
 using EPOOutline;
 
-using Game.Systems.InventorySystem;
-
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 using Zenject;
-
-using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Game.Systems.InventorySystem
 {
@@ -25,7 +17,21 @@ namespace Game.Systems.InventorySystem
 
 		[SerializeField] private Settings settings;
 
-		public IInventory Inventory { get; private set; }
+		public IInventory Inventory 
+		{
+			get
+			{
+				if(inventory == null)
+				{
+					inventory = new Inventory(ContainerData.inventory);
+					//TODO Load from data
+				}
+				
+				return inventory;
+			}
+		}
+		private IInventory inventory;
+
 		public bool IsOpened => currentChestWindow?.IsShowing ?? false;
 		public bool IsSearched => data.isSearched;
 		public bool IsInteractable => currentInteractor == null;
@@ -36,13 +42,13 @@ namespace Game.Systems.InventorySystem
 		private Data data;
 
 		private UIManager uiManager;
-		private UIContainerWindow.Factory factory;
+		private InventoryContainerHandler containerHandler;
 
 		[Inject]
-		private void Construct(UIManager uiManager, UIContainerWindow.Factory factory)
+		private void Construct(UIManager uiManager, InventoryContainerHandler containerHandler)
 		{
 			this.uiManager = uiManager;
-			this.factory = factory;
+			this.containerHandler = containerHandler;
 		}
 
 		private void Awake()
@@ -56,8 +62,6 @@ namespace Game.Systems.InventorySystem
 			{
 				data = new Data();
 			}
-
-			Inventory = new Inventory(ContainerData.inventory);
 		}
 
 
@@ -94,15 +98,7 @@ namespace Game.Systems.InventorySystem
 		{
 			CloseWindow();
 
-			currentChestWindow = factory.Create();
-			currentChestWindow.Hide();
-			currentChestWindow.Inventory.SetInventory(Inventory);
-
-			currentChestWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
-
-			(currentChestWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
-			currentChestWindow.transform.localScale = Vector3.one;
-			currentChestWindow.transform.rotation = Quaternion.Euler(Vector3.zero);
+			currentChestWindow = containerHandler.SpawnContainerWindow(Inventory);
 			currentChestWindow.Show();
 		}
 

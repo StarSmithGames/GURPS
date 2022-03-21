@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
 	public UIWindowsManager WindowsManager { get; private set; }
 
 	[SerializeField] private UIAvatars avatars;
+	[SerializeField] private UICharacterStatusWindow characterStatus;
 
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
 
@@ -66,5 +67,6 @@ public class UIManager : MonoBehaviour
 
 		SetVirtualSpace(index);
 		avatars.SetAvatarFrame(index);
+		characterStatus.SetCharacter(signal.character);
 	}
 }

@@ -10,8 +10,14 @@ namespace Game.Systems.InventorySystem
 		public Image icon;
 		public TMPro.TextMeshProUGUI count;
 
+		public UIInventory Owner { get; private set; }
 		public bool IsEmpty => CurrentItem == null;
 		public Item CurrentItem { get; private set; }
+
+		public void SetOwner(UIInventory owner)
+		{
+			Owner = owner;
+		}
 
 		public void SetItem(Item item)
 		{
