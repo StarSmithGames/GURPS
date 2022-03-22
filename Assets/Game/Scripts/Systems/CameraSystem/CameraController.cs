@@ -10,13 +10,12 @@ public class CameraController : IInitializable, ITickable, IDisposable
 {
 	public float movementSpeed = 10f;
 
-	public float rotationSpeed = 1f;
+	public float rotationSpeed = 50f;
 
 	public Vector2 zoomMinMax = new Vector2(0.01f, 10f);
 	public float zoomStandart = 5f;
 	public float zoomSpeed = 10f;
 
-	private float currentYRotation;
 	private float currentZoom;
 
 	private Vector3 cameraPivotPosition;
@@ -78,23 +77,16 @@ public class CameraController : IInitializable, ITickable, IDisposable
 
 		if (inputManager.GetKey(KeyAction.CameraRotate))
 		{
-			Debug.LogError(inputManager.GetMousePosition());
+			transposer.FollowTarget.Rotate(Vector3.up * Input.GetAxis("Mouse X") * rotationSpeed * 2 * Time.deltaTime, Space.World);
+
 		}
 		if (inputManager.GetKey(KeyAction.CameraRotateLeft))
 		{
-			currentYRotation += rotationSpeed * Time.deltaTime;
-
-			transposer.FollowTarget.Rotate(Vector3.up * currentYRotation, Space.World);
-
-			currentYRotation = 0;
+			transposer.FollowTarget.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
 		}
 		if (inputManager.GetKey(KeyAction.CameraRotateRight))
 		{
-			currentYRotation += rotationSpeed * Time.deltaTime;
-
-			transposer.FollowTarget.Rotate(Vector3.down * currentYRotation, Space.World);
-
-			currentYRotation = 0;
+			transposer.FollowTarget.Rotate(Vector3.down * rotationSpeed * Time.deltaTime, Space.World);
 		}
 
 		#region Zoom

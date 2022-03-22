@@ -345,7 +345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40d5c4a262f0a7343b3456f3f8985093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  background: {fileID: 5483355966803082946}
-  back: {fileID: 5483355966803082959}
-  avatar: {fileID: 5483355966251464891}
-  frame: {fileID: 5483355967184353601}
+  <BackgroundButton>k__BackingField: {fileID: 5483355966803082946}
+  <Back>k__BackingField: {fileID: 5483355966803082959}
+  <Avatar>k__BackingField: {fileID: 5483355966251464891}
+  <Frame>k__BackingField: {fileID: 5483355967184353601}

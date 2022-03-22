@@ -1,5 +1,6 @@
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
+using Game.Systems.InventorySystem;
 
 using UnityEngine;
 
@@ -12,6 +13,8 @@ public class ProjectInstaller : MonoInstaller
 	public override void InstallBindings()
 	{
 		SignalBusInstaller.Install(Container);
+
+		Container.BindInstance(Container.InstantiateComponentOnNewGameObject<AsyncManager>());
 
 		GameManagerInstaller.Install(Container);
 

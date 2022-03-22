@@ -10,21 +10,34 @@ namespace Game.Systems.BattleSystem
     {
         public UnityAction onClicked;
 
-        public Button background;
-        [Space]
-        public Image back;
-        public Image avatar;
-        public Image frame;
+        [field: SerializeField] public Button BackgroundButton { get; private set; }
+        [field: SerializeField] public Image Back { get; private set; }
+        [field: SerializeField] public Image Avatar { get; private set; }
+        [field: SerializeField] public Image Frame { get; private set; }
+
+        public IEntity CurrentEntity { get; private set; }
 
         [Inject]
         private void Construct()
 		{
-            background.onClick.AddListener(OnClick);
+            BackgroundButton.onClick.AddListener(OnClick);
 		}
 
 		private void OnDestroy()
 		{
-            background?.onClick.RemoveAllListeners();
+            BackgroundButton?.onClick.RemoveAllListeners();
+        }
+
+        public void SetEntity(IEntity entity)
+		{
+            CurrentEntity = entity;
+
+            UpdateUI();
+        }
+
+        private void UpdateUI()
+		{
+            Avatar.sprite = CurrentEntity.EntityData.characterSprite;
         }
 
         private void OnClick()

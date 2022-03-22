@@ -10,19 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5574338018feb6643a5bb05e0e09f80c, type: 3}
-  m_Name: Character1
+  m_Name: Zombie
   m_EditorClassIdentifier: 
-  characterSprite: {fileID: 21300000, guid: 3f80cbec08daddb44bb5316bd40a3414, type: 3}
+  characterSprite: {fileID: 21300000, guid: 54d2b1279beda12479291c18aae1a2c4, type: 3}
   localizations: []
   inventory:
-    useRandomItems: 0
-    shuffleList: 0
-    items:
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 5a435e1e1ece6c9428a29f20bd09a9c5, type: 2}
-      currentStackSize: 1000
-      currentWeight: 0.01
-      currentDurability: 100
+    useRandomItems: 1
+    shuffleList: 1
+    items: []
     randomSettings:
       isUnique: 0
       useRandomCount: 1

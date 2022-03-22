@@ -65,10 +65,8 @@ public class CharacterController3D : MonoBehaviour
 		//model.rotation = animator.rootRotation;
 	}
 
-	private void Update()
+	private void FixedUpdate()
 	{
-		if (IsFreezed) return;
-
 		Movement();
 
 		Rotation();
@@ -80,6 +78,12 @@ public class CharacterController3D : MonoBehaviour
 	public void Freeze()
 	{
 		IsFreezed = true;
+
+		if (IsHasTarget)
+		{
+			IsHasTarget = false;
+			currentDestination = Vector3.zero;
+		}
 	}
 
 	public void UnFreeze()

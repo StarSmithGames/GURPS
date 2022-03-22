@@ -19,6 +19,8 @@ namespace Game.Systems.InventorySystem
 
 		public void ShowPopup()
 		{
+			isShowing = true;
+
 			Popup.PopIn(onStart: () => base.Show());
 		}
 

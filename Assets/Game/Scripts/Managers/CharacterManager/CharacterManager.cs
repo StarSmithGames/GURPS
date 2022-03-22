@@ -10,11 +10,7 @@ namespace Game.Managers.CharacterManager
 {
 	public class CharacterManager : IInitializable, IDisposable
 	{
-		public Character CurrentCharacter { get; private set; }
-
-		public int CurrentCharacterIndex => characters.IndexOf(CurrentCharacter);
-
-		private List<Character> characters = new List<Character>();
+		public CharacterParty Party { get; private set; }
 
 		private SignalBus signalBus;
 
@@ -25,11 +21,27 @@ namespace Game.Managers.CharacterManager
 
 		public void Initialize()
 		{
-			characters = GameObject.FindObjectsOfType<Character>().ToList();//stub
-			SetCharacter(characters.FirstOrDefault());
+			Party = new CharacterParty(signalBus, GameObject.FindObjectsOfType<Character>().ToList());//stub
+			Party.SetCharacter(0);
 		}
 
 		public void Dispose() { }
+	}
+
+	public class CharacterParty
+	{
+		public Character CurrentCharacter { get; private set; }
+		public int CurrentCharacterIndex => Characters.IndexOf(CurrentCharacter);
+
+		public List<Character> Characters { get; private set; }
+
+		private SignalBus signalBus;
+
+		public CharacterParty(SignalBus signalBus, List<Character> characters)
+		{
+			this.signalBus = signalBus;
+			Characters = characters;
+		}
 
 		public void SetCharacter(Character character)
 		{
@@ -42,7 +54,7 @@ namespace Game.Managers.CharacterManager
 
 		public void SetCharacter(int index)
 		{
-			SetCharacter(characters[index]);
+			SetCharacter(Characters[index]);
 		}
 	}
 }

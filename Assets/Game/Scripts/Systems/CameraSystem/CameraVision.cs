@@ -9,6 +9,8 @@ using Zenject;
 
 public class CameraVision : IInitializable, ITickable
 {
+	public bool IsCanHoldMouse { get; private set; }
+
 	private IObservable CurrentEntity
 	{
 		get => currentEntity;
@@ -28,6 +30,7 @@ public class CameraVision : IInitializable, ITickable
 	}
 	private IObservable currentEntity = null;
 
+	private CharacterParty party;
 
 	private CinemachineBrain brain;
 	private InputManager inputManager;
@@ -44,7 +47,7 @@ public class CameraVision : IInitializable, ITickable
 
 	public void Initialize()
 	{
-
+		IsCanHoldMouse = settings.isCanHoldMouse;
 	}
 
 	public void Tick()
@@ -69,23 +72,33 @@ public class CameraVision : IInitializable, ITickable
 			{
 				if (inputManager.IsLeftMouseButtonDown())
 				{
-					characterManager.CurrentCharacter.InteractWith(CurrentEntity);
+					characterManager.Party.CurrentCharacter.InteractWith(CurrentEntity);
 				}
 			}
 			else
 			{
 				//Targeting
-				if (settings.isCanHoldMouse || inputManager.IsLeftMouseButtonDown())
+				if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 				{
 					if (Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
 					{
-						characterManager.CurrentCharacter.Controller.SetDestination(hit.point);
+						characterManager.Party.CurrentCharacter.Controller.SetDestination(hit.point);
 					}
 				}
 			}
 		}
 	}
-	
+
+	public void BlockMouseHolding()
+	{
+		IsCanHoldMouse = false;
+	}
+	public void UnBlockMouseHolding()
+	{
+		IsCanHoldMouse = settings.isCanHoldMouse;
+	}
+
+
 	[System.Serializable]
 	public class Settings
 	{

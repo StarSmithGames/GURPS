@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class UIRound : MonoBehaviour
+public class UIRoundQueue : MonoBehaviour
 {
     public Transform content;
 }

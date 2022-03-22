@@ -35,6 +35,6 @@ public class UIAvatars : MonoBehaviour
 	private void OnAvatarClicked(UIAvatar avatar)
 	{
 		int index = avatars.IndexOf(avatar);
-		characterManager.SetCharacter(index);
+		characterManager.Party.SetCharacter(index);
 	}
 }

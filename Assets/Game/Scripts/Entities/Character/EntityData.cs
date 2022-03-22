@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace Game.Entities
 {
-    [CreateAssetMenu(fileName = "CharacterData", menuName = "Data/Character")]
-    public class CharacterData : ScriptableObject
+    [CreateAssetMenu(fileName = "EntityData", menuName = "Data/Entity")]
+    public class EntityData : ScriptableObject
     {
         [PreviewField]
-        public Sprite itemSprite;
+        public Sprite characterSprite;
 
         [ListDrawerSettings(ListElementLabelName = "Tittle")]
         [InfoBox("@LocalizationInfo", InfoMessageType.Warning)]

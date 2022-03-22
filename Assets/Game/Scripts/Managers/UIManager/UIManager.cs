@@ -2,6 +2,7 @@ using DG.Tweening;
 
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
+using Game.Systems.BattleSystem;
 using Game.Systems.InventorySystem;
 
 using System.Collections;
@@ -15,13 +16,10 @@ public class UIManager : MonoBehaviour
 	public UIVirtualSpace CurrentVirtualSpace { get; private set; }
 	public UIWindowsManager WindowsManager { get; private set; }
 
-	[Header("Battle")]
-	public UIRound round;
-	[SerializeField] private GameObject commenceBattle;
+	[field: SerializeField] public UIAvatars Avatars { get; private set; }
+	[field: SerializeField] public UICharacterStatusWindow CharacterStatus { get; private set; }
+	[field: SerializeField] public UIBattle Battle { get; private set; }
 	[Space]
-	[SerializeField] private UIAvatars avatars;
-	[SerializeField] private UICharacterStatusWindow characterStatus;
-
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
 
 	private List<UIVirtualSpace> virtualSpaces = new List<UIVirtualSpace>();
@@ -39,13 +37,11 @@ public class UIManager : MonoBehaviour
 
 
 		signalBus?.Subscribe<SignalCharacterChanged>(OnCharacterChanged);
-		signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 	}
 
 	private void OnDestroy()
 	{
 		signalBus?.Unsubscribe<SignalCharacterChanged>(OnCharacterChanged);
-		signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
 	}
 
 	private void Awake()
@@ -68,25 +64,12 @@ public class UIManager : MonoBehaviour
 		CurrentVirtualSpace = virtualSpaces[index];
 	}
 
-	private void OnGameStateChanged(SignalGameStateChanged signal)
-	{
-		if(signal.oldGameState == GameState.Gameplay && signal.newGameState == GameState.Battle)
-		{
-			Sequence sequence = DOTween.Sequence();
-
-			sequence
-				.AppendCallback(() => commenceBattle.SetActive(true))
-				.AppendInterval(1f)
-				.AppendCallback(() => commenceBattle.SetActive(false));
-		}
-	}
-
 	private void OnCharacterChanged(SignalCharacterChanged signal)
 	{
-		int index = characterManager.CurrentCharacterIndex;
+		int index = characterManager.Party.CurrentCharacterIndex;
 
 		SetVirtualSpace(index);
-		avatars.SetAvatarFrame(index);
-		characterStatus.SetCharacter(signal.character);
+		Avatars.SetAvatarFrame(index);
+		CharacterStatus.SetCharacter(signal.character);
 	}
 }

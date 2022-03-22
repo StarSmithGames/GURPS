@@ -8,49 +8,62 @@ using System.Linq;
 
 using Zenject;
 using Game.Entities;
+using Game.Managers.CharacterManager;
+using Sirenix.Utilities;
 
 public class NPC : MonoBehaviour, IEntity
 {
+	public EntityData EntityData => entityData;
+	[SerializeField] private EntityData entityData;
+
 	public Transform Transform => transform;
 	public CharacterController3D Controller { get; private set; }
 
 	private FieldOfView fov;
 	private GameManager gameManager;
+	private CharacterManager characterManager;
 	private BattleSystem battleSystem;
 
 	[Inject]
-	private void Construct(FieldOfView fov, CharacterController3D controller, GameManager gameManager, BattleSystem battleSystem)
+	private void Construct(FieldOfView fov, CharacterController3D controller, GameManager gameManager, CharacterManager characterManager, BattleSystem battleSystem)
 	{
 		this.fov = fov;
 		Controller = controller;
 		this.gameManager = gameManager;
+		this.characterManager = characterManager;
 		this.battleSystem = battleSystem;
 
-		//fov.StartView();
+		fov.StartView();
 	}
 
 	private void Update()
 	{
-		if(gameManager.CurrentGameState != GameState.Battle)
+		if(gameManager.CurrentGameState != GameState.PreBattle &&
+			gameManager.CurrentGameState != GameState.Battle)
 		{
-			//if (fov.visibleTargets.Count > 0)
-			//{
-			//	List<Transform> targets = new List<Transform>(fov.visibleTargets);
-			//	fov.StopView();
+			if (fov.visibleTargets.Count > 0)
+			{
+				fov.StopView();
+				List<IEntity> entities = new List<IEntity>();
 
-			//	List<IEntity> enemies = new List<IEntity>();
-			//	for (int i = 0; i < targets.Count; i++)
-			//	{
-			//		Character c = targets[i].GetComponent<Character>();
-					
-			//		if(c != null)
-			//		{
-			//			enemies.Add(c);
-			//		}
-			//	}
+				characterManager.Party.Characters.ForEach((x) =>
+				{
+					entities.Add(x);
+				});
+				entities.Add(this);
 
-			//	battleSystem.StartBattle(enemies, this);
-			//}
+				battleSystem.StartBattle(entities);
+			}
 		}
+	}
+	
+	public void Freeze()
+	{
+		Controller.Freeze();
+	}
+
+	public void UnFreeze()
+	{
+		Controller.UnFreeze();
 	}
 }

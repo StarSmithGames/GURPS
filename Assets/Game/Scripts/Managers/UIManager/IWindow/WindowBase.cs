@@ -24,7 +24,7 @@ public abstract class WindowBase : MonoBehaviour, IWindow
 
 public abstract class WindowBasePoolable : PoolableObject, IWindow
 {
-	private bool isShowing = false;
+	protected bool isShowing = false;
 	public bool IsShowing => isShowing;
 
 	public virtual void Show()

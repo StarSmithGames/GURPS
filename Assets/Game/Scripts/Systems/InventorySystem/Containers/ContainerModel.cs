@@ -96,11 +96,11 @@ namespace Game.Systems.InventorySystem
 
 		private void OpenWindow()
 		{
-			CloseWindow();
+			containerWindow?.Hide();
 
-			var chestPopup = containerHandler.SpawnContainerWindow(Inventory);
-			chestPopup.onTakeAll += OnTakeAll;
-			chestPopup.ShowPopup();
+			containerWindow = containerHandler.SpawnContainerWindow(Inventory);
+			containerWindow.onTakeAll += OnTakeAll;
+			containerWindow.ShowPopup();
 		}
 
 		private void CloseWindow()
@@ -108,8 +108,7 @@ namespace Game.Systems.InventorySystem
 			if(containerWindow != null)
 			{
 				containerWindow.onTakeAll -= OnTakeAll;
-				containerWindow.Hide();
-				containerWindow.DespawnIt();
+				containerWindow.HidePopup();
 			}
 			containerWindow = null;
 		}

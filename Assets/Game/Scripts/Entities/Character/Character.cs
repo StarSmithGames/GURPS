@@ -8,8 +8,8 @@ namespace Game.Entities
 {
 	public class Character : MonoBehaviour, IEntity
 	{
-		public CharacterData CharacterData => characterData;
-		[SerializeField] private CharacterData characterData;
+		public EntityData EntityData => entityData;
+		[SerializeField] private EntityData entityData;
 
 		public IInventory Inventory
 		{
@@ -17,7 +17,7 @@ namespace Game.Entities
 			{
 				if(inventory == null)
 				{
-					inventory = new Inventory(characterData.inventory);
+					inventory = new Inventory(entityData.inventory);
 					//TODO Load data
 				}
 
@@ -31,11 +31,13 @@ namespace Game.Entities
 		public Transform CameraPivot { get; private set; }
 
 		private SignalBus signalBus;
+		private AnimatorControl animatorControl;
 
 		[Inject]
 		private void Construct(SignalBus signalBus, CharacterController3D controller, [Inject(Id = "CameraPivot")] Transform cameraPivot)
 		{
 			this.signalBus = signalBus;
+			this.animatorControl = animatorControl;
 
 			Controller = controller;
 			CameraPivot = cameraPivot;
