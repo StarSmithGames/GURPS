@@ -1,3 +1,4 @@
+using Game.Systems.BattleSystem;
 using Game.Systems.InventorySystem;
 
 using UnityEngine;
@@ -8,6 +9,8 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 {
 	[SerializeField] private UIItemCursor itemCursorPrefab;
 	[SerializeField] private UIContainerWindow chestPopupWindowPrefab;
+	[Header("Battle")]
+	[SerializeField] private UITurn turnPrefab;
 
 	public override void InstallBindings()
 	{
@@ -22,5 +25,14 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 		Container.BindInstance(Container.InstantiatePrefabForComponent<UIItemCursor>(itemCursorPrefab));
 
 		Container.BindInterfacesAndSelfTo<InventoryContainerHandler>().AsSingle();
+
+		BindBattleSystem();
+	}
+
+	private void BindBattleSystem() 
+	{
+		Container.BindFactory<UITurn, UITurn.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
+				.FromComponentInNewPrefab(turnPrefab));
 	}
 }

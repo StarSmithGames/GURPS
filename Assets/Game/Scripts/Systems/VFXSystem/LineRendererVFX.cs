@@ -31,7 +31,7 @@ public class LineRendererVFX : MonoBehaviour
 
 	private void Update()
 	{
-		DrawCircle();
+		//DrawCircle();
 	}
 
 	[Button("Update")]

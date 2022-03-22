@@ -8,9 +8,6 @@ namespace Game.Systems.InventorySystem
 {
 	public abstract class ItemData : ScriptableObject
 	{
-		[PreviewField]
-		public Sprite itemSprite;
-
 		public string ItemName
 		{
 			get
@@ -36,6 +33,9 @@ namespace Game.Systems.InventorySystem
 				return "";
 			}
 		}
+
+		[PreviewField]
+		public Sprite itemSprite;
 
 		[ListDrawerSettings(ListElementLabelName = "Tittle")]
 		[InfoBox("@LocalizationInfo", InfoMessageType.Warning)]

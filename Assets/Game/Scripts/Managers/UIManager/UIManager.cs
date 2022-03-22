@@ -1,6 +1,7 @@
-using CMF;
+using DG.Tweening;
 
 using Game.Managers.CharacterManager;
+using Game.Managers.GameManager;
 using Game.Systems.InventorySystem;
 
 using System.Collections;
@@ -14,6 +15,10 @@ public class UIManager : MonoBehaviour
 	public UIVirtualSpace CurrentVirtualSpace { get; private set; }
 	public UIWindowsManager WindowsManager { get; private set; }
 
+	[Header("Battle")]
+	public UIRound round;
+	[SerializeField] private GameObject commenceBattle;
+	[Space]
 	[SerializeField] private UIAvatars avatars;
 	[SerializeField] private UICharacterStatusWindow characterStatus;
 
@@ -34,11 +39,13 @@ public class UIManager : MonoBehaviour
 
 
 		signalBus?.Subscribe<SignalCharacterChanged>(OnCharacterChanged);
+		signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 	}
 
 	private void OnDestroy()
 	{
 		signalBus?.Unsubscribe<SignalCharacterChanged>(OnCharacterChanged);
+		signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
 	}
 
 	private void Awake()
@@ -59,6 +66,19 @@ public class UIManager : MonoBehaviour
 
 		virtualSpaces[index].gameObject.SetActive(true);
 		CurrentVirtualSpace = virtualSpaces[index];
+	}
+
+	private void OnGameStateChanged(SignalGameStateChanged signal)
+	{
+		if(signal.oldGameState == GameState.Gameplay && signal.newGameState == GameState.Battle)
+		{
+			Sequence sequence = DOTween.Sequence();
+
+			sequence
+				.AppendCallback(() => commenceBattle.SetActive(true))
+				.AppendInterval(1f)
+				.AppendCallback(() => commenceBattle.SetActive(false));
+		}
 	}
 
 	private void OnCharacterChanged(SignalCharacterChanged signal)

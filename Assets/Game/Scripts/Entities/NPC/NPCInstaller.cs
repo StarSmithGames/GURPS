@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Game.Entities
 {
-	public class CharacterInstaller : MonoInstaller
+	public class NPCInstaller : MonoInstaller
 	{
 		[SerializeField] private Animator animator;
 		[SerializeField] private NavMeshAgent navMeshAgent;
@@ -14,6 +14,7 @@ namespace Game.Entities
 		[SerializeField] private Transform model;
 		[SerializeField] private Transform cameraPivot;
 		[SerializeField] private CharacterController3D controller;
+		[SerializeField] private FieldOfView fov;
 
 		public override void InstallBindings()
 		{
@@ -23,6 +24,7 @@ namespace Game.Entities
 			Container.BindInstance(model).WithId("Model");
 			Container.BindInstance(cameraPivot).WithId("CameraPivot");
 			Container.BindInstance(controller);
+			Container.BindInstance(fov);
 		}
 	}
 }

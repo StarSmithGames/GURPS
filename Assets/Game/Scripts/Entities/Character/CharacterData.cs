@@ -9,6 +9,9 @@ namespace Game.Entities
     [CreateAssetMenu(fileName = "CharacterData", menuName = "Data/Character")]
     public class CharacterData : ScriptableObject
     {
+        [PreviewField]
+        public Sprite itemSprite;
+
         [ListDrawerSettings(ListElementLabelName = "Tittle")]
         [InfoBox("@LocalizationInfo", InfoMessageType.Warning)]
         public List<Localization> localizations = new List<Localization>();

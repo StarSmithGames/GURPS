@@ -1,3 +1,4 @@
+using Game.Managers.GameManager;
 using Game.Systems.InventorySystem;
 using UnityEngine;
 
@@ -29,11 +30,22 @@ namespace Game.Entities
 		public CharacterController3D Controller { get; private set; }
 		public Transform CameraPivot { get; private set; }
 
+		private SignalBus signalBus;
+
 		[Inject]
-		private void Construct(CharacterController3D controller, [Inject(Id = "CameraPivot")] Transform cameraPivot)
+		private void Construct(SignalBus signalBus, CharacterController3D controller, [Inject(Id = "CameraPivot")] Transform cameraPivot)
 		{
+			this.signalBus = signalBus;
+
 			Controller = controller;
 			CameraPivot = cameraPivot;
+
+			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
+		}
+
+		private void OnDestroy()
+		{
+			signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
 		}
 
 		public void Freeze()
@@ -56,6 +68,13 @@ namespace Game.Entities
 					break;
 				}
 			}
+		}
+
+
+
+		private void OnGameStateChanged(SignalGameStateChanged signal)
+		{
+
 		}
 	}
 }
