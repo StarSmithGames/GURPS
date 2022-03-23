@@ -4,6 +4,9 @@ using UnityEngine;
 
 using Zenject;
 using Game.Managers.CharacterManager;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class CameraController : IInitializable, ITickable, IDisposable
@@ -21,24 +24,37 @@ public class CameraController : IInitializable, ITickable, IDisposable
 	private Vector3 cameraPivotPosition;
 	private float cameraPivotYRotation;
 
-	private CinemachineFramingTransposer transposer;
+	private bool isTactic = false;
+
+	private CinemachineFramingTransposer transposerMain;
+	private CinemachineFramingTransposer transposerSpare;
 
 	private SignalBus signalBus;
 	private CinemachineBrain brain;
+	private List<CinemachineVirtualCamera> characterCamers;
 	private InputManager inputManager;
+	private AsyncManager asyncManager;
 
-    public CameraController(SignalBus signalBus, CinemachineBrain brain, InputManager inputManager)
+
+	public CameraController(SignalBus signalBus,
+		CinemachineBrain brain,
+		[Inject(Id = "CharacterCamers")] List<CinemachineVirtualCamera> characterCamers,
+		InputManager inputManager,
+		AsyncManager asyncManager)
 	{
 		this.signalBus = signalBus;
 		this.brain = brain;
+		this.characterCamers = characterCamers;
 		this.inputManager = inputManager;
+		this.asyncManager = asyncManager;
 	}
 
 	public void Initialize()
 	{
-		transposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent(CinemachineCore.Stage.Body) as CinemachineFramingTransposer;
-		cameraPivotPosition = transposer.FollowTarget.localPosition;
-		cameraPivotYRotation = transposer.FollowTarget.rotation.eulerAngles.y;
+		transposerMain = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
+		transposerSpare = transposerMain;
+		cameraPivotPosition = transposerMain.FollowTarget.localPosition;
+		cameraPivotYRotation = transposerMain.FollowTarget.rotation.eulerAngles.y;
 
 		SetZoom(zoomStandart);
 
@@ -57,37 +73,46 @@ public class CameraController : IInitializable, ITickable, IDisposable
 			CameraHome();
 		}
 
+		if (inputManager.GetKeyDown(KeyAction.TacticalCamera))
+		{
+			isTactic = !isTactic;
+			characterCamers.OrderByDescending((x) => x.Priority).First().gameObject.SetActive(!isTactic);
+			asyncManager.StartCoroutine(WaitWhileCamerasBlendes());
+		}
+
+		#region Move
 		if (inputManager.GetKey(KeyAction.CameraForward))
 		{
-			transposer.FollowTarget.position += transposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
+			transposerSpare.FollowTarget.position += transposerMain.FollowTarget.forward * movementSpeed * Time.deltaTime;
 		}
 		if (inputManager.GetKey(KeyAction.CameraBackward))
 		{
-			transposer.FollowTarget.position += -transposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
+			transposerSpare.FollowTarget.position += -transposerMain.FollowTarget.forward * movementSpeed * Time.deltaTime;
 		}
 		if (inputManager.GetKey(KeyAction.CameraLeft))
 		{
-			transposer.FollowTarget.position += -transposer.FollowTarget.right * movementSpeed * Time.deltaTime;
+			transposerSpare.FollowTarget.position += -transposerMain.FollowTarget.right * movementSpeed * Time.deltaTime;
 		}
 		if (inputManager.GetKey(KeyAction.CameraRight))
 		{
-			transposer.FollowTarget.position += transposer.FollowTarget.right * movementSpeed * Time.deltaTime;
+			transposerSpare.FollowTarget.position += transposerMain.FollowTarget.right * movementSpeed * Time.deltaTime;
 		}
+		#endregion
 
-
+		#region Rotate
 		if (inputManager.GetKey(KeyAction.CameraRotate))
 		{
-			transposer.FollowTarget.Rotate(Vector3.up * Input.GetAxis("Mouse X") * rotationSpeed * 2 * Time.deltaTime, Space.World);
-
+			transposerMain.FollowTarget.Rotate(Vector3.up * Input.GetAxis("Mouse X") * rotationSpeed * 2 * Time.deltaTime, Space.World);
 		}
 		if (inputManager.GetKey(KeyAction.CameraRotateLeft))
 		{
-			transposer.FollowTarget.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
+			transposerMain.FollowTarget.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
 		}
 		if (inputManager.GetKey(KeyAction.CameraRotateRight))
 		{
-			transposer.FollowTarget.Rotate(Vector3.down * rotationSpeed * Time.deltaTime, Space.World);
+			transposerMain.FollowTarget.Rotate(Vector3.down * rotationSpeed * Time.deltaTime, Space.World);
 		}
+		#endregion
 
 		#region Zoom
 		if (inputManager.GetKey(KeyAction.CameraZoomIn))
@@ -124,19 +149,27 @@ public class CameraController : IInitializable, ITickable, IDisposable
 		brain.ActiveVirtualCamera.LookAt = target;
 	}
 
-	private void CameraHome()
+	public void CameraHome()
 	{
-		transposer.FollowTarget.localPosition = cameraPivotPosition;
-		transposer.FollowTarget.rotation = Quaternion.Euler(0, cameraPivotYRotation, 0);
+		transposerMain.FollowTarget.localPosition = cameraPivotPosition;
+		transposerMain.FollowTarget.rotation = Quaternion.Euler(0, cameraPivotYRotation, 0);
 	}
 
 	private void SetZoom(float zoom)
 	{
 		currentZoom = Mathf.Clamp(zoom, zoomMinMax.x, zoomMinMax.y);
 
-		transposer.m_CameraDistance = currentZoom;
+		transposerSpare.m_CameraDistance = currentZoom;
 	}
 
+
+	private IEnumerator WaitWhileCamerasBlendes()
+	{
+		yield return null;
+		yield return new WaitWhile(() => !brain.ActiveBlend?.IsComplete ?? false);
+		Debug.LogError(brain.ActiveVirtualCamera.VirtualCameraGameObject.name);
+		transposerSpare = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
+	}
 
 	private void OnCharacterChanged(SignalCharacterChanged signal)
 	{

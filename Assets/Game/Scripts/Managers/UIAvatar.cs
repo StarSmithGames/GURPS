@@ -7,8 +7,9 @@ using Zenject;
 public class UIAvatar : MonoBehaviour
 {
 	public UnityAction<UIAvatar> onClicked;
+	public UnityAction<UIAvatar> onDoubleClicked;
 
-	public Button background;
+	public UIButtonPointerComponent background;
 	[Space]
 	public Image frameMain;
 	public Image frameSpare;
@@ -16,12 +17,15 @@ public class UIAvatar : MonoBehaviour
 	[Inject]
 	private void Construct()
 	{
-		background.onClick.AddListener(OnClick);
+		background.onClickChanged += OnClick;
 	}
 
 	private void OnDestroy()
 	{
-		background.onClick.RemoveListener(OnClick);
+		if(background != null)
+		{
+			background.onClickChanged -= OnClick;
+		}
 	}
 
 	public void SetFrame(bool isLeader)
@@ -30,8 +34,15 @@ public class UIAvatar : MonoBehaviour
 		frameSpare.enabled = !isLeader;
 	}
 
-	private void OnClick()
+	private void OnClick(int count)
 	{
-		onClicked?.Invoke(this);
+		if(count == 1)
+		{
+			onClicked?.Invoke(this);
+		}
+		else if(count > 1)
+		{
+			onDoubleClicked?.Invoke(this);
+		}
 	}
 }
