@@ -13,6 +13,5 @@ public class VFXManager : IInitializable
 
 	public void Initialize()
 	{
-		Debug.LogError("VFX");
 	}
 }

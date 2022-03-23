@@ -113,7 +113,7 @@ namespace Game.Systems.InventorySystem
 			{
 				if (data != null && data.localizations.Count > 0)
 				{
-					return data.GetLocalization(true).itemName;
+					return data.GetLocalization().itemName;
 				}
 
 				return "";

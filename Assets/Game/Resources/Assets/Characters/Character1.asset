@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Character1
   m_EditorClassIdentifier: 
   characterSprite: {fileID: 21300000, guid: 3f80cbec08daddb44bb5316bd40a3414, type: 3}
-  localizations: []
+  localizations:
+  - language: 10
+    characterName: Player1
   inventory:
     useRandomItems: 0
     shuffleList: 0

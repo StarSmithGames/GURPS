@@ -66,6 +66,8 @@ namespace Game.Systems.BattleSystem
 
 			yield return new WaitForSeconds(3f);
 
+			gameManager.ChangeState(GameState.Battle);
+
 			while (true)
 			{
 				var initiator = CurrentBattle.CurrentTurn.initiator;
@@ -74,9 +76,10 @@ namespace Game.Systems.BattleSystem
 
 				if (characterManager.Party.Characters.Contains(initiator))
 				{
+					cameraController.SetFollowTarget(initiator.Transform);
 					characterManager.Party.SetCharacter(initiator as Character);
 
-					uiManager.Battle.TurnInforamtion.SetText("YOU TURN");
+					uiManager.Battle.Messages.ShowTurnInforamtion("YOU TURN");
 
 					isMineTurn = true;
 				}
@@ -84,14 +87,15 @@ namespace Game.Systems.BattleSystem
 				{
 					cameraController.SetFollowTarget(initiator.Transform);
 
-					uiManager.Battle.TurnInforamtion.SetText("ENEMY TURN");
+					uiManager.Battle.Messages.ShowTurnInforamtion("ENEMY TURN");
 				}
 
-				uiManager.Battle.TurnInforamtion.gameObject.SetActive(true);
 				uiManager.Battle.SkipTurn.gameObject.SetActive(isMineTurn);
 
 				if (isMineTurn)
 				{
+					initiator.UnFreeze();
+
 					while (isMineTurn && !isSkipTurn)
 					{
 						yield return null;
@@ -114,7 +118,7 @@ namespace Game.Systems.BattleSystem
 					}
 					else
 					{
-						uiManager.Battle.ShowNewRound();
+						uiManager.Battle.Messages.ShowNewRound();
 					}
 				}
 
@@ -138,7 +142,7 @@ namespace Game.Systems.BattleSystem
 
 		private void BattlePhaseInitialization()
 		{
-			uiManager.Battle.ShowCommenceBattle();
+			uiManager.Battle.Messages.ShowCommenceBattle();
 			uiManager.Battle.SkipTurn.onClick = SkipTurn;
 
 			CurrentBattle.entities.ForEach((x) =>
@@ -155,7 +159,7 @@ namespace Game.Systems.BattleSystem
 			cameraController.SetFollowTarget(cachedCharacter.Transform);
 			characterManager.Party.SetCharacter(cachedCharacter);
 
-			uiManager.Battle.TurnInforamtion.gameObject.SetActive(false);
+			uiManager.Battle.Messages.HideTurnInforamtion();
 			uiManager.Battle.SetBattle(null);
 
 			CurrentBattle.entities.ForEach((x) =>

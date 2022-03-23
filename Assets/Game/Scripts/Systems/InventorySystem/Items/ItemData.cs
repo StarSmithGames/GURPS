@@ -63,14 +63,8 @@ namespace Game.Systems.InventorySystem
 		[Space]
 		public ItemRarity rarity;
 
-		public Localization GetLocalization(bool isEnglish = false)
+		public Localization GetLocalization(SystemLanguage language = SystemLanguage.English)
 		{
-			if (isEnglish)
-			{
-				return localizations.Find((x) => x.language == SystemLanguage.English) ?? localizations[0];
-			}
-
-			SystemLanguage language = SystemLanguage.English; //LocalizationSystem.LocalizationSystem.CurrentLanguageStatic;
 			return localizations.Find((x) => x.language == language) ?? localizations[0];
 		}
 

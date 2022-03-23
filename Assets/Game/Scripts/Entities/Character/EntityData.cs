@@ -9,6 +9,19 @@ namespace Game.Entities
     [CreateAssetMenu(fileName = "EntityData", menuName = "Data/Entity")]
     public class EntityData : ScriptableObject
     {
+        public string CharacterName
+        {
+            get
+            {
+                if (localizations.Count > 0)
+                {
+                    return GetLocalization().characterName;
+                }
+
+                return "";
+            }
+        }
+
         [PreviewField]
         public Sprite characterSprite;
 
@@ -18,7 +31,7 @@ namespace Game.Entities
 
         public InventorySettings inventory;
 
-        public Localization GetLocalization(SystemLanguage language)
+        public Localization GetLocalization(SystemLanguage language = SystemLanguage.English)
         {
             return localizations.Find((x) => x.language == language) ?? localizations[0];
         }

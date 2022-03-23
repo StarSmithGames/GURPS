@@ -7,13 +7,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 using Zenject;
 
 public class CharacterController3D : MonoBehaviour
 {
+	public UnityAction onTargetChanged;
+
 	public bool IsGrounded => controller.isGrounded;
-	public bool IsHasTarget { get; private set; }
+	public bool IsHasTarget
+	{
+		get => isHasTarget;
+		private set
+		{
+			if(isHasTarget != value)
+			{
+				isHasTarget = value;
+			}
+			onTargetChanged?.Invoke();
+		}
+	}
+	private bool isHasTarget = false;
+	public Vector3 CurrentDestination { get; private set; }
+	public Vector3 CurrentNavMeshDestination => navMeshAgent.pathEndPosition;
+	public Vector3[] CurrentNavMeshPath => navMeshAgent.path.corners;
+
+
 	public bool IsFreezed { get; private set; }
 
 	[OnValueChanged("Validate", true)]
@@ -22,7 +42,6 @@ public class CharacterController3D : MonoBehaviour
 	private Vector3 lastPosition;
 	private Vector3 lastVelocity;
 	private Vector3 lastGravityVelocity;
-	private Vector3 currentDestination;
 
 	private float currentYRotation = 0f;
 	private float fallOffAngle = 90f;
@@ -53,7 +72,7 @@ public class CharacterController3D : MonoBehaviour
 		model = transform;
 
 		currentYRotation = model.localEulerAngles.y;
-		currentDestination = transform.root.position;
+		CurrentDestination = transform.root.position;
 	}
 
 
@@ -82,7 +101,7 @@ public class CharacterController3D : MonoBehaviour
 		if (IsHasTarget)
 		{
 			IsHasTarget = false;
-			currentDestination = Vector3.zero;
+			CurrentDestination = Vector3.zero;
 		}
 	}
 
@@ -152,7 +171,7 @@ public class CharacterController3D : MonoBehaviour
 			return Vector3.zero;
 		}
 
-		Vector3 direction = currentDestination - transform.root.position;
+		Vector3 direction = CurrentDestination - transform.root.position;
 		direction = VectorMath.RemoveDotVector(direction, transform.root.up);
 		Vector3 velocity = direction.normalized * settings.movementSpeed;
 
@@ -220,10 +239,10 @@ public class CharacterController3D : MonoBehaviour
 		if (IsPathValid(destination))
 		{
 			IsHasTarget = navMeshAgent.SetDestination(destination);
-			currentDestination = IsHasTarget ? destination : Vector3.zero;
+			CurrentDestination = IsHasTarget ? destination : Vector3.zero;
 			return IsHasTarget;
 		}
-		currentDestination = Vector3.zero;
+		CurrentDestination = Vector3.zero;
 		IsHasTarget = false;
 		return false;
 	}
@@ -267,7 +286,7 @@ public class CharacterController3D : MonoBehaviour
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere(transform.root.position, settings.reachTargetThreshold);
 		if (!IsHasTarget) return;
-		Gizmos.DrawSphere(currentDestination, 0.1f);
+		Gizmos.DrawSphere(CurrentDestination, 0.1f);
 
 		if (!settings.useNavMesh) return;
 

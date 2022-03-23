@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c34e898270762954ab77f139a7ec2601, type: 3}
   m_Name: Container
   m_EditorClassIdentifier: 
-  localizations: []
+  localizations:
+  - language: 10
+    containerName: Chest
   inventory:
     useRandomItems: 0
     shuffleList: 0

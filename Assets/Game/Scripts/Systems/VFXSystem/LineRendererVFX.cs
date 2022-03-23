@@ -1,195 +1,79 @@
 using Sirenix.OdinInspector;
-
-using System.Collections;
-using System.Collections.Generic;
-
 using UnityEngine;
-using UnityEngine.UIElements;
 
-using Zenject;
-
-public class LineRendererVFX : MonoBehaviour
+namespace Game.Systems.VFX
 {
-	public LineRenderer line;
-	[OnValueChanged("DrawCircle")]
-	[Min(0)]
-	public int pointCount;
-	[OnValueChanged("DrawCircle")]
-	[Min(0)]
-	public float radius;
-
-	public Vector3 lookFrom = new Vector3(0, 1f, 0);
-	public Vector3 offset = new Vector3(0, 0.01f, 0);
-
-	public bool isDebub = false;
-	[ShowIf("isDebub")]
-	public bool showLines = false;
-
-	public bool useRaycast = true;
-	public float rayLength = 100f;
-	public LayerMask raycastLayerMask = ~0;
-
-	private void Update()
+	public class LineRendererVFX : MonoBehaviour
 	{
-		//DrawCircle();
-	}
+		public bool IsEnabled { get; protected set; }
 
-	[Button("Update")]
-	private void DrawCircle()
-	{
-		line.loop = true;
-		line.positionCount = pointCount;
+		[field: SerializeField] public LineRenderer Line { get; set; }
 
-		float TAU = 2 * Mathf.PI;
+		[SerializeField] protected Vector3 lookFrom = new Vector3(0, 1f, 0);
+		[SerializeField] protected Vector3 offset = new Vector3(0, 0.01f, 0);
 
-		for (int i = 0; i < pointCount; i++)
+		[SerializeField] protected bool isDebub = false;
+		[ShowIf("isDebub")]
+		[SerializeField] protected bool showLines = false;
+
+		[SerializeField] protected bool useRaycast = true;
+		[ShowIf("useRaycast")]
+		[SerializeField] protected float rayLength = 100f;
+		[ShowIf("useRaycast")]
+		[SerializeField] protected LayerMask raycastLayerMask = ~0;
+
+		public void Enable(bool trigger)
 		{
-			float radians = ((float)i / pointCount) * TAU;
-			Vector3 position = new Vector3(Mathf.Cos(radians) * radius, 0, Mathf.Sin(radians) * radius);
+			IsEnabled = trigger;
+			Line.enabled = IsEnabled;
+		}
 
-			if (useRaycast)
+		void DrawTriangle(Vector3[] vertexPositions, float startWidth, float endWidth)
+		{
+			Line.startWidth = startWidth;
+			Line.endWidth = endWidth;
+			Line.loop = true;
+			Line.positionCount = 3;
+			Line.SetPositions(vertexPositions);
+		}
+
+		void DrawPolygon(int vertexNumber, float radius, Vector3 centerPos, float startWidth, float endWidth)
+		{
+			Line.startWidth = startWidth;
+			Line.endWidth = endWidth;
+			Line.loop = true;
+			float angle = 2 * Mathf.PI / vertexNumber;
+			Line.positionCount = vertexNumber;
+
+			for (int i = 0; i < vertexNumber; i++)
 			{
-				Ray ray = new Ray(transform.root.TransformPoint(position) + lookFrom, Vector3.down);
-				if (Physics.Raycast(ray, out RaycastHit hit, rayLength, raycastLayerMask, QueryTriggerInteraction.Ignore))
-				{
-					position.y = hit.point.y - transform.root.position.y;
-				}
-				else
-				{
-					position.y = 0;
-				}
+				Matrix4x4 rotationMatrix = new Matrix4x4(new Vector4(Mathf.Cos(angle * i), Mathf.Sin(angle * i), 0, 0),
+														 new Vector4(-1 * Mathf.Sin(angle * i), Mathf.Cos(angle * i), 0, 0),
+										   new Vector4(0, 0, 1, 0),
+										   new Vector4(0, 0, 0, 1));
+				Vector3 initialRelativePosition = new Vector3(0, radius, 0);
+				Line.SetPosition(i, centerPos + rotationMatrix.MultiplyPoint(initialRelativePosition));
 			}
-
-			line.SetPosition(i, position + offset);
-		}
-	}
-
-	void DrawTriangle(Vector3[] vertexPositions, float startWidth, float endWidth)
-	{
-		line.startWidth = startWidth;
-		line.endWidth = endWidth;
-		line.loop = true;
-		line.positionCount = 3;
-		line.SetPositions(vertexPositions);
-	}
-
-	void DrawPolygon(int vertexNumber, float radius, Vector3 centerPos, float startWidth, float endWidth)
-	{
-		line.startWidth = startWidth;
-		line.endWidth = endWidth;
-		line.loop = true;
-		float angle = 2 * Mathf.PI / vertexNumber;
-		line.positionCount = vertexNumber;
-
-		for (int i = 0; i < vertexNumber; i++)
-		{
-			Matrix4x4 rotationMatrix = new Matrix4x4(new Vector4(Mathf.Cos(angle * i), Mathf.Sin(angle * i), 0, 0),
-													 new Vector4(-1 * Mathf.Sin(angle * i), Mathf.Cos(angle * i), 0, 0),
-									   new Vector4(0, 0, 1, 0),
-									   new Vector4(0, 0, 0, 1));
-			Vector3 initialRelativePosition = new Vector3(0, radius, 0);
-			line.SetPosition(i, centerPos + rotationMatrix.MultiplyPoint(initialRelativePosition));
-		}
-	}
-
-	void DrawSineWave(Vector3 startPoint, float amplitude, float wavelength)
-	{
-		float x = 0f;
-		float y;
-		float k = 2 * Mathf.PI / wavelength;
-		line.positionCount = 200;
-		for (int i = 0; i < line.positionCount; i++)
-		{
-			x += i * 0.001f;
-			y = amplitude * Mathf.Sin(k * x);
-			line.SetPosition(i, new Vector3(x, y, 0) + startPoint);
-		}
-	}
-
-	void DrawTravellingSineWave(Vector3 startPoint, float amplitude, float wavelength, float waveSpeed)
-	{
-
-		float x = 0f;
-		float y;
-		float k = 2 * Mathf.PI / wavelength;
-		float w = k * waveSpeed;
-		line.positionCount = 200;
-		for (int i = 0; i < line.positionCount; i++)
-		{
-			x += i * 0.001f;
-			y = amplitude * Mathf.Sin(k * x + w * Time.time);
-			line.SetPosition(i, new Vector3(x, y, 0) + startPoint);
-		}
-	}
-
-	void DrawStandingSineWave(Vector3 startPoint, float amplitude, float wavelength, float waveSpeed)
-	{
-
-		float x = 0f;
-		float y;
-		float k = 2 * Mathf.PI / wavelength;
-		float w = k * waveSpeed;
-		line.positionCount = 200;
-		for (int i = 0; i < line.positionCount; i++)
-		{
-			x += i * 0.001f;
-			y = amplitude * (Mathf.Sin(k * x + w * Time.time) + Mathf.Sin(k * x - w * Time.time));
-			line.SetPosition(i, new Vector3(x, y, 0) + startPoint);
-		}
-	}
-
-	void DrawQuadraticBezierCurve(Vector3 point0, Vector3 point1, Vector3 point2)
-	{
-		line.positionCount = 200;
-		float t = 0f;
-		Vector3 B = new Vector3(0, 0, 0);
-		for (int i = 0; i < line.positionCount; i++)
-		{
-			B = (1 - t) * (1 - t) * point0 + 2 * (1 - t) * t * point1 + t * t * point2;
-			line.SetPosition(i, B);
-			t += (1 / (float)line.positionCount);
-		}
-	}
-
-	void DrawCubicBezierCurve(Vector3 point0, Vector3 point1, Vector3 point2, Vector3 point3)
-	{
-
-		line.positionCount = 200;
-		float t = 0f;
-		Vector3 B = new Vector3(0, 0, 0);
-		for (int i = 0; i < line.positionCount; i++)
-		{
-			B = (1 - t) * (1 - t) * (1 - t) * point0 + 3 * (1 - t) * (1 - t) *
-				t * point1 + 3 * (1 - t) * t * t * point2 + t * t * t * point3;
-
-			line.SetPosition(i, B);
-			t += (1 / (float)line.positionCount);
-		}
-	}
-
-
-	private void OnDrawGizmos()
-	{
-		if (Application.isEditor)
-		{
-			DrawCircle();
 		}
 
-		if (isDebub)
+		protected virtual void OnDrawGizmos()
 		{
-			Gizmos.color = Color.blue;
-			Gizmos.DrawLine(transform.position + lookFrom, transform.position + lookFrom + transform.forward);
-
-			Gizmos.color = Color.red;
-			Gizmos.DrawSphere(transform.position + lookFrom, 0.05f);
-			Gizmos.DrawLine(transform.position, transform.position + lookFrom);
-
-			if (showLines)
+			if (isDebub)
 			{
-				Gizmos.color = Color.white;
-				for (int i = 0; i < line.positionCount; i++)
+				Gizmos.color = Color.blue;
+				Gizmos.DrawLine(transform.position + lookFrom, transform.position + lookFrom + transform.forward);
+
+				Gizmos.color = Color.red;
+				Gizmos.DrawSphere(transform.position + lookFrom, 0.05f);
+				Gizmos.DrawLine(transform.position, transform.position + lookFrom);
+
+				if (showLines)
 				{
-					Gizmos.DrawLine(transform.TransformPoint(line.GetPosition(i)) + new Vector3(0, lookFrom.y, 0), transform.TransformPoint(line.GetPosition(i)) + lookFrom + Vector3.down * rayLength);
+					Gizmos.color = Color.white;
+					for (int i = 0; i < Line.positionCount; i++)
+					{
+						Gizmos.DrawLine(transform.TransformPoint(Line.GetPosition(i)) + new Vector3(0, lookFrom.y, 0), transform.TransformPoint(Line.GetPosition(i)) + lookFrom + Vector3.down * rayLength);
+					}
 				}
 			}
 		}

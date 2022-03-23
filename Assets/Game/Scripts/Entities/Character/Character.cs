@@ -28,18 +28,18 @@ namespace Game.Entities
 
 		public Transform Transform => transform;
 		public CharacterController3D Controller { get; private set; }
+		public MarkerController MarkerController { get; private set; }
 		public Transform CameraPivot { get; private set; }
 
 		private SignalBus signalBus;
-		private AnimatorControl animatorControl;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, CharacterController3D controller, [Inject(Id = "CameraPivot")] Transform cameraPivot)
+		private void Construct(SignalBus signalBus, CharacterController3D controller, MarkerController markerController, [Inject(Id = "CameraPivot")] Transform cameraPivot)
 		{
 			this.signalBus = signalBus;
-			this.animatorControl = animatorControl;
 
 			Controller = controller;
+			MarkerController = markerController;
 			CameraPivot = cameraPivot;
 
 			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);

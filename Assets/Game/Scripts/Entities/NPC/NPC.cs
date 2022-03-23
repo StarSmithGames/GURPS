@@ -11,7 +11,7 @@ using Game.Entities;
 using Game.Managers.CharacterManager;
 using Sirenix.Utilities;
 
-public class NPC : MonoBehaviour, IEntity
+public class NPC : MonoBehaviour, IEntity, IObservable
 {
 	public EntityData EntityData => entityData;
 	[SerializeField] private EntityData entityData;
@@ -20,15 +20,17 @@ public class NPC : MonoBehaviour, IEntity
 	public CharacterController3D Controller { get; private set; }
 
 	private FieldOfView fov;
+	private UIManager uiManager;
 	private GameManager gameManager;
 	private CharacterManager characterManager;
 	private BattleSystem battleSystem;
 
 	[Inject]
-	private void Construct(FieldOfView fov, CharacterController3D controller, GameManager gameManager, CharacterManager characterManager, BattleSystem battleSystem)
+	private void Construct(FieldOfView fov, CharacterController3D controller, UIManager uiManager, GameManager gameManager, CharacterManager characterManager, BattleSystem battleSystem)
 	{
 		this.fov = fov;
 		Controller = controller;
+		this.uiManager = uiManager;
 		this.gameManager = gameManager;
 		this.characterManager = characterManager;
 		this.battleSystem = battleSystem;
@@ -65,5 +67,19 @@ public class NPC : MonoBehaviour, IEntity
 	public void UnFreeze()
 	{
 		Controller.UnFreeze();
+	}
+
+	public void StartObserve()
+	{
+		uiManager.Battle.ShowEntityInformation(this);
+	}
+
+	public void Observe()
+	{
+	}
+
+	public void EndObserve()
+	{
+		uiManager.Battle.HideEntityInformation();
 	}
 }
