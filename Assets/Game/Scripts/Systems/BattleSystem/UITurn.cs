@@ -15,6 +15,10 @@ namespace Game.Systems.BattleSystem
         [field: SerializeField] public Image Avatar { get; private set; }
         [field: SerializeField] public Image Frame { get; private set; }
 
+        [Space]
+        [SerializeField] private Vector2 defaultSize = new Vector2(80, 80);
+        [SerializeField] private Vector2 selectedSize = new Vector2(100, 100);
+
         public IEntity CurrentEntity { get; private set; }
 
         [Inject]
@@ -34,6 +38,18 @@ namespace Game.Systems.BattleSystem
 
             UpdateUI();
         }
+
+        public void Select()
+		{
+            (transform as RectTransform).sizeDelta = selectedSize;
+		}
+
+        public void Diselect()
+		{
+            (transform as RectTransform).sizeDelta = defaultSize;
+        }
+
+
 
         private void UpdateUI()
 		{

@@ -1,18 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
-public class UISkipTurn : MonoBehaviour
+using Zenject;
+
+namespace Game.Systems.BattleSystem
 {
-    // Start is called before the first frame update
-    void Start()
+    public class UISkipTurn : MonoBehaviour
     {
-        
-    }
+		public UnityAction onClick;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        [SerializeField] private Button background;
+
+        [Inject]
+        private void Construct()
+		{
+            background.onClick.AddListener(OnClick);
+		}
+
+		private void OnDestroy()
+		{
+			background?.onClick.RemoveAllListeners();
+		}
+
+		private void OnClick()
+		{
+			onClick?.Invoke();
+		}
+	}
 }
