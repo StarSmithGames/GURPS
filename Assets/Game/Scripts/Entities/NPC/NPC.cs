@@ -10,6 +10,7 @@ using Zenject;
 using Game.Entities;
 using Game.Managers.CharacterManager;
 using Sirenix.Utilities;
+using UnityEngine.UI;
 
 public class NPC : MonoBehaviour, IEntity, IObservable
 {
@@ -17,6 +18,7 @@ public class NPC : MonoBehaviour, IEntity, IObservable
 	[SerializeField] private EntityData entityData;
 
 	public Transform Transform => transform;
+	public NavigationController Navigation { get; private set; }
 	public CharacterController3D Controller { get; private set; }
 
 	private FieldOfView fov;
@@ -26,9 +28,17 @@ public class NPC : MonoBehaviour, IEntity, IObservable
 	private BattleSystem battleSystem;
 
 	[Inject]
-	private void Construct(FieldOfView fov, CharacterController3D controller, UIManager uiManager, GameManager gameManager, CharacterManager characterManager, BattleSystem battleSystem)
+	private void Construct(
+		FieldOfView fov,
+		NavigationController navigationController,
+		CharacterController3D controller,
+		UIManager uiManager,
+		GameManager gameManager,
+		CharacterManager characterManager,
+		BattleSystem battleSystem)
 	{
 		this.fov = fov;
+		Navigation = navigationController;
 		Controller = controller;
 		this.uiManager = uiManager;
 		this.gameManager = gameManager;

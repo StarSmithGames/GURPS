@@ -1,15 +1,19 @@
 using Cinemachine;
 
 using Game.Managers.CharacterManager;
+using Game.Managers.GameManager;
+
+using System;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 using Zenject;
 
-public class CameraVision : IInitializable, ITickable
+public class CameraVision : IInitializable, IDisposable, ITickable
 {
 	public bool IsCanHoldMouse { get; private set; }
+	public bool IsCamDrawPath { get; private set; }
 
 	private IObservable CurrentEntity
 	{
@@ -32,13 +36,15 @@ public class CameraVision : IInitializable, ITickable
 
 	private CharacterParty party;
 
+	private SignalBus signalBus;
 	private CinemachineBrain brain;
 	private InputManager inputManager;
 	private CharacterManager characterManager;
 	private Settings settings;
 
-	public CameraVision(CinemachineBrain brain, InputManager inputManager, CharacterManager characterManager, GlobalSettings settings)
+	public CameraVision(SignalBus signalBus, CinemachineBrain brain, InputManager inputManager, CharacterManager characterManager, GlobalSettings settings)
 	{
+		this.signalBus = signalBus;
 		this.brain = brain;
 		this.inputManager = inputManager;
 		this.characterManager = characterManager;
@@ -48,6 +54,13 @@ public class CameraVision : IInitializable, ITickable
 	public void Initialize()
 	{
 		IsCanHoldMouse = settings.isCanHoldMouse;
+
+		signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
+	}
+
+	public void Dispose()
+	{
+		signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
 	}
 
 	public void Tick()
@@ -89,15 +102,15 @@ public class CameraVision : IInitializable, ITickable
 		}
 	}
 
-	public void BlockMouseHolding()
+	private void OnGameStateChanged(SignalGameStateChanged signal)
 	{
-		IsCanHoldMouse = false;
+		if(signal.newGameState == GameState.Battle)
+		{
+			IsCanHoldMouse = false;
+			IsCamDrawPath = true;
+		}
 	}
-	public void UnBlockMouseHolding()
-	{
-		IsCanHoldMouse = settings.isCanHoldMouse;
-	}
-
+	
 
 	[System.Serializable]
 	public class Settings

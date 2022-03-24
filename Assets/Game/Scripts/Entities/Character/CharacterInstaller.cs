@@ -14,6 +14,7 @@ namespace Game.Entities
 		[SerializeField] private Transform model;
 		[SerializeField] private Transform cameraPivot;
 		[SerializeField] private CharacterController3D controller;
+		[SerializeField] private NavigationController navigationController;
 		[SerializeField] private MarkerController markerController;
 
 		public override void InstallBindings()
@@ -24,6 +25,7 @@ namespace Game.Entities
 			Container.BindInstance(model).WithId("Model");
 			Container.BindInstance(cameraPivot).WithId("CameraPivot");
 			Container.BindInstance(controller);
+			Container.BindInstance(navigationController);
 			Container.BindInstance(markerController);
 		}
 	}

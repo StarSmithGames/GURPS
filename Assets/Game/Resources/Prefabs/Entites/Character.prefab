@@ -2109,7 +2109,6 @@ MonoBehaviour:
     turnSpeed: 2000
     jumpHeight: 3
     gravity: -9.81
-    reachTargetThreshold: 0.1
 --- !u!1 &3430409962961017737
 GameObject:
   m_ObjectHideFlags: 0
@@ -3919,6 +3918,7 @@ GameObject:
   - component: {fileID: 6753425058046806695}
   - component: {fileID: 6753425058046806692}
   - component: {fileID: 6753425058046806698}
+  - component: {fileID: 696508144769888773}
   m_Layer: 6
   m_Name: Character
   m_TagString: Untagged
@@ -3979,6 +3979,7 @@ MonoBehaviour:
   model: {fileID: 0}
   cameraPivot: {fileID: 2316238609389999535}
   controller: {fileID: 361113232122987903}
+  navigationController: {fileID: 696508144769888773}
   markerController: {fileID: 8770400967174064253}
 --- !u!143 &6753425058046806693
 CharacterController:
@@ -4043,6 +4044,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 410e7a1f9cee7494b9a7e8fde737149f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &696508144769888773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6753425058046806699}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1aefdecc5976320409763a624d20f997, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6759835977553681654
@@ -5193,6 +5206,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1048525448597392365, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
+      propertyPath: m_Parameters.widthMultiplier
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1048525448597392365, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.a
+      value: 0.39215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 1048525448597392365, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.g
+      value: 0.9372549
+      objectReference: {fileID: 0}
+    - target: {fileID: 1048525448597392365, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.r
+      value: 0.61960787
+      objectReference: {fileID: 0}
     - target: {fileID: 1048525448597392367, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
       propertyPath: m_Name
       value: MarkerLineDottedStandart
@@ -5204,6 +5233,10 @@ PrefabInstance:
     - target: {fileID: 4001474256616797333, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
       propertyPath: useRaycast
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4001474256616797333, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
+      propertyPath: raycastLayerMask.m_Bits
+      value: 55
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}

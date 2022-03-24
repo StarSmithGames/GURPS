@@ -27,6 +27,7 @@ namespace Game.Entities
 		private IInventory inventory;
 
 		public Transform Transform => transform;
+		public NavigationController Navigation { get; private set; }
 		public CharacterController3D Controller { get; private set; }
 		public MarkerController MarkerController { get; private set; }
 		public Transform CameraPivot { get; private set; }
@@ -34,10 +35,16 @@ namespace Game.Entities
 		private SignalBus signalBus;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, CharacterController3D controller, MarkerController markerController, [Inject(Id = "CameraPivot")] Transform cameraPivot)
+		private void Construct(
+			SignalBus signalBus,
+			NavigationController navigationController,
+			CharacterController3D controller,
+			MarkerController markerController,
+			[Inject(Id = "CameraPivot")] Transform cameraPivot)
 		{
 			this.signalBus = signalBus;
 
+			Navigation = navigationController;
 			Controller = controller;
 			MarkerController = markerController;
 			CameraPivot = cameraPivot;

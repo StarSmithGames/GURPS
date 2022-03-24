@@ -124,7 +124,7 @@ namespace Game.Systems.InventorySystem
 			{
 				currentInteractor.Controller.SetDestination(transform.position, settings.maxRange - 0.1f);
 
-				yield return new WaitWhile(() => !currentInteractor.Controller.IsReachedDestination());
+				yield return new WaitWhile(() => !currentInteractor.Navigation.IsReachedDestination());
 			}
 
 			if (IsInteractorInRange())

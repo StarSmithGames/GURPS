@@ -19,26 +19,28 @@ namespace Game.Entities
 		private bool isHasTarget = false;
 
 		private SignalBus signalBus;
-		private CharacterController3D controller;
+		private NavigationController navigationController;
+		private CharacterController3D characterController;
 		private GameManager gameManager;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, CharacterController3D controller, GameManager gameManager)
+		private void Construct(SignalBus signalBus, NavigationController navigationController, CharacterController3D characterController, GameManager gameManager)
 		{
 			this.signalBus = signalBus;
-			this.controller = controller;
+			this.navigationController = navigationController;
+			this.characterController = characterController;
 			this.gameManager = gameManager;
 
-			controller.onTargetChanged += OnTargetChanged;
+			characterController.onTargetChanged += OnTargetChanged;
 
 			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 		}
 
 		private void OnDestroy()
 		{
-			if(controller != null)
+			if(characterController != null)
 			{
-				controller.onTargetChanged -= OnTargetChanged;
+				characterController.onTargetChanged -= OnTargetChanged;
 			}
 
 			signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
@@ -60,9 +62,9 @@ namespace Game.Entities
 
 		private void OnTargetChanged()
 		{
-			if (controller.IsHasTarget != isHasTarget)
+			if (characterController.IsHasTarget != isHasTarget)
 			{
-				isHasTarget = controller.IsHasTarget;
+				isHasTarget = characterController.IsHasTarget;
 
 				if (isHasTarget)
 				{
@@ -76,11 +78,11 @@ namespace Game.Entities
 
 			if (isHasTarget)
 			{
-				TargetMarker.transform.position = controller.CurrentNavMeshDestination;
+				TargetMarker.transform.position = characterController.CurrentNavMeshDestination;
 
 				if(gameManager.CurrentGameState == GameState.Battle)
 				{
-					LineMarker.DrawLine(controller.CurrentNavMeshPath);
+					LineMarker.DrawLine(navigationController.CurrentNavMeshPath);
 				}
 			}
 
