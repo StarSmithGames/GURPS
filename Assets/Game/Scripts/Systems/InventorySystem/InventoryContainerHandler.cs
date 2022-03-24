@@ -115,7 +115,7 @@ namespace Game.Systems.InventorySystem
 
 			IsDraging = true;
 
-			characterManager.Party.CurrentCharacter.Freeze();
+			characterManager.Party.CurrentCharacter.Freeze(true);
 
 			item = slot.CurrentItem;
 			from = slot.Owner.CurrentInventory;
@@ -134,7 +134,7 @@ namespace Game.Systems.InventorySystem
 		{
 			Dispose();
 
-			characterManager.Party.CurrentCharacter.UnFreeze();
+			characterManager.Party.CurrentCharacter.Freeze(false);
 
 			IsDraging = false;
 		}
@@ -148,7 +148,7 @@ namespace Game.Systems.InventorySystem
 				from.Remove(item);
 			}
 
-			characterManager.Party.CurrentCharacter.UnFreeze();
+			characterManager.Party.CurrentCharacter.Freeze(false);
 
 			Dispose();
 		}

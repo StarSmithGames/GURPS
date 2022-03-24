@@ -39,14 +39,16 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 	private SignalBus signalBus;
 	private CinemachineBrain brain;
 	private InputManager inputManager;
+	private GameManager gameManager;
 	private CharacterManager characterManager;
 	private Settings settings;
 
-	public CameraVision(SignalBus signalBus, CinemachineBrain brain, InputManager inputManager, CharacterManager characterManager, GlobalSettings settings)
+	public CameraVision(SignalBus signalBus, CinemachineBrain brain, InputManager inputManager, GameManager gameManager, CharacterManager characterManager, GlobalSettings settings)
 	{
 		this.signalBus = signalBus;
 		this.brain = brain;
 		this.inputManager = inputManager;
+		this.gameManager = gameManager;
 		this.characterManager = characterManager;
 		this.settings = settings.cameraVision;
 	}
@@ -67,16 +69,13 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 	{
 		RaycastHit hit;
 		Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
+		bool isHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject();
+
+		var character = characterManager.Party.CurrentCharacter;
 
 		//Looking
-		if (Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
-		{
-			CurrentEntity = hit.transform.root.GetComponent<IObservable>();
-		}
-		else
-		{
-			CurrentEntity = null;
-		}
+		CurrentEntity = isHit ? hit.transform.root.GetComponent<IObservable>() : null;
+
 
 		//MouseHolding
 		if (inputManager.IsLeftMouseButtonPressed())
@@ -85,7 +84,7 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 			{
 				if (inputManager.IsLeftMouseButtonDown())
 				{
-					characterManager.Party.CurrentCharacter.InteractWith(CurrentEntity);
+					character.InteractWith(CurrentEntity);
 				}
 			}
 			else
@@ -93,10 +92,23 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 				//Targeting
 				if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 				{
-					if (Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject())
+					if (isHit)
 					{
-						characterManager.Party.CurrentCharacter.Controller.SetDestination(hit.point);
+						character.Navigation.SetTarget(hit.point);
+						character.Controller.SetDestination(hit.point);
 					}
+				}
+			}
+		}
+
+
+		if (isHit)
+		{
+			if (gameManager.CurrentGameState == GameState.Battle)
+			{
+				if (!character.Controller.IsHasTarget)
+				{
+					character.Navigation.SetTarget(hit.point);
 				}
 			}
 		}
@@ -104,10 +116,13 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 
 	private void OnGameStateChanged(SignalGameStateChanged signal)
 	{
-		if(signal.newGameState == GameState.Battle)
+		if(signal.newGameState == GameState.Gameplay)
+		{
+			IsCanHoldMouse = settings.isCanHoldMouse;
+		}
+		else if(signal.newGameState == GameState.Battle)
 		{
 			IsCanHoldMouse = false;
-			IsCamDrawPath = true;
 		}
 	}
 	

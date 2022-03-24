@@ -32,7 +32,6 @@ public class CharacterController3D : MonoBehaviour
 	}
 	private bool isHasTarget = false;
 	public Vector3 CurrentDestination { get; private set; }
-	public Vector3 CurrentNavMeshDestination => navMeshAgent.pathEndPosition;
 
 	public bool IsFreezed { get; private set; }
 

@@ -1,3 +1,5 @@
+using EPOOutline;
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,7 +17,8 @@ namespace Game.Entities
 		[SerializeField] private Transform cameraPivot;
 		[SerializeField] private CharacterController3D controller;
 		[SerializeField] private NavigationController navigationController;
-		[SerializeField] private MarkerController markerController;
+		[SerializeField] private Markers markers;
+		[SerializeField] private Outlinable outline;
 
 		public override void InstallBindings()
 		{
@@ -26,7 +29,8 @@ namespace Game.Entities
 			Container.BindInstance(cameraPivot).WithId("CameraPivot");
 			Container.BindInstance(controller);
 			Container.BindInstance(navigationController);
-			Container.BindInstance(markerController);
+			Container.BindInstance(markers);
+			Container.BindInstance(outline);
 		}
 	}
 }

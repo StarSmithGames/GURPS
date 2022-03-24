@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Game.Systems.BattleSystem
 {
-    public class UISkipTurn : MonoBehaviour
+    public class UIButton : MonoBehaviour
     {
 		public UnityAction onClick;
 

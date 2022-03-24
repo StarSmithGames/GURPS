@@ -14,6 +14,8 @@ namespace Game.Systems.VFX
 
 		public void DrawCircle()
 		{
+			if (!IsEnabled) return;
+
 			Line.loop = true;
 			Line.positionCount = pointCount;
 

@@ -167,7 +167,6 @@ public class CameraController : IInitializable, ITickable, IDisposable
 	{
 		yield return null;
 		yield return new WaitWhile(() => !brain.ActiveBlend?.IsComplete ?? false);
-		Debug.LogError(brain.ActiveVirtualCamera.VirtualCameraGameObject.name);
 		transposerSpare = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
 	}
 

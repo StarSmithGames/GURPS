@@ -1,5 +1,6 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
+using DG.Tweening;
 
 namespace Game.Systems.VFX
 {
@@ -26,6 +27,28 @@ namespace Game.Systems.VFX
 		{
 			IsEnabled = trigger;
 			Line.enabled = IsEnabled;
+		}
+
+		public void EnableIn()
+		{
+			Sequence sequence = DOTween.Sequence();
+
+			Color color = Line.material.color;
+			color.a = 0;
+			Line.material.color = color;
+
+			Enable(true);
+
+			sequence
+				.Append(Line.material.DOFade(1, 0.25f));
+		}
+		public void EnableOut()
+		{
+			Sequence sequence = DOTween.Sequence();
+
+			sequence
+				.Append(Line.material.DOFade(0, 0.25f))
+				.AppendCallback(() => Enable(false));
 		}
 
 		void DrawTriangle(Vector3[] vertexPositions, float startWidth, float endWidth)

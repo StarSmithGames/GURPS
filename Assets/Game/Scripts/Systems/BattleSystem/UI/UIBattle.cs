@@ -17,8 +17,10 @@ namespace Game.Systems.BattleSystem
 	{
 		[field: SerializeField] public UIRoundQueue RoundQueue { get; private set; }
 		[field: SerializeField] public UIEntityInformation EntityInformation { get; private set; }
-		[field: SerializeField] public UISkipTurn SkipTurn { get; private set; }
 		[field: SerializeField] public UIMessages Messages { get; private set; }
+		[field: Space]
+		[field: SerializeField] public UIButton SkipTurn { get; private set; }
+		[field: SerializeField] public UIButton RunAway { get; private set; }
 
 
 		private Battle currentBattle;
@@ -75,6 +77,7 @@ namespace Game.Systems.BattleSystem
 			{
 				RoundQueue.gameObject.SetActive(false);
 				SkipTurn.gameObject.SetActive(false);
+				RunAway.gameObject.SetActive(false);
 
 				return;
 			}

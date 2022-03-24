@@ -70,6 +70,8 @@ namespace Game.Systems.BattleSystem
 
 			while (true)
 			{
+				UpdateMarkers();
+
 				var initiator = CurrentBattle.CurrentTurn.initiator;
 
 				bool isMineTurn = false;
@@ -91,10 +93,11 @@ namespace Game.Systems.BattleSystem
 				}
 
 				uiManager.Battle.SkipTurn.gameObject.SetActive(isMineTurn);
+				uiManager.Battle.RunAway.gameObject.SetActive(isMineTurn);
 
 				if (isMineTurn)
 				{
-					initiator.UnFreeze();
+					initiator.Freeze(false);
 
 					while (isMineTurn && !isSkipTurn)
 					{
@@ -137,6 +140,11 @@ namespace Game.Systems.BattleSystem
 			isSkipTurn = true;
 		}
 
+		private void RunAway()
+		{
+			BattlePhaseCompletion();
+		}
+
 
 		private Character cachedCharacter;
 
@@ -144,10 +152,11 @@ namespace Game.Systems.BattleSystem
 		{
 			uiManager.Battle.Messages.ShowCommenceBattle();
 			uiManager.Battle.SkipTurn.onClick = SkipTurn;
+			uiManager.Battle.RunAway.onClick = RunAway;
 
 			CurrentBattle.entities.ForEach((x) =>
 			{
-				x.Freeze();
+				x.Freeze(true);
 			});
 
 			cachedCharacter = characterManager.Party.CurrentCharacter;
@@ -164,7 +173,7 @@ namespace Game.Systems.BattleSystem
 
 			CurrentBattle.entities.ForEach((x) =>
 			{
-				x.UnFreeze();
+				x.Freeze(false);
 			});
 
 			currentBattles.Remove(CurrentBattle);
@@ -173,6 +182,28 @@ namespace Game.Systems.BattleSystem
 			StopBattle();
 		}
 
+		private void UpdateMarkers()
+		{
+			CurrentBattle.entities.ForEach((x) =>
+			{
+				if (characterManager.Party.Characters.Contains(x))
+				{
+					if(x == CurrentBattle.CurrentTurn.initiator)
+					{
+						x.MarkerController.SetFollowMaterial(MaterialType.Leader);
+					}
+					else
+					{
+						x.MarkerController.SetFollowMaterial(MaterialType.Companion);
+					}
+				}
+				else
+				{
+					x.MarkerController.SetFollowMaterial(MaterialType.Enemy);
+				}
+
+			});
+		}
 
 		public class Battle
 		{

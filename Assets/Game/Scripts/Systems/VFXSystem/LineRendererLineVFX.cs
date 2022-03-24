@@ -16,6 +16,8 @@ namespace Game.Systems.VFX
 
 		public void DrawLine(Vector3[] points)
 		{
+			if (!IsEnabled) return;
+
 			Line.loop = false;
 			Line.useWorldSpace = true;
 

@@ -180,6 +180,7 @@ namespace EPOOutline
 
         private void OnValidate()
         {
+            if(!isCustom)
             Properties.outlineLayer = Mathf.Clamp(Properties.outlineLayer, 0, 63);
             ValidateTargets();
         }
