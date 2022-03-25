@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 5483355966803082958}
   - component: {fileID: 5483355966803082944}
   - component: {fileID: 5483355966803082959}
-  - component: {fileID: 5483355966803082946}
+  - component: {fileID: 9041020849987004743}
   - component: {fileID: 5483355966803082945}
   m_Layer: 5
   m_Name: Background
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5483355966803082946
+--- !u!114 &9041020849987004743
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,7 +161,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5483355966803082957}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 35b83e5f644a8554287ff24a7d181848, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -346,7 +346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40d5c4a262f0a7343b3456f3f8985093, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <BackgroundButton>k__BackingField: {fileID: 5483355966803082946}
+  <BackgroundButton>k__BackingField: {fileID: 9041020849987004743}
   <Back>k__BackingField: {fileID: 5483355966803082959}
   <Avatar>k__BackingField: {fileID: 5483355966251464891}
   <Frame>k__BackingField: {fileID: 5483355967184353601}

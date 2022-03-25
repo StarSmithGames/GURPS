@@ -5,6 +5,7 @@ using Game.Entities;
 using Game.Systems.InventorySystem;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 using Zenject;
 
@@ -33,8 +34,8 @@ public abstract class Entity : MonoBehaviour, IEntity, IObservable
 	public NavigationController Navigation { get; private set; }
 	public CharacterController3D Controller { get; private set; }
 
-	public Markers MarkerController { get; private set; }
-	public Outlinable Outline { get; private set; }
+	public Markers Markers { get; private set; }
+	public Outlinable Outlines { get; private set; }
 
 	public Transform CameraPivot { get; private set; }
 
@@ -47,19 +48,23 @@ public abstract class Entity : MonoBehaviour, IEntity, IObservable
 		NavigationController navigationController,
 		CharacterController3D controller,
 		Markers markerController,
-		Outlinable outline)
+		Outlinable outline,
+		[Inject(Id = "CameraPivot")] Transform cameraPivot)
 	{
 		this.signalBus = signalBus;
 
 		Navigation = navigationController;
 		Controller = controller;
-		MarkerController = markerController;
-		Outline = outline;
+		Markers = markerController;
+		Outlines = outline;
+		CameraPivot = cameraPivot;
+
+		Validate();
 	}
 
 	protected virtual void Start()
 	{
-		Outline.enabled = false;
+		Outlines.enabled = false;
 	}
 
 
@@ -78,13 +83,23 @@ public abstract class Entity : MonoBehaviour, IEntity, IObservable
 
 	public virtual void StartObserve()
 	{
-		Outline.enabled = true;
+		Outlines.enabled = true;
 	}
 
 	public virtual void Observe() { }
 
 	public virtual void EndObserve()
 	{
-		Outline.enabled = false;
+		Outlines.enabled = false;
+	}
+
+
+	private void Validate()
+	{
+		Assert.IsNotNull(Navigation,		$"Entity {gameObject.name} lost component.");
+		Assert.IsNotNull(Controller,		$"Entity {gameObject.name} lost component.");
+		Assert.IsNotNull(Markers,	$"Entity {gameObject.name} lost component.");
+		Assert.IsNotNull(Outlines,			$"Entity {gameObject.name} lost component.");
+		Assert.IsNotNull(CameraPivot,		$"Entity {gameObject.name} lost component.");
 	}
 }

@@ -5,6 +5,7 @@ using Game.Managers.GameManager;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 using UnityEngine;
@@ -19,6 +20,14 @@ namespace Game.Systems.BattleSystem
 		public Battle CurrentBattle { get; private set; }
 
 		private List<Battle> currentBattles = new List<Battle>();
+
+		public bool IsBattleProcess => battleCoroutine != null;
+		private Coroutine battleCoroutine = null;
+
+		private bool isSkipTurn = false;
+		private bool isBattleEnd = false;
+		private Character cachedCharacter;
+
 
 		private GameManager gameManager;
 		private UIManager uiManager;
@@ -39,6 +48,9 @@ namespace Game.Systems.BattleSystem
 		{
 			gameManager.ChangeState(GameState.PreBattle);
 
+			isSkipTurn = false;
+			isBattleEnd = false;
+
 			Battle battle = new Battle()
 			{
 				entities = entities,
@@ -46,19 +58,28 @@ namespace Game.Systems.BattleSystem
 
 			battle.CreateStartRounds();
 
-
 			CurrentBattle = battle;
 			currentBattles.Add(battle);
 
-			asyncManager.StartCoroutine(BattleProcess());
+			if (!IsBattleProcess)
+			{
+				battleCoroutine = asyncManager.StartCoroutine(BattleProcess());
+			}
 		}
 
 		public void StopBattle()
 		{
+			if (IsBattleProcess)
+			{
+				asyncManager.StopCoroutine(battleCoroutine);
+				battleCoroutine = null;
+			}
+
+			BattlePhaseCompletion();
+
 			gameManager.ChangeState(GameState.Gameplay);
 		}
 
-		private bool isSkipTurn = false;
 
 		private IEnumerator BattleProcess()
 		{
@@ -70,69 +91,16 @@ namespace Game.Systems.BattleSystem
 
 			while (true)
 			{
-				UpdateMarkers();
+				UpdateStates();
+				UpdateInitiatorTurn();
 
-				var initiator = CurrentBattle.CurrentTurn.initiator;
-
-				bool isMineTurn = false;
-
-				if (characterManager.Party.Characters.Contains(initiator))
-				{
-					cameraController.SetFollowTarget(initiator.Transform);
-					characterManager.Party.SetCharacter(initiator as Character);
-
-					uiManager.Battle.Messages.ShowTurnInforamtion("YOU TURN");
-
-					isMineTurn = true;
-				}
-				else
-				{
-					cameraController.SetFollowTarget(initiator.Transform);
-
-					uiManager.Battle.Messages.ShowTurnInforamtion("ENEMY TURN");
-				}
-
-				uiManager.Battle.SkipTurn.gameObject.SetActive(isMineTurn);
-				uiManager.Battle.RunAway.gameObject.SetActive(isMineTurn);
-
-				if (isMineTurn)
-				{
-					initiator.Freeze(false);
-
-					while (isMineTurn && !isSkipTurn)
-					{
-						yield return null;
-					}
-
-					isSkipTurn = false;
-				}
-				else
-				{
-					Debug.LogError("ENEMY SKIP!");
-					yield return new WaitForSeconds(3f);
-				}
-
-				if (!CurrentBattle.NextTurn())
-				{
-					if (!CurrentBattle.NextRound())
-					{
-						Debug.LogError("WIN!");
-						break;
-					}
-					else
-					{
-						uiManager.Battle.Messages.ShowNewRound();
-					}
-				}
-
-				Debug.LogError("NextTurn!");
-
-				yield return null;
+				yield return InitiatorTurn();
 			}
 
+			gameManager.ChangeState(GameState.EndBattle);
 			yield return new WaitForSeconds(3f);
 
-			BattlePhaseCompletion();
+			StopBattle();
 		}
 
 		private void SkipTurn()
@@ -140,24 +108,13 @@ namespace Game.Systems.BattleSystem
 			isSkipTurn = true;
 		}
 
-		private void RunAway()
-		{
-			BattlePhaseCompletion();
-		}
-
-
-		private Character cachedCharacter;
-
 		private void BattlePhaseInitialization()
 		{
 			uiManager.Battle.Messages.ShowCommenceBattle();
-			uiManager.Battle.SkipTurn.onClick = SkipTurn;
-			uiManager.Battle.RunAway.onClick = RunAway;
+			uiManager.Battle.SkipTurn.onClick.AddListener(SkipTurn);
+			uiManager.Battle.RunAway.onClick.AddListener(StopBattle);
 
-			CurrentBattle.entities.ForEach((x) =>
-			{
-				x.Freeze(true);
-			});
+			UpdateStates();
 
 			cachedCharacter = characterManager.Party.CurrentCharacter;
 
@@ -165,44 +122,115 @@ namespace Game.Systems.BattleSystem
 		}
 		private void BattlePhaseCompletion()
 		{
-			cameraController.SetFollowTarget(cachedCharacter.Transform);
-			characterManager.Party.SetCharacter(cachedCharacter);
+			LookAt(cachedCharacter);
 
 			uiManager.Battle.Messages.HideTurnInforamtion();
 			uiManager.Battle.SetBattle(null);
+			uiManager.Battle.SkipTurn.onClick.RemoveAllListeners();
+			uiManager.Battle.RunAway.onClick.RemoveAllListeners();
 
-			CurrentBattle.entities.ForEach((x) =>
-			{
-				x.Freeze(false);
-			});
+
+			UpdateStates();
 
 			currentBattles.Remove(CurrentBattle);
 			CurrentBattle = null;
-
-			StopBattle();
 		}
 
-		private void UpdateMarkers()
+		private void LookAt(IEntity entity)
 		{
+			if(entity is Character character)
+			{
+				if (!characterManager.Party.SetCharacter(character))
+				{
+					cameraController.CameraToHome();
+				}
+			}
+			else
+			{
+				cameraController.SetFollowTarget(entity.CameraPivot);
+			}
+		}
+
+		private void UpdateStates()
+		{
+			IEntity initiator = CurrentBattle.CurrentTurn.initiator;
+			bool isEndBattle = gameManager.CurrentGameState == GameState.EndBattle;
+
 			CurrentBattle.entities.ForEach((x) =>
 			{
+				x.Freeze(!isEndBattle);
+
 				if (characterManager.Party.Characters.Contains(x))
 				{
-					if(x == CurrentBattle.CurrentTurn.initiator)
+					if (x == initiator)
 					{
-						x.MarkerController.SetFollowMaterial(MaterialType.Leader);
+						x.Markers.SetFollowMaterial(MaterialType.Leader);
 					}
 					else
 					{
-						x.MarkerController.SetFollowMaterial(MaterialType.Companion);
+						x.Markers.SetFollowMaterial(MaterialType.Companion);
 					}
 				}
 				else
 				{
-					x.MarkerController.SetFollowMaterial(MaterialType.Enemy);
+					x.Markers.SetFollowMaterial(MaterialType.Enemy);
 				}
 
+				x.Navigation.BattlePassive();
 			});
+
+			if(gameManager.CurrentGameState == GameState.Battle)
+			{
+				initiator.Freeze(false);
+
+				initiator.Navigation.BattleActive();
+			}
+		}
+
+		private void UpdateInitiatorTurn()
+		{
+			IEntity initiator = CurrentBattle.CurrentTurn.initiator;
+			bool isMineTurn = characterManager.Party.Characters.Contains(initiator);
+
+			LookAt(initiator);
+
+			uiManager.Battle.Messages.ShowTurnInforamtion(isMineTurn ? "YOU TURN" : "ENEMY TURN");
+
+			uiManager.Battle.SkipTurn.gameObject.SetActive(isMineTurn);
+			uiManager.Battle.RunAway.gameObject.SetActive(isMineTurn);
+		}
+
+		private IEnumerator InitiatorTurn()
+		{
+			IEntity initiator = CurrentBattle.CurrentTurn.initiator;
+			bool isMineTurn = characterManager.Party.Characters.Contains(initiator);
+
+			if (isMineTurn)
+			{
+				while (isMineTurn && !isSkipTurn)
+				{
+					yield return null;
+				}
+
+				isSkipTurn = false;
+			}
+			else
+			{
+				Debug.LogError("ENEMY SKIP!");
+				yield return new WaitForSeconds(3f);
+			}
+
+			if (!CurrentBattle.NextTurn())
+			{
+				if (!CurrentBattle.NextRound())
+				{
+					Debug.LogError("WIN!");
+				}
+				else
+				{
+					uiManager.Battle.Messages.ShowNewRound();
+				}
+			}
 		}
 
 		public class Battle

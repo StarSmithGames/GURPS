@@ -9,7 +9,7 @@ public class UIAvatar : MonoBehaviour
 	public UnityAction<UIAvatar> onClicked;
 	public UnityAction<UIAvatar> onDoubleClicked;
 
-	public UIButtonPointerComponent background;
+	public UIButtonPointer background;
 	[Space]
 	public Image frameMain;
 	public Image frameSpare;

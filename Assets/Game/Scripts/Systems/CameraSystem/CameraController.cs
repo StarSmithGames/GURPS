@@ -70,7 +70,7 @@ public class CameraController : IInitializable, ITickable, IDisposable
 	{
 		if (inputManager.GetKeyDown(KeyAction.CameraCenter))
 		{
-			CameraHome();
+			CameraToHome();
 		}
 
 		if (inputManager.GetKeyDown(KeyAction.TacticalCamera))
@@ -149,7 +149,7 @@ public class CameraController : IInitializable, ITickable, IDisposable
 		brain.ActiveVirtualCamera.LookAt = target;
 	}
 
-	public void CameraHome()
+	public void CameraToHome()
 	{
 		transposerMain.FollowTarget.localPosition = cameraPivotPosition;
 		transposerMain.FollowTarget.rotation = Quaternion.Euler(0, cameraPivotYRotation, 0);

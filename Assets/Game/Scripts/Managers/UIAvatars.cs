@@ -45,11 +45,14 @@ public class UIAvatars : MonoBehaviour
 	private void OnAvatarClicked(UIAvatar avatar)
 	{
 		int index = avatars.IndexOf(avatar);
-		characterManager.Party.SetCharacter(index);
+		if (!characterManager.Party.SetCharacter(index))
+		{
+			cameraController.SetFollowTarget(characterManager.Party.Characters[index].CameraPivot);
+		}
 	}
 
 	private void OnAvatarDoubleClicked(UIAvatar avatar)
 	{
-		cameraController.CameraHome();
+		cameraController.CameraToHome();
 	}
 }

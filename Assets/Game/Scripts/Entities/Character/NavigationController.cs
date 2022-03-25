@@ -17,7 +17,7 @@ namespace Game.Entities
 
 		private SignalBus signalBus;
 		private NavMeshAgent navMeshAgent;
-		private Markers markerController;
+		private Markers markers;
 		private GameManager gameManager;
 		private CharacterController3D characterController;
 
@@ -25,13 +25,13 @@ namespace Game.Entities
         private void Construct(
 			SignalBus signalBus,
 			NavMeshAgent navMeshAgent,
-			Markers markerController,
+			Markers markers,
 			GameManager gameManager,
 			CharacterController3D characterController)
 		{
 			this.signalBus = signalBus;
 			this.navMeshAgent = navMeshAgent;
-			this.markerController = markerController;
+			this.markers = markers;
 			this.gameManager = gameManager;
 			this.characterController = characterController;
 
@@ -52,12 +52,12 @@ namespace Game.Entities
 
 		private void Update()
 		{
-			markerController.TargetMarker.transform.position = CurrentNavMeshDestination;
-			markerController.TargetMarker.DrawCircle();
+			markers.TargetMarker.transform.position = CurrentNavMeshDestination;
+			markers.TargetMarker.DrawCircle();
 
-			markerController.FollowMarker.DrawCircle();
+			markers.FollowMarker.DrawCircle();
 
-			markerController.LineMarker.DrawLine(navMeshAgent.path.corners);
+			markers.LineMarker.DrawLine(navMeshAgent.path.corners);
 		}
 
 		public bool IsReachedDestination()
@@ -68,7 +68,6 @@ namespace Game.Entities
 		{
 			return (navMeshAgent.remainingDistance >= navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
 		}
-
 
 		public bool SetTarget(Vector3 destination, float stoppingDistance = -1)
 		{
@@ -82,12 +81,23 @@ namespace Game.Entities
 			return false;
 		}
 
-
 		public bool IsPathValid(Vector3 destination)
 		{
 			NavMeshPath path = new NavMeshPath();
 			navMeshAgent.CalculatePath(destination, path);
 			return path.status == NavMeshPathStatus.PathComplete;
+		}
+
+		public void BattleActive()
+		{
+			markers.LineMarker.Enable(true);
+			markers.TargetMarker.Enable(true);
+		}
+
+		public void BattlePassive()
+		{
+			markers.LineMarker.Enable(false);
+			markers.TargetMarker.Enable(false);
 		}
 
 		private void OnTargetChanged()
@@ -96,16 +106,16 @@ namespace Game.Entities
 			{
 				if (characterController.IsHasTarget)
 				{
-					if (!markerController.TargetMarker.IsEnabled)
+					if (!markers.TargetMarker.IsEnabled)
 					{
-						markerController.TargetMarker.EnableIn();
+						markers.TargetMarker.EnableIn();
 					}
 				}
 				else
 				{
-					if (markerController.TargetMarker.IsEnabled)
+					if (markers.TargetMarker.IsEnabled)
 					{
-						markerController.TargetMarker.EnableOut();
+						markers.TargetMarker.EnableOut();
 					}
 				}
 			}
@@ -115,35 +125,35 @@ namespace Game.Entities
 		{
 			if(signal.newGameState == GameState.Gameplay)
 			{
-				markerController.FollowMarker.Enable(false);
+				markers.FollowMarker.Enable(false);
 
-				markerController.TargetMarker.transform.parent = null;
-				markerController.TargetMarker.Enable(false);
+				markers.TargetMarker.transform.parent = null;
+				markers.TargetMarker.Enable(false);
 
-				markerController.AreaMarker.Enable(false);
+				markers.AreaMarker.Enable(false);
 
-				markerController.LineMarker.Enable(false);
+				markers.LineMarker.Enable(false);
 			}
 			else if(signal.newGameState == GameState.PreBattle)
 			{
-				markerController.FollowMarker.Enable(false);
+				markers.FollowMarker.Enable(false);
 
-				markerController.TargetMarker.Enable(false);
+				markers.TargetMarker.Enable(false);
 
-				markerController.AreaMarker.Enable(false);
+				markers.AreaMarker.Enable(false);
 
-				markerController.LineMarker.Enable(false);
+				markers.LineMarker.Enable(false);
 			}
 			else if(signal.newGameState == GameState.Battle)
 			{
-				markerController.FollowMarker.Enable(true);
+				markers.FollowMarker.Enable(true);
 
-				markerController.TargetMarker.transform.parent = null;
-				markerController.TargetMarker.Enable(true);
+				markers.TargetMarker.transform.parent = null;
+				markers.TargetMarker.Enable(true);
 
-				markerController.AreaMarker.Enable(false);
+				markers.AreaMarker.Enable(false);
 
-				markerController.LineMarker.Enable(true);
+				markers.LineMarker.Enable(true);
 			}
 		}
 

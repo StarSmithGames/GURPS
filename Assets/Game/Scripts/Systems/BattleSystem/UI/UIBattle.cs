@@ -10,6 +10,7 @@ using UnityEngine;
 using Zenject;
 
 using static Game.Systems.BattleSystem.BattleSystem;
+using static UnityEditor.Rendering.FilterWindow;
 
 namespace Game.Systems.BattleSystem
 {
@@ -19,8 +20,8 @@ namespace Game.Systems.BattleSystem
 		[field: SerializeField] public UIEntityInformation EntityInformation { get; private set; }
 		[field: SerializeField] public UIMessages Messages { get; private set; }
 		[field: Space]
-		[field: SerializeField] public UIButton SkipTurn { get; private set; }
-		[field: SerializeField] public UIButton RunAway { get; private set; }
+		[field: SerializeField] public UIButtonPointer SkipTurn { get; private set; }
+		[field: SerializeField] public UIButtonPointer RunAway { get; private set; }
 
 
 		private Battle currentBattle;
@@ -28,12 +29,14 @@ namespace Game.Systems.BattleSystem
 
 		private UITurn.Factory turnFactory;
 		private GameObject turnSeparate;
+		private CameraController cameraController;
 
 		[Inject]
-		private void Construct(UITurn.Factory turnFactory, [Inject(Id = "TurnSeparate")] GameObject turnSeparate)
+		private void Construct(UITurn.Factory turnFactory, [Inject(Id = "TurnSeparate")] GameObject turnSeparate, CameraController cameraController)
 		{
 			this.turnFactory = turnFactory;
 			this.turnSeparate = turnSeparate;
+			this.cameraController = cameraController;
 
 			RoundQueue.content.DestroyChildren();
 
@@ -114,16 +117,7 @@ namespace Game.Systems.BattleSystem
 			int diff = size - turns.Count;
 			if (diff != 0)
 			{
-				UITurn CreateElement()
-				{
-					UITurn element = turnFactory.Create();
-
-					element.transform.SetParent(RoundQueue.content);
-
-					element.transform.localScale = Vector3.one;
-
-					return element;
-				}
+				
 
 				if (diff > 0)//need add
 				{
@@ -138,11 +132,37 @@ namespace Game.Systems.BattleSystem
 
 					for (int i = turns.Count - 1; i >= diff; i--)
 					{
-						turns[i].DespawnIt();
-						turns.RemoveAt(i);
+						RemoveElement(i);
 					}
 				}
+
+				UITurn CreateElement()
+				{
+					UITurn element = turnFactory.Create();
+
+					element.onDoubleCick += OnTurnClickChanged;
+
+					element.transform.SetParent(RoundQueue.content);
+
+					element.transform.localScale = Vector3.one;
+
+					return element;
+				}
+
+				void RemoveElement(int index)
+				{
+					turns[index].onDoubleCick -= OnTurnClickChanged;
+
+					turns[index].DespawnIt();
+					turns.RemoveAt(index);
+				}
 			}
+		}
+
+
+		private void OnTurnClickChanged(UITurn turn)
+		{
+			cameraController.SetFollowTarget(turn.CurrentEntity.CameraPivot);
 		}
 	}
 }

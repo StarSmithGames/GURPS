@@ -43,18 +43,22 @@ namespace Game.Managers.CharacterManager
 			Characters = characters;
 		}
 
-		public void SetCharacter(Character character)
+		public bool SetCharacter(Character character)
 		{
 			if (CurrentCharacter != character)
 			{
 				CurrentCharacter = character;
 				signalBus?.Fire(new SignalCharacterChanged() { character = CurrentCharacter });
+
+				return true;
 			}
+
+			return false;
 		}
 
-		public void SetCharacter(int index)
+		public bool SetCharacter(int index)
 		{
-			SetCharacter(Characters[index]);
+			return SetCharacter(Characters[index]);
 		}
 	}
 }

@@ -7,16 +7,18 @@ using UnityEngine;
 
 public interface IEntity
 {
+	Transform Transform { get; }
+
+	Transform CameraPivot { get; }
+
 	EntityData EntityData { get; }
 	IInventory Inventory { get; }
-
-	Transform Transform { get; }
 
 	NavigationController Navigation { get; }
 	CharacterController3D Controller { get; }
 
-	Markers MarkerController { get; }
-	Outlinable Outline { get; }
+	Markers Markers { get; }
+	Outlinable Outlines { get; }
 
 	void Freeze(bool trigger);
 }

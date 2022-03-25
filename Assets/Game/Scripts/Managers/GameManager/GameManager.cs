@@ -51,6 +51,7 @@ namespace Game.Managers.GameManager
         Gameplay,
         PreBattle,
         Battle,
+        EndBattle,
         GameOver,
     }
 }

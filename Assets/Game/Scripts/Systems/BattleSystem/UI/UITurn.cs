@@ -8,9 +8,9 @@ namespace Game.Systems.BattleSystem
 {
     public class UITurn : PoolableObject
     {
-        public UnityAction onClicked;
+        public UnityAction<UITurn> onDoubleCick;
 
-        [field: SerializeField] public Button BackgroundButton { get; private set; }
+        [field: SerializeField] public UIButtonPointer BackgroundButton { get; private set; }
         [field: SerializeField] public Image Back { get; private set; }
         [field: SerializeField] public Image Avatar { get; private set; }
         [field: SerializeField] public Image Frame { get; private set; }
@@ -20,18 +20,22 @@ namespace Game.Systems.BattleSystem
         [SerializeField] private Vector2 defaultSize = new Vector2(80, 80);
         [SerializeField] private Vector2 selectedSize = new Vector2(100, 100);
 
-        public IEntity CurrentEntity { get; private set; }
-
         [Inject]
         private void Construct()
 		{
-            BackgroundButton.onClick.AddListener(OnClick);
-		}
+            BackgroundButton.onClickChanged += OnClickChanged;
+
+        }
 
 		private void OnDestroy()
 		{
-            BackgroundButton?.onClick.RemoveAllListeners();
-        }
+			if(BackgroundButton != null)
+			{
+                BackgroundButton.onClickChanged -= OnClickChanged;
+            }
+		}
+
+		public IEntity CurrentEntity { get; private set; }
 
         public void SetEntity(IEntity entity)
 		{
@@ -55,15 +59,17 @@ namespace Game.Systems.BattleSystem
         }
 
 
-
         private void UpdateUI()
 		{
             Avatar.sprite = CurrentEntity.EntityData.characterSprite;
         }
 
-        private void OnClick()
+        private void OnClickChanged(int count)
 		{
-            onClicked?.Invoke();
+            if(count == 2)
+			{
+                onDoubleCick?.Invoke(this);
+            }
         }
 
         public class Factory : PlaceholderFactory<UITurn> { }
