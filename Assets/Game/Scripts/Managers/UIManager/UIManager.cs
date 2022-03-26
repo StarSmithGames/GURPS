@@ -32,21 +32,17 @@ public class UIManager : MonoBehaviour
 	{
 		this.signalBus = signalBus;
 		this.characterManager = characterManager;
-
 		WindowsManager = windowsManager;
-
-
-		signalBus?.Subscribe<SignalCharacterChanged>(OnCharacterChanged);
 	}
 
 	private void OnDestroy()
 	{
-		signalBus?.Unsubscribe<SignalCharacterChanged>(OnCharacterChanged);
+		signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
 
-	private void Awake()
+	private void Start()
 	{
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < characterManager.CurrentParty.Characters.Count; i++)
 		{
 			var space = Instantiate(originalVirtualSpace, originalVirtualSpace.transform.parent);
 			virtualSpaces.Add(space);
@@ -54,6 +50,8 @@ public class UIManager : MonoBehaviour
 		}
 
 		originalVirtualSpace.gameObject.SetActive(false);
+
+		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
 
 	private void SetVirtualSpace(int index)
@@ -64,12 +62,11 @@ public class UIManager : MonoBehaviour
 		CurrentVirtualSpace = virtualSpaces[index];
 	}
 
-	private void OnCharacterChanged(SignalCharacterChanged signal)
+	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 	{
-		int index = characterManager.Party.CurrentCharacterIndex;
+		int index = characterManager.CurrentParty.LeaderPartyIndex;
 
 		SetVirtualSpace(index);
-		Avatars.SetAvatarFrame(index);
-		CharacterStatus.SetCharacter(signal.character);
+		CharacterStatus.SetCharacter(signal.leader);
 	}
 }

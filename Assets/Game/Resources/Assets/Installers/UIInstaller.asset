@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efe3d0d1a81646d479ef4163a4de58f1, type: 3}
   m_Name: UIInstaller
   m_EditorClassIdentifier: 
+  avatarPrefab: {fileID: 8307824656283175849, guid: 4bbf109ff6e81c040ae28201167a72c2, type: 3}
   itemCursorPrefab: {fileID: 4875044641302866099, guid: 37cc0004ebb681a44b6b3c29e81b96d3, type: 3}
   chestPopupWindowPrefab: {fileID: 8388637833920730225, guid: de440f16446d4734b9acc39af6942dfb, type: 3}
   turnPrefab: {fileID: 5483355968189638841, guid: e7b6dd26e311b8e4cbe5edf7a9488794, type: 3}

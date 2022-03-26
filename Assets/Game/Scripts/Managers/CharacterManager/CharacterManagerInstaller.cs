@@ -6,7 +6,7 @@ namespace Game.Managers.CharacterManager
 	{
 		public override void InstallBindings()
 		{
-			Container.DeclareSignal<SignalCharacterChanged>();
+			Container.DeclareSignal<SignalLeaderPartyChanged>();
 
 			Container.BindInterfacesAndSelfTo<CharacterManager>().AsSingle();
 		}

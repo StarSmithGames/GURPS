@@ -34,20 +34,6 @@ namespace Game.Entities
 			this.markers = markers;
 			this.gameManager = gameManager;
 			this.characterController = characterController;
-
-			characterController.onTargetChanged += OnTargetChanged;
-
-			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
-		}
-
-		private void OnDestroy()
-		{
-			if(characterController != null)
-			{
-				characterController.onTargetChanged -= OnTargetChanged;
-			}
-
-			signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
 		}
 
 		private void Update()
@@ -88,74 +74,6 @@ namespace Game.Entities
 			return path.status == NavMeshPathStatus.PathComplete;
 		}
 
-		public void BattleActive()
-		{
-			markers.LineMarker.Enable(true);
-			markers.TargetMarker.Enable(true);
-		}
-
-		public void BattlePassive()
-		{
-			markers.LineMarker.Enable(false);
-			markers.TargetMarker.Enable(false);
-		}
-
-		private void OnTargetChanged()
-		{
-			if (gameManager.CurrentGameState == GameState.Gameplay)
-			{
-				if (characterController.IsHasTarget)
-				{
-					if (!markers.TargetMarker.IsEnabled)
-					{
-						markers.TargetMarker.EnableIn();
-					}
-				}
-				else
-				{
-					if (markers.TargetMarker.IsEnabled)
-					{
-						markers.TargetMarker.EnableOut();
-					}
-				}
-			}
-		}
-
-		private void OnGameStateChanged(SignalGameStateChanged signal)
-		{
-			if(signal.newGameState == GameState.Gameplay)
-			{
-				markers.FollowMarker.Enable(false);
-
-				markers.TargetMarker.transform.parent = null;
-				markers.TargetMarker.Enable(false);
-
-				markers.AreaMarker.Enable(false);
-
-				markers.LineMarker.Enable(false);
-			}
-			else if(signal.newGameState == GameState.PreBattle)
-			{
-				markers.FollowMarker.Enable(false);
-
-				markers.TargetMarker.Enable(false);
-
-				markers.AreaMarker.Enable(false);
-
-				markers.LineMarker.Enable(false);
-			}
-			else if(signal.newGameState == GameState.Battle)
-			{
-				markers.FollowMarker.Enable(true);
-
-				markers.TargetMarker.transform.parent = null;
-				markers.TargetMarker.Enable(true);
-
-				markers.AreaMarker.Enable(false);
-
-				markers.LineMarker.Enable(true);
-			}
-		}
 
 		private void Validate()
 		{

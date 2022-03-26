@@ -57,12 +57,12 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 	{
 		IsCanHoldMouse = settings.isCanHoldMouse;
 
-		signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
+		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
 
 	public void Dispose()
 	{
-		signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
+		signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
 
 	public void Tick()
@@ -71,7 +71,7 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 		Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
 		bool isHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject();
 
-		var character = characterManager.Party.CurrentCharacter;
+		var leaderCharacter = characterManager.CurrentParty.LeaderParty;
 
 		//Looking
 		CurrentEntity = isHit ? hit.transform.root.GetComponent<IObservable>() : null;
@@ -84,7 +84,7 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 			{
 				if (inputManager.IsLeftMouseButtonDown())
 				{
-					character.InteractWith(CurrentEntity);
+					leaderCharacter.InteractWith(CurrentEntity);
 				}
 			}
 			else
@@ -94,8 +94,8 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 				{
 					if (isHit)
 					{
-						character.Navigation.SetTarget(hit.point);
-						character.Controller.SetDestination(hit.point);
+						leaderCharacter.Navigation.SetTarget(hit.point);
+						leaderCharacter.Controller.SetDestination(hit.point);
 					}
 				}
 			}
@@ -104,26 +104,19 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 
 		if (isHit)
 		{
-			if (gameManager.CurrentGameState == GameState.Battle)
+			if (leaderCharacter.InBattle)
 			{
-				if (!character.Controller.IsHasTarget)
+				if (!leaderCharacter.Controller.IsHasTarget)
 				{
-					character.Navigation.SetTarget(hit.point);
+					leaderCharacter.Navigation.SetTarget(hit.point);
 				}
 			}
 		}
 	}
 
-	private void OnGameStateChanged(SignalGameStateChanged signal)
+	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 	{
-		if(signal.newGameState == GameState.Gameplay)
-		{
-			IsCanHoldMouse = settings.isCanHoldMouse;
-		}
-		else if(signal.newGameState == GameState.Battle)
-		{
-			IsCanHoldMouse = false;
-		}
+		IsCanHoldMouse = signal.leader.InBattle ? false : settings.isCanHoldMouse;
 	}
 	
 

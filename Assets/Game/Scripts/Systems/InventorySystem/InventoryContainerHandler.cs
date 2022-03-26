@@ -76,7 +76,7 @@ namespace Game.Systems.InventorySystem
 		public void CharacterTakeAllFrom(IInventory inventory)
 		{
 			from = inventory;
-			to = characterManager.Party.CurrentCharacter.Inventory;
+			to = characterManager.CurrentParty.LeaderParty.Inventory;
 
 			for (int i = 0; i < from.Items.Count; i++)
 			{
@@ -102,7 +102,7 @@ namespace Game.Systems.InventorySystem
 			if (slot.IsEmpty) return;
 			item = slot.CurrentItem;
 			from = slot.Owner.CurrentInventory;
-			to = characterManager.Party.CurrentCharacter.Inventory;
+			to = characterManager.CurrentParty.LeaderParty.Inventory;
 			if (from == to) return;
 
 			to.Add(item);
@@ -115,7 +115,7 @@ namespace Game.Systems.InventorySystem
 
 			IsDraging = true;
 
-			characterManager.Party.CurrentCharacter.Freeze(true);
+			characterManager.CurrentParty.LeaderParty.Freeze(true);
 
 			item = slot.CurrentItem;
 			from = slot.Owner.CurrentInventory;
@@ -134,7 +134,7 @@ namespace Game.Systems.InventorySystem
 		{
 			Dispose();
 
-			characterManager.Party.CurrentCharacter.Freeze(false);
+			characterManager.CurrentParty.LeaderParty.Freeze(false);
 
 			IsDraging = false;
 		}
@@ -148,7 +148,7 @@ namespace Game.Systems.InventorySystem
 				from.Remove(item);
 			}
 
-			characterManager.Party.CurrentCharacter.Freeze(false);
+			characterManager.CurrentParty.LeaderParty.Freeze(false);
 
 			Dispose();
 		}

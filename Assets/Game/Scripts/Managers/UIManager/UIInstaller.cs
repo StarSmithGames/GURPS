@@ -7,6 +7,9 @@ using Zenject;
 [CreateAssetMenu(fileName = "UIInstaller", menuName = "Installers/UIInstaller")]
 public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 {
+	[Header("General")]
+	[SerializeField] private UIAvatar avatarPrefab;
+	[Header("Inventory-Container")]
 	[SerializeField] private UIItemCursor itemCursorPrefab;
 	[SerializeField] private UIContainerWindow chestPopupWindowPrefab;
 	[Header("Battle")]
@@ -19,6 +22,17 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 
 		Container.Bind<UIWindowsManager>().WhenInjectedInto<UIManager>();
 
+		Container.BindFactory<UIAvatar, UIAvatar.Factory>()
+			.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
+			.FromComponentInNewPrefab(avatarPrefab));
+
+		BindInventoryContainer();
+
+		BindBattleSystem();
+	}
+
+	private void BindInventoryContainer()
+	{
 		Container.BindFactory<UIContainerWindow, UIContainerWindow.Factory>()
 			.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
 			.FromComponentInNewPrefab(chestPopupWindowPrefab));
@@ -26,14 +40,12 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 		Container.BindInstance(Container.InstantiatePrefabForComponent<UIItemCursor>(itemCursorPrefab));
 
 		Container.BindInterfacesAndSelfTo<InventoryContainerHandler>().AsSingle();
-
-		BindBattleSystem();
 	}
 
 	private void BindBattleSystem() 
 	{
 		Container.BindFactory<UITurn, UITurn.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(6)
 				.FromComponentInNewPrefab(turnPrefab));
 
 		Container.BindInstance(Container.InstantiatePrefab(turnSeparatePrefab)).WithId("TurnSeparate");

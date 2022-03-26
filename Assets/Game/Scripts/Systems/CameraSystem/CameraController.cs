@@ -58,12 +58,12 @@ public class CameraController : IInitializable, ITickable, IDisposable
 
 		SetZoom(zoomStandart);
 
-		signalBus?.Subscribe<SignalCharacterChanged>(OnCharacterChanged);
+		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
 
 	public void Dispose()
 	{
-		signalBus?.Unsubscribe<SignalCharacterChanged>(OnCharacterChanged);
+		signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
 
 	public void Tick()
@@ -147,6 +147,8 @@ public class CameraController : IInitializable, ITickable, IDisposable
 	{
 		brain.ActiveVirtualCamera.Follow = target;
 		brain.ActiveVirtualCamera.LookAt = target;
+
+		CameraToHome();
 	}
 
 	public void CameraToHome()
@@ -170,8 +172,8 @@ public class CameraController : IInitializable, ITickable, IDisposable
 		transposerSpare = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
 	}
 
-	private void OnCharacterChanged(SignalCharacterChanged signal)
+	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 	{
-		SetFollowTarget(signal.character.CameraPivot);
+		SetFollowTarget(signal.leader.CameraPivot);
 	}
 }

@@ -65,6 +65,8 @@ public abstract class Entity : MonoBehaviour, IEntity, IObservable
 	protected virtual void Start()
 	{
 		Outlines.enabled = false;
+
+		ResetMarkers();
 	}
 
 
@@ -93,12 +95,24 @@ public abstract class Entity : MonoBehaviour, IEntity, IObservable
 		Outlines.enabled = false;
 	}
 
+	protected virtual void ResetMarkers()
+	{
+		Markers.FollowMarker.Enable(false);
+
+		Markers.TargetMarker.transform.parent = null;
+		Markers.TargetMarker.Enable(false);
+
+		Markers.AreaMarker.Enable(false);
+
+		Markers.LineMarker.Enable(false);
+	}
+
 
 	private void Validate()
 	{
 		Assert.IsNotNull(Navigation,		$"Entity {gameObject.name} lost component.");
 		Assert.IsNotNull(Controller,		$"Entity {gameObject.name} lost component.");
-		Assert.IsNotNull(Markers,	$"Entity {gameObject.name} lost component.");
+		Assert.IsNotNull(Markers,			$"Entity {gameObject.name} lost component.");
 		Assert.IsNotNull(Outlines,			$"Entity {gameObject.name} lost component.");
 		Assert.IsNotNull(CameraPivot,		$"Entity {gameObject.name} lost component.");
 	}

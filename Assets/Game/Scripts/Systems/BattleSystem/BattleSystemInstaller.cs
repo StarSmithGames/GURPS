@@ -6,6 +6,9 @@ namespace Game.Systems.BattleSystem
 	{
 		public override void InstallBindings()
 		{
+			Container.DeclareSignal<SignalCurrentBattleChanged>();
+
+			Container.BindInterfacesAndSelfTo<BattleManager>().AsSingle();
 			Container.BindInterfacesAndSelfTo<BattleSystem>().AsSingle();
 		}
 	}

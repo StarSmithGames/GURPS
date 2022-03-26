@@ -11,16 +11,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
+using Zenject;
+
 using static Game.Systems.BattleSystem.BattleSystem;
 
 namespace Game.Systems.BattleSystem
 {
 	public class BattleSystem
 	{
-		public Battle CurrentBattle { get; private set; }
-
-		private List<Battle> currentBattles = new List<Battle>();
-
 		public bool IsBattleProcess => battleCoroutine != null;
 		private Coroutine battleCoroutine = null;
 
@@ -28,38 +26,48 @@ namespace Game.Systems.BattleSystem
 		private bool isBattleEnd = false;
 		private Character cachedCharacter;
 
-
-		private GameManager gameManager;
+		private SignalBus signalBus;
+		private BattleManager battleManager;
 		private UIManager uiManager;
 		private AsyncManager asyncManager;
 		private CharacterManager characterManager;
 		private CameraController cameraController;
 
-		public BattleSystem(GameManager gameManager, UIManager uiManager, AsyncManager asyncManager, CharacterManager characterManager, CameraController cameraController)
+		public BattleSystem(
+			SignalBus signalBus,
+			BattleManager battleManager,
+			UIManager uiManager,
+			AsyncManager asyncManager,
+			CharacterManager characterManager,
+			CameraController cameraController)
 		{
-			this.gameManager = gameManager;
+			this.signalBus = signalBus;
+			this.battleManager = battleManager;
 			this.uiManager = uiManager;
 			this.asyncManager = asyncManager;
 			this.characterManager = characterManager;
 			this.cameraController = cameraController;
 		}
 
-		public void StartBattle(List<IEntity> entities)
-		{
-			gameManager.ChangeState(GameState.PreBattle);
+		private Battle localBattleTest;
 
+		public void StartBattle(List<IBattlable> entities)
+		{
 			isSkipTurn = false;
 			isBattleEnd = false;
 
-			Battle battle = new Battle()
-			{
-				entities = entities,
-			};
+			cachedCharacter = characterManager.CurrentParty.LeaderParty;
 
-			battle.CreateStartRounds();
+			uiManager.Battle.Messages.ShowCommenceBattle();
+			uiManager.Battle.SkipTurn.ButtonPointer.onClick.AddListener(SkipTurn);
+			uiManager.Battle.RunAway.ButtonPointer.onClick.AddListener(StopBattle);
 
-			CurrentBattle = battle;
-			currentBattles.Add(battle);
+			localBattleTest = new Battle(entities);
+			localBattleTest.onNextRound += uiManager.Battle.Messages.ShowNewRound;
+			battleManager.AddBattle(localBattleTest);
+			localBattleTest.Initialization();
+
+			UpdateStates();
 
 			if (!IsBattleProcess)
 			{
@@ -75,19 +83,23 @@ namespace Game.Systems.BattleSystem
 				battleCoroutine = null;
 			}
 
-			BattlePhaseCompletion();
+			localBattleTest.Dispose();
+			battleManager.RemoveBattle(localBattleTest);
 
-			gameManager.ChangeState(GameState.Gameplay);
+			LookAt(cachedCharacter);
+
+			uiManager.Battle.Messages.HideTurnInforamtion();
+			uiManager.Battle.SkipTurn.ButtonPointer.onClick.RemoveAllListeners();
+			uiManager.Battle.RunAway.ButtonPointer.onClick.RemoveAllListeners();
+
+			UpdateStates();
 		}
-
 
 		private IEnumerator BattleProcess()
 		{
-			BattlePhaseInitialization();
-
 			yield return new WaitForSeconds(3f);
 
-			gameManager.ChangeState(GameState.Battle);
+			localBattleTest.SetState(BattleState.Battle);
 
 			while (true)
 			{
@@ -97,70 +109,27 @@ namespace Game.Systems.BattleSystem
 				yield return InitiatorTurn();
 			}
 
-			gameManager.ChangeState(GameState.EndBattle);
 			yield return new WaitForSeconds(3f);
 
 			StopBattle();
 		}
+
 
 		private void SkipTurn()
 		{
 			isSkipTurn = true;
 		}
 
-		private void BattlePhaseInitialization()
-		{
-			uiManager.Battle.Messages.ShowCommenceBattle();
-			uiManager.Battle.SkipTurn.onClick.AddListener(SkipTurn);
-			uiManager.Battle.RunAway.onClick.AddListener(StopBattle);
-
-			UpdateStates();
-
-			cachedCharacter = characterManager.Party.CurrentCharacter;
-
-			uiManager.Battle.SetBattle(CurrentBattle);
-		}
-		private void BattlePhaseCompletion()
-		{
-			LookAt(cachedCharacter);
-
-			uiManager.Battle.Messages.HideTurnInforamtion();
-			uiManager.Battle.SetBattle(null);
-			uiManager.Battle.SkipTurn.onClick.RemoveAllListeners();
-			uiManager.Battle.RunAway.onClick.RemoveAllListeners();
-
-
-			UpdateStates();
-
-			currentBattles.Remove(CurrentBattle);
-			CurrentBattle = null;
-		}
-
-		private void LookAt(IEntity entity)
-		{
-			if(entity is Character character)
-			{
-				if (!characterManager.Party.SetCharacter(character))
-				{
-					cameraController.CameraToHome();
-				}
-			}
-			else
-			{
-				cameraController.SetFollowTarget(entity.CameraPivot);
-			}
-		}
-
 		private void UpdateStates()
 		{
-			IEntity initiator = CurrentBattle.CurrentTurn.initiator;
-			bool isEndBattle = gameManager.CurrentGameState == GameState.EndBattle;
+			IEntity initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
+			bool isEndBattle = localBattleTest.CurrentState == BattleState.EndBattle;
 
-			CurrentBattle.entities.ForEach((x) =>
+			localBattleTest.Entities.ForEach((x) =>
 			{
 				x.Freeze(!isEndBattle);
 
-				if (characterManager.Party.Characters.Contains(x))
+				if (characterManager.CurrentParty.Characters.Contains(x))
 				{
 					if (x == initiator)
 					{
@@ -175,35 +144,31 @@ namespace Game.Systems.BattleSystem
 				{
 					x.Markers.SetFollowMaterial(MaterialType.Enemy);
 				}
-
-				x.Navigation.BattlePassive();
 			});
 
-			if(gameManager.CurrentGameState == GameState.Battle)
+			if(localBattleTest.CurrentState == BattleState.Battle)
 			{
 				initiator.Freeze(false);
-
-				initiator.Navigation.BattleActive();
 			}
 		}
 
 		private void UpdateInitiatorTurn()
 		{
-			IEntity initiator = CurrentBattle.CurrentTurn.initiator;
-			bool isMineTurn = characterManager.Party.Characters.Contains(initiator);
+			IEntity initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
+			bool isMineTurn = characterManager.CurrentParty.Characters.Contains(initiator);
 
 			LookAt(initiator);
 
 			uiManager.Battle.Messages.ShowTurnInforamtion(isMineTurn ? "YOU TURN" : "ENEMY TURN");
 
-			uiManager.Battle.SkipTurn.gameObject.SetActive(isMineTurn);
-			uiManager.Battle.RunAway.gameObject.SetActive(isMineTurn);
+			uiManager.Battle.SkipTurn.Enable(isMineTurn);
+			uiManager.Battle.RunAway.Enable(isMineTurn);
 		}
 
 		private IEnumerator InitiatorTurn()
 		{
-			IEntity initiator = CurrentBattle.CurrentTurn.initiator;
-			bool isMineTurn = characterManager.Party.Characters.Contains(initiator);
+			IEntity initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
+			bool isMineTurn = characterManager.CurrentParty.Characters.Contains(initiator);
 
 			if (isMineTurn)
 			{
@@ -220,117 +185,188 @@ namespace Game.Systems.BattleSystem
 				yield return new WaitForSeconds(3f);
 			}
 
-			if (!CurrentBattle.NextTurn())
+			localBattleTest.NextTurn();
+		}
+
+
+		private void LookAt(IEntity entity)
+		{
+			if (entity is Character character)
 			{
-				if (!CurrentBattle.NextRound())
+				if (!characterManager.CurrentParty.SetLeader(character))
 				{
-					Debug.LogError("WIN!");
+					cameraController.CameraToHome();
+				}
+			}
+			else
+			{
+				cameraController.SetFollowTarget(entity.CameraPivot);
+			}
+		}
+	}
+
+	public class Battle
+	{
+		public UnityAction onBattleUpdated;
+
+		public UnityAction onBattleStateChanged;
+
+		public UnityAction onNextVictory;
+		public UnityAction onNextRound;
+		public UnityAction onNextTurn;
+
+		public BattleState CurrentState { get; private set; }
+		public BattleFSM BattleFSM { get; private set; }
+		public List<IBattlable> Entities { get; private set; }
+
+		public Battle(List<IBattlable> entities)
+		{
+			BattleFSM = new BattleFSM();
+			Entities = entities;
+		}
+
+		public void Initialization()
+		{
+			Entities.ForEach((x) =>
+			{
+				x.JoinBattle(this);
+			});
+
+			List<Turn> turns = new List<Turn>();
+			Entities.ForEach((x) => turns.Add(new Turn(x)));
+			Round round = new Round(turns);
+			BattleFSM.Rounds.Add(round);
+			BattleFSM.Rounds.Add(round.Copy());
+
+			SetState(BattleState.PreBattle);
+		}
+
+		public void Dispose()
+		{
+			SetState(BattleState.EndBattle);
+
+			Entities.ForEach((x) =>
+			{
+				x.LeaveBattle();
+			});
+		}
+
+
+		public void NextTurn()
+		{
+			if (!BattleFSM.NextTurn())
+			{
+				if (!BattleFSM.NextRound())
+				{
+					onNextVictory?.Invoke();
+					onBattleUpdated?.Invoke();
 				}
 				else
 				{
-					uiManager.Battle.Messages.ShowNewRound();
-				}
-			}
-		}
-
-		public class Battle
-		{
-			public UnityAction onBattleUpdated;
-
-			public bool isShuffleAllRounds = true;
-
-			public Round CurrentRound => rounds.First();
-			public Turn CurrentTurn => CurrentRound.turns[0];//max 17 in one round + 1separator = 18
-
-			public List<Round> rounds = new List<Round>();
-			public List<IEntity> entities = new List<IEntity>();
-
-			public int TurnCount
-			{
-				get
-				{
-					int result = 0;
-					rounds.ForEach((x) =>
-					{
-						result += x.turns.Count;
-					});
-
-					return result;
-				}
-			}
-
-			public void CreateStartRounds()
-			{
-				Round round = new Round();
-
-				entities.ForEach((x) =>
-				{
-					round.turns.Add(new Turn()
-					{
-						initiator = x,
-					});
-				});
-
-				rounds.Add(round);
-				round.Shuffle();
-				rounds.Add(isShuffleAllRounds ? round.Copy().Shuffle() : round.Copy());
-			}
-		
-
-			public bool NextRound()
-			{
-				if(rounds.Count > 1)
-				{
-					rounds.RemoveAt(0);
-
-					rounds.Add(isShuffleAllRounds ? rounds.First().Copy().Shuffle() : rounds.First().Copy());
-
+					onNextRound?.Invoke();
 					onBattleUpdated?.Invoke();
-
-					return true;
 				}
-
-				return false;
 			}
-
-			public bool NextTurn()
+			else
 			{
-				if(CurrentRound.turns.Count > 1)
-				{
-					CurrentRound.turns.RemoveAt(0);
-
-					onBattleUpdated?.Invoke();
-
-					return true;
-				}
-
-				return false;
+				onNextTurn?.Invoke();
+				onBattleUpdated?.Invoke();
 			}
 		}
-		public class Round : ICopyable<Round>
+
+		public Battle SetState(BattleState state)
 		{
-			public List<Turn> turns = new List<Turn>();
+			CurrentState = state;
 
-			public Round Shuffle()
-			{
-				turns = turns.OrderBy((x) => Guid.NewGuid()).ToList();//initiative
-
-				return this;
-			}
-
-			public Round Copy()
-			{
-				Round round = new Round()
-				{
-					turns = new List<Turn>(turns),
-				};
-
-				return round;
-			}
+			onBattleStateChanged?.Invoke();
+			onBattleUpdated?.Invoke();
+			return this;
 		}
-		public class Turn
+	}
+
+	public class BattleFSM
+	{
+		public bool isShuffleAllRounds = false;
+
+		public List<Round> Rounds { get; private set; }
+
+		public Round CurrentRound => Rounds.First();
+		public Turn CurrentTurn => CurrentRound.Turns[0];//max 17 in one round + 1 separator = 18
+
+		public BattleFSM()
 		{
-			public IEntity initiator;
+			Rounds = new List<Round>();
 		}
+
+		public bool NextRound()
+		{
+			if (Rounds.Count > 1)
+			{
+				Rounds.RemoveAt(0);
+
+				Rounds.Add(isShuffleAllRounds ? Rounds.First().Copy().Shuffle() : Rounds.First().Copy());
+
+				return true;
+			}
+
+			return false;
+		}
+
+		public bool NextTurn()
+		{
+			if (CurrentRound.Turns.Count > 1)
+			{
+				CurrentRound.Turns.RemoveAt(0);
+
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	public class Round : ICopyable<Round>
+	{
+		public List<Turn> Turns { get; private set; }
+
+		public Round(List<Turn> turns)
+		{
+			Turns = turns;
+		}
+
+		public Round Shuffle()
+		{
+			Turns = Turns.OrderBy((x) => Guid.NewGuid()).ToList();//initiative
+
+			return this;
+		}
+
+		public Round Copy()
+		{
+			return new Round(new List<Turn>(Turns));
+		}
+	}
+	
+	public class Turn : ICopyable<Turn>
+	{
+		public IEntity Initiator { get; private set; }
+
+		public Turn(IEntity entity)
+		{
+			Initiator = entity;
+		}
+
+		public Turn Copy()
+		{
+			return new Turn(Initiator);
+		}
+	}
+
+
+	public enum BattleState
+	{
+		PreBattle,
+		Battle,
+		EndBattle,
 	}
 }

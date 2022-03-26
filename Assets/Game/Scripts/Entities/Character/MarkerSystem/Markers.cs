@@ -21,6 +21,8 @@ namespace Game.Entities
 		private void Awake()
 		{
 			Assert.AreEqual(materials.Count, Enum.GetValues(typeof(MaterialType)).Length, "Materials count are not equal enum");
+
+			TargetMarker.transform.parent = null;
 		}
 
 		public void SetFollowMaterial(MaterialType type)

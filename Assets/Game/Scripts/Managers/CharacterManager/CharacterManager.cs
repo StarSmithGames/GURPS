@@ -10,7 +10,7 @@ namespace Game.Managers.CharacterManager
 {
 	public class CharacterManager : IInitializable, IDisposable
 	{
-		public CharacterParty Party { get; private set; }
+		public CharacterParty CurrentParty { get; private set; }
 
 		private SignalBus signalBus;
 
@@ -21,8 +21,8 @@ namespace Game.Managers.CharacterManager
 
 		public void Initialize()
 		{
-			Party = new CharacterParty(signalBus, GameObject.FindObjectsOfType<Character>().ToList());//stub
-			Party.SetCharacter(0);
+			CurrentParty = new CharacterParty(signalBus, GameObject.FindObjectsOfType<Character>().ToList());//stub
+			CurrentParty.SetLeader(0);
 		}
 
 		public void Dispose() { }
@@ -30,8 +30,8 @@ namespace Game.Managers.CharacterManager
 
 	public class CharacterParty
 	{
-		public Character CurrentCharacter { get; private set; }
-		public int CurrentCharacterIndex => Characters.IndexOf(CurrentCharacter);
+		public Character LeaderParty { get; private set; }
+		public int LeaderPartyIndex => Characters.IndexOf(LeaderParty);
 
 		public List<Character> Characters { get; private set; }
 
@@ -43,12 +43,12 @@ namespace Game.Managers.CharacterManager
 			Characters = characters;
 		}
 
-		public bool SetCharacter(Character character)
+		public bool SetLeader(Character character)
 		{
-			if (CurrentCharacter != character)
+			if (LeaderParty != character)
 			{
-				CurrentCharacter = character;
-				signalBus?.Fire(new SignalCharacterChanged() { character = CurrentCharacter });
+				LeaderParty = character;
+				signalBus?.Fire(new SignalLeaderPartyChanged() { leader = LeaderParty });
 
 				return true;
 			}
@@ -56,9 +56,9 @@ namespace Game.Managers.CharacterManager
 			return false;
 		}
 
-		public bool SetCharacter(int index)
+		public bool SetLeader(int index)
 		{
-			return SetCharacter(Characters[index]);
+			return SetLeader(Characters[index]);
 		}
 	}
 }

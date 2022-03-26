@@ -49,9 +49,8 @@ namespace Game.Managers.GameManager
         LevelLoading,
         PreGameplay,
         Gameplay,
-        PreBattle,
-        Battle,
-        EndBattle,
         GameOver,
     }
+
+
 }

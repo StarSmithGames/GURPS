@@ -2,8 +2,8 @@ using Game.Entities;
 
 namespace Game.Managers.CharacterManager
 {
-	public struct SignalCharacterChanged
+	public struct SignalLeaderPartyChanged
 	{
-		public Character character;
+		public Character leader;
 	}
 }
