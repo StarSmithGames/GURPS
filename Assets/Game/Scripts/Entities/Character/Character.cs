@@ -1,5 +1,6 @@
 using Game.Managers.GameManager;
 using Game.Systems.BattleSystem;
+using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 using UnityEngine;
 using UnityEngine.Events;

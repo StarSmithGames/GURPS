@@ -276,7 +276,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 90ef21589078a9d4aaa982eb1258d332, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c9b00ab864b403f45afb81839c9a68d5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -312,7 +312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02c73453910d95243b80c34be96a38c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: {fileID: 8775481289212961852}
+  owner: {fileID: 5856945990929664807}
 --- !u!1 &8775481288471186922
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,9 +399,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8775481289212961851}
   - component: {fileID: 8775481289212961853}
-  - component: {fileID: 8775481289212961852}
+  - component: {fileID: 5856945990929664807}
   m_Layer: 5
-  m_Name: Slot
+  m_Name: SlotInventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -437,7 +437,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8775481289212961850}
   m_CullTransparentMesh: 1
---- !u!114 &8775481289212961852
+--- !u!114 &5856945990929664807
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -446,9 +446,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8775481289212961850}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c38c5e1a777ad74f964c4ac80dbd949, type: 3}
+  m_Script: {fileID: 11500000, guid: 7c5fd5272c97e674e98c1d6053998855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DragAndDrop: {fileID: 4531578179368156272}
-  icon: {fileID: 8775481288471186924}
-  count: {fileID: 8775481287350817445}
+  <DragAndDrop>k__BackingField: {fileID: 4531578179368156272}
+  <Background>k__BackingField: {fileID: 8775481287885496448}
+  <Icon>k__BackingField: {fileID: 8775481288471186924}
+  <Count>k__BackingField: {fileID: 8775481287350817445}

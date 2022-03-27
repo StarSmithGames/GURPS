@@ -1,0 +1,37 @@
+using UnityEngine;
+
+namespace Game.Systems.InventorySystem
+{
+	public class UISlotInventory : UISlot
+	{
+		[field: Space]
+		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
+
+		public bool IsEmpty => CurrentItem == null;
+		public Item CurrentItem { get; private set; }
+
+		public UIInventory Owner { get; private set; }
+
+		public void SetOwner(UIInventory owner)
+		{
+			Owner = owner;
+		}
+
+		public void SetItem(Item item)
+		{
+			CurrentItem = item;
+
+			UpdateUI();
+		}
+
+
+		private void UpdateUI()
+		{
+			Icon.enabled = CurrentItem != null;
+			Icon.sprite = CurrentItem?.ItemData.itemSprite;
+
+			Count.enabled = CurrentItem != null;
+			Count.text = CurrentItem?.CurrentStackSize.ToString() ?? "";
+		}
+	}
+}

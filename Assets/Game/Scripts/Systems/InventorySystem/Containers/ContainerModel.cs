@@ -1,5 +1,9 @@
 using EPOOutline;
 
+using Game.Systems.InteractionSystem;
+
+using Sirenix.OdinInspector;
+
 using System.Collections;
 using UnityEngine;
 
@@ -7,7 +11,7 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : MonoBehaviour, IInteractable, IObservable
+	public class ContainerModel : InteractableModel, IObservable
 	{
 		[SerializeField] private Collider collider;
 		[SerializeField] private Outlinable outline;
@@ -34,10 +38,8 @@ namespace Game.Systems.InventorySystem
 
 		public bool IsOpened => containerWindow?.IsShowing ?? false;
 		public bool IsSearched => data.isSearched;
-		public bool IsInteractable => currentInteractor == null;
 
 		private UIContainerWindow containerWindow = null;
-		private IEntity currentInteractor = null;
 
 		private Data data;
 
@@ -64,20 +66,7 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-
-		public void Interact() { }
-		public void InteractFrom(IEntity entity)
-		{
-			if (currentInteractor != null)
-			{
-				return;
-			}
-
-			currentInteractor = entity;
-			StartCoroutine(Interaction());
-		}
-
-
+		#region Observe
 		public void StartObserve()
 		{
 			if(currentInteractor == null)
@@ -93,6 +82,42 @@ namespace Game.Systems.InventorySystem
 				outline.enabled = false;
 			}
 		}
+		#endregion
+
+		#region Interaction
+		public override void InteractFrom(IEntity entity)
+		{
+			base.InteractFrom(entity);
+			StartCoroutine(Interaction());
+		}
+		private IEnumerator Interaction()
+		{
+			outline.enabled = false;
+
+			if (!IsInteractorInRange())
+			{
+				currentInteractor.Controller.SetDestination(InteractPosition);
+
+				yield return new WaitWhile(() => !currentInteractor.Navigation.IsReachedDestination());
+			}
+
+			if (IsInteractorInRange())
+			{
+				OpenWindow();
+			}
+
+			while (IsOpened)
+			{
+				if (!IsInteractorInRange())
+				{
+					CloseWindow();
+				}
+				yield return null;
+			}
+
+			currentInteractor = null;
+		}
+		#endregion
 
 		private void OpenWindow()
 		{
@@ -113,44 +138,6 @@ namespace Game.Systems.InventorySystem
 			containerWindow = null;
 		}
 
-
-		private IEnumerator Interaction()
-		{
-			if(currentInteractor == null) yield break;
-
-			outline.enabled = false;
-
-			if (!IsInteractorInRange())
-			{
-				currentInteractor.Controller.SetDestination(transform.position, settings.maxRange - 0.1f);
-
-				yield return new WaitWhile(() => !currentInteractor.Navigation.IsReachedDestination());
-			}
-
-			if (IsInteractorInRange())
-			{
-				OpenWindow();
-			}
-
-			while (IsOpened)
-			{
-				if(!IsInteractorInRange())
-				{
-					CloseWindow();
-				}
-				yield return null;
-			}
-
-			currentInteractor = null;
-		}
-
-		private bool IsInteractorInRange()
-		{
-			if (currentInteractor == null) return false;
-			return Vector3.Distance(transform.position, currentInteractor.Transform.position) <= settings.maxRange;
-		}
-
-
 		private void OnTakeAll()
 		{
 			containerHandler.CharacterTakeAllFrom(Inventory);
@@ -159,13 +146,9 @@ namespace Game.Systems.InventorySystem
 
 		private void OnDrawGizmosSelected()
 		{
-			Gizmos.DrawWireSphere(transform.position, settings.maxRange);
-		}
-
-		[System.Serializable]
-		public class Settings
-		{
-			public float maxRange = 3f;
+			Gizmos.color = Color.red;
+			Gizmos.DrawWireSphere(InteractPosition, settings.maxRange);
+			Gizmos.DrawSphere(InteractPosition, 0.1f);
 		}
 
 		public class Data

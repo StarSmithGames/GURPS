@@ -57,7 +57,7 @@ namespace Game.Entities
 
 		public bool SetTarget(Vector3 destination, float stoppingDistance = -1)
 		{
-			navMeshAgent.stoppingDistance = stoppingDistance == -1 ? settings.reachTargetThreshold : settings.reachTargetThreshold;
+			navMeshAgent.stoppingDistance = stoppingDistance <= 0 ? settings.reachTargetThreshold : stoppingDistance;
 
 			if (IsPathValid(destination))
 			{

@@ -44,6 +44,7 @@ public class OutlineEditor : OdinEditor
 		if (GUILayout.Button("RefreshAssets"))
 		{
             AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
         }
     }
 

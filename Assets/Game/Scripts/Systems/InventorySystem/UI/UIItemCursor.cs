@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +8,6 @@ namespace Game.Systems.InventorySystem
 		[SerializeField] private Image icon;
 
 		public UISlot Slot { get; private set; }
-		public Item Item { get; private set; }
 
 		private Transform parent;
 
@@ -24,18 +21,15 @@ namespace Game.Systems.InventorySystem
 			Slot = slot;
 		}
 
-		public void SetItem(Item item)
+		public void SetIcon(Sprite sprite)
 		{
-			Item = item;
-
-			icon.sprite = item?.ItemData.itemSprite;
+			icon.sprite = sprite;
 		}
 
 		public void Dispose()
 		{
 			transform.parent = parent;
 			Slot = null;
-			Item = null;
 			icon.sprite = null;
 		}
 	}

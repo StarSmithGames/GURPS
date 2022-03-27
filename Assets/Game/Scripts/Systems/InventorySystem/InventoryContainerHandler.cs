@@ -1,13 +1,19 @@
 using Game.Managers.CharacterManager;
 
+using System;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+using Zenject;
+
 namespace Game.Systems.InventorySystem
 {
-	public class InventoryContainerHandler
+	public class InventoryContainerHandler : ITickable, IInitializable, IDisposable
 	{
 		public bool IsDraging { get; private set; }
+
+		public bool IsInventoryOpened { get; private set; }
 
 		private Item item;
 		private IInventory from;
@@ -17,17 +23,42 @@ namespace Game.Systems.InventorySystem
 		private UIItemCursor itemCursor;
 		private CharacterManager characterManager;
 		private UIContainerWindow.Factory containerFactory;
+		private InputManager inputManager;
 
 		public InventoryContainerHandler(
 			UIManager uiManager,
 			UIItemCursor itemCursor,
 			CharacterManager characterManager,
-			UIContainerWindow.Factory containerFactory)
+			UIContainerWindow.Factory containerFactory,
+			InputManager inputManager)
 		{
 			this.uiManager = uiManager;
 			this.itemCursor = itemCursor;
 			this.characterManager = characterManager;
 			this.containerFactory = containerFactory;
+			this.inputManager = inputManager;
+		}
+
+
+		public void Initialize()
+		{
+			IsInventoryOpened = uiManager.CharacterStatus.gameObject.activeSelf;
+			CloseCharacterStatus();
+
+			uiManager.CharacterStatus.onClose += CloseCharacterStatus;
+		}
+
+		public void Dispose()
+		{
+			uiManager.CharacterStatus.onClose -= CloseCharacterStatus;
+		}
+
+		public void Tick()
+		{
+			if (inputManager.GetKeyDown(KeyAction.Inventory))
+			{
+				CharacterStatusEnable();
+			}
 		}
 
 		public void Subscribe(UIInventory uiInventory)
@@ -84,7 +115,7 @@ namespace Game.Systems.InventorySystem
 			}
 			from.Clear();
 
-			Dispose();
+			Clear();
 		}
 
 
@@ -99,29 +130,35 @@ namespace Game.Systems.InventorySystem
 
 		public void OnPointerClick(UISlot slot, PointerEventData eventData)
 		{
-			if (slot.IsEmpty) return;
-			item = slot.CurrentItem;
-			from = slot.Owner.CurrentInventory;
-			to = characterManager.CurrentParty.LeaderParty.Inventory;
-			if (from == to) return;
+			if(slot is UISlotInventory inventorySlot)
+			{
+				if (inventorySlot.IsEmpty) return;
+				item = inventorySlot.CurrentItem;
+				from = inventorySlot.Owner.CurrentInventory;
+				to = characterManager.CurrentParty.LeaderParty.Inventory;
+				if (from == to) return;
 
-			to.Add(item);
-			from.Remove(item);
+				to.Add(item);
+				from.Remove(item);
+			}
 		}
 
 		public void OnBeginDrag(UISlot slot, PointerEventData eventData)
 		{
-			if (slot.IsEmpty) return;
+			if (slot is UISlotInventory inventorySlot)
+			{
+				if (inventorySlot.IsEmpty) return;
 
-			IsDraging = true;
+				characterManager.CurrentParty.LeaderParty.Freeze(true);
 
-			characterManager.CurrentParty.LeaderParty.Freeze(true);
+				item = inventorySlot.CurrentItem;
+				from = inventorySlot.Owner.CurrentInventory;
 
-			item = slot.CurrentItem;
-			from = slot.Owner.CurrentInventory;
+				itemCursor.SetIcon(inventorySlot.CurrentItem.ItemData.itemSprite);
+				itemCursor.transform.parent = uiManager.transform.root;
 
-			itemCursor.SetItem(slot.CurrentItem);
-			itemCursor.transform.parent = uiManager.transform.root;
+				IsDraging = true;
+			}
 		}
 		public void OnDrag(UISlot slot, PointerEventData eventData)
 		{
@@ -132,7 +169,7 @@ namespace Game.Systems.InventorySystem
 		}
 		public void OnEndDrag(UISlot slot, PointerEventData eventData)
 		{
-			Dispose();
+			Clear();
 
 			characterManager.CurrentParty.LeaderParty.Freeze(false);
 
@@ -140,26 +177,44 @@ namespace Game.Systems.InventorySystem
 		}
 		public void OnDrop(UISlot slot, PointerEventData eventData)
 		{
-			to = slot.Owner.CurrentInventory;
-
-			if(from != null && item != null && from != to)
+			if (slot is UISlotInventory inventorySlot)
 			{
-				to.Add(item);
-				from.Remove(item);
+				to = inventorySlot.Owner.CurrentInventory;
+
+				if (from != null && item != null && from != to)
+				{
+					to.Add(item);
+					from.Remove(item);
+				}
+
+				characterManager.CurrentParty.LeaderParty.Freeze(false);
+
+				Clear();
 			}
-
-			characterManager.CurrentParty.LeaderParty.Freeze(false);
-
-			Dispose();
 		}
 
-		private void Dispose()
+		private void Clear()
 		{
 			itemCursor.Dispose();
 
 			item = null;
 			from = null;
 			to = null;
+		}
+
+
+		private void CharacterStatusEnable()
+		{
+			IsInventoryOpened = !IsInventoryOpened;
+			uiManager.CharacterStatus.gameObject.SetActive(IsInventoryOpened);
+		}
+		private void CloseCharacterStatus()
+		{
+			if (IsInventoryOpened)
+			{
+				IsInventoryOpened = false;
+				uiManager.CharacterStatus.gameObject.SetActive(false);
+			}
 		}
 	}
 }

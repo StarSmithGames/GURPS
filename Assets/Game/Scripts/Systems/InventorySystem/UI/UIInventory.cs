@@ -12,7 +12,7 @@ namespace Game.Systems.InventorySystem
 	public class UIInventory : MonoBehaviour
 	{
 		public Transform content;
-		public List<UISlot> slots = new List<UISlot>();
+		public List<UISlotInventory> slots = new List<UISlotInventory>();
 
 		public IInventory CurrentInventory => currentInventory;
 		private IInventory currentInventory;
@@ -71,7 +71,7 @@ namespace Game.Systems.InventorySystem
 		[Button]
 		private void GetAllSlots()
 		{
-			slots = GetComponentsInChildren<UISlot>().ToList();
+			slots = GetComponentsInChildren<UISlotInventory>().ToList();
 		}
 	}
 }

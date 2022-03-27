@@ -3,6 +3,7 @@ using DG.Tweening;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Systems.BattleSystem;
+using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 
 using System.Collections;
@@ -42,6 +43,24 @@ public class UIManager : MonoBehaviour
 
 	private void Start()
 	{
+		CreateVirtualSpaces();
+
+		SetVirtualSpace(characterManager.CurrentParty.LeaderPartyIndex);
+		CharacterStatus.SetCharacter(characterManager.CurrentParty.LeaderParty);
+
+		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+	}
+
+	public void SetVirtualSpace(int index)
+	{
+		virtualSpaces.ForEach((x) => x.gameObject.SetActive(false));
+
+		virtualSpaces[index].gameObject.SetActive(true);
+		CurrentVirtualSpace = virtualSpaces[index];
+	}
+
+	private void CreateVirtualSpaces()
+	{
 		for (int i = 0; i < characterManager.CurrentParty.Characters.Count; i++)
 		{
 			var space = Instantiate(originalVirtualSpace, originalVirtualSpace.transform.parent);
@@ -50,16 +69,6 @@ public class UIManager : MonoBehaviour
 		}
 
 		originalVirtualSpace.gameObject.SetActive(false);
-
-		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
-	}
-
-	private void SetVirtualSpace(int index)
-	{
-		virtualSpaces.ForEach((x) => x.gameObject.SetActive(false));
-
-		virtualSpaces[index].gameObject.SetActive(true);
-		CurrentVirtualSpace = virtualSpaces[index];
 	}
 
 	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
