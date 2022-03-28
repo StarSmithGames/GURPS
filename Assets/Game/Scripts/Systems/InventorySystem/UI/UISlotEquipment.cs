@@ -1,7 +1,5 @@
 using Sirenix.OdinInspector;
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Systems.InventorySystem
@@ -41,6 +39,9 @@ namespace Game.Systems.InventorySystem
 		private void Swap()
 		{
 			Background.sprite = Background.sprite == BaseBackground ? SwapBackground : BaseBackground;
+#if UNITY_EDITOR
+			UnityEditor.EditorUtility.SetDirty(gameObject);
+#endif
 		}
 	}
 }

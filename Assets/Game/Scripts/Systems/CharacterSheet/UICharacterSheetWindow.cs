@@ -6,9 +6,9 @@ using UnityEngine.Events;
 
 using Zenject;
 
-namespace Game.Systems.InteractionSystem
+namespace Game.Systems.InventorySystem
 {
-	public class UICharacterStatusWindow : MonoBehaviour
+	public class UICharacterSheetWindow : MonoBehaviour
 	{
 		public UnityAction onClose;
 

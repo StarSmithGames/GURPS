@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class UIContainerWindow : UIPoolableAnimatedWindow
+	public class UIContainerWindow : WindowAnimatedPoolable
 	{
 		public UnityAction onTakeAll;
 		public UnityAction onClose;

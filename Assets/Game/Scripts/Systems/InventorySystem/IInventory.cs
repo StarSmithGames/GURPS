@@ -8,6 +8,7 @@ namespace Game.Systems.InventorySystem
         event UnityAction OnInventoryChanged;
 
         List<Item> Items { get; }
+
         bool Add(Item item);
         bool Remove(Item item);
 

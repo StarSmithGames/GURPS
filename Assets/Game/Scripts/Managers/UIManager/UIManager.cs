@@ -18,7 +18,7 @@ public class UIManager : MonoBehaviour
 	public UIWindowsManager WindowsManager { get; private set; }
 
 	[field: SerializeField] public UIAvatars Avatars { get; private set; }
-	[field: SerializeField] public UICharacterStatusWindow CharacterStatus { get; private set; }
+	[field: SerializeField] public UICharacterSheetWindow CharacterStatus { get; private set; }
 	[field: SerializeField] public UIBattle Battle { get; private set; }
 	[Space]
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
