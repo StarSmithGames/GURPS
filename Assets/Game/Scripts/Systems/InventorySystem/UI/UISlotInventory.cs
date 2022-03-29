@@ -30,7 +30,7 @@ namespace Game.Systems.InventorySystem
 			Icon.enabled = CurrentItem != null;
 			Icon.sprite = CurrentItem?.ItemData.itemSprite;
 
-			Count.enabled = CurrentItem != null;
+			Count.enabled = CurrentItem != null && !CurrentItem.IsArmor && !CurrentItem.IsWeapon;
 			Count.text = CurrentItem?.CurrentStackSize.ToString() ?? "";
 		}
 	}

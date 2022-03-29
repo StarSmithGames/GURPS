@@ -1,6 +1,6 @@
 namespace Game.Systems.InventorySystem
 {
-    public abstract class WeaponItemData : EqupableItemData
+    public abstract class WeaponItemData : EquippableItemData
     {
     }
 }

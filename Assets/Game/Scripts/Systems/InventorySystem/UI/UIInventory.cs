@@ -12,7 +12,7 @@ namespace Game.Systems.InventorySystem
 	public class UIInventory : MonoBehaviour
 	{
 		public Transform content;
-		public List<UISlotInventory> slots = new List<UISlotInventory>();
+		public UISlotInventory[] slots;
 
 		public IInventory CurrentInventory => currentInventory;
 		private IInventory currentInventory;
@@ -24,14 +24,17 @@ namespace Game.Systems.InventorySystem
 		{
 			this.containerHandler = containerHandler;
 
-			slots.ForEach((x) => x.SetOwner(this));
+			for (int i = 0; i < slots.Length; i++)
+			{
+				slots[i].SetOwner(this);
+			}
 
-			containerHandler.Subscribe(this);
+			containerHandler.Subscribe(slots);
 		}
 
 		private void OnDestroy()
 		{
-			containerHandler?.UnSubscribe(this);
+			containerHandler?.UnSubscribe(slots);
 		}
 
 		public void SetInventory(IInventory inventory)
@@ -49,7 +52,7 @@ namespace Game.Systems.InventorySystem
 
 		private void UpdateSlots()
 		{
-			for (int i = 0; i < slots.Count; i++)
+			for (int i = 0; i < slots.Length; i++)
 			{
 				if (i < currentInventory.Items.Count)
 				{
@@ -71,7 +74,7 @@ namespace Game.Systems.InventorySystem
 		[Button]
 		private void GetAllSlots()
 		{
-			slots = GetComponentsInChildren<UISlotInventory>().ToList();
+			slots = GetComponentsInChildren<UISlotInventory>();
 		}
 	}
 }

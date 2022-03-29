@@ -25,6 +25,46 @@ MonoBehaviour:
       currentStackSize: 1000
       currentWeight: 0.01
       currentDurability: 100
+    - useRandom: 0
+      data: {fileID: 11400000, guid: 30de1c84827915745ad9251b08a0cc3d, type: 2}
+      currentStackSize: 1
+      currentWeight: 0.01
+      currentDurability: 100
+    - useRandom: 0
+      data: {fileID: 11400000, guid: 669af4225c959144ca54181b4059c7ed, type: 2}
+      currentStackSize: 1
+      currentWeight: 0.01
+      currentDurability: 100
+    - useRandom: 0
+      data: {fileID: 11400000, guid: 12a0c06ab07214d4d99e94c683b71d09, type: 2}
+      currentStackSize: 1
+      currentWeight: 0.01
+      currentDurability: 100
+    - useRandom: 0
+      data: {fileID: 11400000, guid: 2458c1b0df8f4b54680153f505ca1dea, type: 2}
+      currentStackSize: 1
+      currentWeight: 0.01
+      currentDurability: 100
+    - useRandom: 0
+      data: {fileID: 11400000, guid: 40ae7b9662b044e428f0ce5248a72da3, type: 2}
+      currentStackSize: 1
+      currentWeight: 0.01
+      currentDurability: 100
+    - useRandom: 0
+      data: {fileID: 11400000, guid: 0954bdeaa3b351946a8fddf1ec1b7eb1, type: 2}
+      currentStackSize: 1
+      currentWeight: 0.01
+      currentDurability: 100
+    - useRandom: 0
+      data: {fileID: 11400000, guid: c32f9bbed9c011d4c8fdbb9ae912fddd, type: 2}
+      currentStackSize: 1
+      currentWeight: 0.01
+      currentDurability: 100
+    - useRandom: 0
+      data: {fileID: 11400000, guid: 7cde3e219ee9ba4488fc4c572778a51b, type: 2}
+      currentStackSize: 1
+      currentWeight: 0.01
+      currentDurability: 100
     randomSettings:
       isUnique: 0
       useRandomCount: 1

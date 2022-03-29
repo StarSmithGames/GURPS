@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 946d89af8ef09a949a550de2b2eaa40f, type: 3}
+  m_Name: Forearm0
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: aeaf8f8173b12de4c9a0ffd32c00caca, type: 3}
+  localizations:
+  - language: 10
+    itemName: Bracers
+    itemDescription: 
+  prefab: {fileID: 0}
+  isStackable: 0
+  isInfinityStack: 0
+  stackSize: 1
+  weight: 0.01
+  isBreakable: 0
+  decay:
+    decayOverTime: 0
+    decayInside: 0
+    decayOutsie: 0
+  rarity: 0

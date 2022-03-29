@@ -13,6 +13,21 @@ namespace Game.Entities
 	{
 		public UnityAction onCharacterUpdated;
 
+		public IEquipment Equipment 
+		{
+			get
+			{
+				if(equipment == null)
+				{
+					equipment = new Equipment();
+					//TODO Load data
+				}
+
+				return equipment;
+			}
+		}
+		private IEquipment equipment;
+
 		public bool InBattle => CurrentBattle != null;
 
 		public Battle CurrentBattle { get; private set; }

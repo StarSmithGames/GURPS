@@ -1,6 +1,7 @@
 using Game.Managers.CharacterManager;
 
 using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,6 +19,8 @@ namespace Game.Systems.InventorySystem
 		private Item item;
 		private IInventory from;
 		private IInventory to;
+
+		private IEquipment equipment;
 
 		private UIManager uiManager;
 		private UIItemCursor itemCursor;
@@ -61,35 +64,37 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-		public void Subscribe(UIInventory uiInventory)
+		public void Subscribe(UISlot[] slots)
 		{
-			uiInventory.slots.ForEach((x) =>
+			for (int i = 0; i < slots.Length; i++)
 			{
-				x.DragAndDrop.onPointerEnter += OnPointerEnter;
-				x.DragAndDrop.onPointerEXit += OnPointerExit;
+				UISlot slot = slots[i];
+				slot.DragAndDrop.onPointerEnter += OnPointerEnter;
+				slot.DragAndDrop.onPointerEXit += OnPointerExit;
 
-				x.DragAndDrop.onPointerClick += OnPointerClick;
+				slot.DragAndDrop.onPointerClick += OnPointerClick;
 
-				x.DragAndDrop.onBeginDrag += OnBeginDrag;
-				x.DragAndDrop.onDrag += OnDrag;
-				x.DragAndDrop.onEndDrag += OnEndDrag;
-				x.DragAndDrop.onDrop += OnDrop;
-			});
+				slot.DragAndDrop.onBeginDrag += OnBeginDrag;
+				slot.DragAndDrop.onDrag += OnDrag;
+				slot.DragAndDrop.onEndDrag += OnEndDrag;
+				slot.DragAndDrop.onDrop += OnDrop;
+			}
 		}
-		public void UnSubscribe(UIInventory uiInventory)
+		public void UnSubscribe(UISlot[] slots)
 		{
-			uiInventory.slots.ForEach((x) =>
+			for (int i = 0; i < slots.Length; i++)
 			{
-				x.DragAndDrop.onPointerEnter -= OnPointerEnter;
-				x.DragAndDrop.onPointerEXit -= OnPointerExit;
+				UISlot slot = slots[i];
+				slot.DragAndDrop.onPointerEnter -= OnPointerEnter;
+				slot.DragAndDrop.onPointerEXit -= OnPointerExit;
 
-				x.DragAndDrop.onPointerClick -= OnPointerClick;
+				slot.DragAndDrop.onPointerClick -= OnPointerClick;
 
-				x.DragAndDrop.onBeginDrag -= OnBeginDrag;
-				x.DragAndDrop.onDrag -= OnDrag;
-				x.DragAndDrop.onEndDrag -= OnEndDrag;
-				x.DragAndDrop.onDrop -= OnDrop;
-			});
+				slot.DragAndDrop.onBeginDrag -= OnBeginDrag;
+				slot.DragAndDrop.onDrag -= OnDrag;
+				slot.DragAndDrop.onEndDrag -= OnEndDrag;
+				slot.DragAndDrop.onDrop -= OnDrop;
+			}
 		}
 
 		public UIContainerWindow SpawnContainerWindow(IInventory inventory)
@@ -133,13 +138,35 @@ namespace Game.Systems.InventorySystem
 			if(slot is UISlotInventory inventorySlot)
 			{
 				if (inventorySlot.IsEmpty) return;
+
 				item = inventorySlot.CurrentItem;
 				from = inventorySlot.Owner.CurrentInventory;
 				to = characterManager.CurrentParty.LeaderParty.Inventory;
-				if (from == to) return;
+				equipment = characterManager.CurrentParty.LeaderParty.Equipment;
 
-				to.Add(item);
-				from.Remove(item);
+				if (eventData.clickCount > 1)
+				{
+					if (from == to)
+					{
+						if (item.IsEquippable)
+						{
+							equipment.Add(item);
+							from.Remove(item);
+						}
+					}
+					else
+					{
+						to.Add(item);
+						from.Remove(item);
+					}
+				}
+				else
+				{
+					if (from == to) return;
+
+					to.Add(item);
+					from.Remove(item);
+				}
 			}
 		}
 
@@ -200,6 +227,7 @@ namespace Game.Systems.InventorySystem
 			item = null;
 			from = null;
 			to = null;
+			equipment = null;
 		}
 
 

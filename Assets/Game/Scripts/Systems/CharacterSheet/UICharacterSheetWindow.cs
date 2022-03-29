@@ -32,6 +32,7 @@ namespace Game.Systems.InventorySystem
 		public void SetCharacter(Character character)
 		{
 			Inventory.SetInventory(character.Inventory);
+			Equipment.SetEquipment(character.Equipment);
 		}
 
 

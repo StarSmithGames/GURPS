@@ -85,7 +85,9 @@ namespace Game.Systems.InventorySystem
 
 		public bool IsBreakable => data?.isBreakable ?? false;
 
-		public bool IsWeapon => false;
+		public bool IsEquippable => data != null && data is EquippableItemData;
+		public bool IsArmor => data != null && data is ArmorItemData;
+		public bool IsWeapon => data != null && data is WeaponItemData;
 
 
 		public Item GenerateItem()//rnd item

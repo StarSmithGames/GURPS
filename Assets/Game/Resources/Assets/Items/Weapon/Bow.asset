@@ -9,13 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d3c52bfe70718e4694ab27e5a395281, type: 3}
-  m_Name: Item
+  m_Script: {fileID: 11500000, guid: 9d6d7f3bdeba83d41b6dda8cc5797153, type: 3}
+  m_Name: Bow
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 0}
-  localizations: []
+  itemSprite: {fileID: 21300000, guid: 51f5a7633e0c07642a29d74ab656f22b, type: 3}
+  localizations:
+  - language: 10
+    itemName: Bow
+    itemDescription: 
   prefab: {fileID: 0}
-  isStackable: 1
+  isStackable: 0
   isInfinityStack: 0
   stackSize: 1
   weight: 0.01
@@ -25,7 +28,4 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
-  melleType: 1
-  offHandType: 0
-  handedType: 4
-  twoHandedType: 3
+  rangedType: 0

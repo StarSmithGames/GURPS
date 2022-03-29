@@ -10,8 +10,7 @@ namespace Game.Systems.InventorySystem
 		[field: SerializeField] public Sprite BaseBackground { get; private set; }
 		[field: SerializeField] public Sprite SwapBackground { get; private set; }
 
-		public bool IsEmpty => CurrentItem == null;
-		public Item CurrentItem { get; private set; }
+		public Equip CurrentEqup { get; private set; }
 
 		public UIEquipment Owner { get; private set; }
 
@@ -20,20 +19,21 @@ namespace Game.Systems.InventorySystem
 			Owner = owner;
 		}
 
-		public void SetItem(Item item)
+		public void SetEquip(Equip equip)
 		{
-			CurrentItem = item;
+			CurrentEqup = equip;
+			CurrentEqup.onEquipChanged += UpdateUI;
 
 			UpdateUI();
 		}
 
-
 		private void UpdateUI()
 		{
-			Icon.enabled = CurrentItem != null;
-			Icon.sprite = CurrentItem?.ItemData.itemSprite;
-		}
+			Icon.enabled = !CurrentEqup.IsEmpty;
+			Icon.sprite = CurrentEqup.Item?.ItemData.itemSprite;
 
+			Background.sprite = !CurrentEqup.IsEmpty ? SwapBackground : BaseBackground;
+		}
 
 		[Button]
 		private void Swap()

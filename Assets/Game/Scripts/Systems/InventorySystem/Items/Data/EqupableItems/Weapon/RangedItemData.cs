@@ -7,6 +7,7 @@ namespace Game.Systems.InventorySystem
 	{
 		public RangedType rangedType = RangedType.Bow;
 	}
+
 	public enum RangedType
 	{
 		Bow,

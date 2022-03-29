@@ -46,7 +46,7 @@ namespace Game.Systems.InventorySystem
 		[InlineEditor(InlineEditorModes.GUIAndPreview)]
 		public ItemModel prefab;
 		[Space]
-		public bool isStackable = true;
+		public bool isStackable = false;
 		[ShowIf("isStackable")]
 		public bool isInfinityStack = false;
 		[ShowIf("@isStackable && !isInfinityStack")]
