@@ -13,20 +13,19 @@ namespace Game.Entities
 	{
 		public UnityAction onCharacterUpdated;
 
-		public IEquipment Equipment 
+		public CharacterSheet CharacterSheet
 		{
 			get
 			{
-				if(equipment == null)
+				if (characterSheet == null)
 				{
-					equipment = new Equipment();
-					//TODO Load data
+					characterSheet = new CharacterSheet(EntityData);
 				}
 
-				return equipment;
+				return characterSheet;
 			}
 		}
-		private IEquipment equipment;
+		private CharacterSheet characterSheet;
 
 		public bool InBattle => CurrentBattle != null;
 
@@ -45,7 +44,6 @@ namespace Game.Entities
 			base.Start();
 			Controller.onTargetChanged += OnTargetChanged;
 		}
-
 
 		public void InteractWith(IObservable observable)
 		{
@@ -164,6 +162,17 @@ namespace Game.Entities
 			{
 				ResetMarkers();
 			}
+		}
+	}
+
+
+	public class CharacterSheet : EntitySheet
+	{
+		public virtual IEquipment Equipment { get; private set; }
+
+		public CharacterSheet(EntityData data) : base(data)
+		{
+			Equipment = new Equipment(Inventory);
 		}
 	}
 }

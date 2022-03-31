@@ -9,5 +9,8 @@ namespace Game.Systems.InventorySystem
 
 		[field: SerializeField] public Image Background { get; protected set; }
 		[field: SerializeField] public Image Icon { get; protected set; }
+
+		public virtual bool IsEmpty => CurrentItem == null;
+		public virtual Item CurrentItem { get; protected set; }
 	}
 }

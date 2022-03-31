@@ -2,7 +2,11 @@ using Game.Systems.CharacterCutomization;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine.Events;
+
+using static UnityEditor.Progress;
 
 namespace Game.Systems.InventorySystem
 {
@@ -26,28 +30,28 @@ namespace Game.Systems.InventorySystem
 		//Ring0		= 22,
 		//Ring1		= 23,
 		//Trinket		= 24,
-
-		public List<Item> Items { get; private set; }
-		public List<Equip> Equips { get; private set; }
 		public List<Equip> Armors { get; private set; }
-		public List<Equip> Weapons { get; private set; }
-
 
 		private Dictionary<Equip, Type[]> dictionarySlotTypes;
+		private EquipWeaponConnection Weapon0;
+		private EquipWeaponConnection Weapon1;
 
-		public Equipment()
+		private IInventory inventory;
+
+		public Equipment(IInventory inventory)
 		{
+			this.inventory = inventory;
 			Initialization();
 		}
 
 		private void Initialization()
 		{
-			Head = new Equip();
-			Sholders = new Equip();
-			Chest = new Equip();
-			Forearms = new Equip();
-			Legs = new Equip();
-			Feet = new Equip();
+			Head		= new Equip();
+			Sholders	= new Equip();
+			Chest		= new Equip();
+			Forearms	= new Equip();
+			Legs		= new Equip();
+			Feet		= new Equip();
 
 			Weapon00 = new Equip();
 			Weapon01 = new Equip();
@@ -62,11 +66,6 @@ namespace Game.Systems.InventorySystem
 				{ Forearms, new Type[]{typeof(ForearmItemData) } },
 				{ Legs,     new Type[]{typeof(LegsItemData) } },
 				{ Feet,     new Type[]{typeof(FeetItemData) } },
-
-				{ Weapon00, new Type[]{typeof(WeaponItemData) } },
-				{ Weapon01, new Type[]{typeof(WeaponItemData) } },
-				{ Weapon10, new Type[]{typeof(WeaponItemData) } },
-				{ Weapon11, new Type[]{typeof(WeaponItemData) } },
 			};
 
 			Armors = new List<Equip>()
@@ -79,71 +78,219 @@ namespace Game.Systems.InventorySystem
 				Feet,
 			};
 
-			Weapons = new List<Equip>()
+			Weapon0 = new EquipWeaponConnection()
 			{
-				Weapon00,
-				Weapon01,
-				Weapon10,
-				Weapon11,
+				Main = Weapon00,
+				Spare = Weapon01,
+				Inventory = inventory,
 			};
-
-			Equips = new List<Equip>();
-			Equips.AddRange(Armors);
-			Equips.AddRange(Weapons);
-
-			Items = new List<Item>();
+			Weapon1 = new EquipWeaponConnection()
+			{
+				Main = Weapon10,
+				Spare = Weapon11,
+				Inventory = inventory,
+			};
 		}
 
 
 		public bool Add(Item item)
 		{
-			if(item.ItemData is WeaponItemData weaponItemData)
+			if(item.IsWeapon)
 			{
-				return AddWeapon(item);
+				return Weapon0.Add(item);
 			}
-			else
+			else if(item.IsArmor)
 			{
-
+				return AddArmor(item);
 			}
 
-			//OnEquipmentChanged?.Invoke();
+			return false;
+		}
+		public bool AddTo(Item item, Equip equip)
+		{
+			if (item.IsWeapon)
+			{
+				if (Weapon0.Contains(equip))
+				{
+					return Weapon0.AddTo(equip, item);
+				}
+				else if (Weapon1.Contains(equip))
+				{
+					return Weapon1.AddTo(equip, item);
+				}
+			}
+			else if (item.IsArmor)
+			{
+				if (AddArmorTo(item, equip))
+				{
+					return true;
+				}
+				return AddArmor(item);
+			}
+
+
 			return false;
 		}
 
-		public bool Remove(Item item)
+		public bool RemoveFrom(Equip equip)
 		{
-			Items.Remove(item);
-			OnEquipmentChanged?.Invoke();
+			if (!equip.IsEmpty)
+			{
+				if (equip.Item.IsWeapon)
+				{
+					if (Weapon0.Contains(equip))
+					{
+						return Weapon0.RemoveFrom(equip);
+					}
+					else if (Weapon1.Contains(equip))
+					{
+						return Weapon1.RemoveFrom(equip);
+					}
+				}
+				else if (equip.Item.IsArmor)
+				{
+					equip.SetItem(null);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
+		private bool AddArmor(Item item)
+		{
+			foreach (var armor in Armors)
+			{
+				if(AddArmorTo(item, armor))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+		private bool AddArmorTo(Item item, Equip equip)
+		{
+			if (dictionarySlotTypes.TryGetValue(equip, out Type[] types))
+			{
+				for (int i = 0; i < types.Length; i++)
+				{
+					if (types[i].IsAssignableFrom(item.ItemData.GetType()))
+					{
+						if (!equip.IsEmpty)
+						{
+							inventory.Add(equip.Item);
+						}
+						equip.SetItem(item);
+
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		private bool RemoveArmor(Item item)
+		{
+			Equip equip = Armors.Find((x) => x.Item == item);
+			equip.SetItem(null);
 			return true;
 		}
 
-		private void AddArmor(Item item)
+		public bool WeaponSwaps(Equip from, Equip to)
 		{
+			var weaponFrom = GetWeapon(from);
+			var weaponTo = GetWeapon(to);
 
-		}
-
-		private bool AddWeapon(Item item)
-		{
-			if(item.ItemData is MeleeItemData meleeItemData)
+			if (weaponFrom == weaponTo)//one handeds
 			{
-				if(meleeItemData.melleType == MelleType.TwoHanded)
+				from.Swap(to);
+			}
+			else
+			{
+				if (weaponTo.IsTwoEmpty)
 				{
-					Weapon00.SetItem(item);
-					Weapon01.SetItem(item);
+					if (from.Item.IsTwoHandedWeapon)
+					{
+						weaponFrom.Swap(weaponTo);
+					}
+					else
+					{
+						to.SetItem(from.Item);
+						from.SetItem(null);
+					}
 				}
 				else
 				{
-					Weapon00.SetItem(item);
-					Weapon01.SetItem(null);
+					if (to.IsEmpty)
+					{
+						if (from.Item.IsTwoHandedWeapon)
+						{
+							Item item = from.Item;
+							weaponFrom.SetItemBoth(null);
+							if (!weaponTo.Main.IsEmpty)
+							{
+								weaponFrom.Main.SetItem(weaponTo.Main.Item);
+							}
+							if (!weaponTo.Spare.IsEmpty)
+							{
+								weaponFrom.Spare.SetItem(weaponTo.Spare.Item);
+							}
+
+							weaponTo.SetItemBoth(item);
+						}
+						else
+						{
+							to.SetItem(from.Item);
+							from.SetItem(null);
+						}
+					}
+					else
+					{
+						if (from.Item.IsTwoHandedWeapon)
+						{
+							weaponFrom.Swap(weaponTo);
+						}
+						else
+						{
+							if (to.Item.IsTwoHandedWeapon)//OneHanded x TwoHanded
+							{
+								Item item = to.Item;
+								weaponTo.SetItemBoth(null);
+
+								to.SetItem(from.Item);
+								from.SetItem(null);
+
+								if (!weaponFrom.Main.IsEmpty)
+								{
+									weaponTo.Add(weaponFrom.Main.Item);
+								}
+								if (!weaponFrom.Spare.IsEmpty)
+								{
+									weaponTo.Add(weaponFrom.Spare.Item);
+								}
+
+								weaponFrom.SetItemBoth(item);
+							}
+							else//OneHanded x OneHanded
+							{
+								from.Swap(to);
+							}
+						}
+					}
 				}
 			}
-			else if(item.ItemData is RangedItemData rangedItemData)
-			{
-				Weapon00.SetItem(item);
-				Weapon01.SetItem(item);
-			}
+			return false;
+		}
 
-			return true;
+		private EquipWeaponConnection GetWeapon(Equip equip)
+		{
+			if (Weapon0.Contains(equip)) return Weapon0;
+			if (Weapon1.Contains(equip)) return Weapon1;
+
+			return null;
 		}
 	}
 
@@ -151,6 +298,8 @@ namespace Game.Systems.InventorySystem
 	public class Equip
 	{
 		public UnityAction onEquipChanged;
+
+		public bool Mark { get; set; }
 
 		public bool IsEmpty => Item == null;
 		public Item Item { get; private set; }
@@ -160,6 +309,180 @@ namespace Game.Systems.InventorySystem
 			Item = item;
 
 			onEquipChanged?.Invoke();
+		}
+
+		public void Swap(Equip equip)
+		{
+			Item item = equip.Item;
+			equip.SetItem(Item);
+			SetItem(item);
+		}
+	}
+
+	public class EquipWeaponConnection
+	{
+		public bool IsTwoEmpty => Main.IsEmpty && Spare.IsEmpty;
+		public bool IsEmpty => Main.IsEmpty || Spare.IsEmpty;
+
+		public Equip Main { get; set; }
+		public Equip Spare { get; set; }
+
+		public IInventory Inventory { get; set; }
+
+		public void Swap(EquipWeaponConnection weapon)
+		{
+			Item main = weapon.Main.Item;
+			bool mark = weapon.Spare.Mark;
+			Item spare = weapon.Spare.Item;
+			
+			weapon.Main.SetItem(Main.Item);
+			weapon.Spare.Mark = Spare.Mark;
+			weapon.Spare.SetItem(Spare.Item);
+
+			Main.SetItem(main);
+			Spare.Mark = mark;
+			Spare.SetItem(spare);
+		}
+
+		public void SetItemBoth(Item item)
+		{
+			Main.SetItem(item);
+			Spare.Mark = item != null;
+			Spare.SetItem(item);
+		}
+		public void SetItemUp(Item item)
+		{
+			Main.SetItem(item);
+			Spare.Mark = false;
+			Spare.SetItem(null);
+		}
+		public void SetItemDown(Item item)
+		{
+			Main.SetItem(null);
+			Spare.Mark = false;
+			Spare.SetItem(item);
+		}
+
+		public bool Add(Item item)
+		{
+			if (item.IsTwoHandedWeapon)
+			{
+				if (Main.IsEmpty)//двухручное
+				{
+					if (!Spare.IsEmpty)
+					{
+						Inventory.Add(Spare.Item);
+					}
+
+					SetItemBoth(item);
+					return true;
+				}
+				else
+				{
+					if (Main.Item.IsTwoHandedWeapon)//TwoHanded x TwoHanded
+					{
+						Inventory.Add(Main.Item);
+						SetItemBoth(item);
+						return true;
+					}
+					else//TwoHanded x OneHanded
+					{
+						Inventory.Add(Main.Item);
+						if (!Spare.IsEmpty)
+						{
+							Inventory.Add(Spare.Item);
+						}
+						SetItemBoth(item);
+						return true;
+					}
+				}
+			}
+			else
+			{
+				if (Main.IsEmpty)//одноручное
+				{
+					Main.SetItem(item);
+					return true;
+				}
+				else
+				{
+					if (Main.Item.IsTwoHandedWeapon)//OneHanded x TwoHanded
+					{
+						Inventory.Add(Main.Item);
+						SetItemUp(item);
+						return true;
+					}
+					else
+					{
+						if (Spare.IsEmpty)
+						{
+							Spare.Mark = false;
+							Spare.SetItem(item);
+							return true;
+						}
+						else
+						{
+							Inventory.Add(Main.Item);
+							Main.SetItem(item);
+							return true;
+						}
+					}
+				}
+			}
+		}
+		public bool AddTo(Equip equip, Item item)
+		{
+			if (item.IsTwoHandedWeapon)
+			{
+				return Add(item);
+			}
+			else
+			{
+				if (equip.IsEmpty)
+				{
+					equip.SetItem(item);
+					return true;
+				}
+				else
+				{
+					if (equip.Item.IsTwoHandedWeapon)
+					{
+						Inventory.Add(Main.Item);
+						SetItemBoth(null);
+						equip.SetItem(item);
+						return true;
+					}
+					else
+					{
+						Inventory.Add(equip.Item);
+						equip.SetItem(item);
+						return true;
+					}
+				}
+			}
+		}
+
+		public bool RemoveFrom(Equip equip)
+		{
+			if (equip.Item.IsTwoHandedWeapon)
+			{
+				SetItemBoth(null);
+				return true;
+			}
+			else
+			{
+				equip.SetItem(null);
+				return true;
+			}
+		}
+
+		public bool Contains(Item item)
+		{
+			return item != null && (Main.Item == item || Spare.Item == item);
+		}
+		public bool Contains(Equip equip)
+		{
+			return equip != null && (Main == equip || Spare == equip);
 		}
 	}
 }

@@ -1,3 +1,5 @@
+using Game.Entities;
+
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;

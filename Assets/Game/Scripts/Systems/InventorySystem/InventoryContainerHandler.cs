@@ -1,3 +1,4 @@
+using Game.Entities;
 using Game.Managers.CharacterManager;
 
 using System;
@@ -21,6 +22,7 @@ namespace Game.Systems.InventorySystem
 		private IInventory to;
 
 		private IEquipment equipment;
+		private Equip slotEquip;
 
 		private UIManager uiManager;
 		private UIItemCursor itemCursor;
@@ -112,7 +114,7 @@ namespace Game.Systems.InventorySystem
 		public void CharacterTakeAllFrom(IInventory inventory)
 		{
 			from = inventory;
-			to = characterManager.CurrentParty.LeaderParty.Inventory;
+			to = characterManager.CurrentParty.LeaderParty.CharacterSheet.Inventory;
 
 			for (int i = 0; i < from.Items.Count; i++)
 			{
@@ -135,14 +137,16 @@ namespace Game.Systems.InventorySystem
 
 		public void OnPointerClick(UISlot slot, PointerEventData eventData)
 		{
-			if(slot is UISlotInventory inventorySlot)
-			{
-				if (inventorySlot.IsEmpty) return;
+			if (slot.IsEmpty) return;
 
-				item = inventorySlot.CurrentItem;
+			item = slot.CurrentItem;
+
+			equipment = characterManager.CurrentParty.LeaderParty.CharacterSheet.Equipment;
+
+			if (slot is UISlotInventory inventorySlot)
+			{
 				from = inventorySlot.Owner.CurrentInventory;
-				to = characterManager.CurrentParty.LeaderParty.Inventory;
-				equipment = characterManager.CurrentParty.LeaderParty.Equipment;
+				to = characterManager.CurrentParty.LeaderParty.CharacterSheet.Inventory;
 
 				if (eventData.clickCount > 1)
 				{
@@ -168,24 +172,46 @@ namespace Game.Systems.InventorySystem
 					from.Remove(item);
 				}
 			}
+			else if (slot is UISlotEquipment equipmentSlot)
+			{
+				if (eventData.clickCount > 1)
+				{
+					to = characterManager.CurrentParty.LeaderParty.CharacterSheet.Inventory;
+
+					to.Add(item);
+					equipment.RemoveFrom(equipmentSlot.CurrentEquip);
+				}
+			}
+
+			Clear();
 		}
 
+
+		private UISlot beginSlot = null;
 		public void OnBeginDrag(UISlot slot, PointerEventData eventData)
 		{
+			if (slot.IsEmpty) return;
+			if (eventData.clickCount > 1) return;
+
+
+			beginSlot = slot;
+
+			characterManager.CurrentParty.LeaderParty.Freeze(true);
+
+			item = slot.CurrentItem;
+
 			if (slot is UISlotInventory inventorySlot)
 			{
-				if (inventorySlot.IsEmpty) return;
-
-				characterManager.CurrentParty.LeaderParty.Freeze(true);
-
-				item = inventorySlot.CurrentItem;
 				from = inventorySlot.Owner.CurrentInventory;
-
-				itemCursor.SetIcon(inventorySlot.CurrentItem.ItemData.itemSprite);
-				itemCursor.transform.parent = uiManager.transform.root;
-
-				IsDraging = true;
 			}
+
+			equipment = characterManager.CurrentParty.LeaderParty.CharacterSheet.Equipment;
+
+			itemCursor.SetIcon(item.ItemData.itemSprite);
+			itemCursor.transform.parent = uiManager.transform.root;
+
+
+			IsDraging = true;
 		}
 		public void OnDrag(UISlot slot, PointerEventData eventData)
 		{
@@ -204,20 +230,45 @@ namespace Game.Systems.InventorySystem
 		}
 		public void OnDrop(UISlot slot, PointerEventData eventData)
 		{
+			if (item == null) return;
+			if (slot == beginSlot) return;
+
 			if (slot is UISlotInventory inventorySlot)
 			{
 				to = inventorySlot.Owner.CurrentInventory;
 
-				if (from != null && item != null && from != to)
+				if (from != null && from != to)
 				{
 					to.Add(item);
 					from.Remove(item);
 				}
-
-				characterManager.CurrentParty.LeaderParty.Freeze(false);
-
-				Clear();
+				else if(beginSlot is UISlotEquipment equipmentSlot)
+				{
+					to.Add(item);
+					equipment.RemoveFrom(equipmentSlot.CurrentEquip);
+				}
 			}
+			else if (slot is UISlotEquipment equipmentSlot)
+			{
+				if (beginSlot is UISlotEquipment neiborSlot)//UISlotEquipment on UISlotEquipment
+				{
+					equipment.WeaponSwaps(neiborSlot.CurrentEquip, equipmentSlot.CurrentEquip);
+				}
+				else//UISlotInventory on UISlotEquipment
+				{
+					if (from != null)
+					{
+						if(equipment.AddTo(item, equipmentSlot.CurrentEquip))
+						{
+							from.Remove(item);
+						}
+					}
+				}
+			}
+
+			Clear();
+		
+			characterManager.CurrentParty.LeaderParty.Freeze(false);
 		}
 
 		private void Clear()
@@ -228,6 +279,8 @@ namespace Game.Systems.InventorySystem
 			from = null;
 			to = null;
 			equipment = null;
+
+			beginSlot = null;
 		}
 
 

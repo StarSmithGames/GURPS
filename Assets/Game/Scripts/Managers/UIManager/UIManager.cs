@@ -1,5 +1,6 @@
 using DG.Tweening;
 
+using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Systems.BattleSystem;
@@ -46,7 +47,7 @@ public class UIManager : MonoBehaviour
 		CreateVirtualSpaces();
 
 		SetVirtualSpace(characterManager.CurrentParty.LeaderPartyIndex);
-		CharacterStatus.SetCharacter(characterManager.CurrentParty.LeaderParty);
+		CharacterStatus.SetCharacter(characterManager.CurrentParty.LeaderParty.CharacterSheet);
 
 		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
@@ -76,6 +77,6 @@ public class UIManager : MonoBehaviour
 		int index = characterManager.CurrentParty.LeaderPartyIndex;
 
 		SetVirtualSpace(index);
-		CharacterStatus.SetCharacter(signal.leader);
+		CharacterStatus.SetCharacter(signal.leader.CharacterSheet);
 	}
 }

@@ -29,10 +29,10 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-		public void SetCharacter(Character character)
+		public void SetCharacter(CharacterSheet sheet)
 		{
-			Inventory.SetInventory(character.Inventory);
-			Equipment.SetEquipment(character.Equipment);
+			Inventory.SetInventory(sheet.Inventory);
+			Equipment.SetEquipment(sheet.Equipment);
 		}
 
 

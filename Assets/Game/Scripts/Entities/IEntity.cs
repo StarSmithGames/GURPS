@@ -12,7 +12,6 @@ public interface IEntity
 	Transform CameraPivot { get; }
 
 	EntityData EntityData { get; }
-	IInventory Inventory { get; }
 
 	NavigationController Navigation { get; }
 	CharacterController3D Controller { get; }

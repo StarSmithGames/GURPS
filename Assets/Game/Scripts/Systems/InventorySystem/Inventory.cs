@@ -13,9 +13,16 @@ namespace Game.Systems.InventorySystem
     {
         public event UnityAction OnInventoryChanged;
 
+        public bool IsEmpty => Items.Count == 0;
+
         public List<Item> Items { get; private set; }
 
-        public Inventory(InventorySettings settings)
+        public Inventory()
+		{
+            Items = new List<Item>();
+        }
+
+		public Inventory(InventorySettings settings)
         {
             Items = settings.GenerateItems();
         }

@@ -7,6 +7,8 @@ namespace Game.Systems.InventorySystem
     {
         event UnityAction OnInventoryChanged;
 
+        bool IsEmpty { get; }
+
         List<Item> Items { get; }
 
         bool Add(Item item);

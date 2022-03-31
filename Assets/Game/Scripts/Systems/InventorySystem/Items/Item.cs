@@ -88,7 +88,28 @@ namespace Game.Systems.InventorySystem
 		public bool IsEquippable => data != null && data is EquippableItemData;
 		public bool IsArmor => data != null && data is ArmorItemData;
 		public bool IsWeapon => data != null && data is WeaponItemData;
+		public bool IsTwoHandedWeapon
+		{
+			get
+			{
+				if(data != null)
+				{
+					if(ItemData is MeleeItemData meleeItemData)
+					{
+						if (meleeItemData.melleType == MelleType.TwoHanded)
+						{
+							return true;
+						}
+					}
+					if(ItemData is RangedItemData)
+					{
+						return true;
+					}
+				}
 
+				return false;
+			}
+		}
 
 		public Item GenerateItem()//rnd item
 		{

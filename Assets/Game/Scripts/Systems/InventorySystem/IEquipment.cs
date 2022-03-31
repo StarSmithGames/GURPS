@@ -19,9 +19,11 @@ namespace Game.Systems.InventorySystem
 		Equip Weapon10 { get; }
 		Equip Weapon11 { get; }
 
-		List<Item> Items { get; }
-
 		bool Add(Item item);
-		bool Remove(Item item);
+		bool AddTo(Item item, Equip equip);
+
+		bool RemoveFrom(Equip equip);
+
+		bool WeaponSwaps(Equip from, Equip to);
 	}
 }

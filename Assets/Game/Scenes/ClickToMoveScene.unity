@@ -1341,7 +1341,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -2064,7 +2064,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -2080,7 +2080,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -5105,6 +5105,10 @@ PrefabInstance:
       propertyPath: characterData
       value: 
       objectReference: {fileID: 11400000, guid: c290be8b3e643ed4da93af2bb7566809, type: 2}
+    - target: {fileID: 6753425058046806692, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: <EntityData>k__BackingField
+      value: 
+      objectReference: {fileID: 11400000, guid: c290be8b3e643ed4da93af2bb7566809, type: 2}
     - target: {fileID: 6753425058046806699, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: m_Name
       value: Character (1)
@@ -7064,7 +7068,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -9519,7 +9523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 926c479c677f00e4f8c2648a64a19919, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityData: {fileID: 11400000, guid: 4f96a8e4b1994bd4aa3945d709af589f, type: 2}
+  <EntityData>k__BackingField: {fileID: 11400000, guid: 4f96a8e4b1994bd4aa3945d709af589f, type: 2}
 --- !u!114 &1118374282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11329,7 +11333,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -17403,7 +17407,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -19088,77 +19092,81 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6753425058046806692, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: <EntityData>k__BackingField
+      value: 
+      objectReference: {fileID: 11400000, guid: 5fbc4eb3b82e980409cd8636cadb5f15, type: 2}
     - target: {fileID: 6753425058046806699, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[0].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[1].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[2].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[3].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[4].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[5].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[6].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[7].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[8].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[9].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[10].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[11].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[12].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[13].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[14].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[15].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: outlineTargets.Array.data[16].IsVisible
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
@@ -19604,7 +19612,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5

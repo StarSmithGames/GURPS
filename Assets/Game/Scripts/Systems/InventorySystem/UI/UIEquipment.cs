@@ -54,10 +54,6 @@ namespace Game.Systems.InventorySystem
 
 		public void SetEquipment(IEquipment equipment)
 		{
-			if (currentEquipment != null)
-			{
-				currentEquipment.OnEquipmentChanged -= OnInventoryChanged;
-			}
 			currentEquipment = equipment;
 
 			Head.SetEquip(currentEquipment.Head);
@@ -71,18 +67,6 @@ namespace Game.Systems.InventorySystem
 			Weapon01.SetEquip(currentEquipment.Weapon01);
 			Weapon10.SetEquip(currentEquipment.Weapon10);
 			Weapon11.SetEquip(currentEquipment.Weapon11);
-		}
-
-		private void UpdateSlots()
-		{
-			foreach (var item in currentEquipment.Items)
-			{
-			}
-		}
-
-		private void OnInventoryChanged()
-		{
-			UpdateSlots();
 		}
 
 		[Button]

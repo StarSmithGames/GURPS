@@ -1,5 +1,7 @@
 using Sirenix.OdinInspector;
 
+using System.Linq;
+
 using UnityEngine;
 
 namespace Game.Systems.InventorySystem
@@ -10,9 +12,14 @@ namespace Game.Systems.InventorySystem
 		[field: SerializeField] public Sprite BaseBackground { get; private set; }
 		[field: SerializeField] public Sprite SwapBackground { get; private set; }
 
-		public Equip CurrentEqup { get; private set; }
+		public override bool IsEmpty => CurrentEquip?.IsEmpty ?? true;
+		public Equip CurrentEquip { get; private set; }
+		public override Item CurrentItem => CurrentEquip?.Item;
 
 		public UIEquipment Owner { get; private set; }
+
+		private Color one = Color.white;
+		private Color oneHalfAlpha = new Color(1, 1, 1, 0.5f);
 
 		public void SetOwner(UIEquipment owner)
 		{
@@ -21,18 +28,19 @@ namespace Game.Systems.InventorySystem
 
 		public void SetEquip(Equip equip)
 		{
-			CurrentEqup = equip;
-			CurrentEqup.onEquipChanged += UpdateUI;
+			CurrentEquip = equip;
+			CurrentEquip.onEquipChanged += UpdateUI;
 
 			UpdateUI();
 		}
 
 		private void UpdateUI()
 		{
-			Icon.enabled = !CurrentEqup.IsEmpty;
-			Icon.sprite = CurrentEqup.Item?.ItemData.itemSprite;
+			Icon.enabled = !CurrentEquip.IsEmpty;
+			Icon.sprite = CurrentItem?.ItemData.itemSprite;
+			Icon.color = CurrentEquip.Mark ? oneHalfAlpha : one;
 
-			Background.sprite = !CurrentEqup.IsEmpty ? SwapBackground : BaseBackground;
+			Background.sprite = CurrentEquip.IsEmpty ? SwapBackground : BaseBackground;
 		}
 
 		[Button]

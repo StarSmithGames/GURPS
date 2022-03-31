@@ -7,9 +7,6 @@ namespace Game.Systems.InventorySystem
 		[field: Space]
 		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
 
-		public bool IsEmpty => CurrentItem == null;
-		public Item CurrentItem { get; private set; }
-
 		public UIInventory Owner { get; private set; }
 
 		public void SetOwner(UIInventory owner)
