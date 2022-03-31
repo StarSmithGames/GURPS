@@ -252,7 +252,7 @@ namespace Game.Systems.InventorySystem
 			{
 				if (beginSlot is UISlotEquipment neiborSlot)//UISlotEquipment on UISlotEquipment
 				{
-					equipment.WeaponSwaps(neiborSlot.CurrentEquip, equipmentSlot.CurrentEquip);
+					equipment.Swap(neiborSlot.CurrentEquip, equipmentSlot.CurrentEquip);
 				}
 				else//UISlotInventory on UISlotEquipment
 				{

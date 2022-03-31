@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Game.Entities
 {
-    [CreateAssetMenu(fileName = "EntityData", menuName = "Data/Entity")]
+    [CreateAssetMenu(fileName = "EntityData", menuName = "Game/Entity")]
     public class EntityData : ScriptableObject
     {
         public string CharacterName

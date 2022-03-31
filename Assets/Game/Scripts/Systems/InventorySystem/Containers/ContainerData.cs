@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game.Systems.InventorySystem
 {
-    [CreateAssetMenu(fileName = "ContainerData", menuName = "Data/Inventory/Container")]
+    [CreateAssetMenu(fileName = "ContainerData", menuName = "Game/Inventory/Container")]
     public class ContainerData : ScriptableObject
     {
         [ListDrawerSettings(ListElementLabelName = "Tittle")]

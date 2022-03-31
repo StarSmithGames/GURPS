@@ -1,12 +1,7 @@
-using Game.Systems.CharacterCutomization;
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine.Events;
-
-using static UnityEditor.Progress;
 
 namespace Game.Systems.InventorySystem
 {
@@ -26,10 +21,12 @@ namespace Game.Systems.InventorySystem
 		public Equip Weapon10 { get; private set; }
 		public Equip Weapon11 { get; private set; }
 
-		//Jewelry		= 21,
-		//Ring0		= 22,
-		//Ring1		= 23,
-		//Trinket		= 24,
+		public Equip Cloak { get; private set; }
+		public Equip Jewelry { get; private set; }
+		public Equip Ring0 { get; private set; }
+		public Equip Ring1 { get; private set; }
+		public Equip Trinket { get; private set; }
+
 		public List<Equip> Armors { get; private set; }
 
 		private Dictionary<Equip, Type[]> dictionarySlotTypes;
@@ -53,10 +50,16 @@ namespace Game.Systems.InventorySystem
 			Legs		= new Equip();
 			Feet		= new Equip();
 
-			Weapon00 = new Equip();
-			Weapon01 = new Equip();
-			Weapon10 = new Equip();
-			Weapon11 = new Equip();
+			Weapon00	= new Equip();
+			Weapon01	= new Equip();
+			Weapon10	= new Equip();
+			Weapon11	= new Equip();
+
+			Cloak		= new Equip();
+			Jewelry		= new Equip();
+			Ring0		= new Equip();
+			Ring1		= new Equip();
+			Trinket		= new Equip();
 
 			dictionarySlotTypes = new Dictionary<Equip, Type[]>()
 			{
@@ -66,6 +69,10 @@ namespace Game.Systems.InventorySystem
 				{ Forearms, new Type[]{typeof(ForearmItemData) } },
 				{ Legs,     new Type[]{typeof(LegsItemData) } },
 				{ Feet,     new Type[]{typeof(FeetItemData) } },
+				{ Cloak,    new Type[]{typeof(BackItemData) } },
+				{ Jewelry,  new Type[]{typeof(JewelryItemData) } },
+				{ Ring0,    new Type[]{typeof(RingItemData) } },
+				{ Ring1,    new Type[]{typeof(RingItemData) } },
 			};
 
 			Armors = new List<Equip>()
@@ -76,19 +83,23 @@ namespace Game.Systems.InventorySystem
 				Forearms,
 				Legs,
 				Feet,
+				Cloak,
+				Jewelry,
+				Ring0,
+				Ring1,
 			};
 
 			Weapon0 = new EquipWeaponConnection()
 			{
-				Main = Weapon00,
-				Spare = Weapon01,
-				Inventory = inventory,
+				Main		= Weapon00,
+				Spare		= Weapon01,
+				Inventory	= inventory,
 			};
 			Weapon1 = new EquipWeaponConnection()
 			{
-				Main = Weapon10,
-				Spare = Weapon11,
-				Inventory = inventory,
+				Main		= Weapon10,
+				Spare		= Weapon11,
+				Inventory	= inventory,
 			};
 		}
 
@@ -172,18 +183,27 @@ namespace Game.Systems.InventorySystem
 		}
 		private bool AddArmorTo(Item item, Equip equip)
 		{
+			if(IsCanAddTo(item, equip))
+			{
+				if (!equip.IsEmpty)
+				{
+					inventory.Add(equip.Item);
+				}
+				equip.SetItem(item);
+
+				return true;
+			}
+
+			return false;
+		}
+		private bool IsCanAddTo(Item item, Equip equip)
+		{
 			if (dictionarySlotTypes.TryGetValue(equip, out Type[] types))
 			{
 				for (int i = 0; i < types.Length; i++)
 				{
 					if (types[i].IsAssignableFrom(item.ItemData.GetType()))
 					{
-						if (!equip.IsEmpty)
-						{
-							inventory.Add(equip.Item);
-						}
-						equip.SetItem(item);
-
 						return true;
 					}
 				}
@@ -192,14 +212,29 @@ namespace Game.Systems.InventorySystem
 			return false;
 		}
 
-		private bool RemoveArmor(Item item)
+		public bool Swap(Equip from, Equip to)
 		{
-			Equip equip = Armors.Find((x) => x.Item == item);
-			equip.SetItem(null);
-			return true;
+			var weaponFrom = GetWeapon(from);
+			var weaponTo = GetWeapon(to);
+
+			if (weaponFrom == null && weaponTo == null)//armor swap
+			{
+				if (IsCanAddTo(from.Item, to))
+				{
+					from.Swap(to);
+					return true;
+				}
+			}
+			else if(weaponFrom != null && weaponTo != null)//weapon swap
+			{
+				return SwapWeapons(from, to);
+			}
+
+			return false;
 		}
 
-		public bool WeaponSwaps(Equip from, Equip to)
+
+		private bool SwapWeapons(Equip from, Equip to)
 		{
 			var weaponFrom = GetWeapon(from);
 			var weaponTo = GetWeapon(to);
@@ -284,6 +319,7 @@ namespace Game.Systems.InventorySystem
 			}
 			return false;
 		}
+
 
 		private EquipWeaponConnection GetWeapon(Equip equip)
 		{

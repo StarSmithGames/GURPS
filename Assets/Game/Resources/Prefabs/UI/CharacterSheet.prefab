@@ -2064,6 +2064,11 @@ MonoBehaviour:
   <Weapon01>k__BackingField: {fileID: 3182734003974819796}
   <Weapon10>k__BackingField: {fileID: 3182734003042487591}
   <Weapon11>k__BackingField: {fileID: 3182734003453664613}
+  <Cloak>k__BackingField: {fileID: 3182734003697973100}
+  <Jewelry>k__BackingField: {fileID: 3182734003188034986}
+  <Ring0>k__BackingField: {fileID: 3182734004452296715}
+  <Ring1>k__BackingField: {fileID: 3182734003371840161}
+  <Trinket>k__BackingField: {fileID: 3182734003072117608}
   slots:
   - {fileID: 3182734003375335213}
   - {fileID: 3182734004805985024}

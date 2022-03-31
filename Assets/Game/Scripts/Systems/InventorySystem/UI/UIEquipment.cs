@@ -26,6 +26,12 @@ namespace Game.Systems.InventorySystem
 		[field: SerializeField] public UISlotEquipment Weapon01 { get; private set; }
 		[field: SerializeField] public UISlotEquipment Weapon10 { get; private set; }
 		[field: SerializeField] public UISlotEquipment Weapon11 { get; private set; }
+		[field: Space]
+		[field: SerializeField] public UISlotEquipment Cloak { get; private set; }
+		[field: SerializeField] public UISlotEquipment Jewelry { get; private set; }
+		[field: SerializeField] public UISlotEquipment Ring0 { get; private set; }
+		[field: SerializeField] public UISlotEquipment Ring1 { get; private set; }
+		[field: SerializeField] public UISlotEquipment Trinket { get; private set; }
 
 		public UISlotEquipment[] slots;
 
@@ -67,6 +73,12 @@ namespace Game.Systems.InventorySystem
 			Weapon01.SetEquip(currentEquipment.Weapon01);
 			Weapon10.SetEquip(currentEquipment.Weapon10);
 			Weapon11.SetEquip(currentEquipment.Weapon11);
+
+			Cloak.SetEquip(currentEquipment.Cloak);
+			Jewelry.SetEquip(currentEquipment.Jewelry);
+			Ring0.SetEquip(currentEquipment.Ring0);
+			Ring1.SetEquip(currentEquipment.Ring1);
+			Trinket.SetEquip(currentEquipment.Trinket);
 		}
 
 		[Button]
