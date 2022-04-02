@@ -53,6 +53,14 @@ namespace Game.Systems.InteractionSystem
 			return Vector3.Distance(transform.position, currentInteractor.Transform.position) <= interactableSettings.maxRange;
 		}
 
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.red;
+			Gizmos.DrawWireSphere(InteractPosition, interactableSettings.maxRange);
+			Gizmos.DrawSphere(InteractPosition, 0.1f);
+		}
+
+
 		[System.Serializable]
 		public class Settings
 		{

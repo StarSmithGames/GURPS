@@ -1,7 +1,9 @@
 using Game.Entities;
+using Game.Systems.SheetSystem;
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using Zenject;
@@ -12,6 +14,7 @@ public class UIAvatar : PoolableObject
 	public UnityAction<UIAvatar> onDoubleClicked;
 
 	[field: SerializeField] public UIButtonPointer BackgroundButton { get; private set; }
+	[field: SerializeField] public PointerHoverComponent PointerHover { get; private set; }
 	[field: Space]
 	[field: SerializeField] public Image Avatar { get; private set; }
 	[field: Space]
@@ -21,12 +24,27 @@ public class UIAvatar : PoolableObject
 
 	public Character CurrentCharacter { get; private set; }
 
+	private UIManager uiManager;
+
+	[Inject]
+	private void Construct(UIManager uiManager)
+	{
+		this.uiManager = uiManager;
+	}
+
 	private void OnDestroy()
 	{
 		if (BackgroundButton != null)
 		{
 			BackgroundButton.onClickChanged -= OnClick;
 		}
+
+		if(PointerHover != null)
+		{
+			PointerHover.onPointerEnter -= OnPointerEnter;
+			PointerHover.onPointerExit -= OnPointerExit;
+		}
+
 		if (CurrentCharacter != null)
 		{
 			CurrentCharacter.onCharacterBattleStateChanged -= UpdateBattleUI;
@@ -36,6 +54,9 @@ public class UIAvatar : PoolableObject
 	private void Start()
 	{
 		BackgroundButton.onClickChanged += OnClick;
+
+		PointerHover.onPointerEnter += OnPointerEnter;
+		PointerHover.onPointerExit += OnPointerExit;
 	}
 
 	public void SetCharacter(Character character)
@@ -45,8 +66,11 @@ public class UIAvatar : PoolableObject
 			CurrentCharacter.onCharacterBattleStateChanged -= UpdateBattleUI;
 		}
 		CurrentCharacter = character;
-		CurrentCharacter.onCharacterBattleStateChanged += UpdateBattleUI;
-		
+		if(CurrentCharacter != null)
+		{
+			CurrentCharacter.onCharacterBattleStateChanged += UpdateBattleUI;
+		}
+
 		UpdateUI();
 	}
 
@@ -58,7 +82,7 @@ public class UIAvatar : PoolableObject
 
 	private void UpdateUI()
 	{
-		Avatar.sprite = CurrentCharacter.EntityData.characterSprite;
+		Avatar.sprite = (CurrentCharacter.Sheet.Information as EntityAvatarInformation).icon;
 		UpdateBattleUI();
 	}
 
@@ -77,6 +101,15 @@ public class UIAvatar : PoolableObject
 		{
 			onDoubleClicked?.Invoke(this);
 		}
+	}
+
+	private void OnPointerEnter(PointerEventData eventData)
+	{
+		uiManager.Battle.SetSheet(CurrentCharacter.Sheet);
+	}
+	private void OnPointerExit(PointerEventData eventData)
+	{
+		uiManager.Battle.SetSheet(null);
 	}
 
 	public class Factory : PlaceholderFactory<UIAvatar> { }

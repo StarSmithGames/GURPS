@@ -8,19 +8,28 @@ namespace Game.Systems.SheetSystem
 {
     public interface ISheet
     {
+        IInformation Information { get; }
         IStats Stats { get; }
         IInventory Inventory { get; }
+
+        SheetSettings Settings { get; }
     }
 
-    public class EntitySheet : ISheet
+    public abstract class EntitySheet : ISheet
     {
+        public virtual IInformation Information { get; protected set; }
         public virtual IStats Stats { get; private set; }
         public virtual IInventory Inventory { get; private set; }
 
-        public EntitySheet(EntityData data)
+		public SheetSettings Settings { get; private set; }
+
+		public EntitySheet(IInformation information, SheetSettings sheetSettings)
         {
-            Stats = new Stats(data.characterSheet.stats);
-            Inventory = new Inventory(data.characterSheet.inventory);
+            Settings = sheetSettings;
+
+            Information = information;
+            Stats = new Stats(Settings.stats);
+            Inventory = new Inventory(Settings.inventory);
         }
     }
 
@@ -28,58 +37,73 @@ namespace Game.Systems.SheetSystem
     {
         public virtual IEquipment Equipment { get; private set; }
 
-        public CharacterSheet(EntityData data) : base(data)
+        public CharacterSheet(CharacterData data) : base(data.information, data.sheet)
         {
-            Equipment = new Equipment(data.characterSheet.equipment, Inventory);
+            Equipment = new Equipment(data.sheet.equipment, Inventory);
         }
     }
 
     public class NPCSheet : EntitySheet
     {
-        public NPCSheet(EntityData data) : base(data) { }
-    }
+        public NPCSheet(NPCData data) : base(data.information, data.sheet) { }
+	}
+
+	public class ContainerSheet : EntitySheet
+	{
+		public ContainerSheet(ContainerData data) : base(data.information, data.sheet) { }
+	}
 
 
-    [System.Serializable]
-    public class CharacterSheetSettings
+
+	[System.Serializable]
+    public class SheetSettings
     {
         public Identity identity = Identity.Humanoid;
+        [HideIf("IsLifeless")]
         public float age = -1;
-        [ShowIf("identity", Identity.Humanoid)]
+        [ShowIf("@IsHumanoid && !IsLifeless")]
         public Race race = Race.Human;
+        [HideIf("IsLifeless")]
         public Gender gender = Gender.Male;
+        [HideIf("IsLifeless")]
         public Aligment aligment = Aligment.TrueNeutral;
         [Space]
+        public bool isImmortal = false;
         public StatsSettigns stats;
         public InventorySettings inventory;
-        [ShowIf("identity", Identity.Humanoid)]
+        [ShowIf("@IsHumanoid && !IsLifeless")]
         public EquipmentSettings equipment;
+
+
+        private bool IsHumanoid => identity == Identity.Humanoid;
+        private bool IsLifeless => identity == Identity.Lifeless;
     }
 
     public enum Identity
     {
-        Humanoid,
-        Animal,
+        Humanoid    = 0,
+        Animal      = 10,
+        Lifeless    = 100,
     }
 
     public enum Race
     {
-        Human = 0,
-        Elf = 1,
-        Dwarf = 2,
-        Dragonborn = 3,
+        Human       = 0,
+        Elf         = 1,
+        Dwarf       = 2,
+        Dragonborn  = 3,
 
-        HalfElf = 10,
-        HalfDwarf = 11,
-        Halflieng = 12,
+        HalfElf     = 10,
+        HalfDwarf   = 11,
+        Halflieng   = 12,
 
-        Goblin = 100,
-        Hobgoblin = 101,
-        Orc = 102,
-        Kobold = 103,
-        Murloc = 104,
-        Minotaur = 105,
-        Zombie = 106,
+        Goblin      = 100,
+        Hobgoblin   = 101,
+        Orc         = 102,
+        Kobold      = 103,
+        Murloc      = 104,
+        Minotaur    = 105,
+        Zombie      = 106,
     }
 
     public enum Gender

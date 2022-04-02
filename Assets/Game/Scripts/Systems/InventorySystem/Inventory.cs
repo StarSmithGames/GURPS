@@ -124,7 +124,7 @@ namespace Game.Systems.InventorySystem
     [System.Serializable]
     public class InventorySettings
     {
-        public bool useRandomItems = true;
+        public bool useRandomItems = false;
         public bool shuffleList = true;
         //sort by
 

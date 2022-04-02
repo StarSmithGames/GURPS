@@ -1,3 +1,5 @@
+using Game.Systems.SheetSystem;
+
 using UnityEngine;
 
 using Zenject;
@@ -33,10 +35,10 @@ namespace Game.Systems.BattleSystem
 			signalBus?.Subscribe<SignalCurrentBattleChanged>(OnBattleChanged);
 		}
 
-		public void SetEntityInformation(IEntity entity)
+		public void SetSheet(ISheet sheet)
 		{
-			EntityInformation.SetEntity(entity);
-			EntityInformation.gameObject.SetActive(entity != null);
+			EntityInformation.SetSheet(sheet);
+			EntityInformation.gameObject.SetActive(sheet != null);
 		}
 
 		private void OnBattleUpdated()

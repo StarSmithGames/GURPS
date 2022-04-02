@@ -1,6 +1,7 @@
 using EPOOutline;
 
 using Game.Systems.InteractionSystem;
+using Game.Systems.SheetSystem;
 
 using Sirenix.OdinInspector;
 
@@ -11,30 +12,26 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : InteractableModel, IObservable
+	public class ContainerModel : InteractableModel, ISheetable, IObservable
 	{
 		[SerializeField] private Collider collider;
 		[SerializeField] private Outlinable outline;
 
-		public ContainerData ContainerData => containerData;
-		[SerializeField] private ContainerData containerData;
+		[field: SerializeField] public ContainerData ContainerData { get; private set; }
 
-		[SerializeField] private Settings settings;
-
-		public IInventory Inventory 
+		public ISheet Sheet
 		{
 			get
 			{
-				if(inventory == null)
+				if(containerSheet == null)
 				{
-					inventory = new Inventory(ContainerData.inventory);
-					//TODO Load from data
+					containerSheet = new ContainerSheet(ContainerData);
 				}
-				
-				return inventory;
+
+				return containerSheet;
 			}
 		}
-		private IInventory inventory;
+		private ContainerSheet containerSheet;
 
 		public bool IsOpened => containerWindow?.IsShowing ?? false;
 		public bool IsSearched => data.isSearched;
@@ -73,6 +70,8 @@ namespace Game.Systems.InventorySystem
 			{
 				outline.enabled = true;
 			}
+
+			uiManager.Battle.SetSheet(Sheet);
 		}
 		public void Observe() { }
 		public void EndObserve()
@@ -81,6 +80,8 @@ namespace Game.Systems.InventorySystem
 			{
 				outline.enabled = false;
 			}
+
+			uiManager.Battle.SetSheet(null);
 		}
 		#endregion
 
@@ -123,7 +124,7 @@ namespace Game.Systems.InventorySystem
 		{
 			containerWindow?.Hide();
 
-			containerWindow = containerHandler.SpawnContainerWindow(Inventory);
+			containerWindow = containerHandler.SpawnContainerWindow(Sheet.Inventory);
 			containerWindow.onTakeAll += OnTakeAll;
 			containerWindow.ShowPopup();
 		}
@@ -140,16 +141,9 @@ namespace Game.Systems.InventorySystem
 
 		private void OnTakeAll()
 		{
-			containerHandler.CharacterTakeAllFrom(Inventory);
+			containerHandler.CharacterTakeAllFrom(Sheet.Inventory);
 		}
 
-
-		private void OnDrawGizmosSelected()
-		{
-			Gizmos.color = Color.red;
-			Gizmos.DrawWireSphere(InteractPosition, settings.maxRange);
-			Gizmos.DrawSphere(InteractPosition, 0.1f);
-		}
 
 		public class Data
 		{

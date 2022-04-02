@@ -1341,7 +1341,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -2127,11 +2127,7 @@ MonoBehaviour:
     position: {x: 0, y: 0, z: 0}
   collider: {fileID: 292194764}
   outline: {fileID: 292194763}
-  containerData: {fileID: 11400000, guid: b0f6ad7a6bb1ce749b746081bfb299cf, type: 2}
-  settings:
-    maxRange: 3
-    interaction: 0
-    position: {x: 0, y: 0, z: 0}
+  <ContainerData>k__BackingField: {fileID: 11400000, guid: b0f6ad7a6bb1ce749b746081bfb299cf, type: 2}
 --- !u!208 &292194766
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -5098,6 +5094,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6753425058046806692, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: c617562556291264a940c0d8c3fe2e89, type: 2}
+    - target: {fileID: 6753425058046806692, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
       propertyPath: entityData
       value: 
       objectReference: {fileID: 11400000, guid: c290be8b3e643ed4da93af2bb7566809, type: 2}
@@ -7072,7 +7072,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -9527,7 +9527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 926c479c677f00e4f8c2648a64a19919, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <EntityData>k__BackingField: {fileID: 11400000, guid: 4f96a8e4b1994bd4aa3945d709af589f, type: 2}
+  data: {fileID: 11400000, guid: 3d0965b4c2f5ded48a4313efa89b19ea, type: 2}
 --- !u!114 &1118374282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11338,7 +11338,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -17412,7 +17412,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -18325,19 +18325,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 696369667, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_CameraDistance
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.1199994
+      value: -7.12
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 14.937336
+      value: 10.868668
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.062381
+      value: -6.156191
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.w
@@ -18345,15 +18345,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.45758164
+      value: 0.4575816
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000019606606
+      value: 1e-45
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000010089912
+      value: -1e-45
       objectReference: {fileID: 0}
     - target: {fileID: 1316808353, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Follow
@@ -18365,15 +18365,15 @@ PrefabInstance:
       objectReference: {fileID: 936474466}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.1199994
+      value: -7.12
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 14.937336
+      value: 10.868668
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.062381
+      value: -6.156191
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.w
@@ -18381,15 +18381,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.45758164
+      value: 0.4575816
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000019606606
+      value: 1e-45
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000010089912
+      value: -1e-45
       objectReference: {fileID: 0}
     - target: {fileID: 1643292430, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Follow
@@ -19627,7 +19627,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5

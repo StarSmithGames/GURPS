@@ -11,7 +11,7 @@ namespace Game.Systems.BattleSystem
         [field: SerializeField] public UIBar HealthBar { get; private set; }
         [field: SerializeField] public TMPro.TextMeshProUGUI Level { get; private set; }
 
-        private IEntity entity;
+        private ISheet sheet;
         private IStatBar hitPoints;
 
 		private void OnDestroy()
@@ -22,16 +22,16 @@ namespace Game.Systems.BattleSystem
             }
         }
 
-		public void SetEntity(IEntity entity)
+		public void SetSheet(ISheet sheet)
 		{
-            this.entity = entity;
+            this.sheet = sheet;
 
             if (hitPoints != null)
 			{
                 hitPoints.onStatChanged -= OnHitPointsChanged;
             }
-            hitPoints = entity?.Sheet.Stats.HitPoints;
-            if(entity != null)
+            hitPoints = sheet?.Stats.HitPoints;
+            if(sheet != null)
 			{
                 hitPoints.onStatChanged += OnHitPointsChanged;
             }
@@ -41,7 +41,9 @@ namespace Game.Systems.BattleSystem
 
         private void UpdateUI()
         {
-            Name.text = entity?.EntityData.CharacterName ?? "";
+            if (sheet == null) return;
+
+            Name.text = sheet.Information.Name;
             Level.text = "Level 999";
 
             OnHitPointsChanged();
@@ -49,8 +51,10 @@ namespace Game.Systems.BattleSystem
 
         private void OnHitPointsChanged()
 		{
-            HealthBar.FillAmount = hitPoints?.PercentValue ?? 0.5f;
-            HealthBar.BarText.text = hitPoints?.ToString();
+            if (sheet == null) return;
+
+            HealthBar.FillAmount = sheet.Settings.isImmortal ? 1f : hitPoints.PercentValue;
+            HealthBar.BarText.text = sheet.Settings.isImmortal ? SymbolCollector.INFINITY.ToString() : hitPoints.ToString();
         }
     }
 }

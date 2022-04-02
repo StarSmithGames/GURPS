@@ -2,6 +2,7 @@ using Game.Systems.BattleSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Game.Entities
@@ -11,13 +12,15 @@ namespace Game.Entities
 		public UnityAction onCharacterBattleStateChanged;
 		public UnityAction onCharacterUpdated;
 
+		[SerializeField] private CharacterData data;
+
 		public override ISheet Sheet
 		{
 			get
 			{
 				if(characterSheet == null)
 				{
-					characterSheet = new CharacterSheet(EntityData);
+					characterSheet = new CharacterSheet(data);
 				}
 
 				return characterSheet;
