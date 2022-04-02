@@ -34,6 +34,8 @@ public class CharacterController3D : MonoBehaviour
 	public Vector3 CurrentDestination { get; private set; }
 
 	public bool IsFreezed { get; private set; }
+	public bool IsCanMove { get => isCanMove; set => isCanMove = value; }
+	private bool isCanMove = true;
 
 	[OnValueChanged("Validate", true)]
 	[SerializeField] private Settings settings;
@@ -122,9 +124,9 @@ public class CharacterController3D : MonoBehaviour
 		return IsHasTarget;
 	}
 
-	public Vector3 GetVelocityNormalized()
+	public Vector3 GetVelocity()
 	{
-		return lastVelocity.normalized;
+		return lastVelocity;
 	}
 
 
@@ -175,11 +177,18 @@ public class CharacterController3D : MonoBehaviour
 
 	private Vector3 CalculateMovementVelocity()
 	{
-		if (!IsHasTarget) return Vector3.zero;
-		
-		if (navigationController.IsReachedDestination())
+		if (!IsCanMove) return Vector3.zero;
+
+		if (navigationController.IsReachedDestination() || !IsHasTarget)
 		{
 			IsHasTarget = false;
+			//if (lastVelocity != Vector3.zero)
+			//{
+			//	lastVelocity = Vector3.MoveTowards(lastVelocity, Vector3.zero, 1f * Time.deltaTime);
+
+			//	return lastVelocity;
+			//}
+
 			return Vector3.zero;
 		}
 
@@ -187,7 +196,7 @@ public class CharacterController3D : MonoBehaviour
 		direction = VectorMath.RemoveDotVector(direction, transform.root.up);
 		Vector3 velocity = direction.normalized * settings.movementSpeed;
 
-		return settings.useNavMesh ? navMeshAgent.desiredVelocity : velocity;
+		return settings.useNavMesh ? navMeshAgent.desiredVelocity.normalized : velocity.normalized;
 	}
 
 	private void HandleTimeOut()
@@ -253,6 +262,7 @@ public class CharacterController3D : MonoBehaviour
 		public bool useNavMesh = true;
 		[Space]
 		public float movementSpeed = 5f;
+		public AnimationCurve pathCurve;//eehh
 		public float turnSpeed = 2000f;
 		public float jumpHeight = 1.0f;
 		public float gravity = -9.81f;

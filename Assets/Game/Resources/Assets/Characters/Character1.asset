@@ -16,112 +16,130 @@ MonoBehaviour:
   localizations:
   - language: 10
     characterName: Player1
-  inventory:
-    useRandomItems: 0
-    shuffleList: 0
-    items:
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 5a435e1e1ece6c9428a29f20bd09a9c5, type: 2}
-      currentStackSize: 1000
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 30de1c84827915745ad9251b08a0cc3d, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 3ce4a099262163340a4597e488ecb3c7, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 669af4225c959144ca54181b4059c7ed, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: b6a0081bf0c027d42a62fe441ce7b528, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 12a0c06ab07214d4d99e94c683b71d09, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 2458c1b0df8f4b54680153f505ca1dea, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 40ae7b9662b044e428f0ce5248a72da3, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 0954bdeaa3b351946a8fddf1ec1b7eb1, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: c32f9bbed9c011d4c8fdbb9ae912fddd, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 7cde3e219ee9ba4488fc4c572778a51b, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: e3f3989e83f8881498078c7fdbb24787, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: eb0715ba2522f6e428f0591b0bd05f4e, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 113dc4e5942078f45b446a71f767a818, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 4d5f0c4e4c0630f48b3c33bac6232bc6, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 4555076bacd44e94096e0834690e9ed5, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 509a6ce85bbe8a347a9400df4b9f9469, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 56e3432160368474fbcd08890e27ca6d, type: 2}
-      currentStackSize: 1
-      currentWeight: 0.01
-      currentDurability: 100
-    randomSettings:
-      isUnique: 0
-      useRandomCount: 1
-      itemsCount: 1
-      itemsMinMaxCount: {x: 1, y: 5}
-      staticItems: []
-      useConsumableItems: 1
-      useFireItems: 1
-      useAccelerantItems: 1
-      useFuelItems: 1
-      useStarterItems: 1
-      useTinderItems: 1
-      useToolItems: 1
-      useMaterialItems: 1
-      ignoreList: []
+  characterSheet:
+    identity: 0
+    age: -1
+    race: 0
+    gender: 0
+    aligment: 4
+    stats:
+      strength: 10
+      dexterity: 10
+      intelligence: 10
+      health: 10
+      addHitPoints: 0
+      addFatiguePoints: 0
+      addMove: 0
+      addSpeed: 0
+      addWill: 0
+      addPerception: 0
+    inventory:
+      useRandomItems: 0
+      shuffleList: 1
+      items: []
+      randomSettings:
+        isUnique: 0
+        useRandomCount: 1
+        itemsCount: 1
+        itemsMinMaxCount: {x: 1, y: 5}
+        staticItems: []
+        useConsumableItems: 1
+        useFireItems: 1
+        useAccelerantItems: 1
+        useFuelItems: 1
+        useStarterItems: 1
+        useTinderItems: 1
+        useToolItems: 1
+        useMaterialItems: 1
+        ignoreList: []
+    equipment:
+      head:
+        useRandom: 0
+        data: {fileID: 11400000, guid: 2458c1b0df8f4b54680153f505ca1dea, type: 2}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      sholders:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      chest:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      forearms:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      legs:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      feet:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon00:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon01:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon10:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon11:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      cloak:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      jewelry:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      ring0:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      ring1:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      trinket:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100

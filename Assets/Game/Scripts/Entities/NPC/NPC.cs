@@ -1,9 +1,25 @@
+using Game.Systems.SheetSystem;
+
 using Zenject;
 
 namespace Game.Entities
 {
 	public class NPC : Entity
 	{
+		public override ISheet Sheet
+		{
+			get
+			{
+				if (npcSheet == null)
+				{
+					npcSheet = new NPCSheet(EntityData);
+				}
+
+				return npcSheet;
+			}
+		}
+		private NPCSheet npcSheet;
+
 		protected UIManager uiManager;
 		protected FieldOfView fov;
 

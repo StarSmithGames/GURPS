@@ -94,8 +94,11 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 				{
 					if (isHit)
 					{
-						leaderCharacter.Navigation.SetTarget(hit.point);
-						leaderCharacter.Controller.SetDestination(hit.point);
+						if (!leaderCharacter.InBattle || leaderCharacter.InBattle && !leaderCharacter.Controller.IsHasTarget)
+						{
+							leaderCharacter.Navigation.SetTarget(hit.point);
+							leaderCharacter.Controller.SetDestination(hit.point);
+						}
 					}
 				}
 			}

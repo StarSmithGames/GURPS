@@ -1,6 +1,9 @@
+using Game.Systems.CharacterCutomization;
+
 using System;
 using System.Collections.Generic;
 
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Game.Systems.InventorySystem
@@ -33,10 +36,12 @@ namespace Game.Systems.InventorySystem
 		private EquipWeaponConnection Weapon0;
 		private EquipWeaponConnection Weapon1;
 
+		private EquipmentSettings settings;
 		private IInventory inventory;
 
-		public Equipment(IInventory inventory)
+		public Equipment(EquipmentSettings settings, IInventory inventory)
 		{
+			this.settings = settings;
 			this.inventory = inventory;
 			Initialization();
 		}
@@ -101,6 +106,8 @@ namespace Game.Systems.InventorySystem
 				Spare		= Weapon11,
 				Inventory	= inventory,
 			};
+
+			Head.SetItem(settings.head);
 		}
 
 
@@ -328,6 +335,51 @@ namespace Game.Systems.InventorySystem
 
 			return null;
 		}
+
+		public Data GetData()
+		{
+			return new Data
+			{
+				head = Head.Item,
+				sholders = Sholders.Item,
+				chest = Chest.Item,
+				forearms = Forearms.Item,
+				legs = Legs.Item,
+				feet = Feet.Item,
+
+				weapon00 = Weapon00.Item,
+				weapon01 = Weapon01.Item,
+				weapon10 = Weapon10.Item,
+				weapon11 = Weapon11.Item,
+
+				cloak = Cloak.Item,
+				jewelry = Jewelry.Item,
+				ring0 = Ring0.Item,
+				ring1 = Ring1.Item,
+				trinket = Trinket.Item,
+			};
+		}
+
+		public class Data 
+		{
+			public Item head;
+			public Item sholders;
+			public Item chest;
+			public Item forearms;
+			public Item legs;
+			public Item feet;
+
+			public Item weapon00;
+			public Item weapon01;
+			public Item weapon10;
+			public Item weapon11;
+			
+			public Item cloak;
+			public Item jewelry;
+			public Item ring0;
+			public Item ring1;
+			public Item trinket;
+		}
 	}
 
 	[System.Serializable]
@@ -342,6 +394,14 @@ namespace Game.Systems.InventorySystem
 
 		public void SetItem(Item item)
 		{
+			if(item != null)
+			{
+				if (item.ItemData == null)
+				{
+					item = null;
+				}
+			}
+			
 			Item = item;
 
 			onEquipChanged?.Invoke();
@@ -520,5 +580,27 @@ namespace Game.Systems.InventorySystem
 		{
 			return equip != null && (Main == equip || Spare == equip);
 		}
+	}
+
+	[System.Serializable]
+	public class EquipmentSettings
+	{
+		public Item head;
+		public Item sholders;
+		public Item chest;
+		public Item forearms;
+		public Item legs;
+		public Item feet;
+		[Space]
+		public Item weapon00;
+		public Item weapon01;
+		public Item weapon10;
+		public Item weapon11;
+		[Space]
+		public Item cloak;
+		public Item jewelry;
+		public Item ring0;
+		public Item ring1;
+		public Item trinket;
 	}
 }

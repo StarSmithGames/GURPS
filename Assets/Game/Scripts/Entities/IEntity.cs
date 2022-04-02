@@ -2,6 +2,7 @@ using EPOOutline;
 
 using Game.Entities;
 using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
@@ -10,6 +11,8 @@ public interface IEntity
 	Transform Transform { get; }
 
 	Transform CameraPivot { get; }
+
+	ISheet Sheet { get; }
 
 	EntityData EntityData { get; }
 

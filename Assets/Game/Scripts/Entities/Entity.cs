@@ -2,7 +2,7 @@
 using EPOOutline;
 
 using Game.Entities;
-using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem;
 
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -16,6 +16,8 @@ namespace Game.Entities
 	{
 		public Transform Transform => transform;
 
+		public virtual ISheet Sheet { get; private set; }
+
 		[field: SerializeField] public EntityData EntityData { get; private set; }
 
 		public NavigationController Navigation { get; private set; }
@@ -25,7 +27,6 @@ namespace Game.Entities
 		public Outlinable Outlines { get; private set; }
 
 		public Transform CameraPivot { get; private set; }
-		
 
 		protected SignalBus signalBus;
 
@@ -101,16 +102,6 @@ namespace Game.Entities
 			Assert.IsNotNull(Markers, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(Outlines, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(CameraPivot, $"Entity {gameObject.name} lost component.");
-		}
-	}
-
-	public class EntitySheet
-	{
-		public virtual IInventory Inventory { get; private set; }
-
-		public EntitySheet(EntityData data)
-		{
-			Inventory = new Inventory(data.inventory);
 		}
 	}
 }

@@ -37,7 +37,7 @@ namespace Game.Systems.InventorySystem
 		private void UpdateUI()
 		{
 			Icon.enabled = !CurrentEquip.IsEmpty;
-			Icon.sprite = CurrentItem?.ItemData.itemSprite;
+			Icon.sprite = CurrentItem?.ItemData?.itemSprite;
 			Icon.color = CurrentEquip.Mark ? oneHalfAlpha : one;
 
 			Background.sprite = CurrentEquip.IsEmpty ? SwapBackground : BaseBackground;

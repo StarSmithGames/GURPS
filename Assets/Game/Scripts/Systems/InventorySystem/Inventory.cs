@@ -106,6 +106,19 @@ namespace Game.Systems.InventorySystem
             Items.Clear();
             OnInventoryChanged?.Invoke();
         }
+
+        public Data GetData()
+		{
+            return new Data
+            {
+                items = Items,
+            };
+		}
+
+        public class Data
+		{
+            public List<Item> items;
+        }
 	}
 
     [System.Serializable]

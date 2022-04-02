@@ -2159,7 +2159,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     useNavMesh: 1
-    movementSpeed: 2.5
+    movementSpeed: 5
+    pathCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0.027805796
+        outSlope: 0.027805796
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.11437419
+      - serializedVersion: 3
+        time: 0.9
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.10942184
+        outWeight: 0.8350707
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -3.0221038
+        outSlope: -3.0221038
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.024383187
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
     turnSpeed: 2000
     jumpHeight: 3
     gravity: -9.81
@@ -4431,7 +4464,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6753425058046806699}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be7ce217b3ed05b41a934cbe3ae38504, type: 3}
+  m_Script: {fileID: 11500000, guid: 410057c28bbd3d847882337c4be72468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 8252704713448510007}
@@ -4443,6 +4476,7 @@ MonoBehaviour:
   navigationController: {fileID: 696508144769888773}
   markers: {fileID: 8770400967174064253}
   outline: {fileID: 6874036480430047073}
+  character: {fileID: 6753425058046806692}
 --- !u!114 &6753425058046806692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4455,7 +4489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8571f4f30ee26846ac3cc759e6459b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityData: {fileID: 11400000, guid: 5fbc4eb3b82e980409cd8636cadb5f15, type: 2}
+  <EntityData>k__BackingField: {fileID: 11400000, guid: 5fbc4eb3b82e980409cd8636cadb5f15, type: 2}
 --- !u!143 &6753425058046806693
 CharacterController:
   m_ObjectHideFlags: 0
