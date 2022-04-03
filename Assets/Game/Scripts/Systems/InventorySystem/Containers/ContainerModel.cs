@@ -1,5 +1,6 @@
 using EPOOutline;
 
+using Game.Entities;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
@@ -99,7 +100,7 @@ namespace Game.Systems.InventorySystem
 			{
 				currentInteractor.Controller.SetDestination(InteractPosition);
 
-				yield return new WaitWhile(() => !currentInteractor.Navigation.IsReachedDestination());
+				yield return new WaitWhile(() => !currentInteractor.Navigation.NavMeshAgent.IsReachedDestination());
 			}
 
 			if (IsInteractorInRange())

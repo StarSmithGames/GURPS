@@ -167,8 +167,10 @@ namespace Game.Systems.BattleSystem
 
 		private IEnumerator InitiatorTurn()
 		{
-			IEntity initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
+			IBattlable initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
 			bool isMineTurn = characterManager.CurrentParty.Characters.Contains(initiator);
+
+			initiator.Sheet.Stats.RecoveMove();
 
 			if (isMineTurn)
 			{
@@ -229,6 +231,7 @@ namespace Game.Systems.BattleSystem
 		{
 			Entities.ForEach((x) =>
 			{
+				x.Sheet.Stats.RecoveMove();
 				x.JoinBattle(this);
 			});
 
@@ -349,9 +352,9 @@ namespace Game.Systems.BattleSystem
 	
 	public class Turn : ICopyable<Turn>
 	{
-		public IEntity Initiator { get; private set; }
+		public IBattlable Initiator { get; private set; }
 
-		public Turn(IEntity entity)
+		public Turn(IBattlable entity)
 		{
 			Initiator = entity;
 		}

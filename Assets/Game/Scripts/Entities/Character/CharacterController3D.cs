@@ -113,13 +113,13 @@ public class CharacterController3D : MonoBehaviour
 		IsFreezed = false;
 	}
 
-	public bool SetDestination(Vector3 destination, float stoppingDistance = -1)
+	public bool SetDestination(Vector3 destination, float stoppingDistance = -1, float maxPathDistance = -1)
 	{
 		if (IsFreezed) return false;
 
-		IsHasTarget = navigationController.SetTarget(destination, stoppingDistance);
+		IsHasTarget = navigationController.SetTarget(destination, stoppingDistance, maxPathDistance);
 
-		CurrentDestination = IsHasTarget ? destination : Vector3.zero;
+		CurrentDestination = IsHasTarget ? navigationController.CurrentNavMeshDestination : Vector3.zero;
 
 		return IsHasTarget;
 	}
@@ -179,7 +179,7 @@ public class CharacterController3D : MonoBehaviour
 	{
 		if (!IsCanMove) return Vector3.zero;
 
-		if (navigationController.IsReachedDestination() || !IsHasTarget)
+		if (navigationController.NavMeshAgent.IsReachedDestination() || !IsHasTarget)
 		{
 			IsHasTarget = false;
 			//if (lastVelocity != Vector3.zero)

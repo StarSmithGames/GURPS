@@ -1,5 +1,6 @@
 using Cinemachine;
 
+using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 
@@ -35,6 +36,8 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 	private IObservable currentEntity = null;
 
 	private CharacterParty party;
+	private Character leader;
+	private bool isMouseHit;
 
 	private SignalBus signalBus;
 	private CinemachineBrain brain;
@@ -77,13 +80,12 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 	{
 		RaycastHit hit;
 		Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
-		bool isHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject();
-
-		var leaderCharacter = characterManager.CurrentParty.LeaderParty;
+		isMouseHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject();
+		Vector3 point = hit.point;
+		leader = characterManager.CurrentParty.LeaderParty;
 
 		//Looking
-		CurrentEntity = isHit ? hit.transform.root.GetComponent<IObservable>() : null;
-
+		CurrentEntity = isMouseHit ? hit.transform.root.GetComponent<IObservable>() : null;
 
 		//MouseHolding
 		if (inputManager.IsLeftMouseButtonPressed())
@@ -92,7 +94,7 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 			{
 				if (inputManager.IsLeftMouseButtonDown())
 				{
-					leaderCharacter.InteractWith(CurrentEntity);
+					leader.InteractWith(CurrentEntity);
 				}
 			}
 			else
@@ -100,31 +102,81 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 				//Targeting
 				if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 				{
-					if (isHit)
+					if (isMouseHit)
 					{
-						if (!leaderCharacter.InBattle || leaderCharacter.InBattle && !leaderCharacter.Controller.IsHasTarget)
+						if (!leader.InBattle)
 						{
-							leaderCharacter.Navigation.SetTarget(hit.point);
-							leaderCharacter.Controller.SetDestination(hit.point);
+							leader.Controller.SetDestination(point);
+						}
+						else if(leader.InBattle && !leader.Controller.IsHasTarget)
+						{
+							if(leader.Sheet.Stats.Move.CurrentValue >= 0.1f)
+							{
+								leader.Controller.SetDestination(point, maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
+							}
 						}
 					}
 				}
 			}
 		}
 
-		if (isHit)
+		if (isMouseHit)
 		{
-			if (leaderCharacter.InBattle)
+			if (leader.InBattle)
 			{
-				if (!leaderCharacter.Controller.IsHasTarget)
+				if (!leader.Controller.IsHasTarget)
 				{
-					uiManager.Tooltip.EnableRuler(true);
-					uiManager.Tooltip.SetRulerText(Math.Round(leaderCharacter.Navigation.GetPathRemainingDistance(), 2) + SymbolCollector.METRE.ToString());
-					leaderCharacter.Navigation.SetTarget(hit.point);
+					leader.Navigation.SetTarget(point, maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
 				}
 			}
 
-			uiManager.Tooltip.EnableRuler(leaderCharacter.InBattle && !leaderCharacter.Controller.IsHasTarget);
+			TryShowTooltipRuler();
+		}
+
+		ValidatePath(point);
+	}
+
+	private void TryShowTooltipRuler()
+	{
+		if (leader.InBattle && !leader.Controller.IsHasTarget)
+		{
+			uiManager.Tooltip.SetRulerText(Math.Round(leader.Navigation.CurrentPath.Distance, 2) + SymbolCollector.METRE.ToString());
+			uiManager.Tooltip.EnableRuler(true);
+		}
+		else
+		{
+			if (uiManager.Tooltip.IsRulerShowing)
+			{
+				uiManager.Tooltip.EnableRuler(false);
+			}
+		}
+	}
+
+	private void ValidatePath(Vector3 point)
+	{
+		float pathDistance = (float)Math.Round(leader.Navigation.CurrentPath.Distance, 2);
+
+		bool isInvalidTarget = !isMouseHit || !leader.Navigation.NavMeshAgent.IsPathValid(point);
+		bool isNotEnoughMovement = leader.InBattle && !leader.Controller.IsHasTarget && (leader.Sheet.Stats.Move.CurrentValue < pathDistance);
+
+		if (isInvalidTarget || isNotEnoughMovement)
+		{
+			if (isInvalidTarget)
+			{
+				uiManager.Tooltip.SetMessage(TooltipSystem.MessageType.InvalidTarget);
+			}
+			else if (isNotEnoughMovement)
+			{
+				uiManager.Tooltip.SetMessage(TooltipSystem.MessageType.NotEnoughMovement);
+			}
+			uiManager.Tooltip.EnableMessage(true);
+		}
+		else
+		{
+			if (uiManager.Tooltip.IsMessageShowing)
+			{
+				uiManager.Tooltip.EnableMessage(false);
+			}
 		}
 	}
 

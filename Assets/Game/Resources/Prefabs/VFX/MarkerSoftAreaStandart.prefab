@@ -53,7 +53,7 @@ MonoBehaviour:
   rayLength: 100
   raycastLayerMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 24
   pointCount: 128
   radius: 3
 --- !u!120 &2208969980977933498

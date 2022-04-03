@@ -20,6 +20,8 @@ namespace Game.Systems.SheetSystem
         IStatBar Perception { get; }
 
         IStatBar Lift { get; }
+
+        void RecoveMove();
     }
 
 	public class Stats : IStats
@@ -48,7 +50,7 @@ namespace Game.Systems.SheetSystem
 
             HitPoints = new HitPointsStat(settigns.HitPoints, 10);
             FatiguePoints = new FatiguePointsStat(settigns.FatiguePoints, 10);
-            Move = new MoveStat(settigns.Move, 10);
+            Move = new MoveStat(settigns.Move, settigns.Move);
             Speed = new SpeedStat(settigns.Speed, 10);
             Will = new WillStat(settigns.Will, 10);
             Perception = new PerceptionStat(settigns.Perception, 10);
@@ -73,6 +75,11 @@ namespace Game.Systems.SheetSystem
             Lift = new LiftStat(data.lift, 10);
         }
 
+        public void RecoveMove()
+        {
+            Move.CurrentValue = Move.MaxValue;
+        }
+
         public Data GetData()
 		{
             return new Data()
@@ -92,7 +99,7 @@ namespace Game.Systems.SheetSystem
             };
 		}
 
-        public class Data
+		public class Data
 		{
             public float strength;
             public float dexterity;

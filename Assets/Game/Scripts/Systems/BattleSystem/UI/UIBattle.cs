@@ -12,6 +12,7 @@ namespace Game.Systems.BattleSystem
 		[field: SerializeField] public UIEntityInformation EntityInformation { get; private set; }
 		[field: SerializeField] public UIMessages Messages { get; private set; }
 		[field: Space]
+		[field: SerializeField] public UIBar EnergyBar { get; private set; }
 		[field: SerializeField] public UIButton SkipTurn { get; private set; }
 		[field: SerializeField] public UIButton RunAway { get; private set; }
 

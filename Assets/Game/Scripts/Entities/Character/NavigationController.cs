@@ -1,5 +1,8 @@
 using Game.Managers.GameManager;
 
+using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,16 +12,17 @@ namespace Game.Entities
 {
     public class NavigationController : MonoBehaviour
     {
-		public Vector3 CurrentNavMeshDestination => navMeshAgent.pathEndPosition;
+		public NavMeshAgent NavMeshAgent { get; private set; }
 
-		public Vector3[] CurrentNavMeshPath => navMeshAgent.path.corners;
+		public Vector3 CurrentNavMeshDestination => NavMeshAgent.pathEndPosition;
+
+		public NavigationPath CurrentPath = new NavigationPath();
+		public NavMeshPath CurrentNavMeshPath;
 
 		[SerializeField] private Settings settings;
 
 		private SignalBus signalBus;
-		private NavMeshAgent navMeshAgent;
 		private Markers markers;
-		private GameManager gameManager;
 		private CharacterController3D characterController;
 
 		[Inject]
@@ -26,14 +30,17 @@ namespace Game.Entities
 			SignalBus signalBus,
 			NavMeshAgent navMeshAgent,
 			Markers markers,
-			GameManager gameManager,
 			CharacterController3D characterController)
 		{
 			this.signalBus = signalBus;
-			this.navMeshAgent = navMeshAgent;
+			this.NavMeshAgent = navMeshAgent;
 			this.markers = markers;
-			this.gameManager = gameManager;
 			this.characterController = characterController;
+		}
+
+		private void Start()
+		{
+			CurrentNavMeshPath = NavMeshAgent.path;
 		}
 
 		private void Update()
@@ -43,71 +50,66 @@ namespace Game.Entities
 
 			markers.FollowMarker.DrawCircle();
 
-			markers.LineMarker.DrawLine(navMeshAgent.path.corners);
+			markers.LineMarker.DrawLine(NavMeshAgent.path.corners);
 		}
 
-		public bool IsReachedDestination()
+		public bool SetTarget(Vector3 destination, float stoppingDistance = -1, float maxPathDistance = -1)
 		{
-			return (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
-		}
-		public bool IsReachesDestination()
-		{
-			return (navMeshAgent.remainingDistance >= navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
-		}
+			NavMeshAgent.stoppingDistance = stoppingDistance <= 0 ? settings.reachTargetThreshold : stoppingDistance;
 
-		public bool SetTarget(Vector3 destination, float stoppingDistance = -1)
-		{
-			navMeshAgent.stoppingDistance = stoppingDistance <= 0 ? settings.reachTargetThreshold : stoppingDistance;
+			bool result = false;
 
-			if (IsPathValid(destination))
+			if (NavMeshAgent.IsPathValid(destination))
 			{
-				return navMeshAgent.SetDestination(destination);
+				NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
+
+				CurrentPath = new NavigationPath() { Path = CurrentNavMeshPath.corners.ToList() };
+
+				if (maxPathDistance != -1)
+				{
+					if (CurrentNavMeshPath.GetPathRemainingDistance() > maxPathDistance)
+					{
+						destination = transform.root.position + ((maxPathDistance + 0.1f) * (destination - transform.root.position).normalized);
+
+						if (NavMeshAgent.IsPathValid(destination))
+						{
+							NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
+
+							result = NavMeshAgent.SetPath(CurrentNavMeshPath);
+							return result;
+						}
+					}
+				}
+
+				result = NavMeshAgent.SetPath(CurrentNavMeshPath);
+				return result;
 			}
 
-			return false;
+			return result;
 		}
-
-		public bool IsPathValid(Vector3 destination)
-		{
-			NavMeshPath path = new NavMeshPath();
-			navMeshAgent.CalculatePath(destination, path);
-			return path.status == NavMeshPathStatus.PathComplete;
-		}
-
-		public float GetPathRemainingDistance()
-		{
-			if (navMeshAgent.pathPending ||
-				navMeshAgent.pathStatus == NavMeshPathStatus.PathInvalid ||
-				navMeshAgent.path.corners.Length == 0)
-				return -1f;
-
-			float distance = 0.0f;
-			for (int i = 0; i < navMeshAgent.path.corners.Length - 1; ++i)
-			{
-				distance += Vector3.Distance(navMeshAgent.path.corners[i], navMeshAgent.path.corners[i + 1]);
-			}
-
-			return distance;
-		}
-
 
 		private void Validate()
 		{
-			navMeshAgent.stoppingDistance = settings.reachTargetThreshold;
+			NavMeshAgent.stoppingDistance = settings.reachTargetThreshold;
 		}
-
 		
-		private void OnDrawGizmosSelected()
+		private void OnDrawGizmos()
 		{
 			Gizmos.color = Color.red;
 			Gizmos.DrawWireSphere(transform.position, settings.reachTargetThreshold);
 
 			if (!Application.isPlaying) return;
 
-			Vector3[] corners = navMeshAgent.path.corners;
-			for (int i = 0; i < corners.Length - 1; i++)
+			Gizmos.color = Color.blue;
+			for (int i = 0; i < CurrentPath.Path.Count - 1; i++)
 			{
-				Gizmos.DrawLine(corners[i], corners[i + 1]);
+				Gizmos.DrawLine(CurrentPath.Path[i], CurrentPath.Path[i + 1]);
+			}
+
+			Gizmos.color = Color.red;
+			for (int i = 0; i < CurrentNavMeshPath.corners.Length - 1; i++)
+			{
+				Gizmos.DrawLine(CurrentNavMeshPath.corners[i], CurrentNavMeshPath.corners[i + 1]);
 			}
 		}
 
@@ -115,6 +117,73 @@ namespace Game.Entities
 		public class Settings
 		{
 			public float reachTargetThreshold = 0.1f;
+		}
+	}
+
+	public class NavigationPath
+	{
+		public List<Vector3> Path = new List<Vector3>();
+
+		public Vector3 StartPoint => Path.First();
+		public Vector3 EndPoint => Path.Last();
+		
+		public float Distance
+		{
+			get
+			{
+				float distance = 0.0f;
+				for (int i = 0; i < Path.Count - 1; ++i)
+				{
+					distance += Vector3.Distance(Path[i], Path[i + 1]);
+				}
+
+				return distance;
+			}
+		}
+	}
+
+
+	public static class NavmeshEx
+	{
+		public static bool IsReachedDestination(this NavMeshAgent navMeshAgent)
+		{
+			return (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
+		}
+		public static bool IsReachesDestination(this NavMeshAgent navMeshAgent)
+		{
+			return (navMeshAgent.remainingDistance >= navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
+		}
+
+		public static bool CalculatePath(this NavMeshAgent navMeshAgent, Vector3 destination, out NavMeshPath path)
+		{
+			path = new NavMeshPath();
+			navMeshAgent.CalculatePath(destination, path);
+			return path.status == NavMeshPathStatus.PathComplete;
+		}
+
+		public static bool IsPathValid(this NavMeshAgent navMeshAgent, Vector3 destination)
+		{
+			return CalculatePath(navMeshAgent, destination, out NavMeshPath path);
+		}
+
+
+		public static float GetPathRemainingDistance(this NavMeshPath path)
+		{
+			if(path == null || path.status == NavMeshPathStatus.PathInvalid || path.corners.Length == 0) return -1f;
+
+			float distance = 0.0f;
+			for (int i = 0; i < path.corners.Length - 1; ++i)
+			{
+				distance += Vector3.Distance(path.corners[i], path.corners[i + 1]);
+			}
+
+			return distance;
+		}
+
+		public static float GetPathRemainingDistance(this NavMeshAgent navMeshAgent)
+		{
+			if (navMeshAgent.pathPending) return -1f;
+			return GetPathRemainingDistance(navMeshAgent.path);
 		}
 	}
 }

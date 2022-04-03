@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
 	[field: SerializeField] public UIAvatars Avatars { get; private set; }
 	[field: SerializeField] public UICharacterSheetWindow CharacterSheet { get; private set; }
 	[field: SerializeField] public UIBattle Battle { get; private set; }
+	[field: SerializeField] public UIBars Bars { get; private set; }
 	[field: SerializeField] public TooltipSystem Tooltip { get; private set; }
 	[Space]
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;

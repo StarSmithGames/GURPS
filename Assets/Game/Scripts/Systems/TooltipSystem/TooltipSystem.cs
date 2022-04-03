@@ -8,9 +8,12 @@ using Zenject;
 
 public class TooltipSystem : MonoBehaviour
 {
-    public bool IsShowing { get; private set; }
+	public bool IsRulerShowing { get; private set; }
+	public bool IsMessageShowing { get; private set; }
 
+	[field: SerializeField] public RectTransform Tooltip { get; private set; }
 	[field: SerializeField] public TMPro.TextMeshProUGUI Ruler { get; private set; }
+	[field: SerializeField] public TMPro.TextMeshProUGUI Message { get; private set; }
 
 	private RectTransform ruler;
 
@@ -22,21 +25,33 @@ public class TooltipSystem : MonoBehaviour
 		this.brain = brain;
 	}
 
+	private void Start()
+	{
+		EnableRuler(false);
+		EnableMessage(false);
+	}
+
 	private void Update()
 	{
-		if (IsShowing)
+		if (Ruler.gameObject.activeSelf || Message.gameObject.activeSelf)
 		{
 			Vector2 position = Input.mousePosition;
-			position += OffsetRightDown(Ruler.rectTransform);
+			position += OffsetRightDown(Tooltip);
 
-			Ruler.rectTransform.anchoredPosition = position;
+			Tooltip.anchoredPosition = position;
 		}
 	}
 
 	public void EnableRuler(bool trigger)
 	{
-		IsShowing = trigger;
+		IsRulerShowing = trigger;
 		Ruler.gameObject.SetActive(trigger);
+	}
+
+	public void EnableMessage(bool trigger)
+	{
+		IsMessageShowing = trigger;
+		Message.gameObject.SetActive(trigger);
 	}
 
 	public void SetRulerText(string text)
@@ -44,5 +59,37 @@ public class TooltipSystem : MonoBehaviour
 		Ruler.text = text;
 	}
 
+	public void SetMessage(MessageType type)
+	{
+		switch (type)
+		{
+			case MessageType.InvalidTarget:
+			{
+				Message.text = "Invalid Target";
+				Message.color = Color.red;
+				break;
+			}
+			case MessageType.NotEnoughMovement:
+			{
+				Message.text = "Not Enough Movement";
+				Message.color = Color.yellow;
+				break;
+			}
+			case MessageType.CanNotReachDesination:
+			{
+				Message.text = "Can't Reach Destination";
+				Message.color = Color.white;
+				break;
+			}
+		}
+	}
+
 	private Vector2 OffsetRightDown(RectTransform rectTransform) => new Vector2((rectTransform.sizeDelta.x / 2) * 1.5f, -(rectTransform.sizeDelta.y / 2) * 2.5f);
+
+	public enum MessageType
+	{
+		InvalidTarget,
+		NotEnoughMovement,
+		CanNotReachDesination,
+	}
 }

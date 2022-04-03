@@ -22,7 +22,7 @@ namespace Game.Systems.SheetSystem
 	{
 		public event UnityAction onStatChanged;
 
-		public float CurrentValue
+		public virtual float CurrentValue
 		{
 			get => currentValue;
 			set
@@ -56,7 +56,7 @@ namespace Game.Systems.SheetSystem
 	{
 		public event UnityAction onStatChanged;
 
-		public float CurrentValue
+		public virtual float CurrentValue
 		{
 			get => currentValue;
 			set
@@ -68,7 +68,7 @@ namespace Game.Systems.SheetSystem
 		}
 		protected float currentValue;
 
-		public float MaxBaseValue
+		public virtual float MaxBaseValue
 		{
 			get => maxBaseValue;
 			set
@@ -82,7 +82,7 @@ namespace Game.Systems.SheetSystem
 
 		public float MaxValue => MaxBaseValue + ModifyValue;
 
-		public float PercentValue => CurrentValue / MaxValue;
+		public virtual float PercentValue => currentValue / MaxValue;
 
 		public StatBar(float currentValue, float maxBaseValue) : base()
 		{
@@ -132,6 +132,9 @@ namespace Game.Systems.SheetSystem
 	}
 	public class MoveStat : StatBar
 	{
+		//yard to metre
+		public override float CurrentValue { get => base.CurrentValue * 0.9144f; set => base.CurrentValue = value; }
+
 		public MoveStat(float currentValue, float maxBaseValue) : base(currentValue, maxBaseValue) { }
 	}
 	public class SpeedStat : StatBar
