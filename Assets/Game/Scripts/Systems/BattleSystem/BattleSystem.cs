@@ -1,6 +1,7 @@
 using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
+using Game.Systems.CameraSystem;
 
 using System;
 using System.Collections;

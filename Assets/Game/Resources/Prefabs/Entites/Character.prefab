@@ -4476,7 +4476,7 @@ MonoBehaviour:
   navigationController: {fileID: 696508144769888773}
   markers: {fileID: 8770400967174064253}
   outline: {fileID: 6874036480430047073}
-  character: {fileID: 6753425058046806692}
+  entity: {fileID: 6753425058046806692}
 --- !u!114 &6753425058046806692
 MonoBehaviour:
   m_ObjectHideFlags: 0

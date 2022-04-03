@@ -19,6 +19,7 @@ namespace Game.Entities
 		[SerializeField] private NavigationController navigationController;
 		[SerializeField] private Markers markers;
 		[SerializeField] private Outlinable outline;
+		[SerializeField] private Entity entity;
 
 		public override void InstallBindings()
 		{
@@ -31,6 +32,7 @@ namespace Game.Entities
 			Container.BindInstance(navigationController);
 			Container.BindInstance(markers);
 			Container.BindInstance(outline);
+			Container.BindInstance(entity);
 		}
 	}
 }

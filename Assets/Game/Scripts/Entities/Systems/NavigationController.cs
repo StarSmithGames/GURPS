@@ -10,32 +10,42 @@ using Zenject;
 
 namespace Game.Entities
 {
-    public class NavigationController : MonoBehaviour
+	public class NavigationController : MonoBehaviour
     {
 		public NavMeshAgent NavMeshAgent { get; private set; }
 
 		public Vector3 CurrentNavMeshDestination => NavMeshAgent.pathEndPosition;
 
 		public NavigationPath CurrentPath = new NavigationPath();
-		public NavMeshPath CurrentNavMeshPath;
+		public float CurrentPathDistance => CurrentPath.Distance;
+
+		[HideInInspector] public NavMeshPath CurrentNavMeshPath;
+		public float NavMeshPathDistance => CurrentNavMeshPath.GetPathDistance();
+		public float NavMeshRemainingDistance => NavMeshAgent.GetPathRemainingDistance();
+		public float NavMeshPercentRemainingDistance => NavMeshRemainingDistance / NavMeshPathDistance;
+		public float NavMeshInvertedPercentRemainingDistance => 1 - NavMeshPercentRemainingDistance;
+
 
 		[SerializeField] private Settings settings;
 
 		private SignalBus signalBus;
 		private Markers markers;
 		private CharacterController3D characterController;
+		private Entity entity;
 
 		[Inject]
         private void Construct(
 			SignalBus signalBus,
 			NavMeshAgent navMeshAgent,
 			Markers markers,
-			CharacterController3D characterController)
+			CharacterController3D characterController,
+			Entity entity)
 		{
 			this.signalBus = signalBus;
 			this.NavMeshAgent = navMeshAgent;
 			this.markers = markers;
 			this.characterController = characterController;
+			this.entity = entity;
 		}
 
 		private void Start()
@@ -67,9 +77,9 @@ namespace Game.Entities
 
 				if (maxPathDistance != -1)
 				{
-					if (CurrentNavMeshPath.GetPathRemainingDistance() > maxPathDistance)
+					if (NavMeshPathDistance > maxPathDistance)
 					{
-						destination = transform.root.position + ((maxPathDistance + 0.1f) * (destination - transform.root.position).normalized);
+						destination = transform.root.position + ((maxPathDistance + 0.1f) * (destination - transform.root.position).normalized);//TODO
 
 						if (NavMeshAgent.IsPathValid(destination))
 						{
@@ -139,51 +149,6 @@ namespace Game.Entities
 
 				return distance;
 			}
-		}
-	}
-
-
-	public static class NavmeshEx
-	{
-		public static bool IsReachedDestination(this NavMeshAgent navMeshAgent)
-		{
-			return (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
-		}
-		public static bool IsReachesDestination(this NavMeshAgent navMeshAgent)
-		{
-			return (navMeshAgent.remainingDistance >= navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
-		}
-
-		public static bool CalculatePath(this NavMeshAgent navMeshAgent, Vector3 destination, out NavMeshPath path)
-		{
-			path = new NavMeshPath();
-			navMeshAgent.CalculatePath(destination, path);
-			return path.status == NavMeshPathStatus.PathComplete;
-		}
-
-		public static bool IsPathValid(this NavMeshAgent navMeshAgent, Vector3 destination)
-		{
-			return CalculatePath(navMeshAgent, destination, out NavMeshPath path);
-		}
-
-
-		public static float GetPathRemainingDistance(this NavMeshPath path)
-		{
-			if(path == null || path.status == NavMeshPathStatus.PathInvalid || path.corners.Length == 0) return -1f;
-
-			float distance = 0.0f;
-			for (int i = 0; i < path.corners.Length - 1; ++i)
-			{
-				distance += Vector3.Distance(path.corners[i], path.corners[i + 1]);
-			}
-
-			return distance;
-		}
-
-		public static float GetPathRemainingDistance(this NavMeshAgent navMeshAgent)
-		{
-			if (navMeshAgent.pathPending) return -1f;
-			return GetPathRemainingDistance(navMeshAgent.path);
 		}
 	}
 }

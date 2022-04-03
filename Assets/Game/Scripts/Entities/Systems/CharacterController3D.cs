@@ -1,6 +1,7 @@
 using CMF;
 
 using Game.Entities;
+using Game.Systems.BattleSystem;
 
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor.Validation;
@@ -16,6 +17,7 @@ using Zenject;
 public class CharacterController3D : MonoBehaviour
 {
 	public UnityAction onTargetChanged;
+	public UnityAction onBattleTargetChanged;
 
 	public bool IsGrounded => characterController.isGrounded;
 	public bool IsHasTarget

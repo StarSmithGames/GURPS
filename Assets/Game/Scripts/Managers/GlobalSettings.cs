@@ -1,3 +1,5 @@
+using Game.Systems.CameraSystem;
+
 [System.Serializable]
 public class GlobalSettings
 {

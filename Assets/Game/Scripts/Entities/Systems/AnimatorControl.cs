@@ -22,11 +22,11 @@ public class AnimatorControl : MonoBehaviour
 	private GameManager gameManager;
 
 	[Inject]
-	private void Construct(SignalBus signalBus, Animator animator, Character character, GameManager gameManager, CharacterController3D controller)
+	private void Construct(SignalBus signalBus, Animator animator, Entity entity, GameManager gameManager, CharacterController3D controller)
 	{
 		this.signalBus = signalBus;
 		this.animator = animator;
-		this.character = character;
+		this.character = entity as Character;
 		this.gameManager = gameManager;
 		this.controller = controller;
 	}

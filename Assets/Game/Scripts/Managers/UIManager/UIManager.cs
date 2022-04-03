@@ -1,6 +1,7 @@
 using Game.Managers.CharacterManager;
 using Game.Systems.BattleSystem;
 using Game.Systems.SheetSystem;
+using Game.Systems.TooltipSystem;
 
 using System.Collections.Generic;
 using UnityEngine;

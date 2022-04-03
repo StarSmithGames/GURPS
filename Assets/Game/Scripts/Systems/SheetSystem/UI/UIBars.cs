@@ -1,8 +1,7 @@
+using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Systems.SheetSystem;
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 using Zenject;
