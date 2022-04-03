@@ -1,8 +1,8 @@
-using Game.Entities;
 using Game.Managers.CharacterManager;
+using Game.Managers.InputManager;
+using Game.Systems.SheetSystem;
 
 using System;
-using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -47,15 +47,15 @@ namespace Game.Systems.InventorySystem
 
 		public void Initialize()
 		{
-			IsInventoryOpened = uiManager.CharacterStatus.gameObject.activeSelf;
+			IsInventoryOpened = uiManager.CharacterSheet.gameObject.activeSelf;
 			CloseCharacterStatus();
 
-			uiManager.CharacterStatus.onClose += CloseCharacterStatus;
+			uiManager.CharacterSheet.onClose += CloseCharacterStatus;
 		}
 
 		public void Dispose()
 		{
-			uiManager.CharacterStatus.onClose -= CloseCharacterStatus;
+			uiManager.CharacterSheet.onClose -= CloseCharacterStatus;
 		}
 
 		public void Tick()
@@ -114,7 +114,7 @@ namespace Game.Systems.InventorySystem
 		public void CharacterTakeAllFrom(IInventory inventory)
 		{
 			from = inventory;
-			to = characterManager.CurrentParty.LeaderParty.CharacterSheet.Inventory;
+			to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
 
 			for (int i = 0; i < from.Items.Count; i++)
 			{
@@ -141,12 +141,12 @@ namespace Game.Systems.InventorySystem
 
 			item = slot.CurrentItem;
 
-			equipment = characterManager.CurrentParty.LeaderParty.CharacterSheet.Equipment;
+			equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
 
 			if (slot is UISlotInventory inventorySlot)
 			{
 				from = inventorySlot.Owner.CurrentInventory;
-				to = characterManager.CurrentParty.LeaderParty.CharacterSheet.Inventory;
+				to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
 
 				if (eventData.clickCount > 1)
 				{
@@ -176,7 +176,7 @@ namespace Game.Systems.InventorySystem
 			{
 				if (eventData.clickCount > 1)
 				{
-					to = characterManager.CurrentParty.LeaderParty.CharacterSheet.Inventory;
+					to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
 
 					to.Add(item);
 					equipment.RemoveFrom(equipmentSlot.CurrentEquip);
@@ -205,7 +205,7 @@ namespace Game.Systems.InventorySystem
 				from = inventorySlot.Owner.CurrentInventory;
 			}
 
-			equipment = characterManager.CurrentParty.LeaderParty.CharacterSheet.Equipment;
+			equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
 
 			itemCursor.SetIcon(item.ItemData.itemSprite);
 			itemCursor.transform.parent = uiManager.transform.root;
@@ -287,14 +287,14 @@ namespace Game.Systems.InventorySystem
 		private void CharacterStatusEnable()
 		{
 			IsInventoryOpened = !IsInventoryOpened;
-			uiManager.CharacterStatus.gameObject.SetActive(IsInventoryOpened);
+			uiManager.CharacterSheet.gameObject.SetActive(IsInventoryOpened);
 		}
 		private void CloseCharacterStatus()
 		{
 			if (IsInventoryOpened)
 			{
 				IsInventoryOpened = false;
-				uiManager.CharacterStatus.gameObject.SetActive(false);
+				uiManager.CharacterSheet.gameObject.SetActive(false);
 			}
 		}
 	}

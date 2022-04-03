@@ -1,25 +1,28 @@
-using Game.Managers.GameManager;
 using Game.Systems.BattleSystem;
 using Game.Systems.InteractionSystem;
-using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem;
+
+using System.Collections;
+
 using UnityEngine;
 using UnityEngine.Events;
-
-using Zenject;
 
 namespace Game.Entities
 {
 	public class Character : Entity, IBattlable
 	{
+		public UnityAction onCharacterBattleStateChanged;
 		public UnityAction onCharacterUpdated;
 
-		public CharacterSheet CharacterSheet
+		[SerializeField] private CharacterData data;
+
+		public override ISheet Sheet
 		{
 			get
 			{
-				if (characterSheet == null)
+				if(characterSheet == null)
 				{
-					characterSheet = new CharacterSheet(EntityData);
+					characterSheet = new CharacterSheet(data);
 				}
 
 				return characterSheet;
@@ -68,7 +71,7 @@ namespace Game.Entities
 			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
 			CurrentBattle.onBattleUpdated += OnBattleUpdated;
 
-			onCharacterUpdated?.Invoke();
+			onCharacterBattleStateChanged?.Invoke();
 
 			return true;
 		}
@@ -81,11 +84,26 @@ namespace Game.Entities
 			}
 			CurrentBattle = null;
 
-			onCharacterUpdated?.Invoke();
+			onCharacterBattleStateChanged?.Invoke();
 
 			return true;
 		}
 
+
+		private IEnumerator Move()
+		{
+			float from = Sheet.Stats.Move.CurrentValue;
+			float to = Sheet.Stats.Move.CurrentValue - Navigation.NavMeshPathDistance;
+
+			while (Navigation.NavMeshInvertedPercentRemainingDistance < 0.95f)
+			{
+				Sheet.Stats.Move.CurrentValue = Mathf.Lerp(from, to, Navigation.NavMeshInvertedPercentRemainingDistance);
+				
+				yield return null;
+			}
+
+			Sheet.Stats.Move.CurrentValue = to;
+		}
 
 		private void OnTargetChanged()
 		{
@@ -105,6 +123,13 @@ namespace Game.Entities
 					{
 						Markers.TargetMarker.EnableOut();
 					}
+				}
+			}
+			else
+			{
+				if (Controller.IsHasTarget)
+				{
+					StartCoroutine(Move());
 				}
 			}
 		}
@@ -162,17 +187,6 @@ namespace Game.Entities
 			{
 				ResetMarkers();
 			}
-		}
-	}
-
-
-	public class CharacterSheet : EntitySheet
-	{
-		public virtual IEquipment Equipment { get; private set; }
-
-		public CharacterSheet(EntityData data) : base(data)
-		{
-			Equipment = new Equipment(Inventory);
 		}
 	}
 }

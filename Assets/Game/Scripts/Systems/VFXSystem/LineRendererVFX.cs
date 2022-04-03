@@ -79,7 +79,7 @@ namespace Game.Systems.VFX
 			}
 		}
 
-		protected virtual void OnDrawGizmos()
+		protected virtual void OnDrawGizmosSelected()
 		{
 			if (isDebub)
 			{

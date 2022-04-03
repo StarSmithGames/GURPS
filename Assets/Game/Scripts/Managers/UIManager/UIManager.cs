@@ -1,13 +1,8 @@
-using DG.Tweening;
-
-using Game.Entities;
 using Game.Managers.CharacterManager;
-using Game.Managers.GameManager;
 using Game.Systems.BattleSystem;
-using Game.Systems.InteractionSystem;
-using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem;
+using Game.Systems.TooltipSystem;
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,8 +14,10 @@ public class UIManager : MonoBehaviour
 	public UIWindowsManager WindowsManager { get; private set; }
 
 	[field: SerializeField] public UIAvatars Avatars { get; private set; }
-	[field: SerializeField] public UICharacterSheetWindow CharacterStatus { get; private set; }
+	[field: SerializeField] public UICharacterSheetWindow CharacterSheet { get; private set; }
 	[field: SerializeField] public UIBattle Battle { get; private set; }
+	[field: SerializeField] public UIBars Bars { get; private set; }
+	[field: SerializeField] public TooltipSystem Tooltip { get; private set; }
 	[Space]
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
 
@@ -47,7 +44,7 @@ public class UIManager : MonoBehaviour
 		CreateVirtualSpaces();
 
 		SetVirtualSpace(characterManager.CurrentParty.LeaderPartyIndex);
-		CharacterStatus.SetCharacter(characterManager.CurrentParty.LeaderParty.CharacterSheet);
+		CharacterSheet.SetSheet(characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet);
 
 		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
@@ -77,6 +74,6 @@ public class UIManager : MonoBehaviour
 		int index = characterManager.CurrentParty.LeaderPartyIndex;
 
 		SetVirtualSpace(index);
-		CharacterStatus.SetCharacter(signal.leader.CharacterSheet);
+		CharacterSheet.SetSheet(signal.leader.Sheet as CharacterSheet);
 	}
 }

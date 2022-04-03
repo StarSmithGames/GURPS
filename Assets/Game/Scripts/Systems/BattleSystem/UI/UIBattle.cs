@@ -1,3 +1,5 @@
+using Game.Systems.SheetSystem;
+
 using UnityEngine;
 
 using Zenject;
@@ -10,6 +12,7 @@ namespace Game.Systems.BattleSystem
 		[field: SerializeField] public UIEntityInformation EntityInformation { get; private set; }
 		[field: SerializeField] public UIMessages Messages { get; private set; }
 		[field: Space]
+		[field: SerializeField] public UIBar EnergyBar { get; private set; }
 		[field: SerializeField] public UIButton SkipTurn { get; private set; }
 		[field: SerializeField] public UIButton RunAway { get; private set; }
 
@@ -33,10 +36,10 @@ namespace Game.Systems.BattleSystem
 			signalBus?.Subscribe<SignalCurrentBattleChanged>(OnBattleChanged);
 		}
 
-		public void SetEntityInformation(IEntity entity)
+		public void SetSheet(ISheet sheet)
 		{
-			EntityInformation.SetEntity(entity);
-			EntityInformation.gameObject.SetActive(entity != null);
+			EntityInformation.SetSheet(sheet);
+			EntityInformation.gameObject.SetActive(sheet != null);
 		}
 
 		private void OnBattleUpdated()

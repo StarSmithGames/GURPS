@@ -1,3 +1,5 @@
+using Game.Entities;
+
 namespace Game.Systems.BattleSystem
 {
 	public interface IBattlable : IEntity

@@ -1,7 +1,9 @@
 using Game.Entities;
+using Game.Systems.SheetSystem;
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 using Zenject;
@@ -12,7 +14,11 @@ namespace Game.Systems.BattleSystem
     {
         public UnityAction<UITurn> onDoubleCick;
 
+        public IEntity CurrentEntity { get; private set; }
+
         [field: SerializeField] public UIButtonPointer BackgroundButton { get; private set; }
+        [field: SerializeField] public PointerHoverComponent PointerHover { get; private set; }
+        [field:Space]
         [field: SerializeField] public Image Back { get; private set; }
         [field: SerializeField] public Image Avatar { get; private set; }
         [field: SerializeField] public Image Frame { get; private set; }
@@ -22,11 +28,12 @@ namespace Game.Systems.BattleSystem
         [SerializeField] private Vector2 defaultSize = new Vector2(80, 80);
         [SerializeField] private Vector2 selectedSize = new Vector2(100, 100);
 
-        [Inject]
-        private void Construct()
-		{
-            BackgroundButton.onClickChanged += OnClickChanged;
+        private UIManager uiManager;
 
+        [Inject]
+        private void Construct(UIManager uiManager)
+		{
+            this.uiManager = uiManager;
         }
 
 		private void OnDestroy()
@@ -35,9 +42,20 @@ namespace Game.Systems.BattleSystem
 			{
                 BackgroundButton.onClickChanged -= OnClickChanged;
             }
+
+			if (PointerHover != null)
+			{
+                PointerHover.onPointerEnter -= OnPointerEnter;
+                PointerHover.onPointerExit -= OnPointerExit;
+            }
 		}
 
-		public IEntity CurrentEntity { get; private set; }
+		private void Start()
+		{
+            BackgroundButton.onClickChanged += OnClickChanged;
+            PointerHover.onPointerEnter += OnPointerEnter;
+            PointerHover.onPointerExit += OnPointerExit;
+        }
 
         public void SetEntity(IEntity entity)
 		{
@@ -48,7 +66,7 @@ namespace Game.Systems.BattleSystem
 
         public void Select()
 		{
-            Name.text = CurrentEntity.EntityData.CharacterName;
+            Name.text = CurrentEntity.Sheet.Information.Name;
             Name.enabled = true;
             (transform as RectTransform).sizeDelta = selectedSize;
 		}
@@ -63,7 +81,7 @@ namespace Game.Systems.BattleSystem
 
         private void UpdateUI()
 		{
-            Avatar.sprite = CurrentEntity.EntityData.characterSprite;
+            Avatar.sprite = (CurrentEntity.Sheet.Information as EntityAvatarInformation).icon;
         }
 
         private void OnClickChanged(int count)
@@ -72,6 +90,15 @@ namespace Game.Systems.BattleSystem
 			{
                 onDoubleCick?.Invoke(this);
             }
+        }
+
+        private void OnPointerEnter(PointerEventData eventData)
+        {
+            uiManager.Battle.SetSheet(CurrentEntity.Sheet);
+        }
+        private void OnPointerExit(PointerEventData eventData)
+        {
+            uiManager.Battle.SetSheet(null);
         }
 
         public class Factory : PlaceholderFactory<UITurn> { }

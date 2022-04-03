@@ -2,7 +2,7 @@
 using EPOOutline;
 
 using Game.Entities;
-using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem;
 
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -11,12 +11,11 @@ using Zenject;
 
 namespace Game.Entities
 {
-
 	public abstract class Entity : MonoBehaviour, IEntity, IObservable
 	{
 		public Transform Transform => transform;
 
-		[field: SerializeField] public EntityData EntityData { get; private set; }
+		public virtual ISheet Sheet { get; private set; }
 
 		public NavigationController Navigation { get; private set; }
 		public CharacterController3D Controller { get; private set; }
@@ -25,9 +24,9 @@ namespace Game.Entities
 		public Outlinable Outlines { get; private set; }
 
 		public Transform CameraPivot { get; private set; }
-		
 
 		protected SignalBus signalBus;
+		protected UIManager uiManager;
 
 		[Inject]
 		private void Construct(
@@ -36,7 +35,8 @@ namespace Game.Entities
 			CharacterController3D controller,
 			Markers markerController,
 			Outlinable outline,
-			[Inject(Id = "CameraPivot")] Transform cameraPivot)
+			[Inject(Id = "CameraPivot")] Transform cameraPivot,
+			UIManager uiManager)
 		{
 			this.signalBus = signalBus;
 
@@ -45,6 +45,7 @@ namespace Game.Entities
 			Markers = markerController;
 			Outlines = outline;
 			CameraPivot = cameraPivot;
+			this.uiManager = uiManager;
 
 			Validate();
 		}
@@ -72,6 +73,8 @@ namespace Game.Entities
 		public virtual void StartObserve()
 		{
 			Outlines.enabled = true;
+
+			uiManager.Battle.SetSheet(Sheet);
 		}
 
 		public virtual void Observe() { }
@@ -79,6 +82,8 @@ namespace Game.Entities
 		public virtual void EndObserve()
 		{
 			Outlines.enabled = false;
+
+			uiManager.Battle.SetSheet(null);
 		}
 
 		protected virtual void ResetMarkers()
@@ -101,16 +106,6 @@ namespace Game.Entities
 			Assert.IsNotNull(Markers, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(Outlines, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(CameraPivot, $"Entity {gameObject.name} lost component.");
-		}
-	}
-
-	public class EntitySheet
-	{
-		public virtual IInventory Inventory { get; private set; }
-
-		public EntitySheet(EntityData data)
-		{
-			Inventory = new Inventory(data.inventory);
 		}
 	}
 }

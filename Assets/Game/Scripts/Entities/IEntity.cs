@@ -1,23 +1,23 @@
 using EPOOutline;
 
-using Game.Entities;
-using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
-public interface IEntity
+namespace Game.Entities
 {
-	Transform Transform { get; }
+	public interface IEntity : ISheetable
+	{
+		Transform Transform { get; }
 
-	Transform CameraPivot { get; }
+		Transform CameraPivot { get; }
 
-	EntityData EntityData { get; }
+		NavigationController Navigation { get; }
+		CharacterController3D Controller { get; }
 
-	NavigationController Navigation { get; }
-	CharacterController3D Controller { get; }
+		Markers Markers { get; }
+		Outlinable Outlines { get; }
 
-	Markers Markers { get; }
-	Outlinable Outlines { get; }
-
-	void Freeze(bool trigger);
+		void Freeze(bool trigger);
+	}
 }

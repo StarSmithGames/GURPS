@@ -1,3 +1,5 @@
+using Game.Entities;
+
 using Sirenix.OdinInspector;
 
 using System.Collections;
@@ -52,6 +54,14 @@ namespace Game.Systems.InteractionSystem
 			if (currentInteractor == null) return false;
 			return Vector3.Distance(transform.position, currentInteractor.Transform.position) <= interactableSettings.maxRange;
 		}
+
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.red;
+			Gizmos.DrawWireSphere(InteractPosition, interactableSettings.maxRange);
+			Gizmos.DrawSphere(InteractPosition, 0.1f);
+		}
+
 
 		[System.Serializable]
 		public class Settings

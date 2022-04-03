@@ -42,16 +42,5 @@ namespace Game.Systems.VFX
 				Line.SetPosition(i, position + offset);
 			}
 		}
-
-		protected override void OnDrawGizmos()
-		{
-			if (Application.isEditor)
-			{
-				IsEnabled = true;
-				DrawCircle();
-			}
-
-			base.OnDrawGizmos();
-		}
 	}
 }

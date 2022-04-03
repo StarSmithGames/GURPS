@@ -12,30 +12,140 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c34e898270762954ab77f139a7ec2601, type: 3}
   m_Name: Container
   m_EditorClassIdentifier: 
-  localizations:
-  - language: 10
-    containerName: Chest
-  inventory:
-    useRandomItems: 0
-    shuffleList: 0
-    items:
-    - useRandom: 0
-      data: {fileID: 11400000, guid: 5a435e1e1ece6c9428a29f20bd09a9c5, type: 2}
-      currentStackSize: 2697
-      currentWeight: 0.01
-      currentDurability: 100
-    randomSettings:
-      isUnique: 0
-      useRandomCount: 1
-      itemsCount: 1
-      itemsMinMaxCount: {x: 1, y: 5}
-      staticItems: []
-      useConsumableItems: 1
-      useFireItems: 1
-      useAccelerantItems: 1
-      useFuelItems: 1
-      useStarterItems: 1
-      useTinderItems: 1
-      useToolItems: 1
-      useMaterialItems: 1
-      ignoreList: []
+  information:
+    localizations:
+    - language: 10
+      name: Chest
+  sheet:
+    identity: 100
+    age: -1
+    race: 0
+    gender: 0
+    aligment: 4
+    isImmortal: 1
+    stats:
+      strength: 10
+      dexterity: 10
+      intelligence: 10
+      health: 10
+      addHitPoints: 0
+      addFatiguePoints: 0
+      addMove: 0
+      addSpeed: 0
+      addWill: 0
+      addPerception: 0
+    inventory:
+      useRandomItems: 0
+      shuffleList: 1
+      items:
+      - useRandom: 0
+        data: {fileID: 11400000, guid: 5a435e1e1ece6c9428a29f20bd09a9c5, type: 2}
+        currentStackSize: 4999
+        currentWeight: 0.01
+        currentDurability: 100
+      randomSettings:
+        isUnique: 0
+        useRandomCount: 1
+        itemsCount: 1
+        itemsMinMaxCount: {x: 1, y: 5}
+        staticItems: []
+        useConsumableItems: 1
+        useFireItems: 1
+        useAccelerantItems: 1
+        useFuelItems: 1
+        useStarterItems: 1
+        useTinderItems: 1
+        useToolItems: 1
+        useMaterialItems: 1
+        ignoreList: []
+    equipment:
+      head:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      sholders:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      chest:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      forearms:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      legs:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      feet:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon00:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon01:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon10:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon11:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      cloak:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      jewelry:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      ring0:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      ring1:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      trinket:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
