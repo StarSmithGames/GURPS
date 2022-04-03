@@ -48,15 +48,15 @@ namespace Game.Systems.InventorySystem
 
 		public void Initialize()
 		{
-			IsInventoryOpened = uiManager.CharacterStatus.gameObject.activeSelf;
+			IsInventoryOpened = uiManager.CharacterSheet.gameObject.activeSelf;
 			CloseCharacterStatus();
 
-			uiManager.CharacterStatus.onClose += CloseCharacterStatus;
+			uiManager.CharacterSheet.onClose += CloseCharacterStatus;
 		}
 
 		public void Dispose()
 		{
-			uiManager.CharacterStatus.onClose -= CloseCharacterStatus;
+			uiManager.CharacterSheet.onClose -= CloseCharacterStatus;
 		}
 
 		public void Tick()
@@ -288,14 +288,14 @@ namespace Game.Systems.InventorySystem
 		private void CharacterStatusEnable()
 		{
 			IsInventoryOpened = !IsInventoryOpened;
-			uiManager.CharacterStatus.gameObject.SetActive(IsInventoryOpened);
+			uiManager.CharacterSheet.gameObject.SetActive(IsInventoryOpened);
 		}
 		private void CloseCharacterStatus()
 		{
 			if (IsInventoryOpened)
 			{
 				IsInventoryOpened = false;
-				uiManager.CharacterStatus.gameObject.SetActive(false);
+				uiManager.CharacterSheet.gameObject.SetActive(false);
 			}
 		}
 	}

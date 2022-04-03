@@ -13,8 +13,9 @@ public class UIManager : MonoBehaviour
 	public UIWindowsManager WindowsManager { get; private set; }
 
 	[field: SerializeField] public UIAvatars Avatars { get; private set; }
-	[field: SerializeField] public UICharacterSheetWindow CharacterStatus { get; private set; }
+	[field: SerializeField] public UICharacterSheetWindow CharacterSheet { get; private set; }
 	[field: SerializeField] public UIBattle Battle { get; private set; }
+	[field: SerializeField] public TooltipSystem Tooltip { get; private set; }
 	[Space]
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
 
@@ -41,7 +42,7 @@ public class UIManager : MonoBehaviour
 		CreateVirtualSpaces();
 
 		SetVirtualSpace(characterManager.CurrentParty.LeaderPartyIndex);
-		CharacterStatus.SetCharacter(characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet);
+		CharacterSheet.SetSheet(characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet);
 
 		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
@@ -71,6 +72,6 @@ public class UIManager : MonoBehaviour
 		int index = characterManager.CurrentParty.LeaderPartyIndex;
 
 		SetVirtualSpace(index);
-		CharacterStatus.SetCharacter(signal.leader.Sheet as CharacterSheet);
+		CharacterSheet.SetSheet(signal.leader.Sheet as CharacterSheet);
 	}
 }

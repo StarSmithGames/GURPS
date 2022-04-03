@@ -42,8 +42,15 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 	private GameManager gameManager;
 	private CharacterManager characterManager;
 	private Settings settings;
+	private UIManager uiManager;
 
-	public CameraVision(SignalBus signalBus, CinemachineBrain brain, InputManager inputManager, GameManager gameManager, CharacterManager characterManager, GlobalSettings settings)
+	public CameraVision(SignalBus signalBus,
+		CinemachineBrain brain,
+		InputManager inputManager,
+		GameManager gameManager,
+		CharacterManager characterManager,
+		GlobalSettings settings,
+		UIManager uiManager)
 	{
 		this.signalBus = signalBus;
 		this.brain = brain;
@@ -51,6 +58,7 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 		this.gameManager = gameManager;
 		this.characterManager = characterManager;
 		this.settings = settings.cameraVision;
+		this.uiManager = uiManager;
 	}
 
 	public void Initialize()
@@ -104,16 +112,19 @@ public class CameraVision : IInitializable, IDisposable, ITickable
 			}
 		}
 
-
 		if (isHit)
 		{
 			if (leaderCharacter.InBattle)
 			{
 				if (!leaderCharacter.Controller.IsHasTarget)
 				{
+					uiManager.Tooltip.EnableRuler(true);
+					uiManager.Tooltip.SetRulerText(Math.Round(leaderCharacter.Navigation.GetPathRemainingDistance(), 2) + SymbolCollector.METRE.ToString());
 					leaderCharacter.Navigation.SetTarget(hit.point);
 				}
 			}
+
+			uiManager.Tooltip.EnableRuler(leaderCharacter.InBattle && !leaderCharacter.Controller.IsHasTarget);
 		}
 	}
 

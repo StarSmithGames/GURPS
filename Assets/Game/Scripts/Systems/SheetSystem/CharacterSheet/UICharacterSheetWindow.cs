@@ -29,7 +29,7 @@ namespace Game.Systems.SheetSystem
 			}
 		}
 
-		public void SetCharacter(CharacterSheet sheet)
+		public void SetSheet(CharacterSheet sheet)
 		{
 			Inventory.SetInventory(sheet.Inventory);
 			Equipment.SetEquipment(sheet.Equipment);
