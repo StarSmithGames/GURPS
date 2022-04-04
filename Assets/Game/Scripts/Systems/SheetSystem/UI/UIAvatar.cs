@@ -89,6 +89,9 @@ public class UIAvatar : PoolableObject
 	private void UpdateBattleUI()
 	{
 		IconInBattle.enabled = CurrentCharacter.InBattle;
+
+		FrameLeader.color = CurrentCharacter.InBattle? Color.grey : Color.white;
+		FrameSpare.color = CurrentCharacter.InBattle? Color.grey : Color.white;
 	}
 
 	private void OnClick(int count)
