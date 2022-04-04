@@ -2,6 +2,7 @@
 using EPOOutline;
 
 using Game.Entities;
+using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
 using UnityEngine;
@@ -11,7 +12,7 @@ using Zenject;
 
 namespace Game.Entities
 {
-	public abstract class Entity : MonoBehaviour, IEntity, IObservable
+	public abstract class Entity : InteractableModel, IEntity
 	{
 		public Transform Transform => transform;
 
@@ -69,22 +70,18 @@ namespace Game.Entities
 			}
 		}
 
-
-		public virtual void StartObserve()
+		#region Observe
+		public override void StartObserve()
 		{
-			Outlines.enabled = true;
-
+			base.StartObserve();
 			uiManager.Battle.SetSheet(Sheet);
 		}
-
-		public virtual void Observe() { }
-
-		public virtual void EndObserve()
+		public override void EndObserve()
 		{
-			Outlines.enabled = false;
-
+			base.EndObserve();
 			uiManager.Battle.SetSheet(null);
 		}
+		#endregion
 
 		protected virtual void ResetMarkers()
 		{
@@ -97,7 +94,6 @@ namespace Game.Entities
 
 			Markers.LineMarker.Enable(false);
 		}
-
 
 		private void Validate()
 		{

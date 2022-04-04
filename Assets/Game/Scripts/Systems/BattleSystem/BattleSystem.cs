@@ -1,6 +1,6 @@
 using Game.Entities;
 using Game.Managers.CharacterManager;
-using Game.Managers.GameManager;
+using DG.Tweening;
 using Game.Systems.CameraSystem;
 
 using System;
@@ -13,21 +13,23 @@ using UnityEngine;
 using UnityEngine.Events;
 
 using Zenject;
-
-using static Game.Systems.BattleSystem.BattleSystem;
+using Game.Systems.SheetSystem;
 
 namespace Game.Systems.BattleSystem
 {
 	public class BattleSystem
 	{
+		public IEntity CurrentInitiator { get; private set; }
+		public Character CachedLeader { get; private set; }
+
 		public bool IsBattleProcess => battleCoroutine != null;
 		private Coroutine battleCoroutine = null;
 
 		private bool isSkipTurn = false;
 		private bool isBattleEnd = false;
-		private Character cachedCharacter;
 
 		private SignalBus signalBus;
+		private Settings settings;
 		private BattleManager battleManager;
 		private UIManager uiManager;
 		private AsyncManager asyncManager;
@@ -36,6 +38,7 @@ namespace Game.Systems.BattleSystem
 
 		public BattleSystem(
 			SignalBus signalBus,
+			GlobalSettings settings,
 			BattleManager battleManager,
 			UIManager uiManager,
 			AsyncManager asyncManager,
@@ -43,6 +46,7 @@ namespace Game.Systems.BattleSystem
 			CameraController cameraController)
 		{
 			this.signalBus = signalBus;
+			this.settings = settings.battleSettings;
 			this.battleManager = battleManager;
 			this.uiManager = uiManager;
 			this.asyncManager = asyncManager;
@@ -57,13 +61,14 @@ namespace Game.Systems.BattleSystem
 			isSkipTurn = false;
 			isBattleEnd = false;
 
-			cachedCharacter = characterManager.CurrentParty.LeaderParty;
+			CachedLeader = characterManager.CurrentParty.LeaderParty;
 
 			uiManager.Battle.Messages.ShowCommenceBattle();
 			uiManager.Battle.SkipTurn.ButtonPointer.onClick.AddListener(SkipTurn);
 			uiManager.Battle.RunAway.ButtonPointer.onClick.AddListener(StopBattle);
 
 			localBattleTest = new Battle(entities);
+			localBattleTest.onNextTurn += OnTurnChanged;
 			localBattleTest.onNextRound += uiManager.Battle.Messages.ShowNewRound;
 			battleManager.AddBattle(localBattleTest);
 			localBattleTest.Initialization();
@@ -86,12 +91,14 @@ namespace Game.Systems.BattleSystem
 
 			localBattleTest.Dispose();
 			battleManager.RemoveBattle(localBattleTest);
-
-			LookAt(cachedCharacter);
+			localBattleTest.onNextTurn -= OnTurnChanged;
+			localBattleTest.onNextRound -= uiManager.Battle.Messages.ShowNewRound;
 
 			uiManager.Battle.Messages.HideTurnInforamtion();
 			uiManager.Battle.SkipTurn.ButtonPointer.onClick.RemoveAllListeners();
 			uiManager.Battle.RunAway.ButtonPointer.onClick.RemoveAllListeners();
+
+			cameraController.LookAt(CachedLeader);
 
 			UpdateStates();
 		}
@@ -158,7 +165,7 @@ namespace Game.Systems.BattleSystem
 			IEntity initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
 			bool isMineTurn = characterManager.CurrentParty.Characters.Contains(initiator);
 
-			LookAt(initiator);
+			cameraController.LookAt(initiator);
 
 			uiManager.Battle.Messages.ShowTurnInforamtion(isMineTurn ? "YOU TURN" : "ENEMY TURN");
 
@@ -168,10 +175,7 @@ namespace Game.Systems.BattleSystem
 
 		private IEnumerator InitiatorTurn()
 		{
-			IBattlable initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
-			bool isMineTurn = characterManager.CurrentParty.Characters.Contains(initiator);
-
-			initiator.Sheet.Stats.RecoveMove();
+			bool isMineTurn = characterManager.CurrentParty.Characters.Contains(CurrentInitiator);
 
 			if (isMineTurn)
 			{
@@ -191,20 +195,76 @@ namespace Game.Systems.BattleSystem
 			localBattleTest.NextTurn();
 		}
 
-
-		private void LookAt(IEntity entity)
+		#region StatMove
+		private IEnumerator InitiatorSpendMove()
 		{
-			if (entity is Character character)
+			IStat stat = CurrentInitiator.Sheet.Stats.Move;
+
+			float from = stat.CurrentValue;
+			float to = stat.CurrentValue - CurrentInitiator.Navigation.NavMeshPathDistance;
+
+			NavigationController navigation = CurrentInitiator.Navigation;
+
+			while (navigation.NavMeshAgent.IsReachesDestination())
 			{
-				if (!characterManager.CurrentParty.SetLeader(character))
+				stat.CurrentValue = Mathf.Lerp(from, to, navigation.NavMeshInvertedPercentRemainingDistance);
+
+				yield return null;
+			}
+
+			stat.CurrentValue = to;
+		}
+
+		private void InitiatorRecoveMove(bool isAnimated = true)
+		{
+			if (CurrentInitiator.Sheet.Stats.Move.CurrentValue < CurrentInitiator.Sheet.Stats.Move.MaxValue)
+			{
+				IStatBar stat = CurrentInitiator.Sheet.Stats.Move;
+
+				if (isAnimated)
 				{
-					cameraController.CameraToHome();
+					float from = stat.CurrentValue;
+					float to = stat.MaxValue;
+				
+					DOTween.To(() => from, (x) => stat.CurrentValue = x, to, 0.5f);
+				}
+				else
+				{
+					stat.CurrentValue = stat.MaxValue;
 				}
 			}
-			else
+		}
+		#endregion
+
+		private void OnTurnChanged()
+		{
+			if(CurrentInitiator != null)
 			{
-				cameraController.SetFollowTarget(entity.CameraPivot);
+				CurrentInitiator.Controller.onTargetChanged -= OnInitiatorTargetChanged;
 			}
+			CurrentInitiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
+
+			InitiatorRecoveMove();
+
+			CurrentInitiator.Controller.onTargetChanged += OnInitiatorTargetChanged;
+		}
+
+		private void OnInitiatorTargetChanged()
+		{
+			if (CurrentInitiator.Controller.IsHasTarget)
+			{
+				if (!settings.isInfinityMoveStat)
+				{
+					asyncManager.StartCoroutine(InitiatorSpendMove());
+				}
+			}
+		}
+
+
+		[System.Serializable]
+		public class Settings
+		{
+			public bool isInfinityMoveStat = false;
 		}
 	}
 
@@ -243,6 +303,7 @@ namespace Game.Systems.BattleSystem
 			BattleFSM.Rounds.Add(round.Copy());
 
 			SetState(BattleState.PreBattle);
+			onNextTurn?.Invoke();
 		}
 
 		public void Dispose()
@@ -268,6 +329,7 @@ namespace Game.Systems.BattleSystem
 				else
 				{
 					onNextRound?.Invoke();
+					onNextTurn?.Invoke();
 					onBattleUpdated?.Invoke();
 				}
 			}

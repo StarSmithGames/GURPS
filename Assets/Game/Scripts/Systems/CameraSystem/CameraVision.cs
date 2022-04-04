@@ -4,6 +4,7 @@ using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Managers.InputManager;
+using Game.Systems.InteractionSystem;
 using Game.Systems.TooltipSystem;
 
 using System;
@@ -20,7 +21,7 @@ namespace Game.Systems.CameraSystem
 		public bool IsCanHoldMouse { get; private set; }
 		public bool IsCamDrawPath { get; private set; }
 
-		private IObservable CurrentEntity
+		private IObservable CurrentObserve
 		{
 			get => currentEntity;
 			set
@@ -42,6 +43,7 @@ namespace Game.Systems.CameraSystem
 		private CharacterParty party;
 		private Character leader;
 		private bool isMouseHit;
+		private bool isUI;
 
 		private SignalBus signalBus;
 		private CinemachineBrain brain;
@@ -84,21 +86,59 @@ namespace Game.Systems.CameraSystem
 		{
 			RaycastHit hit;
 			Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
-			isMouseHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore) && !EventSystem.current.IsPointerOverGameObject();
+			isMouseHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore);
+			isUI = EventSystem.current.IsPointerOverGameObject();
 			Vector3 point = hit.point;
 			leader = characterManager.CurrentParty.LeaderParty;
 
 			//Looking
-			CurrentEntity = isMouseHit ? hit.transform.root.GetComponent<IObservable>() : null;
+			CurrentObserve = isMouseHit ? hit.transform.root.GetComponent<IObservable>() : null;
 
-			//MouseHolding
+			HandleHover(point);
+			HandleMouseClick(point);
+
+			if (isMouseHit)
+			{
+				TryShowTooltipRuler();
+			}
+
+			ValidatePath(point);
+		}
+
+		private void HandleHover(Vector3 point)
+		{
+			if (leader.InBattle)
+			{
+				if(isMouseHit && !isUI)
+				{
+					if (!leader.Controller.IsHasTarget)
+					{
+						if (CurrentObserve != null)
+						{
+							if (CurrentObserve is IInteractable interactable)
+							{
+								leader.Navigation.SetTarget(interactable.GetIteractionPosition(leader), maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
+							}
+						}
+						else
+						{
+							leader.Navigation.SetTarget(point, maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
+						}
+					}
+				}
+			}
+		}
+
+		private void HandleMouseClick(Vector3 point)
+		{
 			if (inputManager.IsLeftMouseButtonPressed())
 			{
-				if (CurrentEntity != null)
+				if (CurrentObserve != null)
 				{
+					//Interaction
 					if (inputManager.IsLeftMouseButtonDown())
 					{
-						leader.InteractWith(CurrentEntity);
+						leader.InteractWith(CurrentObserve);
 					}
 				}
 				else
@@ -106,15 +146,15 @@ namespace Game.Systems.CameraSystem
 					//Targeting
 					if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 					{
-						if (isMouseHit)
+						if (isMouseHit && !isUI)
 						{
 							if (!leader.InBattle)
 							{
 								leader.Controller.SetDestination(point);
 							}
-							else if (leader.InBattle && !leader.Controller.IsHasTarget)
+							else
 							{
-								if (leader.Sheet.Stats.Move.CurrentValue >= 0.05f)
+								if (!leader.Controller.IsHasTarget && leader.Sheet.Stats.Move.CurrentValue >= 0.1f)
 								{
 									leader.Controller.SetDestination(point, maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
 								}
@@ -123,22 +163,8 @@ namespace Game.Systems.CameraSystem
 					}
 				}
 			}
-
-			if (isMouseHit)
-			{
-				if (leader.InBattle)
-				{
-					if (!leader.Controller.IsHasTarget)
-					{
-						leader.Navigation.SetTarget(point, maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
-					}
-				}
-
-				TryShowTooltipRuler();
-			}
-
-			ValidatePath(point);
 		}
+
 
 		private void TryShowTooltipRuler()
 		{
@@ -171,7 +197,7 @@ namespace Game.Systems.CameraSystem
 				}
 				else if (isNotEnoughMovement)
 				{
-					uiManager.Tooltip.SetMessage(TooltipSystem.TooltipMessageType.NotEnoughMovement);
+					uiManager.Tooltip.SetMessage(TooltipMessageType.NotEnoughMovement);
 				}
 				uiManager.Tooltip.EnableMessage(true);
 			}

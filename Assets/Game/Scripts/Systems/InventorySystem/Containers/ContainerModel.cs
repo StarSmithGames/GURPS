@@ -1,10 +1,6 @@
-using EPOOutline;
-
 using Game.Entities;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
-
-using Sirenix.OdinInspector;
 
 using System.Collections;
 using UnityEngine;
@@ -13,11 +9,8 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : InteractableModel, ISheetable, IObservable
+	public class ContainerModel : InteractableModel, ISheetable
 	{
-		[SerializeField] private Collider collider;
-		[SerializeField] private Outlinable outline;
-
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
 
 		public ISheet Sheet
@@ -51,11 +44,6 @@ namespace Game.Systems.InventorySystem
 			this.containerHandler = containerHandler;
 		}
 
-		private void Awake()
-		{
-			outline.enabled = false;
-		}
-
 		private void Start()
 		{
 			if (data == null)
@@ -65,22 +53,15 @@ namespace Game.Systems.InventorySystem
 		}
 
 		#region Observe
-		public void StartObserve()
+		public override void StartObserve()
 		{
-			if(currentInteractor == null)
-			{
-				outline.enabled = true;
-			}
+			base.StartObserve();
 
 			uiManager.Battle.SetSheet(Sheet);
 		}
-		public void Observe() { }
-		public void EndObserve()
+		public override void EndObserve()
 		{
-			if (currentInteractor == null)
-			{
-				outline.enabled = false;
-			}
+			base.EndObserve();
 
 			uiManager.Battle.SetSheet(null);
 		}
@@ -98,7 +79,7 @@ namespace Game.Systems.InventorySystem
 
 			if (!IsInteractorInRange())
 			{
-				currentInteractor.Controller.SetDestination(InteractPosition);
+				currentInteractor.Controller.SetDestination(GetIteractionPosition(currentInteractor));
 
 				yield return new WaitWhile(() => !currentInteractor.Navigation.NavMeshAgent.IsReachedDestination());
 			}

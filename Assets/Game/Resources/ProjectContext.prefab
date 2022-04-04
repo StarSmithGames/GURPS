@@ -82,3 +82,5 @@ MonoBehaviour:
         serializedVersion: 2
         m_Bits: 217
       raycastLength: 100
+    battleSettings:
+      isInfinityMoveStat: 1

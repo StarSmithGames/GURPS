@@ -17,7 +17,6 @@ using Zenject;
 public class CharacterController3D : MonoBehaviour
 {
 	public UnityAction onTargetChanged;
-	public UnityAction onBattleTargetChanged;
 
 	public bool IsGrounded => characterController.isGrounded;
 	public bool IsHasTarget

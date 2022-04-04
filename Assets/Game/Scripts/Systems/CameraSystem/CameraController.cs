@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using Game.Managers.InputManager;
+using Game.Entities;
 
 namespace Game.Systems.CameraSystem
 {
@@ -37,19 +38,21 @@ namespace Game.Systems.CameraSystem
 		private List<CinemachineVirtualCamera> characterCamers;
 		private InputManager inputManager;
 		private AsyncManager asyncManager;
-
+		private CharacterManager characterManager;
 
 		public CameraController(SignalBus signalBus,
 			CinemachineBrain brain,
 			[Inject(Id = "CharacterCamers")] List<CinemachineVirtualCamera> characterCamers,
 			InputManager inputManager,
-			AsyncManager asyncManager)
+			AsyncManager asyncManager,
+			CharacterManager characterManager)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
 			this.characterCamers = characterCamers;
 			this.inputManager = inputManager;
 			this.asyncManager = asyncManager;
+			this.characterManager = characterManager;
 		}
 
 		public void Initialize()
@@ -152,6 +155,21 @@ namespace Game.Systems.CameraSystem
 			brain.ActiveVirtualCamera.LookAt = target;
 
 			CameraToHome();
+		}
+
+		public void LookAt(IEntity entity)
+		{
+			if (entity is Character character)
+			{
+				if (!characterManager.CurrentParty.SetLeader(character))
+				{
+					CameraToHome();
+				}
+			}
+			else
+			{
+				SetFollowTarget(entity.CameraPivot);
+			}
 		}
 
 		public void CameraToHome()

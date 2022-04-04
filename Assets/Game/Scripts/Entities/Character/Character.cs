@@ -89,22 +89,6 @@ namespace Game.Entities
 			return true;
 		}
 
-
-		private IEnumerator Move()
-		{
-			float from = Sheet.Stats.Move.CurrentValue;
-			float to = Sheet.Stats.Move.CurrentValue - Navigation.NavMeshPathDistance;
-
-			while (Navigation.NavMeshInvertedPercentRemainingDistance < 0.95f)
-			{
-				Sheet.Stats.Move.CurrentValue = Mathf.Lerp(from, to, Navigation.NavMeshInvertedPercentRemainingDistance);
-				
-				yield return null;
-			}
-
-			Sheet.Stats.Move.CurrentValue = to;
-		}
-
 		private void OnTargetChanged()
 		{
 			if (!InBattle)
@@ -123,13 +107,6 @@ namespace Game.Entities
 					{
 						Markers.TargetMarker.EnableOut();
 					}
-				}
-			}
-			else
-			{
-				if (Controller.IsHasTarget)
-				{
-					StartCoroutine(Move());
 				}
 			}
 		}

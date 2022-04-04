@@ -8,7 +8,7 @@ namespace Game.Systems.InteractionSystem
 	{
 		bool IsInteractable { get; }
 
-		Vector3 InteractPosition { get; }
+		Vector3 GetIteractionPosition(IEntity entity);
 
 		void Interact();
 		void InteractFrom(IEntity entity);
