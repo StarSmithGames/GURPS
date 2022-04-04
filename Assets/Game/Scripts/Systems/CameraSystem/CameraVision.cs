@@ -92,7 +92,7 @@ namespace Game.Systems.CameraSystem
 			leader = characterManager.CurrentParty.LeaderParty;
 
 			//Looking
-			CurrentObserve = isMouseHit ? hit.transform.root.GetComponent<IObservable>() : null;
+			CurrentObserve = isMouseHit && !isUI ? hit.transform.root.GetComponent<IObservable>() : null;
 
 			HandleHover(point);
 			HandleMouseClick(point);
@@ -117,12 +117,12 @@ namespace Game.Systems.CameraSystem
 						{
 							if (CurrentObserve is IInteractable interactable)
 							{
-								leader.Navigation.SetTarget(interactable.GetIteractionPosition(leader), maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
+								leader.SetTarget(interactable.GetIteractionPosition(leader));
 							}
 						}
 						else
 						{
-							leader.Navigation.SetTarget(point, maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
+							leader.SetTarget(point);
 						}
 					}
 				}
@@ -138,6 +138,7 @@ namespace Game.Systems.CameraSystem
 					//Interaction
 					if (inputManager.IsLeftMouseButtonDown())
 					{
+						Debug.LogError(leader.gameObject.name);
 						leader.InteractWith(CurrentObserve);
 					}
 				}
@@ -150,13 +151,13 @@ namespace Game.Systems.CameraSystem
 						{
 							if (!leader.InBattle)
 							{
-								leader.Controller.SetDestination(point);
+								leader.SetDestination(point);
 							}
 							else
 							{
-								if (!leader.Controller.IsHasTarget && leader.Sheet.Stats.Move.CurrentValue >= 0.1f)
+								if (!leader.IsHasTarget && leader.Sheet.Stats.Move.CurrentValue >= 0.1f)
 								{
-									leader.Controller.SetDestination(point, maxPathDistance: leader.Sheet.Stats.Move.CurrentValue);
+									leader.SetDestination(point);
 								}
 							}
 						}

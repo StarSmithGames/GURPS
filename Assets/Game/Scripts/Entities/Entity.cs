@@ -18,6 +18,7 @@ namespace Game.Entities
 
 		public virtual ISheet Sheet { get; private set; }
 
+		public bool IsHasTarget => Controller.IsHasTarget;
 		public NavigationController Navigation { get; private set; }
 		public CharacterController3D Controller { get; private set; }
 
@@ -82,6 +83,16 @@ namespace Game.Entities
 			uiManager.Battle.SetSheet(null);
 		}
 		#endregion
+
+		public virtual void SetTarget(Vector3 point, float maxPathDistance = -1)
+		{
+			Navigation.SetTarget(point, maxPathDistance: maxPathDistance);
+		}
+
+		public virtual void SetDestination(Vector3 destination, float maxPathDistance = -1)
+		{
+			Controller.SetDestination(destination, maxPathDistance: maxPathDistance);
+		}
 
 		protected virtual void ResetMarkers()
 		{

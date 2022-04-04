@@ -4,6 +4,8 @@ using Game.Entities;
 
 using Sirenix.OdinInspector;
 
+using System.Collections;
+
 using UnityEngine;
 
 namespace Game.Systems.InteractionSystem
@@ -14,9 +16,8 @@ namespace Game.Systems.InteractionSystem
 		[Space]
 		[SerializeField] protected Outlinable outline;
 
-		public bool IsInteractable => currentInteractor == null;
+		public bool IsInteractable => outline.enabled;
 
-		protected IEntity currentInteractor = null;
 
 		private void Awake()
 		{
@@ -25,8 +26,6 @@ namespace Game.Systems.InteractionSystem
 
 		public Vector3 GetIteractionPosition(IEntity entity = null)
 		{
-			currentInteractor = entity;
-
 			if (interactableSettings.interaction == InteractionType.CustomPoint)
 			{
 				return transform.TransformPoint(interactableSettings.position);
@@ -35,7 +34,7 @@ namespace Game.Systems.InteractionSystem
 			{
 				if (entity != null)
 				{
-					if (IsInteractorInRange()) return entity.Transform.position;
+					if (IsInteractorInRange(entity)) return entity.Transform.position;
 
 					return transform.position + ((interactableSettings.maxRange - 0.1f) * (entity.Transform.position - transform.position).normalized);
 				}
@@ -44,9 +43,14 @@ namespace Game.Systems.InteractionSystem
 			return transform.position;
 		}
 
-		public void Interact() { }
+		public bool IsInteractorInRange(IEntity entity)
+		{
+			if (entity == null) return false;
+			return Vector3.Distance(transform.position, entity.Transform.position) <= interactableSettings.maxRange;
+		}
 
-		public virtual void InteractFrom(IEntity entity)
+		protected IEntity currentInteractor = null;
+		public void InteractFrom(IEntity entity)
 		{
 			if (currentInteractor != null || entity == null)
 			{
@@ -54,14 +58,47 @@ namespace Game.Systems.InteractionSystem
 			}
 
 			currentInteractor = entity;
-		}
 
-		protected bool IsInteractorInRange()
+			StartCoroutine(PreInteraction());
+		}
+		private IEnumerator PreInteraction()
 		{
-			if (currentInteractor == null) return false;
-			return Vector3.Distance(transform.position, currentInteractor.Transform.position) <= interactableSettings.maxRange;
+			outline.enabled = false;
+			if (!IsInteractorInRange(currentInteractor))
+			{
+				currentInteractor.SetDestination(GetIteractionPosition(currentInteractor));
+
+				Vector3 lastDestination = currentInteractor.Navigation.CurrentNavMeshDestination;
+				bool needBreak = false;
+
+				yield return new WaitWhile(() =>
+				{
+					if (lastDestination != currentInteractor.Navigation.CurrentNavMeshDestination)
+					{
+						needBreak = true;
+						return false;
+					}
+					return !currentInteractor.Navigation.NavMeshAgent.IsReachedDestination();
+				});
+
+				if (needBreak)
+				{
+					currentInteractor = null;
+					yield break;
+				}
+			}
+
+			yield return Interaction();
+
+			currentInteractor = null;
 		}
 
+		protected virtual IEnumerator Interaction()
+		{
+			yield return null;
+		}
+
+		
 		#region Observe
 		public virtual void StartObserve()
 		{
@@ -73,7 +110,6 @@ namespace Game.Systems.InteractionSystem
 			outline.enabled = false;
 		}
 		#endregion
-
 
 		private void OnDrawGizmosSelected()
 		{

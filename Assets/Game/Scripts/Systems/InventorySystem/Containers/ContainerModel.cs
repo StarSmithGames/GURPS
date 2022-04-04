@@ -68,37 +68,21 @@ namespace Game.Systems.InventorySystem
 		#endregion
 
 		#region Interaction
-		public override void InteractFrom(IEntity entity)
+		protected override IEnumerator Interaction()
 		{
-			base.InteractFrom(entity);
-			StartCoroutine(Interaction());
-		}
-		private IEnumerator Interaction()
-		{
-			outline.enabled = false;
-
-			if (!IsInteractorInRange())
-			{
-				currentInteractor.Controller.SetDestination(GetIteractionPosition(currentInteractor));
-
-				yield return new WaitWhile(() => !currentInteractor.Navigation.NavMeshAgent.IsReachedDestination());
-			}
-
-			if (IsInteractorInRange())
+			if (IsInteractorInRange(currentInteractor))
 			{
 				OpenWindow();
 			}
 
 			while (IsOpened)
 			{
-				if (!IsInteractorInRange())
+				if (!IsInteractorInRange(currentInteractor))
 				{
 					CloseWindow();
 				}
 				yield return null;
 			}
-
-			currentInteractor = null;
 		}
 		#endregion
 

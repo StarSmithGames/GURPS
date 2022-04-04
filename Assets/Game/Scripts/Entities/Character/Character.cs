@@ -89,6 +89,16 @@ namespace Game.Entities
 			return true;
 		}
 
+		public override void SetTarget(Vector3 point, float maxPathDistance = -1)
+		{
+			base.SetTarget(point, InBattle ? Sheet.Stats.Move.CurrentValue : maxPathDistance);
+		}
+
+		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
+		{
+			base.SetDestination(destination, InBattle ? Sheet.Stats.Move.CurrentValue : maxPathDistance);
+		}
+
 		private void OnTargetChanged()
 		{
 			if (!InBattle)

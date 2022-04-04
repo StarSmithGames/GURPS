@@ -4490,7 +4490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactableSettings:
-    maxRange: 1
+    maxRange: 1.5
     interaction: 0
     position: {x: 0, y: 0, z: 0}
   outline: {fileID: 6874036480430047073}
