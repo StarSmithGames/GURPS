@@ -19,7 +19,6 @@ namespace Game.Systems.CameraSystem
 	public class CameraVision : IInitializable, IDisposable, ITickable
 	{
 		public bool IsCanHoldMouse { get; private set; }
-		public bool IsCamDrawPath { get; private set; }
 
 		private IObservable CurrentObserve
 		{
@@ -97,10 +96,7 @@ namespace Game.Systems.CameraSystem
 			HandleHover(point);
 			HandleMouseClick(point);
 
-			if (isMouseHit)
-			{
-				TryShowTooltipRuler();
-			}
+			TooltipRuler();
 
 			ValidatePath(point);
 		}
@@ -109,15 +105,18 @@ namespace Game.Systems.CameraSystem
 		{
 			if (leader.InBattle)
 			{
-				if(isMouseHit && !isUI)
+				if(isMouseHit)
 				{
 					if (!leader.Controller.IsHasTarget)
 					{
 						if (CurrentObserve != null)
 						{
-							if (CurrentObserve is IInteractable interactable)
+							if (!isUI)
 							{
-								leader.SetTarget(interactable.GetIteractionPosition(leader));
+								if (CurrentObserve is IInteractable interactable)
+								{
+									leader.SetTarget(interactable.GetIteractionPosition(leader));
+								}
 							}
 						}
 						else
@@ -138,7 +137,6 @@ namespace Game.Systems.CameraSystem
 					//Interaction
 					if (inputManager.IsLeftMouseButtonDown())
 					{
-						Debug.LogError(leader.gameObject.name);
 						leader.InteractWith(CurrentObserve);
 					}
 				}
@@ -167,18 +165,21 @@ namespace Game.Systems.CameraSystem
 		}
 
 
-		private void TryShowTooltipRuler()
+		private void TooltipRuler()
 		{
 			if (leader.InBattle && !leader.Controller.IsHasTarget)
 			{
-				uiManager.Tooltip.SetRulerText(Math.Round(leader.Navigation.CurrentPathDistance, 2) + SymbolCollector.METRE.ToString());
-				uiManager.Tooltip.EnableRuler(true);
-			}
-			else
-			{
-				if (uiManager.Tooltip.IsRulerShowing)
+				if (isMouseHit && !isUI)
 				{
-					uiManager.Tooltip.EnableRuler(false);
+					uiManager.Tooltip.SetRulerText(Math.Round(leader.Navigation.CurrentPathDistance, 2) + SymbolCollector.METRE.ToString());
+					uiManager.Tooltip.EnableRuler(true);
+				}
+				else
+				{
+					if (uiManager.Tooltip.IsRulerShowing)
+					{
+						uiManager.Tooltip.EnableRuler(false);
+					}
 				}
 			}
 		}
@@ -188,7 +189,9 @@ namespace Game.Systems.CameraSystem
 			float pathDistance = (float)Math.Round(leader.Navigation.CurrentPathDistance, 2);
 
 			bool isInvalidTarget = !isMouseHit || !leader.Navigation.NavMeshAgent.IsPathValid(point);
-			bool isNotEnoughMovement = leader.InBattle && !leader.Controller.IsHasTarget && (leader.Sheet.Stats.Move.CurrentValue < pathDistance);
+			bool isNotEnoughMovement = isMouseHit && !isUI &&
+				leader.InBattle && !leader.Controller.IsHasTarget &&
+				(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
 
 			if (isInvalidTarget || isNotEnoughMovement)
 			{
