@@ -240,16 +240,16 @@ namespace Game.Systems.BattleSystem
 		{
 			if(CurrentInitiator != null)
 			{
-				CurrentInitiator.Controller.onTargetChanged -= OnInitiatorTargetChanged;
+				CurrentInitiator.onDestinationChanged -= OnInitiatorDestinationChanged;
 			}
 			CurrentInitiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
 
 			InitiatorRecoveMove();
 
-			CurrentInitiator.Controller.onTargetChanged += OnInitiatorTargetChanged;
+			CurrentInitiator.onDestinationChanged += OnInitiatorDestinationChanged;
 		}
 
-		private void OnInitiatorTargetChanged()
+		private void OnInitiatorDestinationChanged()
 		{
 			if (CurrentInitiator.Controller.IsHasTarget)
 			{

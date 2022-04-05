@@ -83,4 +83,4 @@ MonoBehaviour:
         m_Bits: 217
       raycastLength: 100
     battleSettings:
-      isInfinityMoveStat: 0
+      isInfinityMoveStat: 1

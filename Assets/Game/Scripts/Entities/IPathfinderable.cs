@@ -1,9 +1,13 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Entities
 {
 	public interface IPathfinderable
 	{
+		event UnityAction onTargetChanged;
+		event UnityAction onDestinationChanged;
+
 		bool IsHasTarget { get; }
 
 		Transform Transform { get; }

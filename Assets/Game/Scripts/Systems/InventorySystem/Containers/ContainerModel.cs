@@ -68,12 +68,9 @@ namespace Game.Systems.InventorySystem
 		#endregion
 
 		#region Interaction
-		protected override IEnumerator Interaction()
+		protected override IEnumerator InternalInteraction()
 		{
-			if (IsInteractorInRange(currentInteractor))
-			{
-				OpenWindow();
-			}
+			OpenWindow();
 
 			while (IsOpened)
 			{

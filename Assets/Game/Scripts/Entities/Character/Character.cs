@@ -7,12 +7,13 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
+using Zenject;
+
 namespace Game.Entities
 {
 	public class Character : Entity, IBattlable
 	{
 		public UnityAction onCharacterBattleStateChanged;
-		public UnityAction onCharacterUpdated;
 
 		[SerializeField] private CharacterData data;
 
@@ -34,18 +35,12 @@ namespace Game.Entities
 
 		public Battle CurrentBattle { get; private set; }
 
-		private void OnDestroy()
-		{
-			if (Controller != null)
-			{
-				Controller.onTargetChanged -= OnTargetChanged;
-			}
-		}
+		private CharacterAnimatorControl animatorControl;
 
-		protected override void Start()
+		[Inject]
+		private void Construct(CharacterAnimatorControl animatorControl)
 		{
-			base.Start();
-			Controller.onTargetChanged += OnTargetChanged;
+			this.animatorControl = animatorControl;
 		}
 
 		public void InteractWith(IObservable observable)
@@ -54,11 +49,24 @@ namespace Game.Entities
 			{
 				case IInteractable interactable:
 				{
-					interactable.InteractFrom(this);
+					bool isExternalInteraction = interactable is IEntity && InBattle;
+
+					interactable.InteractFrom(this, isExternalInteraction ? InteractionAttack() : null);
 					break;
 				}
 			}
 		}
+
+		private IEnumerator InteractionAttack()
+		{
+			if (InBattle)
+			{
+				animatorControl.Attack();
+			}
+
+			yield return null;
+		}
+
 
 		public bool JoinBattle(Battle battle)
 		{
@@ -97,10 +105,7 @@ namespace Game.Entities
 		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
 		{
 			base.SetDestination(destination, InBattle ? Sheet.Stats.Move.CurrentValue : maxPathDistance);
-		}
 
-		private void OnTargetChanged()
-		{
 			if (!InBattle)
 			{
 				//Fade-In Fade-Out TargetMarker

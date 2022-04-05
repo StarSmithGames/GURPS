@@ -46,11 +46,11 @@ namespace Game.Systems.InteractionSystem
 		public bool IsInteractorInRange(IEntity entity)
 		{
 			if (entity == null) return false;
-			return Vector3.Distance(transform.position, entity.Transform.position) <= interactableSettings.maxRange;
+			return Vector3.Distance(transform.position, entity.Transform.position) <= interactableSettings.maxRange + 0.1f;
 		}
 
 		protected IEntity currentInteractor = null;
-		public void InteractFrom(IEntity entity)
+		public void InteractFrom(IEntity entity, IEnumerator interaction = null)
 		{
 			if (currentInteractor != null || entity == null)
 			{
@@ -59,9 +59,9 @@ namespace Game.Systems.InteractionSystem
 
 			currentInteractor = entity;
 
-			StartCoroutine(PreInteraction());
+			StartCoroutine(PreInteraction(interaction));
 		}
-		private IEnumerator PreInteraction()
+		private IEnumerator PreInteraction(IEnumerator ExternalInteraction = null)
 		{
 			outline.enabled = false;
 			if (!IsInteractorInRange(currentInteractor))
@@ -88,12 +88,22 @@ namespace Game.Systems.InteractionSystem
 				}
 			}
 
-			yield return Interaction();
+			if (IsInteractorInRange(currentInteractor))
+			{
+				if (ExternalInteraction != null)
+				{
+					yield return ExternalInteraction;
+				}
+				else
+				{
+					yield return InternalInteraction();
+				}
+			}
 
 			currentInteractor = null;
 		}
 
-		protected virtual IEnumerator Interaction()
+		protected virtual IEnumerator InternalInteraction()
 		{
 			yield return null;
 		}

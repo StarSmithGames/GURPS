@@ -1,13 +1,9 @@
 using CMF;
 
 using Game.Entities;
-using Game.Systems.BattleSystem;
 
 using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Editor.Validation;
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -16,7 +12,7 @@ using Zenject;
 
 public class CharacterController3D : MonoBehaviour
 {
-	public UnityAction onTargetChanged;
+	public UnityAction onReachedDestination;
 
 	public bool IsGrounded => characterController.isGrounded;
 	public bool IsHasTarget
@@ -28,15 +24,19 @@ public class CharacterController3D : MonoBehaviour
 			{
 				isHasTarget = value;
 			}
-			onTargetChanged?.Invoke();
 		}
 	}
 	private bool isHasTarget = false;
 	public Vector3 CurrentDestination { get; private set; }
 
 	public bool IsFreezed { get; private set; }
+	public bool IsWaitAnimation { get; set; }
+
 	public bool IsCanMove { get => isCanMove; set => isCanMove = value; }
 	private bool isCanMove = true;
+
+	public bool IsCanRotate { get => isCanRotate; set => isCanRotate = value; }
+	private bool isCanRotate = true;
 
 	[OnValueChanged("Validate", true)]
 	[SerializeField] private Settings settings;
@@ -80,14 +80,6 @@ public class CharacterController3D : MonoBehaviour
 	}
 
 
-	private void OnAnimatorMove()
-	{
-		navMeshAgent.nextPosition = transform.root.position;
-		//rootMotion += animator.deltaPosition;
-		//root.position = animator.rootPosition;
-		//model.rotation = animator.rootRotation;
-	}
-
 	private void FixedUpdate()
 	{
 		Movement();
@@ -98,27 +90,22 @@ public class CharacterController3D : MonoBehaviour
 		HandleTimeOut();
 	}
 
-	public void Freeze()
+	public void Freeze(bool trigger)
 	{
-		IsFreezed = true;
+		IsFreezed = trigger;
 
-		if (IsHasTarget)
+		if (IsFreezed && IsHasTarget)
 		{
 			IsHasTarget = false;
 			CurrentDestination = Vector3.zero;
 		}
 	}
 
-	public void UnFreeze()
+	public bool SetDestination(Vector3 destination, float maxPathDistance = -1)
 	{
-		IsFreezed = false;
-	}
+		if (IsFreezed || IsWaitAnimation) return false;
 
-	public bool SetDestination(Vector3 destination, float stoppingDistance = -1, float maxPathDistance = -1)
-	{
-		if (IsFreezed) return false;
-
-		IsHasTarget = navigationController.SetTarget(destination, stoppingDistance, maxPathDistance);
+		IsHasTarget = navigationController.SetTarget(destination, maxPathDistance);
 
 		CurrentDestination = IsHasTarget ? navigationController.CurrentNavMeshDestination : Vector3.zero;
 
@@ -157,6 +144,8 @@ public class CharacterController3D : MonoBehaviour
 
 	private void Rotation()
 	{
+		if (!IsCanRotate) return;
+
 		Vector3 velocity = lastVelocity;
 		//Project velocity onto a plane defined by the 'up' direction of the parent transform;
 		velocity = Vector3.ProjectOnPlane(velocity, transform.root.up);
@@ -178,20 +167,18 @@ public class CharacterController3D : MonoBehaviour
 
 	private Vector3 CalculateMovementVelocity()
 	{
-		if (!IsCanMove) return Vector3.zero;
+		if (!IsHasTarget) return Vector3.zero;
 
-		if (navigationController.NavMeshAgent.IsReachedDestination() || !IsHasTarget)
+		if (navigationController.NavMeshAgent.IsReachedDestination())
 		{
 			IsHasTarget = false;
-			//if (lastVelocity != Vector3.zero)
-			//{
-			//	lastVelocity = Vector3.MoveTowards(lastVelocity, Vector3.zero, 1f * Time.deltaTime);
 
-			//	return lastVelocity;
-			//}
+			onReachedDestination?.Invoke();
 
 			return Vector3.zero;
 		}
+
+		if (!IsCanMove || IsWaitAnimation) return Vector3.zero;
 
 		Vector3 direction = CurrentDestination - transform.root.position;
 		direction = VectorMath.RemoveDotVector(direction, transform.root.up);

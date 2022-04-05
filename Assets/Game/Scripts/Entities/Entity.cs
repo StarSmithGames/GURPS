@@ -7,6 +7,7 @@ using Game.Systems.SheetSystem;
 
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 using Zenject;
 
@@ -14,6 +15,9 @@ namespace Game.Entities
 {
 	public abstract class Entity : InteractableModel, IEntity
 	{
+		public event UnityAction onTargetChanged;
+		public event UnityAction onDestinationChanged;
+
 		public Transform Transform => transform;
 
 		public virtual ISheet Sheet { get; private set; }
@@ -61,14 +65,7 @@ namespace Game.Entities
 
 		public void Freeze(bool trigger)
 		{
-			if (trigger)
-			{
-				Controller.Freeze();
-			}
-			else
-			{
-				Controller.UnFreeze();
-			}
+			Controller.Freeze(trigger);
 		}
 
 		#region Observe
@@ -87,11 +84,13 @@ namespace Game.Entities
 		public virtual void SetTarget(Vector3 point, float maxPathDistance = -1)
 		{
 			Navigation.SetTarget(point, maxPathDistance: maxPathDistance);
+			onTargetChanged?.Invoke();
 		}
 
 		public virtual void SetDestination(Vector3 destination, float maxPathDistance = -1)
 		{
 			Controller.SetDestination(destination, maxPathDistance: maxPathDistance);
+			onDestinationChanged?.Invoke();
 		}
 
 		protected virtual void ResetMarkers()

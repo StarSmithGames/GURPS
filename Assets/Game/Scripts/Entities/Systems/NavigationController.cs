@@ -63,10 +63,8 @@ namespace Game.Entities
 			markers.LineMarker.DrawLine(NavMeshAgent.path.corners);
 		}
 
-		public bool SetTarget(Vector3 destination, float stoppingDistance = -1, float maxPathDistance = -1)
+		public bool SetTarget(Vector3 destination, float maxPathDistance = -1)
 		{
-			NavMeshAgent.stoppingDistance = stoppingDistance <= 0 ? settings.reachTargetThreshold : stoppingDistance;
-
 			bool result = false;
 
 			if (NavMeshAgent.IsPathValid(destination))
