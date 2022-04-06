@@ -1,9 +1,5 @@
-using CMF;
-
 using DG.Tweening;
 using Game.Entities;
-
-using Sirenix.OdinInspector;
 
 using System.Collections;
 
@@ -11,133 +7,62 @@ using UnityEngine;
 
 using Zenject;
 
-public class CharacterAnimatorControl : MonoBehaviour
+public class CharacterAnimatorControl : AnimatorControl
 {
-	public bool IsRootMotion
-	{
-		get => isRootMotion;
-		private set
-		{
-			isRootMotion = value;
+	protected int weaponTypeHash;
+	protected int attackTypeHash;
 
-			controller.IsCanMove = !isRootMotion;
-			controller.IsCanRotate = !isRootMotion;
-		}
-	}
-	private bool isRootMotion = false;
-	private bool isAttackProccess = false;
-	private bool isWaitAnimationProccess = false;
-	private bool isWaitTransitionProccess = false;
-
-	private int forwardSpeedHash;
-	private int verticalSpeedHash;
-	private int isBattleModeHash;
-	private int isIdle;
-	private int isGrounded;
-	private int weaponType;
-	private int attack;
-
-	private SignalBus signalBus;
-	private Animator animator;
 	private Character character;
-	private CharacterController3D controller;
 	private CharacterOutfit outfit;
 	
 	[Inject]
-	private void Construct(
-		SignalBus signalBus,
-		Animator animator,
-		Entity entity,
-		CharacterController3D controller,
-		CharacterOutfit outfit)
+	private void Construct(CharacterOutfit outfit)
 	{
-		this.signalBus = signalBus;
-		this.animator = animator;
-		this.character = entity as Character;
-		this.controller = controller;
 		this.outfit = outfit;
+
+		character = entity as Character;
 	}
 
-	private void OnDestroy()
+	protected override void Start()
 	{
-		if(character != null)
-		{
-			character.onDestinationChanged -= OnDestinationChanged;
-			controller.onReachedDestination -= OnReachedDestination;
-		}
+		weaponTypeHash = Animator.StringToHash("WeaponType");
+		attackTypeHash = Animator.StringToHash("AttackType");
+		base.Start();
 	}
 
-	private void Start()
+	protected override void Update()
 	{
-		animator.applyRootMotion = false;
+		base.Update();
 
-		character.onDestinationChanged += OnDestinationChanged;
-		controller.onReachedDestination += OnReachedDestination;
+		animator.SetInteger(weaponTypeHash, (int)outfit.CurrentWeaponType);
 
-		forwardSpeedHash = Animator.StringToHash("ForwardSpeed");
-		verticalSpeedHash = Animator.StringToHash("VerticalSpeed");
-		isBattleModeHash = Animator.StringToHash("IsBattleMode");
-		isIdle = Animator.StringToHash("IsIdle");
-		isGrounded = Animator.StringToHash("IsGrounded");
-		weaponType = Animator.StringToHash("WeaponType");
-		attack = Animator.StringToHash("Attack");
-	}
-
-	private void Update()
-	{
-		Vector3 velocity = controller.GetVelocity();
-
-		Vector3 horizontalVelocity = VectorMath.RemoveDotVector(velocity, transform.up);
-		Vector3 verticalVelocity = velocity - horizontalVelocity;
-
-		animator.SetFloat(forwardSpeedHash, velocity.magnitude);
-		animator.SetFloat(verticalSpeedHash, verticalVelocity.magnitude * VectorMath.GetDotProduct(verticalVelocity, transform.up));
-		//animator.SetFloat("HorizontalSpeed", Mathf.Clamp(controller.CalculateAngleToDesination(), -90, 90) / 90);
 		animator.SetBool(isBattleModeHash, character.InBattle);
 
-		animator.SetBool(isIdle, !controller.IsHasTarget && velocity.magnitude == 0);
-		animator.SetBool(isGrounded, controller.IsGrounded);
-
-		animator.SetInteger(weaponType, (int)outfit.CurrentWeaponType);
-
-
-		if (animator.applyRootMotion == false)
-		{
-			character.Navigation.NavMeshAgent.nextPosition = transform.root.position;
-		}
-
-		BattleActions();
-	}
-
-	
-
-	public void Hit()
-	{
-		animator.SetTrigger("Hit");
-	}
-
-	public void Attack()
-	{
-		StartCoroutine(AttackProccess());
-	}
-
-	private void BattleActions()
-	{
 		if (character.InBattle)
 		{
-			controller.IsWaitAnimation = isAttackProccess || isWaitAnimationProccess || isWaitTransitionProccess;
+			character.Controller.IsWaitAnimation = isAttackProccess ||
+				isWaitAnimationProccess ||
+				isWaitTransitionProccess;
 		}
+	}
+
+	public override void Attack(int type = -1)
+	{
+		animator.SetInteger(attackTypeHash, type == -1 ? 0 : type);
+		StartCoroutine(AttackProccess());
 	}
 
 	private IEnumerator AttackProccess()
 	{
+		Vector3 lastForward = transform.forward;
+
 		isAttackProccess = true;
 
 		yield return WaitWhileAnimation("Armature|IdleAction");
 
 		animator.applyRootMotion = true;
 
-		animator.SetTrigger(attack);
+		animator.SetTrigger(attackHash);
 		
 		while (true)
 		{
@@ -154,66 +79,11 @@ public class CharacterAnimatorControl : MonoBehaviour
 		}
 
 		transform.DOMove(transform.root.position, 0.25f);
+		transform.DORotate(lastForward, 0.25f);
 
 		yield return WaitWhileAnimation("Armature|IdleAction");
 
 		animator.applyRootMotion = false;
 		isAttackProccess = false;
 	}
-
-
-	private IEnumerator WaitWhileAnimation(string animation)
-	{
-		isWaitAnimationProccess = true;
-
-		while (character.InBattle)
-		{
-			if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == animation)
-			{
-				break;
-			}
-			yield return null;
-		}
-
-		isWaitAnimationProccess = false;
-	}
-
-	private IEnumerator WaitWhileTransition(string transition)
-	{
-		isWaitTransitionProccess = true;
-
-		while (character.InBattle)
-		{
-			if (animator.GetAnimatorTransitionInfo(0).IsName(transition))
-			{
-				break;
-			}
-			
-			yield return null;
-		}
-
-		isWaitTransitionProccess = false;
-	}
-
-
-	private void OnDestinationChanged()
-	{
-
-	}
-
-	private void OnReachedDestination()
-	{
-		if (character.InBattle)
-		{
-			StartCoroutine(WaitWhileAnimation("Armature|IdleAction"));
-		}
-	}
-
-
-	#region AnimationEvents
-	private void HitEvent()
-	{
-		Debug.LogError("HERE");
-	}
-	#endregion
 }

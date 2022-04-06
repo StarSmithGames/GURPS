@@ -137,7 +137,10 @@ namespace Game.Systems.CameraSystem
 					//Interaction
 					if (inputManager.IsLeftMouseButtonDown())
 					{
-						leader.InteractWith(CurrentObserve);
+						if(CurrentObserve is IInteractable interactable)
+						{
+							leader.TryInteractWith(interactable);
+						}
 					}
 				}
 				else

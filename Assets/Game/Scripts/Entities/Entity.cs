@@ -1,4 +1,6 @@
 
+using CMF;
+
 using EPOOutline;
 
 using Game.Entities;
@@ -13,18 +15,9 @@ using Zenject;
 
 namespace Game.Entities
 {
-	public abstract class Entity : InteractableModel, IEntity
+	public abstract partial class Entity : InteractableModel, IEntity
 	{
-		public event UnityAction onTargetChanged;
-		public event UnityAction onDestinationChanged;
-
-		public Transform Transform => transform;
-
 		public virtual ISheet Sheet { get; private set; }
-
-		public bool IsHasTarget => Controller.IsHasTarget;
-		public NavigationController Navigation { get; private set; }
-		public CharacterController3D Controller { get; private set; }
 
 		public Markers Markers { get; private set; }
 		public Outlinable Outlines { get; private set; }
@@ -37,6 +30,7 @@ namespace Game.Entities
 		[Inject]
 		private void Construct(
 			SignalBus signalBus,
+			AnimatorControl animatorControl,
 			NavigationController navigationController,
 			CharacterController3D controller,
 			Markers markerController,
@@ -46,6 +40,7 @@ namespace Game.Entities
 		{
 			this.signalBus = signalBus;
 
+			AnimatorControl = animatorControl;
 			Navigation = navigationController;
 			Controller = controller;
 			Markers = markerController;
@@ -56,12 +51,24 @@ namespace Game.Entities
 			Validate();
 		}
 
+		protected virtual void OnDestroy()
+		{
+			if (AnimatorControl != null)
+			{
+				AnimatorControl.onAttackEvent -= OnAttacked;
+			}
+		}
+
 		protected virtual void Start()
 		{
+			AnimatorControl.onAttackEvent += OnAttacked;
+
 			Outlines.enabled = false;
 
 			ResetMarkers();
 		}
+
+		public virtual void TryInteractWith(IInteractable interactable) { }
 
 		public void Freeze(bool trigger)
 		{
@@ -80,18 +87,6 @@ namespace Game.Entities
 			uiManager.Battle.SetSheet(null);
 		}
 		#endregion
-
-		public virtual void SetTarget(Vector3 point, float maxPathDistance = -1)
-		{
-			Navigation.SetTarget(point, maxPathDistance: maxPathDistance);
-			onTargetChanged?.Invoke();
-		}
-
-		public virtual void SetDestination(Vector3 destination, float maxPathDistance = -1)
-		{
-			Controller.SetDestination(destination, maxPathDistance: maxPathDistance);
-			onDestinationChanged?.Invoke();
-		}
 
 		protected virtual void ResetMarkers()
 		{
@@ -112,6 +107,53 @@ namespace Game.Entities
 			Assert.IsNotNull(Markers, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(Outlines, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(CameraPivot, $"Entity {gameObject.name} lost component.");
+		}
+
+	}
+
+	//IAnimatable
+	partial class Entity : InteractableModel
+	{
+		public AnimatorControl AnimatorControl { get; private set; }
+		
+		public void Attack(int type = -1)
+		{
+			AnimatorControl.Attack(type);
+		}
+		public void Hit(int type = -1)
+		{
+			AnimatorControl.Hit(type);
+		}
+
+		private void OnAttacked()
+		{
+			(lastInteractable as IAnimatable).Hit(Random.Range(0, 2));
+		}
+	}
+
+	//IPathfinderable
+	partial class Entity
+	{
+		public event UnityAction onTargetChanged;
+		public event UnityAction onDestinationChanged;
+
+		public Transform Transform => transform;
+
+		public bool IsHasTarget => Controller.IsHasTarget;
+
+		public NavigationController Navigation { get; private set; }
+		public CharacterController3D Controller { get; private set; }
+
+		public virtual void SetTarget(Vector3 point, float maxPathDistance = -1)
+		{
+			Navigation.SetTarget(point, maxPathDistance: maxPathDistance);
+			onTargetChanged?.Invoke();
+		}
+
+		public virtual void SetDestination(Vector3 destination, float maxPathDistance = -1)
+		{
+			Controller.SetDestination(destination, maxPathDistance: maxPathDistance);
+			onDestinationChanged?.Invoke();
 		}
 	}
 }

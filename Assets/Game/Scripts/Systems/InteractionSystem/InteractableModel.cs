@@ -1,6 +1,7 @@
 using EPOOutline;
 
 using Game.Entities;
+using Game.Systems.BattleSystem;
 
 using Sirenix.OdinInspector;
 
@@ -18,6 +19,8 @@ namespace Game.Systems.InteractionSystem
 
 		public bool IsInteractable => outline.enabled;
 
+		protected IInteractable lastInteractable = null;
+		protected IEntity currentInteractor = null;
 
 		private void Awake()
 		{
@@ -49,8 +52,7 @@ namespace Game.Systems.InteractionSystem
 			return Vector3.Distance(transform.position, entity.Transform.position) <= interactableSettings.maxRange + 0.1f;
 		}
 
-		protected IEntity currentInteractor = null;
-		public void InteractFrom(IEntity entity, IEnumerator interaction = null)
+		public virtual void InteractFrom(IEntity entity, IEnumerator interaction = null)
 		{
 			if (currentInteractor != null || entity == null)
 			{
@@ -61,6 +63,7 @@ namespace Game.Systems.InteractionSystem
 
 			StartCoroutine(PreInteraction(interaction));
 		}
+
 		private IEnumerator PreInteraction(IEnumerator ExternalInteraction = null)
 		{
 			outline.enabled = false;
@@ -108,7 +111,7 @@ namespace Game.Systems.InteractionSystem
 			yield return null;
 		}
 
-		
+
 		#region Observe
 		public virtual void StartObserve()
 		{

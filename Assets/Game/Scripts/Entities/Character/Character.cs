@@ -43,30 +43,35 @@ namespace Game.Entities
 			this.animatorControl = animatorControl;
 		}
 
-		public void InteractWith(IObservable observable)
+		public override void TryInteractWith(IInteractable interactable)
 		{
-			switch (observable)
+			lastInteractable = interactable;
+			if (interactable is IEntity entity)
 			{
-				case IInteractable interactable:
+				if (InBattle)
 				{
-					bool isExternalInteraction = interactable is IEntity && InBattle;
-
-					interactable.InteractFrom(this, isExternalInteraction ? InteractionAttack() : null);
-					break;
+					interactable.InteractFrom(this, InternalInteraction());
 				}
+				else
+				{
+					interactable.InteractFrom(this);
+				}
+			}
+			else
+			{
+				interactable.InteractFrom(this);
 			}
 		}
 
-		private IEnumerator InteractionAttack()
+		protected override IEnumerator InternalInteraction()
 		{
 			if (InBattle)
 			{
-				animatorControl.Attack();
+				var i = Random.Range(0, 100);
+				Attack(i < 60 ? 0 : 1);
 			}
-
 			yield return null;
 		}
-
 
 		public bool JoinBattle(Battle battle)
 		{
