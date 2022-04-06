@@ -103,6 +103,10 @@ namespace Game.Systems.SheetSystem
 		}
 	}
 
+	public class LevelStat : Stat
+	{
+		public LevelStat(float currentValue) : base(currentValue) { }
+	}
 
 	public class StrengthStat : Stat
 	{

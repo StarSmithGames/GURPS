@@ -4,6 +4,7 @@ using CMF;
 using EPOOutline;
 
 using Game.Entities;
+using Game.Systems.DamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
@@ -128,6 +129,15 @@ namespace Game.Entities
 		private void OnAttacked()
 		{
 			(lastInteractable as IAnimatable).Hit(Random.Range(0, 2));
+			(lastInteractable as IDamegeable).ApplyDamage(new Damage()
+			{
+				damageType = DamageType.Physical,
+				physicalDamage = new PhysicalDamage()
+				{ 
+					amount = 1,
+					physicalDamage = PhysicalDamageType.Crushing,
+				}
+			});
 		}
 	}
 
@@ -154,6 +164,21 @@ namespace Game.Entities
 		{
 			Controller.SetDestination(destination, maxPathDistance: maxPathDistance);
 			onDestinationChanged?.Invoke();
+		}
+	}
+
+	partial class Entity : IDamegeable
+	{
+		public void ApplyDamage<T>(T value) where T : struct
+		{
+			if (value is DamageComposite damageComposite)
+			{
+
+			}
+			else if(value is Damage damage)
+			{
+				Sheet.Stats.HitPoints.CurrentValue -= damage.physicalDamage.amount;
+			}
 		}
 	}
 }

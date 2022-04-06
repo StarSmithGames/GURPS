@@ -21,8 +21,11 @@ public class UIAvatar : PoolableObject
 	[field: SerializeField] public Image FrameLeader { get; private set; }
 	[field: SerializeField] public Image FrameSpare { get; private set; }
 	[field: SerializeField] public Image IconInBattle { get; private set; }
+	[field: Space]
+	[field: SerializeField] public UIBar HPBar { get; private set; }
 
 	public Character CurrentCharacter { get; private set; }
+	private IStatBar stat;
 
 	private UIManager uiManager;
 
@@ -66,7 +69,8 @@ public class UIAvatar : PoolableObject
 			CurrentCharacter.onCharacterBattleStateChanged -= UpdateBattleUI;
 		}
 		CurrentCharacter = character;
-		if(CurrentCharacter != null)
+		HPBar.SetStat(CurrentCharacter?.Sheet.Stats.HitPoints, CurrentCharacter?.Sheet.Settings.isImmortal ?? false);
+		if (CurrentCharacter != null)
 		{
 			CurrentCharacter.onCharacterBattleStateChanged += UpdateBattleUI;
 		}

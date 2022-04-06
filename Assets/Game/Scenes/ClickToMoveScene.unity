@@ -531,6 +531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e68021e62228f4b9ffa032c6378abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsHasText: 0
   <Bar>k__BackingField: {fileID: 705535409}
   <BarText>k__BackingField: {fileID: 1284268327}
 --- !u!222 &41332453
@@ -1499,6 +1500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e68021e62228f4b9ffa032c6378abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsHasText: 0
   <Bar>k__BackingField: {fileID: 360592841}
   <BarText>k__BackingField: {fileID: 846980435}
 --- !u!222 &173442818
@@ -2981,7 +2983,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 0, y: 25}
+  m_Spacing: {x: 0, y: 35}
   m_Constraint: 1
   m_ConstraintCount: 1
 --- !u!114 &343375322
@@ -3053,7 +3055,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 63d12ee3823dd774182d3eb97b6e4fc0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8d8a49a440c9c3945ab2fe2d8cb4c7d8, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10063,6 +10065,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e68021e62228f4b9ffa032c6378abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsHasText: 1
   <Bar>k__BackingField: {fileID: 1276573471}
   <BarText>k__BackingField: {fileID: 375313505}
 --- !u!1 &996950356
@@ -10921,7 +10924,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 540, y: -35}
+  m_AnchoredPosition: {x: 960, y: -35}
   m_SizeDelta: {x: 300, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1090010435
@@ -12408,7 +12411,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 63d12ee3823dd774182d3eb97b6e4fc0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8d8a49a440c9c3945ab2fe2d8cb4c7d8, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13421,7 +13424,7 @@ GameObject:
   - component: {fileID: 1377036763}
   - component: {fileID: 1377036766}
   m_Layer: 5
-  m_Name: Round
+  m_Name: TurnOrder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14018,6 +14021,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e68021e62228f4b9ffa032c6378abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsHasText: 0
   <Bar>k__BackingField: {fileID: 1975038431}
   <BarText>k__BackingField: {fileID: 215661443}
 --- !u!222 &1436344639
@@ -14184,6 +14188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e68021e62228f4b9ffa032c6378abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsHasText: 0
   <Bar>k__BackingField: {fileID: 872468839}
   <BarText>k__BackingField: {fileID: 0}
 --- !u!1 &1442375924
@@ -16305,6 +16310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61e68021e62228f4b9ffa032c6378abd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsHasText: 0
   <Bar>k__BackingField: {fileID: 1625703255}
   <BarText>k__BackingField: {fileID: 1824145681}
 --- !u!222 &1588417275
@@ -23155,7 +23161,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5

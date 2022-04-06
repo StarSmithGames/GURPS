@@ -4499,12 +4499,12 @@ MonoBehaviour:
   characterController: {fileID: 6753425058046806693}
   model: {fileID: 2623157541654726733}
   cameraPivot: {fileID: 2316238609389999535}
+  animatorControl: {fileID: 1107475620882722185}
   controller: {fileID: 361113232122987903}
   navigationController: {fileID: 696508144769888773}
   markers: {fileID: 8770400967174064253}
   outline: {fileID: 6874036480430047073}
   entity: {fileID: 6753425058046806692}
-  animatorControl: {fileID: 1107475620882722185}
   outfit: {fileID: 3640834185947951497}
 --- !u!114 &6753425058046806692
 MonoBehaviour:

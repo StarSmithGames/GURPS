@@ -35,14 +35,6 @@ namespace Game.Entities
 
 		public Battle CurrentBattle { get; private set; }
 
-		private CharacterAnimatorControl animatorControl;
-
-		[Inject]
-		private void Construct(CharacterAnimatorControl animatorControl)
-		{
-			this.animatorControl = animatorControl;
-		}
-
 		public override void TryInteractWith(IInteractable interactable)
 		{
 			lastInteractable = interactable;

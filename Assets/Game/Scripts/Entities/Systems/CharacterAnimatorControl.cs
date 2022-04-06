@@ -66,7 +66,7 @@ public class CharacterAnimatorControl : AnimatorControl
 		
 		while (true)
 		{
-			string animationName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+			string animationName = animator.GetCurrentAnimatorClipInfo(0)?[0].clip.name;
 
 			transform.rotation = animator.rootRotation;
 

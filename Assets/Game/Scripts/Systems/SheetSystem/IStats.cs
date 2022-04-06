@@ -3,10 +3,14 @@ using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
+using static Cinemachine.DocumentationSortingAttribute;
+
 namespace Game.Systems.SheetSystem
 {
 	public interface IStats
 	{
+        IStat Level { get; }
+
         IStat Strength { get; }
         IStat Dexterity { get; }
         IStat Intelligence { get; }
@@ -26,7 +30,9 @@ namespace Game.Systems.SheetSystem
 
 	public class Stats : IStats
 	{
-		public IStat Strength { get; }
+        public IStat Level { get; }
+
+        public IStat Strength { get; }
 		public IStat Dexterity { get; }
 		public IStat Intelligence { get; }
 		public IStat Health { get; }
@@ -43,6 +49,8 @@ namespace Game.Systems.SheetSystem
 
         public Stats(StatsSettigns settigns)
         {
+            Level = new LevelStat(settigns.level);
+
             Strength = new StrengthStat(settigns.strength);
             Dexterity = new DexterityStat(settigns.dexterity);
             Intelligence = new IntelligenceStat(settigns.intelligence);
@@ -122,6 +130,8 @@ namespace Game.Systems.SheetSystem
 	[System.Serializable]
     public class StatsSettigns
     {
+        [Min(1)]
+        public int level = 1;
         [Header("Primary")]
         [RangeStep(0, 20, 1)]
         public float strength = 10;

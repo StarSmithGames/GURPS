@@ -14,8 +14,6 @@ namespace Game.Systems.BattleSystem
     {
         public UnityAction<UITurn> onDoubleCick;
 
-        public IEntity CurrentEntity { get; private set; }
-
         [field: SerializeField] public UIButtonPointer BackgroundButton { get; private set; }
         [field: SerializeField] public PointerHoverComponent PointerHover { get; private set; }
         [field:Space]
@@ -23,10 +21,14 @@ namespace Game.Systems.BattleSystem
         [field: SerializeField] public Image Avatar { get; private set; }
         [field: SerializeField] public Image Frame { get; private set; }
         [field: SerializeField] public TMPro.TextMeshProUGUI Name { get; private set; }
+        [field: Space]
+        [field: SerializeField] public UIBar HPBar { get; private set; }
 
         [Space]
         [SerializeField] private Vector2 defaultSize = new Vector2(80, 80);
         [SerializeField] private Vector2 selectedSize = new Vector2(100, 100);
+
+        public IEntity CurrentEntity { get; private set; }
 
         private UIManager uiManager;
 
@@ -60,6 +62,7 @@ namespace Game.Systems.BattleSystem
         public void SetEntity(IEntity entity)
 		{
             CurrentEntity = entity;
+            HPBar.SetStat(CurrentEntity?.Sheet.Stats.HitPoints, CurrentEntity?.Sheet.Settings.isImmortal ?? false);
 
             UpdateUI();
         }
