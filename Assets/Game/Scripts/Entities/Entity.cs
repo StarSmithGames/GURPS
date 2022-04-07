@@ -18,6 +18,8 @@ namespace Game.Entities
 {
 	public abstract partial class Entity : InteractableModel, IEntity
 	{
+		public GameObject GameObject => gameObject;
+
 		public virtual ISheet Sheet { get; private set; }
 
 		public Markers Markers { get; private set; }
@@ -139,11 +141,11 @@ namespace Game.Entities
 		}
 
 		/// <summary>
-		/// Entity attack lastInteractable
+		/// This Entity attacked lastInteractable
 		/// </summary>
 		protected void OnAttacked()
 		{
-			var direction = ((lastInteractable as MonoBehaviour).transform.position -  transform.position).normalized;
+			var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
 			(lastInteractable as IAnimatable).Hit(Random.Range(0, 2));//animation
 			(lastInteractable as IDamegeable).ApplyDamage(GetDamage());
 		}

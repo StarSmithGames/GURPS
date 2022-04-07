@@ -108,5 +108,9 @@ namespace Game.Entities
 				ResetMarkers();
 			}
 		}
+
+		public void Attack(IEntity entity)
+		{
+		}
 	}
 }

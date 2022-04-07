@@ -19,6 +19,7 @@ namespace Game.Systems.BattleSystem
 {
 	public class BattleSystem
 	{
+		public Turn CurrentTurn { get; private set; }
 		public IEntity CurrentInitiator { get; private set; }
 		public Character CachedLeader { get; private set; }
 
@@ -105,7 +106,7 @@ namespace Game.Systems.BattleSystem
 
 		private IEnumerator BattleProcess()
 		{
-			yield return new WaitForSeconds(3f);
+			yield return new WaitForSeconds(1.5f);
 
 			localBattleTest.SetState(BattleState.Battle);
 
@@ -117,7 +118,7 @@ namespace Game.Systems.BattleSystem
 				yield return InitiatorTurn();
 			}
 
-			yield return new WaitForSeconds(3f);
+			yield return new WaitForSeconds(1.5f);
 
 			StopBattle();
 		}
@@ -184,11 +185,16 @@ namespace Game.Systems.BattleSystem
 					yield return null;
 				}
 
+				if(CurrentTurn.Maneuvers.Count == 0 && CurrentInitiator.Sheet.Stats.Move.PercentValue == 1f)
+				{
+					CurrentTurn.AddManeuver(new Inaction(CurrentInitiator));
+				}
+
 				isSkipTurn = false;
 			}
 			else
 			{
-				Debug.LogError("ENEMY SKIP!");
+				CurrentTurn.AddManeuver(new Wait(CurrentInitiator));
 				yield return new WaitForSeconds(3f);
 			}
 
@@ -242,7 +248,8 @@ namespace Game.Systems.BattleSystem
 			{
 				CurrentInitiator.onDestinationChanged -= OnInitiatorDestinationChanged;
 			}
-			CurrentInitiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
+			CurrentTurn = localBattleTest.BattleFSM.CurrentTurn;
+			CurrentInitiator = CurrentTurn.Initiator;
 
 			InitiatorRecoveMove();
 
@@ -274,7 +281,7 @@ namespace Game.Systems.BattleSystem
 
 		public UnityAction onBattleStateChanged;
 
-		public UnityAction onNextVictory;
+		public UnityAction onVictory;
 		public UnityAction onNextRound;
 		public UnityAction onNextTurn;
 
@@ -323,7 +330,7 @@ namespace Game.Systems.BattleSystem
 			{
 				if (!BattleFSM.NextRound())
 				{
-					onNextVictory?.Invoke();
+					onVictory?.Invoke();
 					onBattleUpdated?.Invoke();
 				}
 				else
@@ -409,17 +416,36 @@ namespace Game.Systems.BattleSystem
 
 		public Round Copy()
 		{
-			return new Round(new List<Turn>(Turns));
+			List<Turn> list = new List<Turn>();
+			for (int i = 0; i < Turns.Count; i++)
+			{
+				list.Add(Turns[i].Copy());
+			}
+
+			return new Round(list);
 		}
 	}
 	
 	public class Turn : ICopyable<Turn>
 	{
+		public List<IManeuver> Maneuvers { get; private set; }
 		public IBattlable Initiator { get; private set; }
 
 		public Turn(IBattlable entity)
 		{
+			Maneuvers = new List<IManeuver>();
 			Initiator = entity;
+		}
+
+		public void AddManeuver(IManeuver maneuver)
+		{
+			Maneuvers.Add(maneuver);
+			maneuver.Execute();
+		}
+
+		public bool ContainsManeuver<T>() where T : IManeuver
+		{
+			return Maneuvers.OfType<T>().Any();
 		}
 
 		public Turn Copy()

@@ -54,10 +54,7 @@ namespace Game.Systems.InteractionSystem
 
 		public virtual void InteractFrom(IEntity entity, IEnumerator interaction = null)
 		{
-			if (currentInteractor != null || entity == null)
-			{
-				return;
-			}
+			if (currentInteractor != null || entity == null) return;
 
 			currentInteractor = entity;
 

@@ -9,6 +9,8 @@ namespace Game.Entities
 {
 	public interface IEntity : ISheetable, IPathfinderable, IInteractable, IObservable, IAnimatable, IDamegeable
 	{
+		GameObject GameObject { get; }
+
 		Transform CameraPivot { get; }
 
 		Markers Markers { get; }

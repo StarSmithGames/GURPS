@@ -33,76 +33,75 @@ namespace Game.Entities
 		}
 		private CharacterSheet characterSheet;
 
-		public bool InBattle => CurrentBattle != null;
-
-		public Battle CurrentBattle { get; private set; }
-
 		public override void TryInteractWith(IInteractable interactable)
 		{
 			lastInteractable = interactable;
-			if (interactable is IEntity entity)
+			if (interactable is IEntity)
 			{
 				if (InBattle)
 				{
 					interactable.InteractFrom(this, InternalInteraction());
-				}
-				else
-				{
-					interactable.InteractFrom(this);
+					return;
 				}
 			}
-			else
-			{
-				interactable.InteractFrom(this);
-			}
+
+			interactable.InteractFrom(this);
 		}
 
 		protected override IEnumerator InternalInteraction()
 		{
 			if (InBattle)
 			{
-				CharacterSheet sheet = Sheet as CharacterSheet;
-
-				if (sheet.Equipment.WeaponCurrent.Hands == Hands.None)
+				if(lastInteractable is IEntity entity)
 				{
-					Attack(0, Random.Range(0, 3));
-				}
-				else
-				{
-					Attack(1, 0);
+					if (!CurrentBattle.BattleFSM.CurrentTurn.ContainsManeuver<Attack>())
+					{
+						CurrentBattle.BattleFSM.CurrentTurn.AddManeuver(new Attack(this, entity));
+					}
+					else
+					{
+						Debug.LogError("Not Enough actions");
+					}
 				}
 			}
 			yield return null;
 		}
 
-		public bool JoinBattle(Battle battle)
+		public override Damage GetDamage()
 		{
-			if(CurrentBattle != null)
+			CharacterSheet sheet = Sheet as CharacterSheet;
+
+			switch (sheet.Equipment.WeaponCurrent.Hands)
 			{
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
+				case Hands.None:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Main:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Spare:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Both:
+				{
+					return base.GetDamage();
+				}
 			}
-			CurrentBattle = battle;
-			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
-			CurrentBattle.onBattleUpdated += OnBattleUpdated;
 
-			onCharacterBattleStateChanged?.Invoke();
-
-			return true;
+			return base.GetDamage();
 		}
+	}
 
-		public bool LeaveBattle()
-		{
-			if(CurrentBattle != null)
-			{
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-			}
-			CurrentBattle = null;
-
-			onCharacterBattleStateChanged?.Invoke();
-
-			return true;
-		}
+	/// <summary>
+	/// Override Battle & Animations implementation
+	/// </summary>
+	partial class Character
+	{
+		public bool InBattle => CurrentBattle != null;
+		public Battle CurrentBattle { get; private set; }
 
 		public override void SetTarget(Vector3 point, float maxPathDistance = -1)
 		{
@@ -133,32 +132,82 @@ namespace Game.Entities
 			}
 		}
 
-		public override Damage GetDamage()
+
+		public void Attack(IEntity entity)
 		{
 			CharacterSheet sheet = Sheet as CharacterSheet;
 
-			switch (sheet.Equipment.WeaponCurrent.Hands)
+			if (sheet.Equipment.WeaponCurrent.Hands == Hands.None)
 			{
-				case Hands.None:
-				{
-					return base.GetDamage();
-				}
-				case Hands.Main:
-				{
-					return base.GetDamage();
-				}
-				case Hands.Spare:
-				{
-					return base.GetDamage();
-				}
-				case Hands.Both:
-				{
-					return base.GetDamage();
-				}
+				Attack(0, Random.Range(0, 3));
 			}
-
-			return base.GetDamage();
+			else
+			{
+				Attack(1, 0);
+			}
 		}
+
+		public void Attack(int weaponType = 0, int attackType = 0)
+		{
+			(AnimatorControl as CharacterAnimatorControl).Attack(weaponType, attackType);
+		}
+
+		
+		public bool JoinBattle(Battle battle)
+		{
+			if (CurrentBattle != null)
+			{
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
+			}
+			CurrentBattle = battle;
+			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
+			CurrentBattle.onBattleUpdated += OnBattleUpdated;
+
+			onCharacterBattleStateChanged?.Invoke();
+
+			return true;
+		}
+
+		public bool LeaveBattle()
+		{
+			if (CurrentBattle != null)
+			{
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
+			}
+			CurrentBattle = null;
+
+			onCharacterBattleStateChanged?.Invoke();
+
+			return true;
+		}
+
+
+		protected override void SubscribeAnimationEvents()
+		{
+			var current = (AnimatorControl as CharacterAnimatorControl);
+
+			current.onAttackEvent += OnAttacked;
+
+			current.onAttackLeftHand += OnAttacked;
+			current.onAttackRightHand += OnAttacked;
+			current.onAttackKick += OnAttacked;
+		}
+		protected override void UnSubscribeAnimationEvents()
+		{
+			var current = (AnimatorControl as CharacterAnimatorControl);
+
+			if (current != null)
+			{
+				current.onAttackEvent -= OnAttacked;
+
+				current.onAttackLeftHand -= OnAttacked;
+				current.onAttackRightHand -= OnAttacked;
+				current.onAttackKick -= OnAttacked;
+			}
+		}
+
 
 		private void OnBattleUpdated()
 		{
@@ -212,41 +261,6 @@ namespace Game.Entities
 			else
 			{
 				ResetMarkers();
-			}
-		}
-	}
-
-	/// <summary>
-	/// Override IAnimatable implementation
-	/// </summary>
-	partial class Character
-	{
-		public void Attack(int weaponType = 0, int attackType = 0)
-		{
-			(AnimatorControl as CharacterAnimatorControl).Attack(weaponType, attackType);
-		}
-
-		protected override void SubscribeAnimationEvents()
-		{
-			var current = (AnimatorControl as CharacterAnimatorControl);
-
-			current.onAttackEvent += OnAttacked;
-
-			current.onAttackLeftHand += OnAttacked;
-			current.onAttackRightHand += OnAttacked;
-			current.onAttackKick += OnAttacked;
-		}
-		protected override void UnSubscribeAnimationEvents()
-		{
-			var current = (AnimatorControl as CharacterAnimatorControl);
-
-			if (current != null)
-			{
-				current.onAttackEvent -= OnAttacked;
-
-				current.onAttackLeftHand -= OnAttacked;
-				current.onAttackRightHand -= OnAttacked;
-				current.onAttackKick -= OnAttacked;
 			}
 		}
 	}
