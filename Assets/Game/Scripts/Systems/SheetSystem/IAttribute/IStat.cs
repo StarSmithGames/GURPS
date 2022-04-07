@@ -154,6 +154,11 @@ namespace Game.Systems.SheetSystem
 		public PerceptionStat(float currentValue, float maxBaseValue) : base(currentValue, maxBaseValue) { }
 	}
 
+	public class ActionPointsStat : StatBar
+	{
+		public ActionPointsStat(float currentValue, float maxBaseValue) : base(currentValue, maxBaseValue) { }
+	}
+
 
 	public class LiftStat : StatBar
 	{

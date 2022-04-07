@@ -30,6 +30,7 @@ namespace Game.Systems.BattleSystem
 
 		public override void Execute()
 		{
+			from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
 			(from as IBattlable).Attack(to);
 		}
 	}

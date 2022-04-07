@@ -33,6 +33,8 @@ namespace Game.Entities
 		}
 		private CharacterSheet characterSheet;
 
+		public bool IsRangeAttackTest => false;
+
 		public override void TryInteractWith(IInteractable interactable)
 		{
 			lastInteractable = interactable;
@@ -40,6 +42,7 @@ namespace Game.Entities
 			{
 				if (InBattle)
 				{
+					//Controller.RotateTo((interactable as MonoBehaviour).transform.position);
 					interactable.InteractFrom(this, InternalInteraction());
 					return;
 				}
@@ -54,7 +57,7 @@ namespace Game.Entities
 			{
 				if(lastInteractable is IEntity entity)
 				{
-					if (!CurrentBattle.BattleFSM.CurrentTurn.ContainsManeuver<Attack>())
+					if (!CurrentBattle.BattleFSM.CurrentTurn.ContainsManeuver<Attack>() && Sheet.Stats.ActionPoints.CurrentValue > 0)
 					{
 						CurrentBattle.BattleFSM.CurrentTurn.AddManeuver(new Attack(this, entity));
 					}

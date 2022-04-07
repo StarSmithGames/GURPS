@@ -251,6 +251,7 @@ namespace Game.Systems.BattleSystem
 			CurrentTurn = localBattleTest.BattleFSM.CurrentTurn;
 			CurrentInitiator = CurrentTurn.Initiator;
 
+			CurrentInitiator.Sheet.Stats.ActionPoints.CurrentValue = CurrentInitiator.Sheet.Stats.ActionPoints.MaxValue;//initiator recove actions
 			InitiatorRecoveMove();
 
 			CurrentInitiator.onDestinationChanged += OnInitiatorDestinationChanged;

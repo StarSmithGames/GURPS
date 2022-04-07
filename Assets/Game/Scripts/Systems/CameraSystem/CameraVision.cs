@@ -105,7 +105,7 @@ namespace Game.Systems.CameraSystem
 		{
 			if (leader.InBattle)
 			{
-				if(isMouseHit)
+				if (isMouseHit)
 				{
 					if (!leader.Controller.IsHasTarget)
 					{
@@ -122,6 +122,11 @@ namespace Game.Systems.CameraSystem
 						else
 						{
 							leader.SetTarget(point);
+
+							if (leader.IsRangeAttackTest)
+							{
+								leader.Controller.RotateTo(point);
+							}
 						}
 					}
 				}

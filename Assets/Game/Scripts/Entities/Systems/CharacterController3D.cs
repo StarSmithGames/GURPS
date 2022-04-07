@@ -84,7 +84,7 @@ public class CharacterController3D : MonoBehaviour
 	{
 		Movement();
 
-		Rotation();
+		Rotation(lastVelocity);
 
 		//Handle timeout (stop controller if it is stuck);
 		HandleTimeOut();
@@ -111,6 +111,13 @@ public class CharacterController3D : MonoBehaviour
 
 		return IsHasTarget;
 	}
+
+	public void RotateTo(Vector3 point)
+	{
+		Rotation((point - model.position).normalized);
+	}
+
+
 
 	public Vector3 GetVelocity()
 	{
@@ -142,11 +149,11 @@ public class CharacterController3D : MonoBehaviour
 		characterController.Move(lastGravityVelocity * Time.deltaTime);
 	}
 
-	private void Rotation()
+	private void Rotation(Vector3 direction)
 	{
 		if (!IsCanRotate) return;
 
-		Vector3 velocity = lastVelocity;
+		Vector3 velocity = direction;
 		//Project velocity onto a plane defined by the 'up' direction of the parent transform;
 		velocity = Vector3.ProjectOnPlane(velocity, transform.root.up);
 		if (velocity.magnitude < magnitudeThreshold) return;

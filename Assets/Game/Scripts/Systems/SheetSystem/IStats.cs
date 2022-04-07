@@ -23,6 +23,8 @@ namespace Game.Systems.SheetSystem
         IStatBar Will { get; }
         IStatBar Perception { get; }
 
+        IStatBar ActionPoints { get; }
+
         IStatBar Lift { get; }
 
         void RecoveMove();
@@ -44,10 +46,11 @@ namespace Game.Systems.SheetSystem
 		public IStatBar Will { get; }
 		public IStatBar Perception { get; }
 
-		public IStatBar Lift { get; }
+        public IStatBar ActionPoints { get; }
 
+        public IStatBar Lift { get; }
 
-        public Stats(StatsSettigns settigns)
+		public Stats(StatsSettigns settigns)
         {
             Level = new LevelStat(settigns.level);
 
@@ -62,6 +65,8 @@ namespace Game.Systems.SheetSystem
             Speed = new SpeedStat(settigns.Speed, 10);
             Will = new WillStat(settigns.Will, 10);
             Perception = new PerceptionStat(settigns.Perception, 10);
+
+            ActionPoints = new ActionPointsStat(1, 1);
 
             Lift = new LiftStat(0, settigns.MaxLift);
         }

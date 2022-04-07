@@ -2,6 +2,10 @@ using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Systems.SheetSystem;
 
+using System.Collections.Generic;
+
+using UnityEditor.Timeline.Actions;
+
 using UnityEngine;
 
 using Zenject;
@@ -12,25 +16,32 @@ public class UIBars : MonoBehaviour
 	[field: SerializeField] public UIBar MagicBar { get; private set; }
 	[field: SerializeField] public UIBar ArmorBar { get; private set; }
 	[field: SerializeField] public UIBar EnergyBar { get; private set; }
+	[field: Space]
+	[field: SerializeField] public Transform ActionContent { get; private set; }
 
-	private IEntity entity;
-	private IStatBar hitPoints;
-	private IStatBar move;
-	private IStatBar will;
+	private IStatBar actionStat;
+	private List<UIAction> actions = new List<UIAction>();
 
 	private SignalBus signalBus;
 	private CharacterManager characterManager;
+	private UIAction.Factory actionFactory;
 
 	[Inject]
-	private void Construct(SignalBus signalBus, CharacterManager characterManager)
+	private void Construct(SignalBus signalBus, CharacterManager characterManager, UIAction.Factory actionFactory)
 	{
 		this.signalBus = signalBus;
 		this.characterManager = characterManager;
+		this.actionFactory = actionFactory;
 	}
 
 	private void OnDestroy()
 	{
 		signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+
+		if (actionStat != null)
+		{
+			actionStat.onStatChanged -= OnStatChanged;
+		}
 	}
 
 	private void Start()
@@ -42,44 +53,52 @@ public class UIBars : MonoBehaviour
 
 	private void SetEntity(IEntity entity)
 	{
-		if (this.entity != null)
+		if(actionStat != null)
 		{
-			hitPoints.onStatChanged -= OnHitPointsChanged;
-			move.onStatChanged -= OnMoveChanged;
-			will.onStatChanged -= OnWillChanged;
+			actionStat.onStatChanged -= OnStatChanged;
 		}
-		this.entity = entity;
-		hitPoints = entity.Sheet.Stats.HitPoints;
-		move = entity.Sheet.Stats.Move;
-		will = entity.Sheet.Stats.Will;
 
-		OnHitPointsChanged();
-		OnMoveChanged();
-		OnWillChanged();
+		HealthBar.SetStat(entity?.Sheet.Stats.HitPoints);
+		EnergyBar.SetStat(entity?.Sheet.Stats.Move);
 
-		if (this.entity != null)
+		actionStat = entity?.Sheet.Stats.ActionPoints;
+
+		if(actionStat != null)
 		{
-			hitPoints.onStatChanged += OnHitPointsChanged;
-			move.onStatChanged += OnMoveChanged;
-			will.onStatChanged += OnWillChanged;
+			actionStat.onStatChanged += OnStatChanged;
+		}
+
+		if (actionStat != null)
+		{
+			if(actionStat.MaxValue != actions.Count)//need resizer
+			{
+				ActionContent.DestroyChildren();
+				actions.Clear();
+
+				for (int i = 0; i < actionStat.MaxValue; i++)
+				{
+					var action = actionFactory.Create();
+
+					action.transform.parent = ActionContent;
+
+					actions.Add(action);
+				}
+			}
+		}
+
+		OnStatChanged();
+	}
+
+	private void OnStatChanged()
+	{
+		for (int i = 0; i < actions.Count; i++)
+		{
+			actions[i].Enable(i < actionStat.CurrentValue);
 		}
 	}
 
 	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 	{
 		SetEntity(signal.leader);
-	}
-
-	private void OnHitPointsChanged()
-	{
-		HealthBar.FillAmount = hitPoints.PercentValue;
-	}
-	private void OnMoveChanged()
-	{
-		EnergyBar.FillAmount = move.PercentValue;
-	}
-	private void OnWillChanged()
-	{
-		MagicBar.FillAmount = will.PercentValue;
 	}
 }
