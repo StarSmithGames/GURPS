@@ -1,5 +1,7 @@
 using Game.Systems.BattleSystem;
+using Game.Systems.DamageSystem;
 using Game.Systems.InteractionSystem;
+using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 
 using System.Collections;
@@ -11,7 +13,7 @@ using Zenject;
 
 namespace Game.Entities
 {
-	public class Character : Entity, IBattlable
+	public partial class Character : Entity, IBattlable
 	{
 		public UnityAction onCharacterBattleStateChanged;
 
@@ -59,8 +61,16 @@ namespace Game.Entities
 		{
 			if (InBattle)
 			{
-				var i = Random.Range(0, 100);
-				Attack(i < 60 ? 0 : 1);
+				CharacterSheet sheet = Sheet as CharacterSheet;
+
+				if (sheet.Equipment.WeaponCurrent.Hands == Hands.None)
+				{
+					Attack(0, Random.Range(0, 3));
+				}
+				else
+				{
+					Attack(1, 0);
+				}
 			}
 			yield return null;
 		}
@@ -123,6 +133,33 @@ namespace Game.Entities
 			}
 		}
 
+		public override Damage GetDamage()
+		{
+			CharacterSheet sheet = Sheet as CharacterSheet;
+
+			switch (sheet.Equipment.WeaponCurrent.Hands)
+			{
+				case Hands.None:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Main:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Spare:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Both:
+				{
+					return base.GetDamage();
+				}
+			}
+
+			return base.GetDamage();
+		}
+
 		private void OnBattleUpdated()
 		{
 			bool isMineTurn = CurrentBattle.BattleFSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
@@ -175,6 +212,41 @@ namespace Game.Entities
 			else
 			{
 				ResetMarkers();
+			}
+		}
+	}
+
+	/// <summary>
+	/// Override IAnimatable implementation
+	/// </summary>
+	partial class Character
+	{
+		public void Attack(int weaponType = 0, int attackType = 0)
+		{
+			(AnimatorControl as CharacterAnimatorControl).Attack(weaponType, attackType);
+		}
+
+		protected override void SubscribeAnimationEvents()
+		{
+			var current = (AnimatorControl as CharacterAnimatorControl);
+
+			current.onAttackEvent += OnAttacked;
+
+			current.onAttackLeftHand += OnAttacked;
+			current.onAttackRightHand += OnAttacked;
+			current.onAttackKick += OnAttacked;
+		}
+		protected override void UnSubscribeAnimationEvents()
+		{
+			var current = (AnimatorControl as CharacterAnimatorControl);
+
+			if (current != null)
+			{
+				current.onAttackEvent -= OnAttacked;
+
+				current.onAttackLeftHand -= OnAttacked;
+				current.onAttackRightHand -= OnAttacked;
+				current.onAttackKick -= OnAttacked;
 			}
 		}
 	}

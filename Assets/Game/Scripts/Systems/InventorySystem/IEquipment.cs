@@ -31,15 +31,4 @@ namespace Game.Systems.InventorySystem
 
 		bool Swap(Equip from, Equip to);
 	}
-
-	public enum WeaponType : int
-	{
-		None = -1,
-
-		OneHandedMelle = 0,
-		TwoHandedMelle = 1,
-
-		OneHandedRanded = 2,
-		TwoHandedRanded = 3,
-	}
 }

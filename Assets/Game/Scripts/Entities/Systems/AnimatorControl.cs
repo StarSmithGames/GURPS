@@ -92,7 +92,7 @@ public class AnimatorControl : MonoBehaviour
 		animator.SetInteger(hitTypeHash, type == -1 ? 0 : type);
 		animator.SetTrigger("Hit");
 	}
-	public virtual void Attack(int type = -1) { }
+	public virtual void Attack(int attackType = 0) { }
 
 	protected IEnumerator WaitWhileAnimation(string animation)
 	{

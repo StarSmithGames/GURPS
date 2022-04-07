@@ -28,22 +28,12 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
-  damage:
+  weaponDamage:
     mainDamage:
-      damageType: 0
-      physicalDamage:
-        amount: 0
-        physicalDamage: 0
-      magicalDamages: []
-    sideDamage:
-      damageType: 0
-      physicalDamage:
-        amount: 0
-        physicalDamage: 0
-      magicalDamages: []
-  resistances:
-    fire: 0
-    air: 0
-    water: 0
-    earth: 0
+      amount: 0
+      damageType: 1
+    isHasSideDamages: 1
+    sideDamages:
+    - amount: 0
+      damageType: 10
   rangedType: 0

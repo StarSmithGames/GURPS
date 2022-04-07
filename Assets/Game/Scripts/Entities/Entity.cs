@@ -54,15 +54,12 @@ namespace Game.Entities
 
 		protected virtual void OnDestroy()
 		{
-			if (AnimatorControl != null)
-			{
-				AnimatorControl.onAttackEvent -= OnAttacked;
-			}
+			UnSubscribeAnimationEvents();
 		}
 
 		protected virtual void Start()
 		{
-			AnimatorControl.onAttackEvent += OnAttacked;
+			SubscribeAnimationEvents();
 
 			Outlines.enabled = false;
 
@@ -101,6 +98,7 @@ namespace Game.Entities
 			Markers.LineMarker.Enable(false);
 		}
 
+
 		private void Validate()
 		{
 			Assert.IsNotNull(Navigation, $"Entity {gameObject.name} lost component.");
@@ -112,36 +110,46 @@ namespace Game.Entities
 
 	}
 
-	//IAnimatable
+	/// <summary>
+	/// IAnimatable implementation
+	/// <summary>
 	partial class Entity : InteractableModel
 	{
 		public AnimatorControl AnimatorControl { get; private set; }
 		
-		public void Attack(int type = -1)
+		public virtual void Attack(int attackType = 0)
 		{
-			AnimatorControl.Attack(type);
+			AnimatorControl.Attack(attackType);
 		}
 		public void Hit(int type = -1)
 		{
 			AnimatorControl.Hit(type);
 		}
 
-		private void OnAttacked()
+		protected virtual void SubscribeAnimationEvents()
 		{
-			(lastInteractable as IAnimatable).Hit(Random.Range(0, 2));
-			(lastInteractable as IDamegeable).ApplyDamage(new Damage()
+			AnimatorControl.onAttackEvent += OnAttacked;
+		}
+		protected virtual void UnSubscribeAnimationEvents()
+		{
+			if (AnimatorControl != null)
 			{
-				damageType = DamageType.Physical,
-				physicalDamage = new PhysicalDamage()
-				{ 
-					amount = 1,
-					physicalDamage = PhysicalDamageType.Crushing,
-				}
-			});
+				AnimatorControl.onAttackEvent -= OnAttacked;
+			}
+		}
+
+		/// <summary>
+		/// Entity attack lastInteractable
+		/// </summary>
+		protected void OnAttacked()
+		{
+			var direction = ((lastInteractable as MonoBehaviour).transform.position -  transform.position).normalized;
+			(lastInteractable as IAnimatable).Hit(Random.Range(0, 2));//animation
+			(lastInteractable as IDamegeable).ApplyDamage(GetDamage());
 		}
 	}
 
-	//IPathfinderable
+	//IPathfinderable implementation
 	partial class Entity
 	{
 		public event UnityAction onTargetChanged;
@@ -167,18 +175,36 @@ namespace Game.Entities
 		}
 	}
 
-	partial class Entity : IDamegeable
+	//IDamegeable implementation
+	partial class Entity
 	{
-		public void ApplyDamage<T>(T value) where T : struct
+		public virtual Damage GetDamage()
 		{
-			if (value is DamageComposite damageComposite)
+			return new Damage()
 			{
+				amount = GetDamageFromTable(Sheet.Stats.Strength.CurrentValue),
+				damageType = DamageType.Crushing,
+			};
+		}
 
-			}
-			else if(value is Damage damage)
+		public virtual void ApplyDamage<T>(T value) where T : struct
+		{
+			if (value is Damage damage)
 			{
-				Sheet.Stats.HitPoints.CurrentValue -= damage.physicalDamage.amount;
+				if (damage.IsPhysicalDamage)
+				{
+					Sheet.Stats.HitPoints.CurrentValue -= damage.amount;
+				}
+				else if (damage.IsMagicalDamage)
+				{
+
+				}
 			}
+		}
+
+		private float GetDamageFromTable(float strength)
+		{
+			return Mathf.Max(Random.Range(1, 7) - 2, 0);
 		}
 	}
 }

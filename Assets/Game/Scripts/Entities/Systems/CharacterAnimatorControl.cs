@@ -4,11 +4,16 @@ using Game.Entities;
 using System.Collections;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
 public class CharacterAnimatorControl : AnimatorControl
 {
+	public UnityAction onAttackLeftHand;
+	public UnityAction onAttackRightHand;
+	public UnityAction onAttackKick;
+
 	protected int weaponTypeHash;
 	protected int attackTypeHash;
 
@@ -34,8 +39,6 @@ public class CharacterAnimatorControl : AnimatorControl
 	{
 		base.Update();
 
-		animator.SetInteger(weaponTypeHash, (int)outfit.CurrentWeaponType);
-
 		animator.SetBool(isBattleModeHash, character.InBattle);
 
 		if (character.InBattle)
@@ -46,9 +49,10 @@ public class CharacterAnimatorControl : AnimatorControl
 		}
 	}
 
-	public override void Attack(int type = -1)
+	public virtual void Attack(int weaponType = 0, int attackType = 0)
 	{
-		animator.SetInteger(attackTypeHash, type == -1 ? 0 : type);
+		animator.SetInteger(weaponTypeHash, weaponType);
+		animator.SetInteger(attackTypeHash, attackType);
 		StartCoroutine(AttackProccess());
 	}
 
@@ -86,4 +90,19 @@ public class CharacterAnimatorControl : AnimatorControl
 		animator.applyRootMotion = false;
 		isAttackProccess = false;
 	}
+
+	#region AnimationEvents
+	private void AttackLeftHand()
+	{
+		onAttackLeftHand?.Invoke();
+	}
+	private void AttackRightHand()
+	{
+		onAttackRightHand?.Invoke();
+	}
+	private void AttackKick()
+	{
+		onAttackKick?.Invoke();
+	}
+	#endregion
 }

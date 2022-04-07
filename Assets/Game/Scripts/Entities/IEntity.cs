@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Game.Entities
 {
-	public interface IEntity : ISheetable, IPathfinderable, IInteractable, IObservable, IAnimatable
+	public interface IEntity : ISheetable, IPathfinderable, IInteractable, IObservable, IAnimatable, IDamegeable
 	{
 		Transform CameraPivot { get; }
 

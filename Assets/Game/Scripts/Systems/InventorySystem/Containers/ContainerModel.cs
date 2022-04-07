@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : InteractableModel, ISheetable
+	public class ContainerModel : InteractableModel, ISheetable/*, IDamegeable*/
 	{
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
 

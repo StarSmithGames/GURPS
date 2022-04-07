@@ -1,4 +1,5 @@
 using Game.Systems.CutomizationSystem;
+using Game.Systems.DamageSystem;
 
 using System;
 using System.Collections.Generic;
@@ -221,7 +222,7 @@ namespace Game.Systems.InventorySystem
 			}
 			else
 			{
-				if (weaponTo.IsTwoEmpty)
+				if (weaponTo.IsEmpty)
 				{
 					if (from.Item.IsTwoHandedWeapon)
 					{
@@ -384,13 +385,15 @@ namespace Game.Systems.InventorySystem
 
 	public class EquipWeapon
 	{
-		public bool IsTwoEmpty => Main.IsEmpty && Spare.IsEmpty;
-		public bool IsEmpty => Main.IsEmpty || Spare.IsEmpty;
+		public UnityAction onEquipWeaponChanged;
+
+		public bool IsEmpty => Main.IsEmpty && Spare.IsEmpty;
 
 		public Equip Main { get; }
 		public Equip Spare { get; }
 
-		public WeaponType WeaponType { get; private set; }
+		public Hands Hands { get; private set; }
+		//public WeaponType WeaponType { get; private set; }
 
 		public IInventory Inventory { get; }
 
@@ -399,6 +402,11 @@ namespace Game.Systems.InventorySystem
 			Main = main;
 			Spare = spare;
 			Inventory = inventory;
+
+			Main.onEquipChanged += OnEquipWeaponChanged;
+			Spare.onEquipChanged += OnEquipWeaponChanged;
+
+			CheckHands();
 		}
 
 		public void Swap(EquipWeapon weapon)
@@ -556,6 +564,43 @@ namespace Game.Systems.InventorySystem
 		{
 			return equip != null && (Main == equip || Spare == equip);
 		}
+
+
+		public WeaponDamage GetMainDamage()
+		{
+			return (Main.Item.ItemData as WeaponItemData).weaponDamage;
+		}
+		public WeaponDamage GetSpareDamage()
+		{
+			return (Spare.Item.ItemData as WeaponItemData).weaponDamage;
+		}
+
+		private void CheckHands()
+		{
+			if (Main.IsEmpty && Spare.IsEmpty)
+			{
+				Hands = Hands.None;
+			}
+			else if (!Main.IsEmpty && Spare.IsEmpty)
+			{
+				Hands = Hands.Main;
+			}
+			else if (Main.IsEmpty && !Spare.IsEmpty)
+			{
+				Hands = Hands.Spare;
+			}
+			else
+			{
+				Hands = Hands.Both;
+			}
+		}
+
+		private void OnEquipWeaponChanged()
+		{
+			CheckHands();
+
+			onEquipWeaponChanged?.Invoke();
+		}
 	}
 
 	[System.Serializable]
@@ -578,5 +623,15 @@ namespace Game.Systems.InventorySystem
 		public Item ring0;
 		public Item ring1;
 		public Item trinket;
+	}
+
+
+
+	public enum Hands : int
+	{
+		None = -1,
+		Main = 0,
+		Spare = 1,
+		Both = 2,
 	}
 }

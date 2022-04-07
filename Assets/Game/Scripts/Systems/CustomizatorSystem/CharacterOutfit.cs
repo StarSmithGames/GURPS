@@ -9,7 +9,7 @@ namespace Game.Entities
 {
 	public class CharacterOutfit : MonoBehaviour
 	{
-		public WeaponType CurrentWeaponType { get; private set; }
+		public Hands BusyHands { get; private set; }
 
 		[SerializeField] private Transform leftHand;
 		[SerializeField] private Transform rightHand;
@@ -24,7 +24,10 @@ namespace Game.Entities
 
 		private void OnDestroy()
 		{
-			equipment.OnEquipmentChanged -= OnEquipmentChanged;
+			if (equipment != null)
+			{
+				equipment.OnEquipmentChanged -= OnEquipmentChanged;
+			}
 		}
 
 		private void Start()
@@ -36,7 +39,7 @@ namespace Game.Entities
 
 		private void OnEquipmentChanged()
 		{
-			CurrentWeaponType = equipment.WeaponCurrent.WeaponType;
+			BusyHands = equipment.WeaponCurrent.Hands;
 		}
 	}
 }

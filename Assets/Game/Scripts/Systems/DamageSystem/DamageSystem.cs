@@ -3,55 +3,60 @@ using Game.Systems.SheetSystem;
 
 using Sirenix.OdinInspector;
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 
 namespace Game.Systems.DamageSystem
 {
-	public class DamageSystem : MonoBehaviour
-	{
-		//public void Damage()
-		//{
-		//	IEntity entity = null;
-
-		//	CharacterSheet sheet1 = ((entity as Character).Sheet as CharacterSheet);
-		//	ISheet sheet2;
-		//absorbed
-		//}
-	}
+	public class DamageSystem : MonoBehaviour { }
 
 	[System.Serializable]
-	public struct DamageComposite
+	public class WeaponDamage
 	{
-		public Damage mainDamage;//only one type dmg!
-		public Damage sideDamage;
-	}
+		[InfoBox("MainDamage damageType", InfoMessageType.Error, VisibleIf = "IsDamageTypeError")]
+		public Damage mainDamage;
+		public bool isHasSideDamages = false;
+		[ShowIf("isHasSideDamages")]
+		public List<Damage> sideDamages = new List<Damage>();
 
+		[ReadOnly][ShowInInspector] public bool IsHasPhysicalDamage => mainDamage.IsPhysicalDamage || sideDamages.Any((x) => x.IsPhysicalDamage);
+		[ReadOnly][ShowInInspector] public bool IsHasMagicalDamage => mainDamage.IsMagicalDamage || sideDamages.Any((x) => x.IsMagicalDamage);
+
+		private bool IsDamageTypeError
+		{
+			get
+			{
+				return isHasSideDamages ? sideDamages.Where((x) => x.damageType == mainDamage.damageType).ToList().Count > 0 : false;
+			}
+		}
+	}
 
 	[System.Serializable]
 	public struct Damage
 	{
+		public float amount;
 		public DamageType damageType;
 
-		[ShowIf("@damageType.HasFlag(DamageType.Physical)")]
-		public PhysicalDamage physicalDamage;
-		[ShowIf("@damageType.HasFlag(DamageType.Magical)")]
-		public List<MagicalDamage> magicalDamages;
+		public bool IsPhysicalDamage =>
+			damageType == DamageType.Slashing ||
+			damageType == DamageType.Crushing ||
+			damageType == DamageType.Piercing ||
+			damageType == DamageType.Missile;
+
+		public bool IsMagicalDamage =>
+			damageType == DamageType.Magic ||
+			damageType == DamageType.Fire ||
+			damageType == DamageType.Air ||
+			damageType == DamageType.Water ||
+			damageType == DamageType.Cold ||
+			damageType == DamageType.Electricity ||
+			damageType == DamageType.Poison;
 	}
 
-	[System.Serializable]
-	public struct PhysicalDamage
-	{
-		public float amount;
-		public PhysicalDamageType physicalDamage;
-	}
-	[System.Serializable]
-	public struct MagicalDamage
-	{
-		public float amount;
-		public MagicalDamageType magicalDamage;
-	}
 
 	[System.Serializable]
 	public struct Resistances
@@ -70,34 +75,21 @@ namespace Game.Systems.DamageSystem
 		public float earth;
 	}
 
-
-
-	[System.Flags]
-	public enum DamageType
+	public enum DamageType : int
 	{
-		None,
-		Physical = 1,
-		Magical = 2,
-	}
+		Slashing = 1,
+		Crushing = 2,
+		Piercing = 3,
+		Missile = 4,
 
-	public enum PhysicalDamageType
-	{
-		Slashing,
-		Crushing,
-		Piercing,
-		Missile,
-	}
+		Magic = 10,
 
-	public enum MagicalDamageType
-	{
-		Magic,
-
-		Fire,
-		Air,
-		Water,
-		Cold,
-		Electricity,
-		Poison,
+		Fire = 15,
+		Air = 16,
+		Water = 17,
+		Cold = 18,
+		Electricity = 19,
+		Poison = 20,
 	}
 
 	public enum SpellType
