@@ -57,11 +57,15 @@ namespace Game.Entities
 		protected virtual void OnDestroy()
 		{
 			UnSubscribeAnimationEvents();
+
+			Sheet.Stats.HitPoints.onStatChanged -= OnHitPointsChanged;
 		}
 
 		protected virtual void Start()
 		{
 			SubscribeAnimationEvents();
+
+			Sheet.Stats.HitPoints.onStatChanged += OnHitPointsChanged;
 
 			Outlines.enabled = false;
 
@@ -98,6 +102,18 @@ namespace Game.Entities
 			Markers.AreaMarker.Enable(false);
 
 			Markers.LineMarker.Enable(false);
+		}
+
+
+		private void OnHitPointsChanged()
+		{
+			if(Sheet.Stats.HitPoints.CurrentValue == 0)
+			{
+				if (!Sheet.Conditions.IsContains<Death>())
+				{
+					Sheet.Conditions.Add(new Death(this));
+				}
+			}
 		}
 
 

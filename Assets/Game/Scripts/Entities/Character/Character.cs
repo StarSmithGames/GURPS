@@ -162,7 +162,7 @@ namespace Game.Entities
 
 		public void Attack(int weaponType = 0, int attackType = 0)
 		{
-			(AnimatorControl as CharacterAnimatorControl).Attack(weaponType, attackType);
+			(AnimatorControl as HumanoidAnimatorControl).Attack(weaponType, attackType);
 		}
 
 		
@@ -199,7 +199,7 @@ namespace Game.Entities
 
 		protected override void SubscribeAnimationEvents()
 		{
-			var current = (AnimatorControl as CharacterAnimatorControl);
+			var current = (AnimatorControl as HumanoidAnimatorControl);
 
 			current.onAttackEvent += OnAttacked;
 
@@ -209,7 +209,7 @@ namespace Game.Entities
 		}
 		protected override void UnSubscribeAnimationEvents()
 		{
-			var current = (AnimatorControl as CharacterAnimatorControl);
+			var current = (AnimatorControl as HumanoidAnimatorControl);
 
 			if (current != null)
 			{

@@ -10,6 +10,7 @@ namespace Game.Systems.SheetSystem
     {
         IInformation Information { get; }
         IStats Stats { get; }
+        IConditions Conditions { get; }
         IInventory Inventory { get; }
 
         SheetSettings Settings { get; }
@@ -19,6 +20,7 @@ namespace Game.Systems.SheetSystem
     {
         public virtual IInformation Information { get; protected set; }
         public virtual IStats Stats { get; private set; }
+		public virtual IConditions Conditions { get; }
         public virtual IInventory Inventory { get; private set; }
 
 		public SheetSettings Settings { get; private set; }
@@ -29,6 +31,7 @@ namespace Game.Systems.SheetSystem
 
             Information = information;
             Stats = new Stats(Settings.stats);
+            Conditions = new Conditions();
             Inventory = new Inventory(Settings.inventory);
         }
     }
