@@ -35,6 +35,13 @@ namespace Game.Entities
 
 		public bool IsRangeAttackTest => false;
 
+		protected override void Start()
+		{
+			base.Start();
+
+			Controller.onReachedDestination += OnReachedDestination;
+		}
+
 		public override void TryInteractWith(IInteractable interactable)
 		{
 			lastInteractable = interactable;
@@ -117,19 +124,12 @@ namespace Game.Entities
 
 			if (!InBattle)
 			{
-				//Fade-In Fade-Out TargetMarker
+				//Fade-In TargetMarker
 				if (Controller.IsHasTarget)
 				{
 					if (!Markers.TargetMarker.IsEnabled)
 					{
 						Markers.TargetMarker.EnableIn();
-					}
-				}
-				else
-				{
-					if (Markers.TargetMarker.IsEnabled)
-					{
-						Markers.TargetMarker.EnableOut();
 					}
 				}
 			}
@@ -211,6 +211,17 @@ namespace Game.Entities
 			}
 		}
 
+		private void OnReachedDestination()
+		{
+			if (!InBattle)
+			{
+				//Fade-Out TargetMarker
+				if (Markers.TargetMarker.IsEnabled)
+				{
+					Markers.TargetMarker.EnableOut();
+				}
+			}
+		}
 
 		private void OnBattleUpdated()
 		{
