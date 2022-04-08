@@ -58,6 +58,7 @@ namespace Game.Systems.InteractionSystem
 
 			currentInteractor = entity;
 
+
 			StartCoroutine(PreInteraction(interaction));
 		}
 

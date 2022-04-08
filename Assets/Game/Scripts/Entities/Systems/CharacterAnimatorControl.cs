@@ -1,3 +1,5 @@
+using CMF;
+
 using DG.Tweening;
 using Game.Entities;
 
@@ -43,9 +45,7 @@ public class CharacterAnimatorControl : AnimatorControl
 
 		if (character.InBattle)
 		{
-			character.Controller.IsWaitAnimation = isAttackProccess ||
-				isWaitAnimationProccess ||
-				isWaitTransitionProccess;
+			character.Controller.IsWaitAnimation = IsAnimationProcess;
 		}
 	}
 
@@ -58,8 +58,6 @@ public class CharacterAnimatorControl : AnimatorControl
 
 	private IEnumerator AttackProccess()
 	{
-		Vector3 lastForward = transform.forward;
-
 		isAttackProccess = true;
 
 		yield return WaitWhileAnimation("Armature|IdleAction");
@@ -83,7 +81,6 @@ public class CharacterAnimatorControl : AnimatorControl
 		}
 
 		transform.DOMove(transform.root.position, 0.25f);
-		transform.DORotate(lastForward, 0.25f);
 
 		yield return WaitWhileAnimation("Armature|IdleAction");
 

@@ -5,6 +5,8 @@ namespace Game.Systems.BattleSystem
 	public interface IBattlable : IEntity
 	{
 		public bool InBattle { get; }
+		public bool InAction { get; }
+
 
 		public Battle CurrentBattle { get; }
 

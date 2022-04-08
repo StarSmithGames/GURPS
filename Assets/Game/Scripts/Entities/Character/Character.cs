@@ -3,6 +3,7 @@ using Game.Systems.DamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
+using DG.Tweening;
 
 using System.Collections;
 
@@ -35,6 +36,7 @@ namespace Game.Entities
 
 		public bool IsRangeAttackTest => false;
 
+
 		protected override void Start()
 		{
 			base.Start();
@@ -49,7 +51,6 @@ namespace Game.Entities
 			{
 				if (InBattle)
 				{
-					//Controller.RotateTo((interactable as MonoBehaviour).transform.position);
 					interactable.InteractFrom(this, InternalInteraction());
 					return;
 				}
@@ -66,7 +67,14 @@ namespace Game.Entities
 				{
 					if (!CurrentBattle.BattleFSM.CurrentTurn.ContainsManeuver<Attack>() && Sheet.Stats.ActionPoints.CurrentValue > 0)
 					{
-						CurrentBattle.BattleFSM.CurrentTurn.AddManeuver(new Attack(this, entity));
+						Sequence sequence = DOTween.Sequence();
+
+						sequence
+							.Append(Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
+							.AppendCallback(() =>
+							{
+								CurrentBattle.BattleFSM.CurrentTurn.AddManeuver(new Attack(this, entity));
+							});
 					}
 					else
 					{
@@ -111,6 +119,8 @@ namespace Game.Entities
 	partial class Character
 	{
 		public bool InBattle => CurrentBattle != null;
+		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
+
 		public Battle CurrentBattle { get; private set; }
 
 		public override void SetTarget(Vector3 point, float maxPathDistance = -1)

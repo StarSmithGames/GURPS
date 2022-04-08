@@ -12,6 +12,8 @@ namespace Game.Entities
 	public class BattlableNPC : NPC, IBattlable
 	{
 		public bool InBattle => CurrentBattle != null;
+		public bool InAction => false;
+
 		public Battle CurrentBattle { get; private set; }
 
 		private CharacterManager characterManager;

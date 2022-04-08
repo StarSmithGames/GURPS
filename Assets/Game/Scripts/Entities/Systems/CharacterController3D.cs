@@ -1,8 +1,13 @@
 using CMF;
 
+using DG.Tweening;
+
 using Game.Entities;
 
 using Sirenix.OdinInspector;
+
+using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.AI;
@@ -117,7 +122,13 @@ public class CharacterController3D : MonoBehaviour
 		Rotation((point - model.position).normalized);
 	}
 
+	public Tween RotateAnimatedTo(Vector3 point, float duration)
+	{
+		var lookPos = (point - model.position).normalized;
+		var rotation = Quaternion.LookRotation(lookPos, Vector3.up);
 
+		return model.DORotate(rotation.eulerAngles, duration);
+	}
 
 	public Vector3 GetVelocity()
 	{
@@ -152,6 +163,7 @@ public class CharacterController3D : MonoBehaviour
 	private void Rotation(Vector3 direction)
 	{
 		if (!IsCanRotate) return;
+		if (direction == Vector3.zero) return;
 
 		Vector3 velocity = direction;
 		//Project velocity onto a plane defined by the 'up' direction of the parent transform;

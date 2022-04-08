@@ -13,6 +13,8 @@ public class AnimatorControl : MonoBehaviour
 {
 	public UnityAction onAttackEvent;
 
+	public virtual bool IsAnimationProcess => isAttackProccess || isWaitAnimationProccess || isWaitTransitionProccess;
+
 	protected bool isAttackProccess = false;
 	protected bool isWaitAnimationProccess = false;
 	protected bool isWaitTransitionProccess = false;
@@ -76,7 +78,7 @@ public class AnimatorControl : MonoBehaviour
 		animator.SetFloat(verticalSpeedHash, verticalVelocity.magnitude * VectorMath.GetDotProduct(verticalVelocity, transform.up));
 		//animator.SetFloat("HorizontalSpeed", Mathf.Clamp(controller.CalculateAngleToDesination(), -90, 90) / 90);
 
-		animator.SetBool(isIdleHash, !entity.Controller.IsHasTarget && velocity.magnitude == 0);
+		animator.SetBool(isIdleHash, !entity.IsHasTarget && velocity.magnitude == 0);
 		animator.SetBool(isGroundedHash, entity.Controller.IsGrounded);
 
 

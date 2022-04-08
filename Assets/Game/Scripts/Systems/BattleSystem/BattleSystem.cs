@@ -84,6 +84,9 @@ namespace Game.Systems.BattleSystem
 
 		public void StopBattle()
 		{
+			if ((CurrentInitiator as IBattlable).InAction) return;
+
+
 			if (IsBattleProcess)
 			{
 				asyncManager.StopCoroutine(battleCoroutine);
@@ -126,6 +129,8 @@ namespace Game.Systems.BattleSystem
 
 		private void SkipTurn()
 		{
+			if ((CurrentInitiator as IBattlable).InAction) return;
+
 			isSkipTurn = true;
 		}
 
@@ -184,13 +189,12 @@ namespace Game.Systems.BattleSystem
 				{
 					yield return null;
 				}
+				isSkipTurn = false;
 
-				if(CurrentTurn.Maneuvers.Count == 0 && CurrentInitiator.Sheet.Stats.Move.PercentValue == 1f)
+				if (CurrentTurn.Maneuvers.Count == 0 && CurrentInitiator.Sheet.Stats.Move.PercentValue == 1f)
 				{
 					CurrentTurn.AddManeuver(new Inaction(CurrentInitiator));
 				}
-
-				isSkipTurn = false;
 			}
 			else
 			{
@@ -259,7 +263,7 @@ namespace Game.Systems.BattleSystem
 
 		private void OnInitiatorDestinationChanged()
 		{
-			if (CurrentInitiator.Controller.IsHasTarget)
+			if (CurrentInitiator.IsHasTarget)
 			{
 				if (!settings.isInfinityMoveStat)
 				{

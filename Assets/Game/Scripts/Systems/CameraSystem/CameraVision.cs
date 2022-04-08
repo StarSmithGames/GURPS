@@ -107,7 +107,7 @@ namespace Game.Systems.CameraSystem
 			{
 				if (isMouseHit)
 				{
-					if (!leader.Controller.IsHasTarget)
+					if (!leader.IsHasTarget)
 					{
 						if (CurrentObserve != null)
 						{
@@ -175,7 +175,7 @@ namespace Game.Systems.CameraSystem
 
 		private void TooltipRuler()
 		{
-			if (leader.InBattle && !leader.Controller.IsHasTarget)
+			if (leader.InBattle && !leader.IsHasTarget)
 			{
 				if (isMouseHit && !isUI)
 				{
@@ -198,7 +198,7 @@ namespace Game.Systems.CameraSystem
 
 			bool isInvalidTarget = !isMouseHit || !leader.Navigation.NavMeshAgent.IsPathValid(point);
 			bool isNotEnoughMovement = isMouseHit && !isUI &&
-				leader.InBattle && !leader.Controller.IsHasTarget &&
+				leader.InBattle && !leader.IsHasTarget &&
 				(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
 
 			if (isInvalidTarget || isNotEnoughMovement)
