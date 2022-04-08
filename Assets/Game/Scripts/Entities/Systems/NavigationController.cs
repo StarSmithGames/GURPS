@@ -63,10 +63,8 @@ namespace Game.Entities
 			markers.LineMarker.DrawLine(NavMeshAgent.path.corners);
 		}
 
-		public bool SetTarget(Vector3 destination, float stoppingDistance = -1, float maxPathDistance = -1)
+		public bool SetTarget(Vector3 destination, float maxPathDistance = -1)
 		{
-			NavMeshAgent.stoppingDistance = stoppingDistance <= 0 ? settings.reachTargetThreshold : stoppingDistance;
-
 			bool result = false;
 
 			if (NavMeshAgent.IsPathValid(destination))
@@ -77,9 +75,23 @@ namespace Game.Entities
 
 				if (maxPathDistance != -1)
 				{
-					if (NavMeshPathDistance > maxPathDistance)
+					float distance = NavMeshPathDistance;
+
+					if (distance >= maxPathDistance)
 					{
-						destination = transform.root.position + ((maxPathDistance + 0.1f) * (destination - transform.root.position).normalized);//TODO
+						destination = transform.root.position + ((maxPathDistance) * (destination - transform.root.position).normalized);//TODO
+
+						if (NavMeshAgent.IsPathValid(destination))
+						{
+							NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
+
+							result = NavMeshAgent.SetPath(CurrentNavMeshPath);
+							return result;
+						}
+					}
+					else if(distance < settings.minPathDistance)
+					{
+						destination = transform.root.position + ((settings.minPathDistance) * (destination - transform.root.position).normalized);
 
 						if (NavMeshAgent.IsPathValid(destination))
 						{
@@ -127,6 +139,7 @@ namespace Game.Entities
 		public class Settings
 		{
 			public float reachTargetThreshold = 0.1f;
+			public float minPathDistance = 1f;
 		}
 	}
 

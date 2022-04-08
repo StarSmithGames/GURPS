@@ -1,5 +1,7 @@
 using Game.Entities;
 
+using System.Collections;
+
 using UnityEngine;
 
 namespace Game.Systems.InteractionSystem
@@ -8,9 +10,10 @@ namespace Game.Systems.InteractionSystem
 	{
 		bool IsInteractable { get; }
 
-		Vector3 InteractPosition { get; }
+		bool IsInteractorInRange(IEntity entity);
 
-		void Interact();
-		void InteractFrom(IEntity entity);
+		Vector3 GetIteractionPosition(IEntity entity);
+
+		void InteractFrom(IEntity entity, IEnumerator interaction = null);
 	}
 }

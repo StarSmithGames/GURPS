@@ -1,59 +1,75 @@
 using CMF;
 
 using Game.Entities;
-using Game.Managers.GameManager;
+using Game.Systems.BattleSystem;
 
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
 public class AnimatorControl : MonoBehaviour
 {
-	private int forwardSpeedHash;
-	private int verticalSpeedHash;
-	private int isBattleModeHash;
-	private int isIdle;
-	private int isGrounded;
+	public UnityAction onAttackEvent;
 
-	private SignalBus signalBus;
-	private Animator animator;
-	private Character character;
-	private CharacterController3D controller;
-	private GameManager gameManager;
+	public virtual bool IsAnimationProcess => isAttackProccess || isWaitAnimationProccess || isWaitTransitionProccess;
+
+	protected bool isAttackProccess = false;
+	protected bool isWaitAnimationProccess = false;
+	protected bool isWaitTransitionProccess = false;
+
+	protected int forwardSpeedHash;
+	protected int verticalSpeedHash;
+	protected int isBattleModeHash;
+	protected int isIdleHash;
+	protected int isGroundedHash;
+	protected int attackHash;
+	protected int hitHash;
+	protected int hitTypeHash;
+
+	protected Animator animator;
+	protected Entity entity;
 
 	[Inject]
-	private void Construct(SignalBus signalBus, Animator animator, Entity entity, GameManager gameManager, CharacterController3D controller)
+	private void Construct(
+		Animator animator,
+		Entity entity)
 	{
-		this.signalBus = signalBus;
 		this.animator = animator;
-		this.character = entity as Character;
-		this.gameManager = gameManager;
-		this.controller = controller;
+		this.entity = entity;
 	}
 
-
-
-	private void OnDestroy()
+	protected virtual void OnDestroy()
 	{
-		if(character != null)
+		if (entity != null)
 		{
-			character.onCharacterBattleStateChanged -= CheckBattleState;
+			entity.onDestinationChanged -= OnDestinationChanged;
+			entity.Controller.onReachedDestination -= OnReachedDestination;
 		}
 	}
 
-	private void Start()
+	protected virtual void Start()
 	{
-		character.onCharacterBattleStateChanged += CheckBattleState;
+		animator.applyRootMotion = false;
+
 		forwardSpeedHash = Animator.StringToHash("ForwardSpeed");
 		verticalSpeedHash = Animator.StringToHash("VerticalSpeed");
 		isBattleModeHash = Animator.StringToHash("IsBattleMode");
-		isIdle = Animator.StringToHash("IsIdle");
-		isGrounded = Animator.StringToHash("IsGrounded");
+		isIdleHash = Animator.StringToHash("IsIdle");
+		isGroundedHash = Animator.StringToHash("IsGrounded");
+
+		attackHash = Animator.StringToHash("Attack");
+		hitHash = Animator.StringToHash("Hit");
+		hitTypeHash = Animator.StringToHash("HitType");
+
+		entity.onDestinationChanged += OnDestinationChanged;
+		entity.Controller.onReachedDestination += OnReachedDestination;
 	}
 
-	private void Update()
-	{
-		Vector3 velocity = controller.GetVelocity();
+	protected virtual void Update()
+{
+		Vector3 velocity = entity.Controller.GetVelocity();
 
 		Vector3 horizontalVelocity = VectorMath.RemoveDotVector(velocity, transform.up);
 		Vector3 verticalVelocity = velocity - horizontalVelocity;
@@ -61,36 +77,84 @@ public class AnimatorControl : MonoBehaviour
 		animator.SetFloat(forwardSpeedHash, velocity.magnitude);
 		animator.SetFloat(verticalSpeedHash, verticalVelocity.magnitude * VectorMath.GetDotProduct(verticalVelocity, transform.up));
 		//animator.SetFloat("HorizontalSpeed", Mathf.Clamp(controller.CalculateAngleToDesination(), -90, 90) / 90);
-		animator.SetBool(isBattleModeHash, character.InBattle);
 
-		animator.SetBool(isIdle, !controller.IsHasTarget && controller.IsGrounded && velocity.magnitude == 0);
-		animator.SetBool(isGrounded, controller.IsGrounded);
+		animator.SetBool(isIdleHash, !entity.IsHasTarget && velocity.magnitude == 0);
+		animator.SetBool(isGroundedHash, entity.Controller.IsGrounded);
 
-		CheckBattleState();
+
+		if (animator.applyRootMotion == false)
+		{
+			entity.Navigation.NavMeshAgent.nextPosition = transform.root.position;
+		}
 	}
 
-	private void CheckBattleState()
+
+	public virtual void Hit(int type = -1)
 	{
-		if (character.InBattle)
+		animator.SetInteger(hitTypeHash, type == -1 ? 0 : type);
+		animator.SetTrigger("Hit");
+	}
+	public virtual void Attack(int attackType = 0) { }
+
+	protected IEnumerator WaitWhileAnimation(string animation)
+	{
+		if(entity is IBattlable battlable)
 		{
-			string animationName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+			isWaitAnimationProccess = true;
 
-			AnimatorTransitionInfo transitionInfo = animator.GetAnimatorTransitionInfo(0);
+			while (battlable.InBattle)
+			{
+				if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == animation)
+				{
+					break;
+				}
+				yield return null;
+			}
 
-			bool isIdleActionTransition = (transitionInfo.IsName("Idle -> IdleToIdleAction"));
-			//transitionInfo.IsName("IdleActionToIdle -> IdleAction") ||
-			//transitionInfo.IsName("IdleActionToIdle -> Idle"));
-
-			bool isIdleAction = (animationName == "Armature|IdleToIdleAction");
-			//animationName == "Armature|IdleAction" ||
-			//animationName == "Armature|IdleActionToIdle");
-
-
-			controller.IsCanMove = !isIdleAction && !isIdleActionTransition;
+			isWaitAnimationProccess = false;
 		}
-		else
+		
+	}
+
+	protected IEnumerator WaitWhileTransition(string transition)
+	{
+		if (entity is IBattlable battlable)
 		{
-			controller.IsCanMove = true;
+			isWaitTransitionProccess = true;
+
+			while (battlable.InBattle)
+			{
+				if (animator.GetAnimatorTransitionInfo(0).IsName(transition))
+				{
+					break;
+				}
+
+				yield return null;
+			}
+
+			isWaitTransitionProccess = false;
 		}
 	}
+
+
+	private void OnDestinationChanged() { }
+
+	private void OnReachedDestination()
+	{
+		if(entity is IBattlable battlable)
+		{
+			if (battlable.InBattle)
+			{
+				StartCoroutine(WaitWhileAnimation("Armature|IdleAction"));
+			}
+		}
+	}
+
+
+	#region AnimationEvents
+	private void AttackEvent()
+	{
+		onAttackEvent?.Invoke();
+	}
+	#endregion
 }

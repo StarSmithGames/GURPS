@@ -14,10 +14,9 @@ namespace Game.Systems.InventorySystem
 		Equip Legs { get; }
 		Equip Feet { get; }
 
-		Equip Weapon00 { get; }
-		Equip Weapon01 { get; }
-		Equip Weapon10 { get; }
-		Equip Weapon11 { get; }
+		EquipWeapon WeaponCurrent { get; }
+		EquipWeapon WeaponMain { get; }
+		EquipWeapon WeaponSpare { get; }
 
 		Equip Cloak { get; }
 		Equip Jewelry { get; }

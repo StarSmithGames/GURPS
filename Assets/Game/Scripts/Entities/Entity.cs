@@ -1,24 +1,26 @@
 
+using CMF;
+
 using EPOOutline;
 
 using Game.Entities;
+using Game.Systems.DamageSystem;
+using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 using Zenject;
 
 namespace Game.Entities
 {
-	public abstract class Entity : MonoBehaviour, IEntity, IObservable
+	public abstract partial class Entity : InteractableModel, IEntity
 	{
-		public Transform Transform => transform;
+		public GameObject GameObject => gameObject;
 
 		public virtual ISheet Sheet { get; private set; }
-
-		public NavigationController Navigation { get; private set; }
-		public CharacterController3D Controller { get; private set; }
 
 		public Markers Markers { get; private set; }
 		public Outlinable Outlines { get; private set; }
@@ -31,6 +33,7 @@ namespace Game.Entities
 		[Inject]
 		private void Construct(
 			SignalBus signalBus,
+			AnimatorControl animatorControl,
 			NavigationController navigationController,
 			CharacterController3D controller,
 			Markers markerController,
@@ -40,6 +43,7 @@ namespace Game.Entities
 		{
 			this.signalBus = signalBus;
 
+			AnimatorControl = animatorControl;
 			Navigation = navigationController;
 			Controller = controller;
 			Markers = markerController;
@@ -50,41 +54,39 @@ namespace Game.Entities
 			Validate();
 		}
 
+		protected virtual void OnDestroy()
+		{
+			UnSubscribeAnimationEvents();
+		}
+
 		protected virtual void Start()
 		{
+			SubscribeAnimationEvents();
+
 			Outlines.enabled = false;
 
 			ResetMarkers();
 		}
 
+		public virtual void TryInteractWith(IInteractable interactable) { }
+
 		public void Freeze(bool trigger)
 		{
-			if (trigger)
-			{
-				Controller.Freeze();
-			}
-			else
-			{
-				Controller.UnFreeze();
-			}
+			Controller.Freeze(trigger);
 		}
 
-
-		public virtual void StartObserve()
+		#region Observe
+		public override void StartObserve()
 		{
-			Outlines.enabled = true;
-
+			base.StartObserve();
 			uiManager.Battle.SetSheet(Sheet);
 		}
-
-		public virtual void Observe() { }
-
-		public virtual void EndObserve()
+		public override void EndObserve()
 		{
-			Outlines.enabled = false;
-
+			base.EndObserve();
 			uiManager.Battle.SetSheet(null);
 		}
+		#endregion
 
 		protected virtual void ResetMarkers()
 		{
@@ -106,6 +108,105 @@ namespace Game.Entities
 			Assert.IsNotNull(Markers, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(Outlines, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(CameraPivot, $"Entity {gameObject.name} lost component.");
+		}
+
+	}
+
+	/// <summary>
+	/// IAnimatable implementation
+	/// <summary>
+	partial class Entity : InteractableModel
+	{
+		public AnimatorControl AnimatorControl { get; private set; }
+		
+		public virtual void Attack(int attackType = 0)
+		{
+			AnimatorControl.Attack(attackType);
+		}
+		public void Hit(int type = -1)
+		{
+			AnimatorControl.Hit(type);
+		}
+
+		protected virtual void SubscribeAnimationEvents()
+		{
+			AnimatorControl.onAttackEvent += OnAttacked;
+		}
+		protected virtual void UnSubscribeAnimationEvents()
+		{
+			if (AnimatorControl != null)
+			{
+				AnimatorControl.onAttackEvent -= OnAttacked;
+			}
+		}
+
+		/// <summary>
+		/// This Entity attacked lastInteractable
+		/// </summary>
+		protected void OnAttacked()
+		{
+			var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
+			(lastInteractable as IAnimatable).Hit(Random.Range(0, 2));//animation
+			(lastInteractable as IDamegeable).ApplyDamage(GetDamage());
+		}
+	}
+
+	//IPathfinderable implementation
+	partial class Entity
+	{
+		public event UnityAction onTargetChanged;
+		public event UnityAction onDestinationChanged;
+
+		public Transform Transform => transform;
+
+		public bool IsHasTarget => Controller.IsHasTarget;
+
+		public NavigationController Navigation { get; private set; }
+		public CharacterController3D Controller { get; private set; }
+
+		public virtual void SetTarget(Vector3 point, float maxPathDistance = -1)
+		{
+			Navigation.SetTarget(point, maxPathDistance: maxPathDistance);
+			onTargetChanged?.Invoke();
+		}
+
+		public virtual void SetDestination(Vector3 destination, float maxPathDistance = -1)
+		{
+			Controller.SetDestination(destination, maxPathDistance: maxPathDistance);
+			onDestinationChanged?.Invoke();
+		}
+	}
+
+	//IDamegeable implementation
+	partial class Entity
+	{
+		public virtual Damage GetDamage()
+		{
+			return new Damage()
+			{
+				amount = GetDamageFromTable(Sheet.Stats.Strength.CurrentValue),
+				damageType = DamageType.Crushing,
+			};
+		}
+
+		public virtual void ApplyDamage<T>(T value) where T : struct
+		{
+			if (value is Damage damage)
+			{
+				if (damage.IsPhysicalDamage)
+				{
+					Sheet.Stats.HitPoints.CurrentValue -= damage.amount;
+				}
+				else if (damage.IsMagicalDamage)
+				{
+
+				}
+			}
+		}
+
+		private float GetDamageFromTable(float strength)
+		{
+			return Mathf.Max(Random.Range(1, 7) - 2, 0);
 		}
 	}
 }

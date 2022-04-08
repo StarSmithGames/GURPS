@@ -103,6 +103,10 @@ namespace Game.Systems.SheetSystem
 		}
 	}
 
+	public class LevelStat : Stat
+	{
+		public LevelStat(float currentValue) : base(currentValue) { }
+	}
 
 	public class StrengthStat : Stat
 	{
@@ -148,6 +152,11 @@ namespace Game.Systems.SheetSystem
 	public class PerceptionStat : StatBar
 	{
 		public PerceptionStat(float currentValue, float maxBaseValue) : base(currentValue, maxBaseValue) { }
+	}
+
+	public class ActionPointsStat : StatBar
+	{
+		public ActionPointsStat(float currentValue, float maxBaseValue) : base(currentValue, maxBaseValue) { }
 	}
 
 

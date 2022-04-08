@@ -1,65 +1,138 @@
+using EPOOutline;
+
 using Game.Entities;
+using Game.Systems.BattleSystem;
 
 using Sirenix.OdinInspector;
 
 using System.Collections;
 
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Game.Systems.InteractionSystem
 {
-	public class InteractableModel : MonoBehaviour, IInteractable
+	public class InteractableModel : MonoBehaviour, IInteractable, IObservable
 	{
 		[SerializeField] protected Settings interactableSettings;
+		[Space]
+		[SerializeField] protected Outlinable outline;
 
-		public Vector3 InteractPosition
+		public bool IsInteractable => outline.enabled;
+
+		protected IInteractable lastInteractable = null;
+		protected IEntity currentInteractor = null;
+
+		private void Awake()
 		{
-			get
+			outline.enabled = false;
+		}
+
+		public Vector3 GetIteractionPosition(IEntity entity = null)
+		{
+			if (interactableSettings.interaction == InteractionType.CustomPoint)
 			{
-				if (interactableSettings.interaction == InteractionType.CustomPoint)
+				return transform.TransformPoint(interactableSettings.position);
+			}
+			else
+			{
+				if (entity != null)
 				{
-					return transform.TransformPoint(interactableSettings.position);
+					if (IsInteractorInRange(entity)) return entity.Transform.position;
+
+					return transform.position + ((interactableSettings.maxRange - 0.1f) * (entity.Transform.position - transform.position).normalized);
+				}
+			}
+
+			return transform.position;
+		}
+
+		public bool IsInteractorInRange(IEntity entity)
+		{
+			if (entity == null) return false;
+			return Vector3.Distance(transform.position, entity.Transform.position) <= interactableSettings.maxRange + 0.1f;
+		}
+
+		public virtual void InteractFrom(IEntity entity, IEnumerator interaction = null)
+		{
+			if (currentInteractor != null || entity == null) return;
+
+			currentInteractor = entity;
+
+
+			StartCoroutine(PreInteraction(interaction));
+		}
+
+		private IEnumerator PreInteraction(IEnumerator ExternalInteraction = null)
+		{
+			outline.enabled = false;
+			if (!IsInteractorInRange(currentInteractor))
+			{
+				currentInteractor.SetDestination(GetIteractionPosition(currentInteractor));
+
+				Vector3 lastDestination = currentInteractor.Navigation.CurrentNavMeshDestination;
+				bool needBreak = false;
+
+				yield return new WaitWhile(() =>
+				{
+					if (lastDestination != currentInteractor.Navigation.CurrentNavMeshDestination)
+					{
+						needBreak = true;
+						return false;
+					}
+					return !currentInteractor.Navigation.NavMeshAgent.IsReachedDestination();
+				});
+
+				if (needBreak)
+				{
+					currentInteractor = null;
+					yield break;
+				}
+			}
+
+			if (IsInteractorInRange(currentInteractor))
+			{
+				if (ExternalInteraction != null)
+				{
+					yield return ExternalInteraction;
 				}
 				else
 				{
-					if (currentInteractor != null)
-					{
-						return transform.position + ((interactableSettings.maxRange - 0.1f) * (currentInteractor.Transform.position - transform.position).normalized);
-					}
+					yield return InternalInteraction();
 				}
-
-				return transform.position;
-			}
-		}
-
-		public bool IsInteractable => currentInteractor == null;
-
-		protected IEntity currentInteractor = null;
-
-		public void Interact() { }
-
-		public virtual void InteractFrom(IEntity entity)
-		{
-			if (currentInteractor != null || entity == null)
-			{
-				return;
 			}
 
-			currentInteractor = entity;
+			currentInteractor = null;
 		}
 
-		protected bool IsInteractorInRange()
+		protected virtual IEnumerator InternalInteraction()
 		{
-			if (currentInteractor == null) return false;
-			return Vector3.Distance(transform.position, currentInteractor.Transform.position) <= interactableSettings.maxRange;
+			yield return null;
 		}
+
+
+		#region Observe
+		public virtual void StartObserve()
+		{
+			outline.enabled = true;
+		}
+		public virtual void Observe() { }
+		public virtual void EndObserve()
+		{
+			outline.enabled = false;
+		}
+		#endregion
 
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.red;
-			Gizmos.DrawWireSphere(InteractPosition, interactableSettings.maxRange);
-			Gizmos.DrawSphere(InteractPosition, 0.1f);
+			if (interactableSettings.interaction == InteractionType.CustomPoint)
+			{
+				Gizmos.DrawSphere(transform.TransformPoint(interactableSettings.position), 0.1f);
+			}
+			else
+			{
+				Gizmos.DrawWireSphere(transform.position, interactableSettings.maxRange);
+			}
 		}
 
 

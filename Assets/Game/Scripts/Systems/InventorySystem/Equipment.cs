@@ -1,4 +1,5 @@
-using Game.Systems.CharacterCutomization;
+using Game.Systems.CutomizationSystem;
+using Game.Systems.DamageSystem;
 
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,9 @@ namespace Game.Systems.InventorySystem
 		public Equip Legs { get; private set; }
 		public Equip Feet { get; private set; }
 
-		public Equip Weapon00 { get; private set; }
-		public Equip Weapon01 { get; private set; }
-		public Equip Weapon10 { get; private set; }
-		public Equip Weapon11 { get; private set; }
+		public EquipWeapon WeaponCurrent => isWeaponMain ? WeaponMain : WeaponSpare;
+		public EquipWeapon WeaponMain { get; private set; }
+		public EquipWeapon WeaponSpare { get; private set; }
 
 		public Equip Cloak { get; private set; }
 		public Equip Jewelry { get; private set; }
@@ -30,11 +30,9 @@ namespace Game.Systems.InventorySystem
 		public Equip Ring1 { get; private set; }
 		public Equip Trinket { get; private set; }
 
-		public List<Equip> Armors { get; private set; }
+		public Dictionary<Equip, Type[]> ArmorsByTypes { get; private set; }
 
-		private Dictionary<Equip, Type[]> dictionarySlotTypes;
-		private EquipWeaponConnection Weapon0;
-		private EquipWeaponConnection Weapon1;
+		private bool isWeaponMain = true;
 
 		private EquipmentSettings settings;
 		private IInventory inventory;
@@ -43,6 +41,7 @@ namespace Game.Systems.InventorySystem
 		{
 			this.settings = settings;
 			this.inventory = inventory;
+
 			Initialization();
 		}
 
@@ -55,10 +54,8 @@ namespace Game.Systems.InventorySystem
 			Legs		= new Equip();
 			Feet		= new Equip();
 
-			Weapon00	= new Equip();
-			Weapon01	= new Equip();
-			Weapon10	= new Equip();
-			Weapon11	= new Equip();
+			WeaponMain = new EquipWeapon(new Equip(), new Equip(), inventory);
+			WeaponSpare = new EquipWeapon(new Equip(), new Equip(), inventory);
 
 			Cloak		= new Equip();
 			Jewelry		= new Equip();
@@ -66,7 +63,7 @@ namespace Game.Systems.InventorySystem
 			Ring1		= new Equip();
 			Trinket		= new Equip();
 
-			dictionarySlotTypes = new Dictionary<Equip, Type[]>()
+			ArmorsByTypes = new Dictionary<Equip, Type[]>()
 			{
 				{ Head,     new Type[]{typeof(HeadItemData)} },
 				{ Sholders, new Type[]{typeof(ShouldersItemData) } },
@@ -80,33 +77,6 @@ namespace Game.Systems.InventorySystem
 				{ Ring1,    new Type[]{typeof(RingItemData) } },
 			};
 
-			Armors = new List<Equip>()
-			{
-				Head,
-				Sholders,
-				Chest,
-				Forearms,
-				Legs,
-				Feet,
-				Cloak,
-				Jewelry,
-				Ring0,
-				Ring1,
-			};
-
-			Weapon0 = new EquipWeaponConnection()
-			{
-				Main		= Weapon00,
-				Spare		= Weapon01,
-				Inventory	= inventory,
-			};
-			Weapon1 = new EquipWeaponConnection()
-			{
-				Main		= Weapon10,
-				Spare		= Weapon11,
-				Inventory	= inventory,
-			};
-
 			Head.SetItem(settings.head);
 		}
 
@@ -115,7 +85,7 @@ namespace Game.Systems.InventorySystem
 		{
 			if(item.IsWeapon)
 			{
-				return Weapon0.Add(item);
+				return WeaponMain.Add(item);
 			}
 			else if(item.IsArmor)
 			{
@@ -128,13 +98,13 @@ namespace Game.Systems.InventorySystem
 		{
 			if (item.IsWeapon)
 			{
-				if (Weapon0.Contains(equip))
+				if (WeaponMain.Contains(equip))
 				{
-					return Weapon0.AddTo(equip, item);
+					return WeaponMain.AddTo(equip, item);
 				}
-				else if (Weapon1.Contains(equip))
+				else if (WeaponSpare.Contains(equip))
 				{
-					return Weapon1.AddTo(equip, item);
+					return WeaponSpare.AddTo(equip, item);
 				}
 			}
 			else if (item.IsArmor)
@@ -156,13 +126,13 @@ namespace Game.Systems.InventorySystem
 			{
 				if (equip.Item.IsWeapon)
 				{
-					if (Weapon0.Contains(equip))
+					if (WeaponMain.Contains(equip))
 					{
-						return Weapon0.RemoveFrom(equip);
+						return WeaponMain.RemoveFrom(equip);
 					}
-					else if (Weapon1.Contains(equip))
+					else if (WeaponSpare.Contains(equip))
 					{
-						return Weapon1.RemoveFrom(equip);
+						return WeaponSpare.RemoveFrom(equip);
 					}
 				}
 				else if (equip.Item.IsArmor)
@@ -178,9 +148,9 @@ namespace Game.Systems.InventorySystem
 
 		private bool AddArmor(Item item)
 		{
-			foreach (var armor in Armors)
+			foreach (var armor in ArmorsByTypes)
 			{
-				if(AddArmorTo(item, armor))
+				if(AddArmorTo(item, armor.Key))
 				{
 					return true;
 				}
@@ -205,7 +175,7 @@ namespace Game.Systems.InventorySystem
 		}
 		private bool IsCanAddTo(Item item, Equip equip)
 		{
-			if (dictionarySlotTypes.TryGetValue(equip, out Type[] types))
+			if (ArmorsByTypes.TryGetValue(equip, out Type[] types))
 			{
 				for (int i = 0; i < types.Length; i++)
 				{
@@ -252,7 +222,7 @@ namespace Game.Systems.InventorySystem
 			}
 			else
 			{
-				if (weaponTo.IsTwoEmpty)
+				if (weaponTo.IsEmpty)
 				{
 					if (from.Item.IsTwoHandedWeapon)
 					{
@@ -328,12 +298,10 @@ namespace Game.Systems.InventorySystem
 		}
 
 
-		private EquipWeaponConnection GetWeapon(Equip equip)
+		private EquipWeapon GetWeapon(Equip equip)
 		{
-			if (Weapon0.Contains(equip)) return Weapon0;
-			if (Weapon1.Contains(equip)) return Weapon1;
-
-			return null;
+			if (WeaponMain.Contains(equip)) return WeaponMain;
+			return WeaponSpare;
 		}
 
 		public Data GetData()
@@ -347,10 +315,10 @@ namespace Game.Systems.InventorySystem
 				legs = Legs.Item,
 				feet = Feet.Item,
 
-				weapon00 = Weapon00.Item,
-				weapon01 = Weapon01.Item,
-				weapon10 = Weapon10.Item,
-				weapon11 = Weapon11.Item,
+				//weapon00 = Weapon00.Item,
+				//weapon01 = Weapon01.Item,
+				//weapon10 = Weapon10.Item,
+				//weapon11 = Weapon11.Item,
 
 				cloak = Cloak.Item,
 				jewelry = Jewelry.Item,
@@ -415,17 +383,33 @@ namespace Game.Systems.InventorySystem
 		}
 	}
 
-	public class EquipWeaponConnection
+	public class EquipWeapon
 	{
-		public bool IsTwoEmpty => Main.IsEmpty && Spare.IsEmpty;
-		public bool IsEmpty => Main.IsEmpty || Spare.IsEmpty;
+		public UnityAction onEquipWeaponChanged;
 
-		public Equip Main { get; set; }
-		public Equip Spare { get; set; }
+		public bool IsEmpty => Main.IsEmpty && Spare.IsEmpty;
 
-		public IInventory Inventory { get; set; }
+		public Equip Main { get; }
+		public Equip Spare { get; }
 
-		public void Swap(EquipWeaponConnection weapon)
+		public Hands Hands { get; private set; }
+		//public WeaponType WeaponType { get; private set; }
+
+		public IInventory Inventory { get; }
+
+		public EquipWeapon(Equip main, Equip spare, IInventory inventory)
+		{
+			Main = main;
+			Spare = spare;
+			Inventory = inventory;
+
+			Main.onEquipChanged += OnEquipWeaponChanged;
+			Spare.onEquipChanged += OnEquipWeaponChanged;
+
+			CheckHands();
+		}
+
+		public void Swap(EquipWeapon weapon)
 		{
 			Item main = weapon.Main.Item;
 			bool mark = weapon.Spare.Mark;
@@ -580,6 +564,43 @@ namespace Game.Systems.InventorySystem
 		{
 			return equip != null && (Main == equip || Spare == equip);
 		}
+
+
+		public WeaponDamage GetMainDamage()
+		{
+			return (Main.Item.ItemData as WeaponItemData).weaponDamage;
+		}
+		public WeaponDamage GetSpareDamage()
+		{
+			return (Spare.Item.ItemData as WeaponItemData).weaponDamage;
+		}
+
+		private void CheckHands()
+		{
+			if (Main.IsEmpty && Spare.IsEmpty)
+			{
+				Hands = Hands.None;
+			}
+			else if (!Main.IsEmpty && Spare.IsEmpty)
+			{
+				Hands = Hands.Main;
+			}
+			else if (Main.IsEmpty && !Spare.IsEmpty)
+			{
+				Hands = Hands.Spare;
+			}
+			else
+			{
+				Hands = Hands.Both;
+			}
+		}
+
+		private void OnEquipWeaponChanged()
+		{
+			CheckHands();
+
+			onEquipWeaponChanged?.Invoke();
+		}
 	}
 
 	[System.Serializable]
@@ -602,5 +623,15 @@ namespace Game.Systems.InventorySystem
 		public Item ring0;
 		public Item ring1;
 		public Item trinket;
+	}
+
+
+
+	public enum Hands : int
+	{
+		None = -1,
+		Main = 0,
+		Spare = 1,
+		Both = 2,
 	}
 }

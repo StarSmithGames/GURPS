@@ -15,6 +15,8 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 	[Header("Battle")]
 	[SerializeField] private UITurn turnPrefab;
 	[SerializeField] private GameObject turnSeparatePrefab;
+	[Space]
+	[SerializeField] private UIAction actionPrefab;
 
 	public override void InstallBindings()
 	{
@@ -29,6 +31,8 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 		BindInventoryContainer();
 
 		BindBattleSystem();
+
+		BindActionFactory();
 	}
 
 	private void BindInventoryContainer()
@@ -49,5 +53,12 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 				.FromComponentInNewPrefab(turnPrefab));
 
 		Container.BindInstance(Container.InstantiatePrefab(turnSeparatePrefab)).WithId("TurnSeparate");
+	}
+
+	private void BindActionFactory()
+	{
+		Container.BindFactory<UIAction, UIAction.Factory>()
+			.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(7)
+			.FromComponentInNewPrefab(actionPrefab));
 	}
 }

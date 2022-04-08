@@ -17,3 +17,4 @@ MonoBehaviour:
   chestPopupWindowPrefab: {fileID: 8388637833920730225, guid: de440f16446d4734b9acc39af6942dfb, type: 3}
   turnPrefab: {fileID: 5483355968189638841, guid: e7b6dd26e311b8e4cbe5edf7a9488794, type: 3}
   turnSeparatePrefab: {fileID: 522465427650173922, guid: 78aab5a83e252f3458ff3a9bdbff30ca, type: 3}
+  actionPrefab: {fileID: 5209587169930084388, guid: 7d63075b03f63fa46934720002e80a54, type: 3}

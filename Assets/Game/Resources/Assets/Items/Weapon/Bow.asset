@@ -28,4 +28,12 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
+  weaponDamage:
+    mainDamage:
+      amount: 0
+      damageType: 1
+    isHasSideDamages: 1
+    sideDamages:
+    - amount: 0
+      damageType: 10
   rangedType: 0

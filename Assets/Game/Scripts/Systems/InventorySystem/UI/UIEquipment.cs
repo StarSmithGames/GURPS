@@ -1,4 +1,4 @@
-using Game.Systems.CharacterCutomization;
+using Game.Systems.CutomizationSystem;
 
 using Sirenix.OdinInspector;
 
@@ -69,10 +69,10 @@ namespace Game.Systems.InventorySystem
 			Legs.SetEquip(currentEquipment.Legs);
 			Feet.SetEquip(currentEquipment.Feet);
 
-			Weapon00.SetEquip(currentEquipment.Weapon00);
-			Weapon01.SetEquip(currentEquipment.Weapon01);
-			Weapon10.SetEquip(currentEquipment.Weapon10);
-			Weapon11.SetEquip(currentEquipment.Weapon11);
+			Weapon00.SetEquip(currentEquipment.WeaponMain.Main);
+			Weapon01.SetEquip(currentEquipment.WeaponMain.Spare);
+			Weapon10.SetEquip(currentEquipment.WeaponSpare.Main);
+			Weapon11.SetEquip(currentEquipment.WeaponSpare.Spare);
 
 			Cloak.SetEquip(currentEquipment.Cloak);
 			Jewelry.SetEquip(currentEquipment.Jewelry);

@@ -1,19 +1,17 @@
 using EPOOutline;
 
+using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
 namespace Game.Entities
 {
-	public interface IEntity : ISheetable
+	public interface IEntity : ISheetable, IPathfinderable, IInteractable, IObservable, IAnimatable, IDamegeable
 	{
-		Transform Transform { get; }
+		GameObject GameObject { get; }
 
 		Transform CameraPivot { get; }
-
-		NavigationController Navigation { get; }
-		CharacterController3D Controller { get; }
 
 		Markers Markers { get; }
 		Outlinable Outlines { get; }

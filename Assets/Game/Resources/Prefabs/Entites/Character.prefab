@@ -2062,7 +2062,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2623157541654726733}
   - component: {fileID: 8252704713448510007}
+  - component: {fileID: 1107475620882722185}
   - component: {fileID: 1947764756966900291}
+  - component: {fileID: 3640834185947951497}
   - component: {fileID: 361113232122987903}
   - component: {fileID: 6874036480430047073}
   m_Layer: 0
@@ -2107,6 +2109,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1107475620882722185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3399236191106093815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 410e7a1f9cee7494b9a7e8fde737149f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1947764756966900291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2145,6 +2159,20 @@ MonoBehaviour:
         - {fileID: 2100000, guid: bc0fad16fffb96241ac0ecc7aeec3379, type: 2}
         - {fileID: 2100000, guid: 59dac18176b688448acf32eb19bf9115, type: 2}
         - {fileID: 2100000, guid: 9f6d98a02c2188a4891e609f5f5d7ce1, type: 2}
+--- !u!114 &3640834185947951497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3399236191106093815}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b07c6ba8ef83b3147b071ac4d0b3fab4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftHand: {fileID: 9122782204272003615}
+  rightHand: {fileID: 185876168798446478}
 --- !u!114 &361113232122987903
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4411,7 +4439,6 @@ GameObject:
   - component: {fileID: 6753425058046806692}
   - component: {fileID: 6753425058046806693}
   - component: {fileID: 6753425058046806695}
-  - component: {fileID: 6753425058046806698}
   - component: {fileID: 696508144769888773}
   m_Layer: 6
   m_Name: Character
@@ -4472,11 +4499,13 @@ MonoBehaviour:
   characterController: {fileID: 6753425058046806693}
   model: {fileID: 2623157541654726733}
   cameraPivot: {fileID: 2316238609389999535}
+  animatorControl: {fileID: 1107475620882722185}
   controller: {fileID: 361113232122987903}
   navigationController: {fileID: 696508144769888773}
   markers: {fileID: 8770400967174064253}
   outline: {fileID: 6874036480430047073}
   entity: {fileID: 6753425058046806692}
+  outfit: {fileID: 3640834185947951497}
 --- !u!114 &6753425058046806692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4489,6 +4518,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8571f4f30ee26846ac3cc759e6459b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactableSettings:
+    maxRange: 1.5
+    interaction: 0
+    position: {x: 0, y: 0, z: 0}
+  outline: {fileID: 6874036480430047073}
   data: {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
 --- !u!143 &6753425058046806693
 CharacterController:
@@ -4505,7 +4539,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.5
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!195 &6753425058046806695
@@ -4530,18 +4564,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6753425058046806698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6753425058046806699}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 410e7a1f9cee7494b9a7e8fde737149f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &696508144769888773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4556,6 +4578,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
     reachTargetThreshold: 0.1
+    minPathDistance: 1
 --- !u!1 &6759835977553681654
 GameObject:
   m_ObjectHideFlags: 0

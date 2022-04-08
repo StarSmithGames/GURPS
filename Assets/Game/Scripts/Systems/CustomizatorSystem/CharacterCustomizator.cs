@@ -10,7 +10,7 @@ using UnityEngine.Assertions;
 using UnityEngine.PlayerLoop;
 using UnityEngine.XR;
 
-namespace Game.Systems.CharacterCutomization
+namespace Game.Systems.CutomizationSystem
 {
     public class CharacterCustomizator : MonoBehaviour
     {

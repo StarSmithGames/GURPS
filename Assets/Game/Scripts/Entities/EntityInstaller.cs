@@ -15,6 +15,7 @@ namespace Game.Entities
 		[Space]
 		[SerializeField] private Transform model;
 		[SerializeField] private Transform cameraPivot;
+		[SerializeField] private AnimatorControl animatorControl;
 		[SerializeField] private CharacterController3D controller;
 		[SerializeField] private NavigationController navigationController;
 		[SerializeField] private Markers markers;
@@ -28,6 +29,7 @@ namespace Game.Entities
 			Container.BindInstance(characterController);
 			Container.BindInstance(model).WithId("Model");
 			Container.BindInstance(cameraPivot).WithId("CameraPivot");
+			Container.BindInstance(animatorControl);
 			Container.BindInstance(controller);
 			Container.BindInstance(navigationController);
 			Container.BindInstance(markers);

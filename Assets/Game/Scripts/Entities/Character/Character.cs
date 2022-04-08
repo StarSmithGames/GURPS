@@ -1,18 +1,22 @@
 using Game.Systems.BattleSystem;
+using Game.Systems.DamageSystem;
 using Game.Systems.InteractionSystem;
+using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
+using DG.Tweening;
 
 using System.Collections;
 
 using UnityEngine;
 using UnityEngine.Events;
 
+using Zenject;
+
 namespace Game.Entities
 {
-	public class Character : Entity, IBattlable
+	public partial class Character : Entity, IBattlable
 	{
 		public UnityAction onCharacterBattleStateChanged;
-		public UnityAction onCharacterUpdated;
 
 		[SerializeField] private CharacterData data;
 
@@ -30,39 +34,141 @@ namespace Game.Entities
 		}
 		private CharacterSheet characterSheet;
 
-		public bool InBattle => CurrentBattle != null;
+		public bool IsRangeAttackTest => false;
 
-		public Battle CurrentBattle { get; private set; }
-
-		private void OnDestroy()
-		{
-			if (Controller != null)
-			{
-				Controller.onTargetChanged -= OnTargetChanged;
-			}
-		}
 
 		protected override void Start()
 		{
 			base.Start();
-			Controller.onTargetChanged += OnTargetChanged;
+
+			Controller.onReachedDestination += OnReachedDestination;
 		}
 
-		public void InteractWith(IObservable observable)
+		public override void TryInteractWith(IInteractable interactable)
 		{
-			switch (observable)
+			lastInteractable = interactable;
+			if (interactable is IEntity)
 			{
-				case IInteractable interactable:
+				if (InBattle)
 				{
-					interactable.InteractFrom(this);
-					break;
+					interactable.InteractFrom(this, InternalInteraction());
+					return;
+				}
+			}
+
+			interactable.InteractFrom(this);
+		}
+
+		protected override IEnumerator InternalInteraction()
+		{
+			if (InBattle)
+			{
+				if(lastInteractable is IEntity entity)
+				{
+					if (!CurrentBattle.BattleFSM.CurrentTurn.ContainsManeuver<Attack>() && Sheet.Stats.ActionPoints.CurrentValue > 0)
+					{
+						Sequence sequence = DOTween.Sequence();
+
+						sequence
+							.Append(Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
+							.AppendCallback(() =>
+							{
+								CurrentBattle.BattleFSM.CurrentTurn.AddManeuver(new Attack(this, entity));
+							});
+					}
+					else
+					{
+						Debug.LogError("Not Enough actions");
+					}
+				}
+			}
+			yield return null;
+		}
+
+		public override Damage GetDamage()
+		{
+			CharacterSheet sheet = Sheet as CharacterSheet;
+
+			switch (sheet.Equipment.WeaponCurrent.Hands)
+			{
+				case Hands.None:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Main:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Spare:
+				{
+					return base.GetDamage();
+				}
+				case Hands.Both:
+				{
+					return base.GetDamage();
+				}
+			}
+
+			return base.GetDamage();
+		}
+	}
+
+	/// <summary>
+	/// Override Battle & Animations implementation
+	/// </summary>
+	partial class Character
+	{
+		public bool InBattle => CurrentBattle != null;
+		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
+
+		public Battle CurrentBattle { get; private set; }
+
+		public override void SetTarget(Vector3 point, float maxPathDistance = -1)
+		{
+			base.SetTarget(point, InBattle ? Sheet.Stats.Move.CurrentValue : maxPathDistance);
+		}
+
+		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
+		{
+			base.SetDestination(destination, InBattle ? Sheet.Stats.Move.CurrentValue : maxPathDistance);
+
+			if (!InBattle)
+			{
+				//Fade-In TargetMarker
+				if (Controller.IsHasTarget)
+				{
+					if (!Markers.TargetMarker.IsEnabled)
+					{
+						Markers.TargetMarker.EnableIn();
+					}
 				}
 			}
 		}
 
+
+		public void Attack(IEntity entity)
+		{
+			CharacterSheet sheet = Sheet as CharacterSheet;
+
+			if (sheet.Equipment.WeaponCurrent.Hands == Hands.None)
+			{
+				Attack(0, Random.Range(0, 3));
+			}
+			else
+			{
+				Attack(1, 0);
+			}
+		}
+
+		public void Attack(int weaponType = 0, int attackType = 0)
+		{
+			(AnimatorControl as CharacterAnimatorControl).Attack(weaponType, attackType);
+		}
+
+		
 		public bool JoinBattle(Battle battle)
 		{
-			if(CurrentBattle != null)
+			if (CurrentBattle != null)
 			{
 				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
 				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
@@ -78,9 +184,10 @@ namespace Game.Entities
 
 		public bool LeaveBattle()
 		{
-			if(CurrentBattle != null)
+			if (CurrentBattle != null)
 			{
 				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
 			}
 			CurrentBattle = null;
 
@@ -90,46 +197,38 @@ namespace Game.Entities
 		}
 
 
-		private IEnumerator Move()
+		protected override void SubscribeAnimationEvents()
 		{
-			float from = Sheet.Stats.Move.CurrentValue;
-			float to = Sheet.Stats.Move.CurrentValue - Navigation.NavMeshPathDistance;
+			var current = (AnimatorControl as CharacterAnimatorControl);
 
-			while (Navigation.NavMeshInvertedPercentRemainingDistance < 0.95f)
+			current.onAttackEvent += OnAttacked;
+
+			current.onAttackLeftHand += OnAttacked;
+			current.onAttackRightHand += OnAttacked;
+			current.onAttackKick += OnAttacked;
+		}
+		protected override void UnSubscribeAnimationEvents()
+		{
+			var current = (AnimatorControl as CharacterAnimatorControl);
+
+			if (current != null)
 			{
-				Sheet.Stats.Move.CurrentValue = Mathf.Lerp(from, to, Navigation.NavMeshInvertedPercentRemainingDistance);
-				
-				yield return null;
-			}
+				current.onAttackEvent -= OnAttacked;
 
-			Sheet.Stats.Move.CurrentValue = to;
+				current.onAttackLeftHand -= OnAttacked;
+				current.onAttackRightHand -= OnAttacked;
+				current.onAttackKick -= OnAttacked;
+			}
 		}
 
-		private void OnTargetChanged()
+		private void OnReachedDestination()
 		{
 			if (!InBattle)
 			{
-				//Fade-In Fade-Out TargetMarker
-				if (Controller.IsHasTarget)
+				//Fade-Out TargetMarker
+				if (Markers.TargetMarker.IsEnabled)
 				{
-					if (!Markers.TargetMarker.IsEnabled)
-					{
-						Markers.TargetMarker.EnableIn();
-					}
-				}
-				else
-				{
-					if (Markers.TargetMarker.IsEnabled)
-					{
-						Markers.TargetMarker.EnableOut();
-					}
-				}
-			}
-			else
-			{
-				if (Controller.IsHasTarget)
-				{
-					StartCoroutine(Move());
+					Markers.TargetMarker.EnableOut();
 				}
 			}
 		}
