@@ -11,6 +11,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 using Zenject;
+using CMF;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Game.Entities
 {
@@ -42,47 +44,6 @@ namespace Game.Entities
 			base.Start();
 
 			Controller.onReachedDestination += OnReachedDestination;
-		}
-
-		public override void TryInteractWith(IInteractable interactable)
-		{
-			lastInteractable = interactable;
-			if (interactable is IEntity)
-			{
-				if (InBattle)
-				{
-					interactable.InteractFrom(this, InternalInteraction());
-					return;
-				}
-			}
-
-			interactable.InteractFrom(this);
-		}
-
-		protected override IEnumerator InternalInteraction()
-		{
-			if (InBattle)
-			{
-				if(lastInteractable is IEntity entity)
-				{
-					if (!CurrentBattle.BattleFSM.CurrentTurn.ContainsManeuver<Attack>() && Sheet.Stats.ActionPoints.CurrentValue > 0)
-					{
-						Sequence sequence = DOTween.Sequence();
-
-						sequence
-							.Append(Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
-							.AppendCallback(() =>
-							{
-								CurrentBattle.BattleFSM.CurrentTurn.AddManeuver(new Attack(this, entity));
-							});
-					}
-					else
-					{
-						Debug.LogError("Not Enough actions");
-					}
-				}
-			}
-			yield return null;
 		}
 
 		public override Damage GetDamage()
@@ -146,7 +107,7 @@ namespace Game.Entities
 		}
 
 
-		public void Attack(IEntity entity)
+		public void Attack()
 		{
 			CharacterSheet sheet = Sheet as CharacterSheet;
 
@@ -159,10 +120,9 @@ namespace Game.Entities
 				Attack(1, 0);
 			}
 		}
-
-		public void Attack(int weaponType = 0, int attackType = 0)
+		private void Attack(int weaponType = 0, int attackType = 0)
 		{
-			(AnimatorControl as CharacterAnimatorControl).Attack(weaponType, attackType);
+			(AnimatorControl as HumanoidAnimatorControl).Attack(weaponType, attackType);
 		}
 
 		
@@ -195,31 +155,7 @@ namespace Game.Entities
 
 			return true;
 		}
-
-
-		protected override void SubscribeAnimationEvents()
-		{
-			var current = (AnimatorControl as CharacterAnimatorControl);
-
-			current.onAttackEvent += OnAttacked;
-
-			current.onAttackLeftHand += OnAttacked;
-			current.onAttackRightHand += OnAttacked;
-			current.onAttackKick += OnAttacked;
-		}
-		protected override void UnSubscribeAnimationEvents()
-		{
-			var current = (AnimatorControl as CharacterAnimatorControl);
-
-			if (current != null)
-			{
-				current.onAttackEvent -= OnAttacked;
-
-				current.onAttackLeftHand -= OnAttacked;
-				current.onAttackRightHand -= OnAttacked;
-				current.onAttackKick -= OnAttacked;
-			}
-		}
+		
 
 		private void OnReachedDestination()
 		{

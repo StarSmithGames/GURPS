@@ -1,5 +1,5 @@
 using Cinemachine;
-
+using DG.Tweening;
 using UnityEngine;
 
 using Zenject;
@@ -25,13 +25,13 @@ namespace Game.Systems.CameraSystem
 
 		private float currentZoom;
 
-		private Vector3 cameraPivotPosition;
-		private float cameraPivotYRotation;
+		private CameraPivot currentPivot;
 
+		private bool IsInBlendTransition => tacticCoroutine != null;
+		private Coroutine tacticCoroutine = null;
 		private bool isTactic = false;
 
-		private CinemachineFramingTransposer transposerMain;
-		private CinemachineFramingTransposer transposerSpare;
+		private CinemachineFramingTransposer currentTransposer;
 
 		private SignalBus signalBus;
 		private CinemachineBrain brain;
@@ -57,13 +57,11 @@ namespace Game.Systems.CameraSystem
 
 		public void Initialize()
 		{
-			transposerMain = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
-			transposerSpare = transposerMain;
-			cameraPivotPosition = transposerMain.FollowTarget.localPosition;
-			cameraPivotYRotation = transposerMain.FollowTarget.rotation.eulerAngles.y;
+			currentTransposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
 
 			SetZoom(zoomStandart);
 
+			LookAt(characterManager.CurrentParty.LeaderParty);
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 		}
 
@@ -81,42 +79,45 @@ namespace Game.Systems.CameraSystem
 
 			if (inputManager.GetKeyDown(KeyAction.TacticalCamera))
 			{
-				isTactic = !isTactic;
-				characterCamers.OrderByDescending((x) => x.Priority).First().gameObject.SetActive(!isTactic);
-				asyncManager.StartCoroutine(WaitWhileCamerasBlendes());
+				if (!IsInBlendTransition)
+				{
+					isTactic = !isTactic;
+					characterCamers.OrderByDescending((x) => x.Priority).First().gameObject.SetActive(!isTactic);
+					tacticCoroutine = asyncManager.StartCoroutine(WaitWhileCamerasBlendes());
+				}
 			}
 
 			#region Move
 			if (inputManager.GetKey(KeyAction.CameraForward))
 			{
-				transposerSpare.FollowTarget.position += transposerMain.FollowTarget.forward * movementSpeed * Time.deltaTime;
+				currentTransposer.FollowTarget.position += currentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
 			}
 			if (inputManager.GetKey(KeyAction.CameraBackward))
 			{
-				transposerSpare.FollowTarget.position += -transposerMain.FollowTarget.forward * movementSpeed * Time.deltaTime;
+				currentTransposer.FollowTarget.position += -currentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
 			}
 			if (inputManager.GetKey(KeyAction.CameraLeft))
 			{
-				transposerSpare.FollowTarget.position += -transposerMain.FollowTarget.right * movementSpeed * Time.deltaTime;
+				currentTransposer.FollowTarget.position += -currentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
 			}
 			if (inputManager.GetKey(KeyAction.CameraRight))
 			{
-				transposerSpare.FollowTarget.position += transposerMain.FollowTarget.right * movementSpeed * Time.deltaTime;
+				currentTransposer.FollowTarget.position += currentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
 			}
 			#endregion
 
 			#region Rotate
 			if (inputManager.GetKey(KeyAction.CameraRotate))
 			{
-				transposerMain.FollowTarget.Rotate(Vector3.up * Input.GetAxis("Mouse X") * rotationSpeed * 2 * Time.deltaTime, Space.World);
+				currentTransposer.FollowTarget.Rotate(Vector3.up * Input.GetAxis("Mouse X") * rotationSpeed * 2 * Time.deltaTime, Space.World);
 			}
 			if (inputManager.GetKey(KeyAction.CameraRotateLeft))
 			{
-				transposerMain.FollowTarget.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
+				currentTransposer.FollowTarget.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
 			}
 			if (inputManager.GetKey(KeyAction.CameraRotateRight))
 			{
-				transposerMain.FollowTarget.Rotate(Vector3.down * rotationSpeed * Time.deltaTime, Space.World);
+				currentTransposer.FollowTarget.Rotate(Vector3.down * rotationSpeed * Time.deltaTime, Space.World);
 			}
 			#endregion
 
@@ -149,53 +150,61 @@ namespace Game.Systems.CameraSystem
 			#endregion
 		}
 
-		public void SetFollowTarget(Transform target)
+		public void CameraToHome()
 		{
-			brain.ActiveVirtualCamera.Follow = target;
-			brain.ActiveVirtualCamera.LookAt = target;
+			DOTween.To(
+				() => currentTransposer.FollowTarget.localPosition,//from
+				(x) => currentTransposer.FollowTarget.localPosition = x,//step
+				currentPivot.settings.startPosition,//to
+				0.5f);//t
 
-			CameraToHome();
+			currentTransposer.FollowTarget.DORotate(currentPivot.settings.startRotation.eulerAngles, 0.3f);
+		}
+
+		public void SetFollowTarget(CameraPivot pivot)
+		{
+			currentPivot = pivot;
+
+			characterCamers.ForEach((x) =>
+			{
+				x.Follow = currentPivot.transform;
+				x.LookAt = currentPivot.transform;
+			});
 		}
 
 		public void LookAt(IEntity entity)
 		{
 			if (entity is Character character)
 			{
-				if (!characterManager.CurrentParty.SetLeader(character))
-				{
-					CameraToHome();
-				}
+				characterManager.CurrentParty.SetLeader(character);
 			}
-			else
-			{
-				SetFollowTarget(entity.CameraPivot);
-			}
+
+			SetFollowTarget(entity.CameraPivot);
+			CameraToHome();
 		}
 
-		public void CameraToHome()
-		{
-			transposerMain.FollowTarget.localPosition = cameraPivotPosition;
-			transposerMain.FollowTarget.rotation = Quaternion.Euler(0, cameraPivotYRotation, 0);
-		}
 
 		private void SetZoom(float zoom)
 		{
 			currentZoom = Mathf.Clamp(zoom, zoomMinMax.x, zoomMinMax.y);
 
-			transposerSpare.m_CameraDistance = currentZoom;
+			currentTransposer.m_CameraDistance = currentZoom;
 		}
-
 
 		private IEnumerator WaitWhileCamerasBlendes()
 		{
 			yield return null;
 			yield return new WaitWhile(() => !brain.ActiveBlend?.IsComplete ?? false);
-			transposerSpare = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
+
+			currentTransposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
+
+			tacticCoroutine = null;
 		}
+
 
 		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 		{
-			SetFollowTarget(signal.leader.CameraPivot);
+			LookAt(signal.leader);
 		}
 	}
 }

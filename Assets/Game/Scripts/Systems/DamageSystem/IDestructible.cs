@@ -1,4 +1,7 @@
-public interface IDestructible
+namespace Game.Systems.DamageSystem
 {
-	void Destruct();
+	public interface IDestructible
+	{
+		void Destruct();
+	}
 }

@@ -17,17 +17,17 @@ using Game.Systems.SheetSystem;
 
 namespace Game.Systems.BattleSystem
 {
-	public class BattleSystem
+	public partial class BattleSystem
 	{
 		public Turn CurrentTurn { get; private set; }
-		public IEntity CurrentInitiator { get; private set; }
+		public IBattlable CurrentInitiator { get; private set; }
 		public Character CachedLeader { get; private set; }
 
 		public bool IsBattleProcess => battleCoroutine != null;
 		private Coroutine battleCoroutine = null;
+		private bool terminateBattle = false;
 
 		private bool isSkipTurn = false;
-		private bool isBattleEnd = false;
 
 		private SignalBus signalBus;
 		private Settings settings;
@@ -60,17 +60,19 @@ namespace Game.Systems.BattleSystem
 		public void StartBattle(List<IBattlable> entities)
 		{
 			isSkipTurn = false;
-			isBattleEnd = false;
+			terminateBattle = false;
 
 			CachedLeader = characterManager.CurrentParty.LeaderParty;
 
 			uiManager.Battle.Messages.ShowCommenceBattle();
-			uiManager.Battle.SkipTurn.ButtonPointer.onClick.AddListener(SkipTurn);
+			uiManager.Battle.SkipTurn.ButtonPointer.onClick.AddListener(StartSkipTurn);
 			uiManager.Battle.RunAway.ButtonPointer.onClick.AddListener(StopBattle);
 
 			localBattleTest = new Battle(entities);
 			localBattleTest.onNextTurn += OnTurnChanged;
 			localBattleTest.onNextRound += uiManager.Battle.Messages.ShowNewRound;
+			localBattleTest.onEntitiesChanged += OnEntitiesChanged;
+
 			battleManager.AddBattle(localBattleTest);
 			localBattleTest.Initialization();
 
@@ -84,9 +86,6 @@ namespace Game.Systems.BattleSystem
 
 		public void StopBattle()
 		{
-			if ((CurrentInitiator as IBattlable).InAction) return;
-
-
 			if (IsBattleProcess)
 			{
 				asyncManager.StopCoroutine(battleCoroutine);
@@ -97,6 +96,13 @@ namespace Game.Systems.BattleSystem
 			battleManager.RemoveBattle(localBattleTest);
 			localBattleTest.onNextTurn -= OnTurnChanged;
 			localBattleTest.onNextRound -= uiManager.Battle.Messages.ShowNewRound;
+			localBattleTest.onEntitiesChanged -= OnEntitiesChanged;
+
+			if (CurrentInitiator != null)
+			{
+				CurrentInitiator.onDestinationChanged -= OnInitiatorDestinationChanged;
+				CurrentInitiator.Sheet.Stats.ActionPoints.onStatChanged -= OnInitiatorActionPointsChanged;
+			}
 
 			uiManager.Battle.Messages.HideTurnInforamtion();
 			uiManager.Battle.SkipTurn.ButtonPointer.onClick.RemoveAllListeners();
@@ -113,7 +119,7 @@ namespace Game.Systems.BattleSystem
 
 			localBattleTest.SetState(BattleState.Battle);
 
-			while (true)
+			while (!terminateBattle)
 			{
 				UpdateStates();
 				UpdateInitiatorTurn();
@@ -121,17 +127,10 @@ namespace Game.Systems.BattleSystem
 				yield return InitiatorTurn();
 			}
 
-			yield return new WaitForSeconds(1.5f);
+			yield return WaitInitiatorAction();
+			yield return null;//? initiator stuck without frame
 
 			StopBattle();
-		}
-
-
-		private void SkipTurn()
-		{
-			if ((CurrentInitiator as IBattlable).InAction) return;
-
-			isSkipTurn = true;
 		}
 
 		private void UpdateStates()
@@ -141,23 +140,26 @@ namespace Game.Systems.BattleSystem
 
 			localBattleTest.Entities.ForEach((x) =>
 			{
-				x.Freeze(!isEndBattle);
-
-				if (characterManager.CurrentParty.Characters.Contains(x))
+				if (!isEndBattle)
 				{
-					if (x == initiator)
+					if (characterManager.CurrentParty.Characters.Contains(x))
 					{
-						x.Markers.SetFollowMaterial(MaterialType.Leader);
+						if (x == initiator)
+						{
+							x.Markers.SetFollowMaterial(MaterialType.Leader);
+						}
+						else
+						{
+							x.Markers.SetFollowMaterial(MaterialType.Companion);
+						}
 					}
 					else
 					{
-						x.Markers.SetFollowMaterial(MaterialType.Companion);
+						x.Markers.SetFollowMaterial(MaterialType.Enemy);
 					}
 				}
-				else
-				{
-					x.Markers.SetFollowMaterial(MaterialType.Enemy);
-				}
+
+				x.Freeze(!isEndBattle);
 			});
 
 			if(localBattleTest.CurrentState == BattleState.Battle)
@@ -185,27 +187,36 @@ namespace Game.Systems.BattleSystem
 
 			if (isMineTurn)
 			{
+				if (CurrentInitiator.Sheet.Conditions.IsContains<Death>())
+				{
+					isSkipTurn = true;
+				}
+
 				while (isMineTurn && !isSkipTurn)
 				{
+					if (terminateBattle)
+					{
+						yield break;
+					}
 					yield return null;
 				}
 				isSkipTurn = false;
-
-				if (CurrentTurn.Maneuvers.Count == 0 && CurrentInitiator.Sheet.Stats.Move.PercentValue == 1f)
-				{
-					CurrentTurn.AddManeuver(new Inaction(CurrentInitiator));
-				}
 			}
 			else
 			{
-				CurrentTurn.AddManeuver(new Wait(CurrentInitiator));
+				Debug.LogError("ENEMY Skip");
 				yield return new WaitForSeconds(3f);
 			}
 
 			localBattleTest.NextTurn();
 		}
 
-		#region StatMove
+		private IEnumerator WaitInitiatorAction()
+		{
+			yield return new WaitWhile(() => CurrentInitiator.InAction);
+		}
+
+		#region Stats Move, ActionsPoints 
 		private IEnumerator InitiatorSpendMove()
 		{
 			IStat stat = CurrentInitiator.Sheet.Stats.Move;
@@ -227,10 +238,10 @@ namespace Game.Systems.BattleSystem
 
 		private void InitiatorRecoveMove(bool isAnimated = true)
 		{
-			if (CurrentInitiator.Sheet.Stats.Move.CurrentValue < CurrentInitiator.Sheet.Stats.Move.MaxValue)
-			{
-				IStatBar stat = CurrentInitiator.Sheet.Stats.Move;
+			IStatBar stat = CurrentInitiator.Sheet.Stats.Move;
 
+			if (stat.CurrentValue < stat.MaxValue)
+			{
 				if (isAnimated)
 				{
 					float from = stat.CurrentValue;
@@ -244,21 +255,45 @@ namespace Game.Systems.BattleSystem
 				}
 			}
 		}
+
+		private void InitiatorRecoveActionsPoints()
+		{
+			var stat = CurrentInitiator.Sheet.Stats.ActionPoints;
+			stat.CurrentValue = stat.MaxValue;
+
+		}
 		#endregion
+
+		private void OnEntitiesChanged()
+		{
+			int countEnemies = 0;
+			localBattleTest.Entities.ForEach((x) =>
+			{
+				if (!characterManager.CurrentParty.Characters.Contains(x))
+				{
+					countEnemies++;
+				}
+			});
+
+			terminateBattle = countEnemies == 0;
+		}
+
 
 		private void OnTurnChanged()
 		{
 			if(CurrentInitiator != null)
 			{
 				CurrentInitiator.onDestinationChanged -= OnInitiatorDestinationChanged;
+				CurrentInitiator.Sheet.Stats.ActionPoints.onStatChanged -= OnInitiatorActionPointsChanged;
 			}
 			CurrentTurn = localBattleTest.BattleFSM.CurrentTurn;
 			CurrentInitiator = CurrentTurn.Initiator;
 
-			CurrentInitiator.Sheet.Stats.ActionPoints.CurrentValue = CurrentInitiator.Sheet.Stats.ActionPoints.MaxValue;//initiator recove actions
+			InitiatorRecoveActionsPoints();
 			InitiatorRecoveMove();
 
 			CurrentInitiator.onDestinationChanged += OnInitiatorDestinationChanged;
+			CurrentInitiator.Sheet.Stats.ActionPoints.onStatChanged += OnInitiatorActionPointsChanged;
 		}
 
 		private void OnInitiatorDestinationChanged()
@@ -272,16 +307,54 @@ namespace Game.Systems.BattleSystem
 			}
 		}
 
+		private void OnInitiatorActionPointsChanged()
+		{
+			if (settings.isInfinityActionStat)
+			{
+				var stat = CurrentInitiator.Sheet.Stats.ActionPoints;
+				if (stat.CurrentValue != stat.MaxValue)
+				{
+					stat.CurrentValue = stat.MaxValue;
+				}
+			}
+		}
+
 
 		[System.Serializable]
 		public class Settings
 		{
 			public bool isInfinityMoveStat = false;
+			public bool isInfinityActionStat = false;
 		}
 	}
 
+	partial class BattleSystem
+	{
+		public bool IsSkipProcess => skipCoroutine != null;
+		private Coroutine skipCoroutine = null;
+
+		private IEnumerator SkipTurn()
+		{
+			yield return WaitInitiatorAction();
+			
+			isSkipTurn = true;
+
+			skipCoroutine = null;
+		}
+
+		private void StartSkipTurn()
+		{
+			if (IsSkipProcess) return;
+
+			skipCoroutine = asyncManager.StartCoroutine(SkipTurn());
+		}
+	}
+
+
+
 	public class Battle
 	{
+		public UnityAction onEntitiesChanged;
 		public UnityAction onBattleUpdated;
 
 		public UnityAction onBattleStateChanged;
@@ -305,6 +378,7 @@ namespace Game.Systems.BattleSystem
 			Entities.ForEach((x) =>
 			{
 				x.Sheet.Stats.RecoveMove();
+				x.onDied += OnDied;
 				x.JoinBattle(this);
 			});
 
@@ -325,6 +399,7 @@ namespace Game.Systems.BattleSystem
 			Entities.ForEach((x) =>
 			{
 				x.LeaveBattle();
+				x.onDied -= OnDied;
 			});
 		}
 
@@ -360,6 +435,37 @@ namespace Game.Systems.BattleSystem
 			onBattleUpdated?.Invoke();
 			return this;
 		}
+
+
+		private void OnDied(IEntity entity)
+		{
+			if (Entities.Contains(entity))
+			{
+				foreach (var round in BattleFSM.Rounds)
+				{
+					for (int i = round.Turns.Count - 1; i >= 0; i--)
+					{
+						var turn = round.Turns[i];
+
+						if (turn.Initiator == entity)
+						{
+							if (BattleFSM.CurrentTurn == turn)
+							{
+								NextTurn();
+							}
+
+							if (round.Remove(turn))
+							{
+								onBattleUpdated?.Invoke();
+							}
+						}
+					}
+				}
+				
+				Entities.Remove(entity as IBattlable);
+				onEntitiesChanged?.Invoke();
+			}
+		}
 	}
 
 	public class BattleFSM
@@ -368,8 +474,8 @@ namespace Game.Systems.BattleSystem
 
 		public List<Round> Rounds { get; private set; }
 
-		public Round CurrentRound => Rounds.First();
-		public Turn CurrentTurn => CurrentRound.Turns[0];//max 17 in one round + 1 separator = 18
+		public Round CurrentRound => Rounds.FirstOrDefault();
+		public Turn CurrentTurn => CurrentRound.Turns.FirstOrDefault();//max 17 in one round + 1 separator = 18
 
 		public BattleFSM()
 		{
@@ -412,6 +518,17 @@ namespace Game.Systems.BattleSystem
 			Turns = turns;
 		}
 
+		public bool Remove(Turn turn)
+		{
+			if (Turns.Contains(turn))
+			{
+				Turns.Remove(turn);
+				return true;
+			}
+
+			return false;
+		}
+
 		public Round Shuffle()
 		{
 			Turns = Turns.OrderBy((x) => Guid.NewGuid()).ToList();//initiative
@@ -433,24 +550,11 @@ namespace Game.Systems.BattleSystem
 	
 	public class Turn : ICopyable<Turn>
 	{
-		public List<IManeuver> Maneuvers { get; private set; }
 		public IBattlable Initiator { get; private set; }
 
 		public Turn(IBattlable entity)
 		{
-			Maneuvers = new List<IManeuver>();
 			Initiator = entity;
-		}
-
-		public void AddManeuver(IManeuver maneuver)
-		{
-			Maneuvers.Add(maneuver);
-			maneuver.Execute();
-		}
-
-		public bool ContainsManeuver<T>() where T : IManeuver
-		{
-			return Maneuvers.OfType<T>().Any();
 		}
 
 		public Turn Copy()

@@ -103,6 +103,12 @@ namespace Game.Entities
 						Markers.FollowMarker.Enable(true);
 						break;
 					}
+					case BattleState.EndBattle:
+					{
+						Markers.FollowMarker.Enable(false);
+
+						break;
+					}
 				}
 			}
 			else
@@ -111,7 +117,12 @@ namespace Game.Entities
 			}
 		}
 
+
 		public void Attack(IEntity entity)
+		{
+		}
+
+		public void Attack()
 		{
 		}
 	}

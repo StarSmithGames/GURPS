@@ -95,10 +95,8 @@ public class UIAvatars : MonoBehaviour
 
 	private void OnAvatarDoubleClicked(UIAvatar avatar)
 	{
-		int index = avatars.IndexOf(avatar);
-		var character = characterManager.CurrentParty.Characters[index];
-
-		cameraController.SetFollowTarget(character.CameraPivot);
+		OnAvatarClicked(avatar);
+		cameraController.CameraToHome();
 	}
 
 	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)

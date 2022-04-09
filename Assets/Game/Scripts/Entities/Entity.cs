@@ -4,6 +4,7 @@ using CMF;
 using EPOOutline;
 
 using Game.Entities;
+using Game.Systems.CameraSystem;
 using Game.Systems.DamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
@@ -18,14 +19,18 @@ namespace Game.Entities
 {
 	public abstract partial class Entity : InteractableModel, IEntity
 	{
-		public GameObject GameObject => gameObject;
+		public MonoBehaviour MonoBehaviour => this;
 
 		public virtual ISheet Sheet { get; private set; }
+
+		public AnimatorControl AnimatorControl { get; private set; }
 
 		public Markers Markers { get; private set; }
 		public Outlinable Outlines { get; private set; }
 
-		public Transform CameraPivot { get; private set; }
+		public CameraPivot CameraPivot { get; private set; }
+
+		public IAction LastInteractionAction { get; set; }
 
 		protected SignalBus signalBus;
 		protected UIManager uiManager;
@@ -38,7 +43,7 @@ namespace Game.Entities
 			CharacterController3D controller,
 			Markers markerController,
 			Outlinable outline,
-			[Inject(Id = "CameraPivot")] Transform cameraPivot,
+			CameraPivot cameraPivot,
 			UIManager uiManager)
 		{
 			this.signalBus = signalBus;
@@ -56,19 +61,14 @@ namespace Game.Entities
 
 		protected virtual void OnDestroy()
 		{
-			UnSubscribeAnimationEvents();
 		}
 
 		protected virtual void Start()
 		{
-			SubscribeAnimationEvents();
-
 			Outlines.enabled = false;
 
 			ResetMarkers();
 		}
-
-		public virtual void TryInteractWith(IInteractable interactable) { }
 
 		public void Freeze(bool trigger)
 		{
@@ -109,46 +109,6 @@ namespace Game.Entities
 			Assert.IsNotNull(Outlines, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(CameraPivot, $"Entity {gameObject.name} lost component.");
 		}
-
-	}
-
-	/// <summary>
-	/// IAnimatable implementation
-	/// <summary>
-	partial class Entity : InteractableModel
-	{
-		public AnimatorControl AnimatorControl { get; private set; }
-		
-		public virtual void Attack(int attackType = 0)
-		{
-			AnimatorControl.Attack(attackType);
-		}
-		public void Hit(int type = -1)
-		{
-			AnimatorControl.Hit(type);
-		}
-
-		protected virtual void SubscribeAnimationEvents()
-		{
-			AnimatorControl.onAttackEvent += OnAttacked;
-		}
-		protected virtual void UnSubscribeAnimationEvents()
-		{
-			if (AnimatorControl != null)
-			{
-				AnimatorControl.onAttackEvent -= OnAttacked;
-			}
-		}
-
-		/// <summary>
-		/// This Entity attacked lastInteractable
-		/// </summary>
-		protected void OnAttacked()
-		{
-			var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
-			(lastInteractable as IAnimatable).Hit(Random.Range(0, 2));//animation
-			(lastInteractable as IDamegeable).ApplyDamage(GetDamage());
-		}
 	}
 
 	//IPathfinderable implementation
@@ -177,9 +137,17 @@ namespace Game.Entities
 		}
 	}
 
-	//IDamegeable implementation
+	//IDamegeable, IKillable implementation
 	partial class Entity
 	{
+		public event UnityAction<IEntity> onDied;
+
+		public void Kill()
+		{
+			Controller.Enable(false);
+			onDied?.Invoke(this);
+		}
+
 		public virtual Damage GetDamage()
 		{
 			return new Damage()

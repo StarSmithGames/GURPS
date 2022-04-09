@@ -51,6 +51,7 @@ namespace Game.Systems.CameraSystem
 		private CharacterManager characterManager;
 		private Settings settings;
 		private UIManager uiManager;
+		private InteractionHandler interactionHandler;
 
 		public CameraVision(SignalBus signalBus,
 			CinemachineBrain brain,
@@ -58,7 +59,8 @@ namespace Game.Systems.CameraSystem
 			GameManager gameManager,
 			CharacterManager characterManager,
 			GlobalSettings settings,
-			UIManager uiManager)
+			UIManager uiManager,
+			InteractionHandler interactionHandler)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
@@ -67,6 +69,7 @@ namespace Game.Systems.CameraSystem
 			this.characterManager = characterManager;
 			this.settings = settings.cameraVision;
 			this.uiManager = uiManager;
+			this.interactionHandler = interactionHandler;
 		}
 
 		public void Initialize()
@@ -139,12 +142,15 @@ namespace Game.Systems.CameraSystem
 			{
 				if (CurrentObserve != null)
 				{
-					//Interaction
-					if (inputManager.IsLeftMouseButtonDown())
+					if(leader != CurrentObserve)
 					{
-						if(CurrentObserve is IInteractable interactable)
+						//Interaction
+						if (inputManager.IsLeftMouseButtonDown())
 						{
-							leader.TryInteractWith(interactable);
+							if (CurrentObserve is IInteractable interactable)
+							{
+								interactionHandler.Interact(leader, interactable);
+							}
 						}
 					}
 				}

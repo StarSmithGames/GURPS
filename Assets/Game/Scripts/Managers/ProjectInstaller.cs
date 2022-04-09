@@ -1,5 +1,6 @@
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
+using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 
 using UnityEngine;
@@ -21,5 +22,7 @@ public class ProjectInstaller : MonoInstaller
 		Container.BindInstance(globalSettings);
 
 		CharacterManagerInstaller.Install(Container);
+
+		InteractionInstaller.Install(Container);
 	}
 }

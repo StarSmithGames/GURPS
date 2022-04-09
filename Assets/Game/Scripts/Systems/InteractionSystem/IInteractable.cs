@@ -13,7 +13,5 @@ namespace Game.Systems.InteractionSystem
 		bool IsInteractorInRange(IEntity entity);
 
 		Vector3 GetIteractionPosition(IEntity entity);
-
-		void InteractFrom(IEntity entity, IEnumerator interaction = null);
 	}
 }

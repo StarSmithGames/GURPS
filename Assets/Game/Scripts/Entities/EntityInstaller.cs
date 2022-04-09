@@ -1,5 +1,7 @@
 using EPOOutline;
 
+using Game.Systems.CameraSystem;
+
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,7 +16,7 @@ namespace Game.Entities
 		[SerializeField] private CharacterController characterController;
 		[Space]
 		[SerializeField] private Transform model;
-		[SerializeField] private Transform cameraPivot;
+		[SerializeField] private CameraPivot cameraPivot;
 		[SerializeField] private AnimatorControl animatorControl;
 		[SerializeField] private CharacterController3D controller;
 		[SerializeField] private NavigationController navigationController;
@@ -28,7 +30,7 @@ namespace Game.Entities
 			Container.BindInstance(navMeshAgent);
 			Container.BindInstance(characterController);
 			Container.BindInstance(model).WithId("Model");
-			Container.BindInstance(cameraPivot).WithId("CameraPivot");
+			Container.BindInstance(cameraPivot);
 			Container.BindInstance(animatorControl);
 			Container.BindInstance(controller);
 			Container.BindInstance(navigationController);
