@@ -27,6 +27,7 @@ namespace Game.Systems.BattleSystem
         [Space]
         [SerializeField] private Vector2 defaultSize = new Vector2(80, 80);
         [SerializeField] private Vector2 selectedSize = new Vector2(100, 100);
+        [SerializeField] private Vector2 diselectedSize = new Vector2(60, 60);
 
         public IEntity CurrentEntity { get; private set; }
 

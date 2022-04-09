@@ -65,7 +65,7 @@ namespace Game.Entities
 			{
 				if(lastInteractable is IEntity entity)
 				{
-					if (!CurrentBattle.BattleFSM.CurrentTurn.ContainsManeuver<Attack>() && Sheet.Stats.ActionPoints.CurrentValue > 0)
+					if (Sheet.Stats.ActionPoints.CurrentValue > 0)
 					{
 						Sequence sequence = DOTween.Sequence();
 
@@ -73,7 +73,8 @@ namespace Game.Entities
 							.Append(Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
 							.AppendCallback(() =>
 							{
-								CurrentBattle.BattleFSM.CurrentTurn.AddManeuver(new Attack(this, entity));
+								Sheet.Stats.ActionPoints.CurrentValue -= 1;
+								Attack(entity);
 							});
 					}
 					else

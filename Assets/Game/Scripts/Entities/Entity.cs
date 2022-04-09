@@ -4,6 +4,7 @@ using CMF;
 using EPOOutline;
 
 using Game.Entities;
+using Game.Systems.CameraSystem;
 using Game.Systems.DamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
@@ -18,6 +19,9 @@ namespace Game.Entities
 {
 	public abstract partial class Entity : InteractableModel, IEntity
 	{
+		public event UnityAction<IEntity> onDeath;
+
+
 		public GameObject GameObject => gameObject;
 
 		public virtual ISheet Sheet { get; private set; }
@@ -25,7 +29,7 @@ namespace Game.Entities
 		public Markers Markers { get; private set; }
 		public Outlinable Outlines { get; private set; }
 
-		public Transform CameraPivot { get; private set; }
+		public CameraPivot CameraPivot { get; private set; }
 
 		protected SignalBus signalBus;
 		protected UIManager uiManager;
@@ -38,7 +42,7 @@ namespace Game.Entities
 			CharacterController3D controller,
 			Markers markerController,
 			Outlinable outline,
-			[Inject(Id = "CameraPivot")] Transform cameraPivot,
+			CameraPivot cameraPivot,
 			UIManager uiManager)
 		{
 			this.signalBus = signalBus;
@@ -111,7 +115,10 @@ namespace Game.Entities
 			{
 				if (!Sheet.Conditions.IsContains<Death>())
 				{
-					Sheet.Conditions.Add(new Death(this));
+					if (Sheet.Conditions.Add(new Death(this)))
+					{
+						onDeath?.Invoke(this);
+					}
 				}
 			}
 		}

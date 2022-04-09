@@ -41,6 +41,7 @@ namespace Game.Managers.CharacterManager
 		{
 			this.signalBus = signalBus;
 			Characters = characters;
+			Characters.Shuffle();
 		}
 
 		public bool SetLeader(Character character)

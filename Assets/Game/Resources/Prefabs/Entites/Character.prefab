@@ -1339,6 +1339,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2316238609389999535}
+  - component: {fileID: 8847653113414792107}
   m_Layer: 6
   m_Name: CameraPivot
   m_TagString: Untagged
@@ -1354,12 +1355,27 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2316238609389999532}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.8000001, z: 0}
+  m_LocalPosition: {x: 0, y: 1.8, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6750769573961507301}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8847653113414792107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2316238609389999532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 326eb6ec61c9fcb459699a45caf7360b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings:
+    startPosition: {x: 0, y: 1.8, z: -0.5}
+    startRotation: {x: -0, y: -0, z: -0, w: 1}
 --- !u!1 &2336190229628388455
 GameObject:
   m_ObjectHideFlags: 0
@@ -4498,7 +4514,7 @@ MonoBehaviour:
   navMeshAgent: {fileID: 6753425058046806695}
   characterController: {fileID: 6753425058046806693}
   model: {fileID: 2623157541654726733}
-  cameraPivot: {fileID: 2316238609389999535}
+  cameraPivot: {fileID: 8847653113414792107}
   animatorControl: {fileID: 1107475620882722185}
   controller: {fileID: 361113232122987903}
   navigationController: {fileID: 696508144769888773}

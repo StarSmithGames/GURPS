@@ -717,6 +717,7 @@ MonoBehaviour:
   <HPBar>k__BackingField: {fileID: 4357737179600750646}
   defaultSize: {x: 80, y: 80}
   selectedSize: {x: 100, y: 100}
+  diselectedSize: {x: 60, y: 60}
 --- !u!1 &5893868491209867655
 GameObject:
   m_ObjectHideFlags: 0

@@ -33,7 +33,7 @@ namespace Game.Systems.SheetSystem
 
 		public bool IsContains<T>(T condition) where T : ICondition
 		{
-			return !CurrentConditions.Contains(condition);
+			return CurrentConditions.Contains(condition);
 		}
 		public bool IsContains<T>() where T : ICondition
 		{
