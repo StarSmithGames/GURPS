@@ -15,8 +15,6 @@ namespace Game.Entities
 		IInteractable, IObservable,
 		IDamegeable, IKillable
 	{
-		public event UnityAction<IEntity> onDeath;
-
 		MonoBehaviour MonoBehaviour { get; }
 
 		CameraPivot CameraPivot { get; }

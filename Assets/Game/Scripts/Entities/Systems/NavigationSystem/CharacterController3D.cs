@@ -106,6 +106,15 @@ public class CharacterController3D : MonoBehaviour
 		}
 	}
 
+	public void Enable(bool trigger)
+	{
+		navMeshAgent.enabled = trigger;
+		characterController.enabled = trigger;
+		navigationController.enabled = trigger;
+
+		enabled = trigger;
+	}
+
 	public bool SetDestination(Vector3 destination, float maxPathDistance = -1)
 	{
 		if (IsFreezed || IsWaitAnimation) return false;

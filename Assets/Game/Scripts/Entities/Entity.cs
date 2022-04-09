@@ -19,8 +19,6 @@ namespace Game.Entities
 {
 	public abstract partial class Entity : InteractableModel, IEntity
 	{
-		public event UnityAction<IEntity> onDeath;
-
 		public MonoBehaviour MonoBehaviour => this;
 
 		public virtual ISheet Sheet { get; private set; }
@@ -142,11 +140,12 @@ namespace Game.Entities
 	//IDamegeable, IKillable implementation
 	partial class Entity
 	{
-		public event UnityAction onDied;
+		public event UnityAction<IEntity> onDied;
 
 		public void Kill()
 		{
-			onDied?.Invoke();
+			Controller.Enable(false);
+			onDied?.Invoke(this);
 		}
 
 		public virtual Damage GetDamage()
