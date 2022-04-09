@@ -10,7 +10,7 @@ namespace Game.Systems.InteractionSystem
 	{
 		bool IsInteractable { get; }
 
-		bool IsInteractorInRange(IEntity entity);
+		bool IsInRange(IEntity entity);
 
 		Vector3 GetIteractionPosition(IEntity entity);
 	}

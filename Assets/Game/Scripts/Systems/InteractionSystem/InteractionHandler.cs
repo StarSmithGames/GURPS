@@ -44,7 +44,6 @@ namespace Game.Systems.InteractionSystem
 					if (from.Sheet.Stats.ActionPoints.CurrentValue > 0)
 					{
 						from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
-
 						entity.LastInteractionAction = new Attack(from, to);
 					}
 					else
@@ -80,7 +79,7 @@ namespace Game.Systems.InteractionSystem
 
 		private IEnumerator PreInteraction()
 		{
-			if (!interactable.IsInteractorInRange(entity))
+			if (!interactable.IsInRange(entity))
 			{
 				entity.SetDestination(interactable.GetIteractionPosition(entity));
 
@@ -215,7 +214,7 @@ namespace Game.Systems.InteractionSystem
 
 				while (container.IsOpened)
 				{
-					if (!interactable.IsInteractorInRange(entity))
+					if (!interactable.IsInRange(entity))
 					{
 						container.Close();
 					}
