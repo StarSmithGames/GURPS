@@ -49,6 +49,8 @@ public class HumanoidAnimatorControl : AnimatorControl
 
 	public virtual void Attack(int weaponType = 0, int attackType = 0)
 	{
+		IsAttackProccess = true;
+		
 		animator.SetInteger(weaponTypeHash, weaponType);
 		animator.SetInteger(attackTypeHash, attackType);
 		StartCoroutine(AttackProccess());
@@ -56,8 +58,6 @@ public class HumanoidAnimatorControl : AnimatorControl
 
 	private IEnumerator AttackProccess()
 	{
-		isAttackProccess = true;
-
 		yield return WaitWhileAnimation("Armature|IdleAction");
 
 		animator.SetTrigger(attackHash);
@@ -80,7 +80,7 @@ public class HumanoidAnimatorControl : AnimatorControl
 
 		yield return WaitWhileAnimation("Armature|IdleAction");
 
-		isAttackProccess = false;
+		IsAttackProccess = false;
 	}
 
 	#region AnimationEvents

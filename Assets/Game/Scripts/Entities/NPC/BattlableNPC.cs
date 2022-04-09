@@ -111,7 +111,12 @@ namespace Game.Entities
 			}
 		}
 
+
 		public void Attack(IEntity entity)
+		{
+		}
+
+		public void Attack()
 		{
 		}
 	}

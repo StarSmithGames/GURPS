@@ -1,4 +1,9 @@
-public interface IDamegeable
+
+namespace Game.Systems.DamageSystem
 {
-	void ApplyDamage<T>(T value) where T : struct;
+	public interface IDamegeable
+	{
+		void ApplyDamage<T>(T value) where T : struct;
+		Damage GetDamage();
+	}
 }

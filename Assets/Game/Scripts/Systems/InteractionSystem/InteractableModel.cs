@@ -19,8 +19,7 @@ namespace Game.Systems.InteractionSystem
 
 		public bool IsInteractable => outline.enabled;
 
-		protected IInteractable lastInteractable = null;
-		protected IEntity currentInteractor = null;
+		protected IEntity interactorInitiator = null;//тот кто взаимодействует с этим объектом
 
 		private void Awake()
 		{
@@ -52,64 +51,6 @@ namespace Game.Systems.InteractionSystem
 			return Vector3.Distance(transform.position, entity.Transform.position) <= interactableSettings.maxRange + 0.1f;
 		}
 
-		public virtual void InteractFrom(IEntity entity, IEnumerator interaction = null)
-		{
-			if (currentInteractor != null || entity == null) return;
-
-			currentInteractor = entity;
-
-
-			StartCoroutine(PreInteraction(interaction));
-		}
-
-		private IEnumerator PreInteraction(IEnumerator ExternalInteraction = null)
-		{
-			outline.enabled = false;
-			if (!IsInteractorInRange(currentInteractor))
-			{
-				currentInteractor.SetDestination(GetIteractionPosition(currentInteractor));
-
-				Vector3 lastDestination = currentInteractor.Navigation.CurrentNavMeshDestination;
-				bool needBreak = false;
-
-				yield return new WaitWhile(() =>
-				{
-					if (lastDestination != currentInteractor.Navigation.CurrentNavMeshDestination)
-					{
-						needBreak = true;
-						return false;
-					}
-					return !currentInteractor.Navigation.NavMeshAgent.IsReachedDestination();
-				});
-
-				if (needBreak)
-				{
-					currentInteractor = null;
-					yield break;
-				}
-			}
-
-			if (IsInteractorInRange(currentInteractor))
-			{
-				if (ExternalInteraction != null)
-				{
-					yield return ExternalInteraction;
-				}
-				else
-				{
-					yield return InternalInteraction();
-				}
-			}
-
-			currentInteractor = null;
-		}
-
-		protected virtual IEnumerator InternalInteraction()
-		{
-			yield return null;
-		}
-
-
 		#region Observe
 		public virtual void StartObserve()
 		{
@@ -134,6 +75,7 @@ namespace Game.Systems.InteractionSystem
 				Gizmos.DrawWireSphere(transform.position, interactableSettings.maxRange);
 			}
 		}
+
 
 
 		[System.Serializable]

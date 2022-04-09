@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : InteractableModel, ISheetable/*, IDamegeable*/
+	public class ContainerModel : InteractableModel, IContainer, ISheetable/*, IDamegeable*/
 	{
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
 
@@ -67,23 +67,8 @@ namespace Game.Systems.InventorySystem
 		}
 		#endregion
 
-		#region Interaction
-		protected override IEnumerator InternalInteraction()
-		{
-			OpenWindow();
-
-			while (IsOpened)
-			{
-				if (!IsInteractorInRange(currentInteractor))
-				{
-					CloseWindow();
-				}
-				yield return null;
-			}
-		}
-		#endregion
-
-		private void OpenWindow()
+		#region OpenClose
+		public void Open()
 		{
 			containerWindow?.Hide();
 
@@ -91,8 +76,7 @@ namespace Game.Systems.InventorySystem
 			containerWindow.onTakeAll += OnTakeAll;
 			containerWindow.ShowPopup();
 		}
-
-		private void CloseWindow()
+		public void Close()
 		{
 			if(containerWindow != null)
 			{
@@ -101,6 +85,7 @@ namespace Game.Systems.InventorySystem
 			}
 			containerWindow = null;
 		}
+		#endregion
 
 		private void OnTakeAll()
 		{

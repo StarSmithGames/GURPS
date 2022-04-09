@@ -72,13 +72,7 @@ namespace Game.Systems.SheetSystem
 
 	public interface ICondition { }
 
-	public class Death : ICondition
-	{
-		public Death(IEntity entity)
-		{
-			entity.AnimatorControl.Death();
-		}
-	}
+	public class Death : ICondition { }
 
 	public class Unconscious : ICondition
 	{

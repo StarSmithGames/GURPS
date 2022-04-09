@@ -44,6 +44,8 @@ namespace Game.Systems.VFX
 		}
 		public void EnableOut()
 		{
+			IsEnabled = false;
+
 			Sequence sequence = DOTween.Sequence();
 
 			sequence

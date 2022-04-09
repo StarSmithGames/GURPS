@@ -1,4 +1,11 @@
-public interface IKillable
+using UnityEngine.Events;
+
+namespace Game.Systems.DamageSystem
 {
-	void Kill();
+	public interface IKillable
+	{
+		public event UnityAction onDied;
+
+		void Kill();
+	}
 }

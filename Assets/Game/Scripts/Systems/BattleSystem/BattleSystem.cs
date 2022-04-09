@@ -177,8 +177,6 @@ namespace Game.Systems.BattleSystem
 			IEntity initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
 			bool isMineTurn = characterManager.CurrentParty.Characters.Contains(initiator);
 
-			Debug.LogError(initiator.GameObject.name);
-
 			cameraController.LookAt(initiator);
 
 			uiManager.Battle.Messages.ShowTurnInforamtion(isMineTurn ? "YOU TURN" : "ENEMY TURN");
@@ -400,18 +398,19 @@ namespace Game.Systems.BattleSystem
 		{
 			if (Entities.Contains(entity))
 			{
-				while(BattleFSM.CurrentTurn.Initiator == entity)
-				{
-					NextTurn();
-				}
-
 				foreach (var round in BattleFSM.Rounds)
 				{
 					for (int i = round.Turns.Count - 1; i >= 0; i--)
 					{
 						var turn = round.Turns[i];
+
 						if (turn.Initiator == entity)
 						{
+							if (BattleFSM.CurrentTurn == turn)
+							{
+								NextTurn();
+							}
+
 							if (round.Remove(turn))
 							{
 								onBattleUpdated?.Invoke();
@@ -419,7 +418,6 @@ namespace Game.Systems.BattleSystem
 						}
 					}
 				}
-
 				
 				Entities.Remove(entity as IBattlable);
 			}

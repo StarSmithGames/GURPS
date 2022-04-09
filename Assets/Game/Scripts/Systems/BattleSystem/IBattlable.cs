@@ -13,6 +13,6 @@ namespace Game.Systems.BattleSystem
 		public bool JoinBattle(Battle battle);
 		public bool LeaveBattle();
 
-		public void Attack(IEntity entity);
+		public void Attack();
 	}
 }

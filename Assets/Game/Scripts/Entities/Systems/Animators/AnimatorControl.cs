@@ -16,9 +16,9 @@ public class AnimatorControl : MonoBehaviour
 	public bool IsRootMotion { get; private set; }
 	public bool IsIdle { get; private set; }
 
-	public virtual bool IsAnimationProcess => isAttackProccess || isWaitAnimationProccess || isWaitTransitionProccess;
+	public virtual bool IsAnimationProcess => IsAttackProccess || isWaitAnimationProccess || isWaitTransitionProccess;
+	public bool IsAttackProccess { get; protected set; }
 
-	protected bool isAttackProccess = false;
 	protected bool isWaitAnimationProccess = false;
 	protected bool isWaitTransitionProccess = false;
 
