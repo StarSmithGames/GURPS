@@ -50,7 +50,7 @@ public class UIAvatar : PoolableObject
 
 		if (CurrentCharacter != null)
 		{
-			CurrentCharacter.onCharacterBattleStateChanged -= UpdateBattleUI;
+			CurrentCharacter.onBattleStateChanged -= UpdateBattleUI;
 		}
 	}
 
@@ -66,13 +66,13 @@ public class UIAvatar : PoolableObject
 	{
 		if(CurrentCharacter != null)
 		{
-			CurrentCharacter.onCharacterBattleStateChanged -= UpdateBattleUI;
+			CurrentCharacter.onBattleStateChanged -= UpdateBattleUI;
 		}
 		CurrentCharacter = character;
 		HPBar.SetStat(CurrentCharacter?.Sheet.Stats.HitPoints, CurrentCharacter?.Sheet.Settings.isImmortal ?? false);
 		if (CurrentCharacter != null)
 		{
-			CurrentCharacter.onCharacterBattleStateChanged += UpdateBattleUI;
+			CurrentCharacter.onBattleStateChanged += UpdateBattleUI;
 		}
 
 		UpdateUI();

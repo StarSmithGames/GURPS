@@ -16,10 +16,8 @@ using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Game.Entities
 {
-	public partial class Character : Entity, IBattlable
+	public partial class Character : HumanoidEntity
 	{
-		public UnityAction onCharacterBattleStateChanged;
-
 		[SerializeField] private CharacterData data;
 
 		public override ISheet Sheet
@@ -79,11 +77,6 @@ namespace Game.Entities
 	/// </summary>
 	partial class Character
 	{
-		public bool InBattle => CurrentBattle != null;
-		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
-
-		public Battle CurrentBattle { get; private set; }
-
 		public override void SetTarget(Vector3 point, float maxPathDistance = -1)
 		{
 			base.SetTarget(point, InBattle ? Sheet.Stats.Move.CurrentValue : maxPathDistance);
@@ -106,56 +99,22 @@ namespace Game.Entities
 			}
 		}
 
-
-		public void Attack()
+		public override void Attack()
 		{
 			CharacterSheet sheet = Sheet as CharacterSheet;
 
+			var control = (AnimatorControl as HumanoidAnimatorControl);
+
 			if (sheet.Equipment.WeaponCurrent.Hands == Hands.None)
 			{
-				Attack(0, Random.Range(0, 3));
+				control.Attack(0, Random.Range(0, 3));
 			}
 			else
 			{
-				Attack(1, 0);
+				control.Attack(1, 0);
 			}
 		}
-		private void Attack(int weaponType = 0, int attackType = 0)
-		{
-			(AnimatorControl as HumanoidAnimatorControl).Attack(weaponType, attackType);
-		}
 
-		
-		public bool JoinBattle(Battle battle)
-		{
-			if (CurrentBattle != null)
-			{
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
-			}
-			CurrentBattle = battle;
-			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
-			CurrentBattle.onBattleUpdated += OnBattleUpdated;
-
-			onCharacterBattleStateChanged?.Invoke();
-
-			return true;
-		}
-
-		public bool LeaveBattle()
-		{
-			if (CurrentBattle != null)
-			{
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
-			}
-			CurrentBattle = null;
-
-			onCharacterBattleStateChanged?.Invoke();
-
-			return true;
-		}
-		
 
 		private void OnReachedDestination()
 		{
@@ -169,15 +128,7 @@ namespace Game.Entities
 			}
 		}
 
-		private void OnBattleUpdated()
-		{
-			bool isMineTurn = CurrentBattle.BattleFSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
-
-			Markers.LineMarker.Enable(InBattle && isMineTurn);
-			Markers.TargetMarker.Enable(InBattle && isMineTurn);
-		}
-
-		private void OnBattleStateChanged()
+		protected override void OnBattleStateChanged()
 		{
 			if (InBattle)
 			{
@@ -222,6 +173,13 @@ namespace Game.Entities
 			{
 				ResetMarkers();
 			}
+		}
+		protected override void OnBattleUpdated()
+		{
+			bool isMineTurn = CurrentBattle.BattleFSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
+
+			Markers.LineMarker.Enable(InBattle && isMineTurn);
+			Markers.TargetMarker.Enable(InBattle && isMineTurn);
 		}
 	}
 }

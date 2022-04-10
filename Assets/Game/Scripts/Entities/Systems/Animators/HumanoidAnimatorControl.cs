@@ -19,19 +19,17 @@ public class HumanoidAnimatorControl : AnimatorControl
 
 	protected int weaponTypeHash;
 	protected int attackTypeHash;
+	protected int isAimingHash;
 
 	private IBattlable humanoid;
 	
-	[Inject]
-	private void Construct()
-	{
-		humanoid = entity as IBattlable;
-	}
-
 	protected override void Start()
 	{
+		humanoid = entity as IBattlable;
+
 		weaponTypeHash = Animator.StringToHash("WeaponType");
 		attackTypeHash = Animator.StringToHash("AttackType");
+		isAimingHash = Animator.StringToHash("IsAiming");
 		base.Start();
 	}
 
@@ -50,9 +48,10 @@ public class HumanoidAnimatorControl : AnimatorControl
 	public virtual void Attack(int weaponType = 0, int attackType = 0)
 	{
 		IsAttackProccess = true;
-		
-		animator.SetInteger(weaponTypeHash, weaponType);
-		animator.SetInteger(attackTypeHash, attackType);
+
+		animator.SetBool(isAimingHash, true);
+		animator.SetInteger(weaponTypeHash, 2/*weaponType*/);
+		animator.SetInteger(attackTypeHash, 0/*attackType*/);
 		StartCoroutine(AttackProccess());
 	}
 
@@ -62,19 +61,19 @@ public class HumanoidAnimatorControl : AnimatorControl
 
 		animator.SetTrigger(attackHash);
 		
-		while (true)
-		{
-			string animationName = animator.GetCurrentAnimatorClipInfo(0)?[0].clip.name;
+		//while (true)
+		//{
+		//	string animationName = animator.GetCurrentAnimatorClipInfo(0)?[0].clip.name;
 
-			transform.rotation = animator.rootRotation;
+		//	transform.rotation = animator.rootRotation;
 
-			if (animationName == "IdleFightToActionIdle")
-			{
-				break;
-			}
+		//	if (animationName == "IdleFightToActionIdle")
+		//	{
+		//		break;
+		//	}
 
-			yield return null;
-		}
+		//	yield return null;
+		//}
 
 		transform.DOMove(transform.root.position, 0.25f);
 

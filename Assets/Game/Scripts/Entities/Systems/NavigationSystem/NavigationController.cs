@@ -44,7 +44,7 @@ namespace Game.Entities
 			NavMeshAgent navMeshAgent,
 			Markers markers,
 			CharacterController3D characterController,
-			Entity entity)
+			IEntity entity)
 		{
 			this.signalBus = signalBus;
 			this.NavMeshAgent = navMeshAgent;
