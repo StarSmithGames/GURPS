@@ -2,7 +2,9 @@ using DG.Tweening;
 
 using Game.Entities;
 using Game.Systems.BattleSystem;
+using Game.Systems.CameraSystem;
 using Game.Systems.DamageSystem;
+using Game.Systems.FloatingTextSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 
@@ -150,7 +152,7 @@ namespace Game.Systems.InteractionSystem
 
 					sequence
 						.Append(from.Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
-						.AppendCallback(() => from.Attack());
+						.AppendCallback(from.Attack);
 				}
 			}
 			else if (to is IDamegeable)
@@ -174,6 +176,8 @@ namespace Game.Systems.InteractionSystem
 		{
 			if(to is IEntity entity)
 			{
+				Debug.LogError("Hit");
+
 				//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
 				entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
 				entity.ApplyDamage(from.GetDamage());

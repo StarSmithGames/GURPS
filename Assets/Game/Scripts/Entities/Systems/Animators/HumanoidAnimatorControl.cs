@@ -1,15 +1,10 @@
-using CMF;
-
 using DG.Tweening;
-using Game.Entities;
 using Game.Systems.BattleSystem;
 
 using System.Collections;
 
 using UnityEngine;
 using UnityEngine.Events;
-
-using Zenject;
 
 public class HumanoidAnimatorControl : AnimatorControl
 {

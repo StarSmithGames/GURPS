@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Game.Systems.DamageSystem
 {
-	public class DamageSystem : MonoBehaviour { }
+	public class DamageCombatSystem : MonoBehaviour { }
 
 	[System.Serializable]
 	public class WeaponDamage

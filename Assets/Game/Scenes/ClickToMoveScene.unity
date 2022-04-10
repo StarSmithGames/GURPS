@@ -2746,7 +2746,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -2762,7 +2762,7 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -23979,9 +23979,73 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
-    - target: {fileID: 8847653113414792107, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
-      propertyPath: settings.startPosition.x
-      value: -7.12
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[0].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[1].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[2].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[3].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[4].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[5].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[6].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[7].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[8].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[9].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[10].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[11].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[12].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[13].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[14].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[15].IsVisible
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6874036480430047073, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
+      propertyPath: outlineTargets.Array.data[16].IsVisible
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
