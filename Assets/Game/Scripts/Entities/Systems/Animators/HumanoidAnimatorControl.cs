@@ -50,8 +50,8 @@ public class HumanoidAnimatorControl : AnimatorControl
 		IsAttackProccess = true;
 
 		animator.SetBool(isAimingHash, true);
-		animator.SetInteger(weaponTypeHash, 2/*weaponType*/);
-		animator.SetInteger(attackTypeHash, 0/*attackType*/);
+		animator.SetInteger(weaponTypeHash, weaponType);
+		animator.SetInteger(attackTypeHash, attackType);
 		StartCoroutine(AttackProccess());
 	}
 
@@ -60,20 +60,20 @@ public class HumanoidAnimatorControl : AnimatorControl
 		yield return WaitWhileAnimation("Armature|IdleAction");
 
 		animator.SetTrigger(attackHash);
-		
-		//while (true)
-		//{
-		//	string animationName = animator.GetCurrentAnimatorClipInfo(0)?[0].clip.name;
 
-		//	transform.rotation = animator.rootRotation;
+		while (true)
+		{
+			string animationName = animator.GetCurrentAnimatorClipInfo(0)?[0].clip.name;
 
-		//	if (animationName == "IdleFightToActionIdle")
-		//	{
-		//		break;
-		//	}
+			transform.rotation = animator.rootRotation;
 
-		//	yield return null;
-		//}
+			if (animationName == "IdleFightToActionIdle")
+			{
+				break;
+			}
+
+			yield return null;
+		}
 
 		transform.DOMove(transform.root.position, 0.25f);
 

@@ -393,7 +393,6 @@ namespace Game.Systems.InventorySystem
 		public Equip Spare { get; }
 
 		public Hands Hands { get; private set; }
-		//public WeaponType WeaponType { get; private set; }
 
 		public IInventory Inventory { get; }
 
@@ -556,10 +555,6 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-		public bool Contains(Item item)
-		{
-			return item != null && (Main.Item == item || Spare.Item == item);
-		}
 		public bool Contains(Equip equip)
 		{
 			return equip != null && (Main == equip || Spare == equip);

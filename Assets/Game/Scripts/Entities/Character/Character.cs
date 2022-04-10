@@ -109,9 +109,13 @@ namespace Game.Entities
 			{
 				control.Attack(0, Random.Range(0, 3));
 			}
-			else
+			else if(sheet.Equipment.WeaponCurrent.Hands == Hands.Main)
 			{
 				control.Attack(1, 0);
+			}
+			else
+			{
+				control.Attack(2, 0);
 			}
 		}
 
