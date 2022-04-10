@@ -47,29 +47,36 @@ public class HumanoidAnimatorControl : AnimatorControl
 		animator.SetBool(isAimingHash, true);
 		animator.SetInteger(weaponTypeHash, weaponType);
 		animator.SetInteger(attackTypeHash, attackType);
-		StartCoroutine(AttackProccess());
+		StartCoroutine(UnArmedAttackProcess());
 	}
 
-	private IEnumerator AttackProccess()
+	private IEnumerator UnArmedAttackProcess()
 	{
 		yield return WaitWhileAnimation("Armature|IdleAction");
 
 		animator.SetTrigger(attackHash);
 
+		float startTime = Time.time;
+
 		while (true)
 		{
-			string animationName = animator.GetCurrentAnimatorClipInfo(0)?[0].clip.name;
-
 			transform.rotation = animator.rootRotation;
 
-			if (animationName == "IdleFightToActionIdle")
+			if (IsCurrentAnimationName("Armature|IdleFightToIdleAction"))
 			{
 				break;
 			}
 
+			if(Time.time - startTime > 5f)
+			{
+				Debug.LogError("ERROR ATTACK PROCESS STUCK");
+				IsAttackProccess = false;
+				transform.DOMove(transform.root.position, 0.25f);
+				yield break;
+			}
+
 			yield return null;
 		}
-
 		transform.DOMove(transform.root.position, 0.25f);
 
 		yield return WaitWhileAnimation("Armature|IdleAction");

@@ -30,7 +30,7 @@ namespace Game.Entities
 
 		protected SignalBus signalBus;
 		protected UIManager uiManager;
-		private FloatingSystem floatingSystem;
+		protected FloatingSystem floatingSystem;
 
 		[Inject]
 		private void Construct(
