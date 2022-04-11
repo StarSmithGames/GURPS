@@ -1,11 +1,7 @@
-
-using CMF;
-
 using EPOOutline;
-
-using Game.Entities;
 using Game.Systems.CameraSystem;
 using Game.Systems.DamageSystem;
+using Game.Systems.FloatingTextSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
@@ -34,6 +30,7 @@ namespace Game.Entities
 
 		protected SignalBus signalBus;
 		protected UIManager uiManager;
+		protected FloatingSystem floatingSystem;
 
 		[Inject]
 		private void Construct(
@@ -44,7 +41,8 @@ namespace Game.Entities
 			Markers markerController,
 			Outlinable outline,
 			CameraPivot cameraPivot,
-			UIManager uiManager)
+			UIManager uiManager,
+			FloatingSystem floatingTextSystem)
 		{
 			this.signalBus = signalBus;
 
@@ -55,6 +53,7 @@ namespace Game.Entities
 			Outlines = outline;
 			CameraPivot = cameraPivot;
 			this.uiManager = uiManager;
+			this.floatingSystem = floatingTextSystem;
 
 			Validate();
 		}
@@ -161,8 +160,11 @@ namespace Game.Entities
 		{
 			if (value is Damage damage)
 			{
+				floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.damageType.ToString(), type: AnimationType.BasicDamageType);
+
 				if (damage.IsPhysicalDamage)
 				{
+					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.amount.ToString(), type: AnimationType.AdvanceDamage);
 					Sheet.Stats.HitPoints.CurrentValue -= damage.amount;
 				}
 				else if (damage.IsMagicalDamage)

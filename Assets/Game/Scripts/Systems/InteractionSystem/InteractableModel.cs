@@ -36,7 +36,7 @@ namespace Game.Systems.InteractionSystem
 			{
 				if (entity != null)
 				{
-					if (IsInteractorInRange(entity)) return entity.Transform.position;
+					if (IsInRange(entity)) return entity.Transform.position;
 
 					return transform.position + ((interactableSettings.maxRange - 0.1f) * (entity.Transform.position - transform.position).normalized);
 				}
@@ -45,10 +45,13 @@ namespace Game.Systems.InteractionSystem
 			return transform.position;
 		}
 
-		public bool IsInteractorInRange(IEntity entity)
+		public bool IsInRange(IEntity entity)
 		{
 			if (entity == null) return false;
-			return Vector3.Distance(transform.position, entity.Transform.position) <= interactableSettings.maxRange + 0.1f;
+
+			float distance = Vector3.Distance(transform.position, entity.Transform.position);
+
+			return distance <= interactableSettings.maxRange + 0.1f;
 		}
 
 		#region Observe

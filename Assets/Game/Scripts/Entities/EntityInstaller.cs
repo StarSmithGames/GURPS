@@ -36,7 +36,7 @@ namespace Game.Entities
 			Container.BindInstance(navigationController);
 			Container.BindInstance(markers);
 			Container.BindInstance(outline);
-			Container.BindInstance(entity);
+			Container.BindInstance<IEntity>(entity);
 		}
 	}
 }

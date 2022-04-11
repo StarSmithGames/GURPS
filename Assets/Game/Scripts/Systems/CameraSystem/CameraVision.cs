@@ -149,7 +149,17 @@ namespace Game.Systems.CameraSystem
 						{
 							if (CurrentObserve is IInteractable interactable)
 							{
-								interactionHandler.Interact(leader, interactable);
+								if (leader.InBattle)
+								{
+									if (leader.Navigation.IsCanReach || interactable.IsInRange(leader))
+									{
+										interactionHandler.Interact(leader, interactable);
+									}
+								}
+								else
+								{
+									interactionHandler.Interact(leader, interactable);
+								}
 							}
 						}
 					}
@@ -185,7 +195,11 @@ namespace Game.Systems.CameraSystem
 			{
 				if (isMouseHit && !isUI)
 				{
-					uiManager.Tooltip.SetRulerText(Math.Round(leader.Navigation.CurrentPathDistance, 2) + SymbolCollector.METRE.ToString());
+					string text = Math.Round(leader.Navigation.CurrentNavMeshPathDistance, 2) +
+						SymbolCollector.METRE.ToString() + "-" +
+						Math.Round(leader.Navigation.FullPathDistance, 2) +
+						SymbolCollector.METRE.ToString();
+					uiManager.Tooltip.SetRulerText(text);
 					uiManager.Tooltip.EnableRuler(true);
 				}
 				else
@@ -200,7 +214,7 @@ namespace Game.Systems.CameraSystem
 
 		private void ValidatePath(Vector3 point)
 		{
-			float pathDistance = (float)Math.Round(leader.Navigation.CurrentPathDistance, 2);
+			float pathDistance = CurrentObserve != null ? leader.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leader.Navigation.FullPathDistance, 2);
 
 			bool isInvalidTarget = !isMouseHit || !leader.Navigation.NavMeshAgent.IsPathValid(point);
 			bool isNotEnoughMovement = isMouseHit && !isUI &&

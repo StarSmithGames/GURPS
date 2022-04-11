@@ -1,15 +1,10 @@
-using CMF;
-
 using DG.Tweening;
-using Game.Entities;
 using Game.Systems.BattleSystem;
 
 using System.Collections;
 
 using UnityEngine;
 using UnityEngine.Events;
-
-using Zenject;
 
 public class HumanoidAnimatorControl : AnimatorControl
 {
@@ -19,19 +14,17 @@ public class HumanoidAnimatorControl : AnimatorControl
 
 	protected int weaponTypeHash;
 	protected int attackTypeHash;
+	protected int isAimingHash;
 
 	private IBattlable humanoid;
 	
-	[Inject]
-	private void Construct()
-	{
-		humanoid = entity as IBattlable;
-	}
-
 	protected override void Start()
 	{
+		humanoid = entity as IBattlable;
+
 		weaponTypeHash = Animator.StringToHash("WeaponType");
 		attackTypeHash = Animator.StringToHash("AttackType");
+		isAimingHash = Animator.StringToHash("IsAiming");
 		base.Start();
 	}
 
@@ -50,32 +43,40 @@ public class HumanoidAnimatorControl : AnimatorControl
 	public virtual void Attack(int weaponType = 0, int attackType = 0)
 	{
 		IsAttackProccess = true;
-		
+
+		animator.SetBool(isAimingHash, true);
 		animator.SetInteger(weaponTypeHash, weaponType);
 		animator.SetInteger(attackTypeHash, attackType);
-		StartCoroutine(AttackProccess());
+		StartCoroutine(UnArmedAttackProcess());
 	}
 
-	private IEnumerator AttackProccess()
+	private IEnumerator UnArmedAttackProcess()
 	{
 		yield return WaitWhileAnimation("Armature|IdleAction");
 
 		animator.SetTrigger(attackHash);
-		
+
+		float startTime = Time.time;
+
 		while (true)
 		{
-			string animationName = animator.GetCurrentAnimatorClipInfo(0)?[0].clip.name;
-
 			transform.rotation = animator.rootRotation;
 
-			if (animationName == "IdleFightToActionIdle")
+			if (IsCurrentAnimationName("Armature|IdleFightToIdleAction"))
 			{
 				break;
 			}
 
+			if(Time.time - startTime > 5f)
+			{
+				Debug.LogError("ERROR ATTACK PROCESS STUCK");
+				IsAttackProccess = false;
+				transform.DOMove(transform.root.position, 0.25f);
+				yield break;
+			}
+
 			yield return null;
 		}
-
 		transform.DOMove(transform.root.position, 0.25f);
 
 		yield return WaitWhileAnimation("Armature|IdleAction");

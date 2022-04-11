@@ -1,9 +1,13 @@
 using Game.Entities;
 
+using UnityEngine.Events;
+
 namespace Game.Systems.BattleSystem
 {
 	public interface IBattlable : IEntity
 	{
+		event UnityAction onBattleStateChanged;
+
 		public bool InBattle { get; }
 		public bool InAction { get; }
 

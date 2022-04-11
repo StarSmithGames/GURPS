@@ -222,7 +222,7 @@ namespace Game.Systems.BattleSystem
 			IStat stat = CurrentInitiator.Sheet.Stats.Move;
 
 			float from = stat.CurrentValue;
-			float to = stat.CurrentValue - CurrentInitiator.Navigation.NavMeshPathDistance;
+			float to = stat.CurrentValue - CurrentInitiator.Navigation.CurrentNavMeshPathDistance;
 
 			NavigationController navigation = CurrentInitiator.Navigation;
 
