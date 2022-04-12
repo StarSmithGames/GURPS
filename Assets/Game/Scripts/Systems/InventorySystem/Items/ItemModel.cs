@@ -18,7 +18,7 @@ namespace Game.Systems.InventorySystem
         }
 
         [ButtonGroup("Body")]
-        private void PrevBody()
+        private void PrevMaterial()
         {
             if (renderer == null) renderer = GetComponent<MeshRenderer>();
 
@@ -29,7 +29,7 @@ namespace Game.Systems.InventorySystem
             Refresh();
         }
         [ButtonGroup("Body")]
-        private void NextBody()
+        private void NextMaterial()
         {
             if (renderer == null) renderer = GetComponent<MeshRenderer>();
 

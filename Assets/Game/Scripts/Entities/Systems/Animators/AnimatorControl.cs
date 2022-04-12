@@ -130,6 +130,42 @@ public class AnimatorControl : MonoBehaviour
 		return animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == animation;
 	}
 
+	protected bool IsCurrentTransitionName(string transition)
+	{
+		return animator.GetAnimatorTransitionInfo(0).IsName(transition);
+	}
+
+	protected IEnumerator WaitWhileNode(string node, bool isNot = false)
+	{
+		if (entity is IBattlable battlable)
+		{
+			isWaitAnimationProccess = true;
+
+			while (battlable.InBattle)
+			{
+				if (isNot)
+				{
+					if (!IsCurrentNodeName(node))
+					{
+						break;
+					}
+				}
+				else
+				{
+					if (IsCurrentNodeName(node))
+					{
+						break;
+					}
+				}
+
+				
+				yield return null;
+			}
+
+			isWaitAnimationProccess = false;
+		}
+	}
+
 	protected IEnumerator WaitWhileAnimation(string animation)
 	{
 		if(entity is IBattlable battlable)
@@ -147,7 +183,6 @@ public class AnimatorControl : MonoBehaviour
 
 			isWaitAnimationProccess = false;
 		}
-		
 	}
 
 	protected IEnumerator WaitWhileTransition(string transition)
@@ -158,7 +193,7 @@ public class AnimatorControl : MonoBehaviour
 
 			while (battlable.InBattle)
 			{
-				if (animator.GetAnimatorTransitionInfo(0).IsName(transition))
+				if (IsCurrentTransitionName(transition))
 				{
 					break;
 				}

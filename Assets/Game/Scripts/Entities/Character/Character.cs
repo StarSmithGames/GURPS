@@ -105,17 +105,29 @@ namespace Game.Entities
 
 			var control = (AnimatorControl as HumanoidAnimatorControl);
 
-			if (sheet.Equipment.WeaponCurrent.Hands == Hands.None)
+			switch (sheet.Equipment.WeaponCurrent.Hands)
 			{
-				control.Attack(0, Random.Range(0, 3));
-			}
-			else if(sheet.Equipment.WeaponCurrent.Hands == Hands.Main)
-			{
-				control.Attack(1, 0);
-			}
-			else
-			{
-				control.Attack(2, 0);
+				case Hands.None:
+				{
+					control.Attack(0, Random.Range(0, 3));
+					break;
+				}
+				case Hands.Main:
+				{
+					control.Attack(1, 0);
+					break;
+				}
+				case Hands.Spare:
+				{
+					control.Attack(0, Random.Range(0, 3));
+					break;
+				}
+				case Hands.Both:
+				{
+					//control.Attack(2, 0);
+					control.Attack(0, Random.Range(0, 3));
+					break;
+				}
 			}
 		}
 

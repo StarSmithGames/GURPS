@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1d3c52bfe70718e4694ab27e5a395281, type: 3}
-  m_Name: SwordOneHanded 1
+  m_Name: Dagger
   m_EditorClassIdentifier: 
   itemSprite: {fileID: 21300000, guid: eb81ca6ebb2b3724b92d4509ab0cc25f, type: 3}
   localizations:
   - language: 10
     itemName: Sword2
     itemDescription: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 5906988978531107355, guid: 5cc8643f011a3094aa4b45fedd25b4ca, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
@@ -28,7 +28,13 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
+  weaponDamage:
+    mainDamage:
+      amount: 0
+      damageType: 0
+    isHasSideDamages: 0
+    sideDamages: []
   melleType: 1
   offHandType: 0
-  handedType: 4
+  oneHandedType: 4
   twoHandedType: 3

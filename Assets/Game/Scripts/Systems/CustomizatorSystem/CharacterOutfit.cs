@@ -9,6 +9,7 @@ namespace Game.Entities
 {
 	public class CharacterOutfit : MonoBehaviour
 	{
+		public bool WeaponInSheath = false;
 		public Hands BusyHands { get; private set; }
 
 		[SerializeField] private Transform leftHand;
@@ -26,20 +27,61 @@ namespace Game.Entities
 		{
 			if (equipment != null)
 			{
-				equipment.OnEquipmentChanged -= OnEquipmentChanged;
+				equipment.WeaponMain.onEquipWeaponChanged -= OnEquipWeaponChanged;
 			}
 		}
 
 		private void Start()
 		{
-			equipment.OnEquipmentChanged += OnEquipmentChanged;
+			equipment.WeaponMain.onEquipWeaponChanged += OnEquipWeaponChanged;
 
-			OnEquipmentChanged();
+			OnEquipWeaponChanged();
 		}
 
-		private void OnEquipmentChanged()
+		private void OnEquipWeaponChanged()
 		{
 			BusyHands = equipment.WeaponCurrent.Hands;
+
+			leftHand.DestroyChildren();
+			rightHand.DestroyChildren();
+
+			switch (BusyHands)
+			{
+				case Hands.None:
+				{
+					break;
+				}
+				case Hands.Main:
+				{
+					var prefab = equipment.WeaponCurrent.Main.Item.ItemData.prefab;
+
+					if (prefab != null)
+					{
+						Instantiate(prefab, rightHand);
+					}
+					break;
+				}
+				case Hands.Spare:
+				{
+					var prefab = equipment.WeaponCurrent.Spare.Item.ItemData.prefab;
+
+					if (prefab != null)
+					{
+						Instantiate(prefab, leftHand);
+					}
+					break;
+				}
+				case Hands.Both:
+				{
+					var prefab = equipment.WeaponCurrent.Main.Item.ItemData.prefab;
+
+					if (prefab != null)
+					{
+						Instantiate(prefab, rightHand);
+					}
+					break;
+				}
+			}
 		}
 	}
 }

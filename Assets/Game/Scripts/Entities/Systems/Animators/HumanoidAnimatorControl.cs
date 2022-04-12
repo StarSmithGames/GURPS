@@ -47,42 +47,52 @@ public class HumanoidAnimatorControl : AnimatorControl
 		animator.SetBool(isAimingHash, true);
 		animator.SetInteger(weaponTypeHash, weaponType);
 		animator.SetInteger(attackTypeHash, attackType);
-		StartCoroutine(UnArmedAttackProcess());
+
+		StartCoroutine(AttackProcess());
 	}
 
-	private IEnumerator UnArmedAttackProcess()
+	private IEnumerator AttackProcess()
 	{
-		yield return WaitWhileAnimation("Armature|IdleAction");
-
+		yield return WaitWhileNode("IdleAction");
 		animator.SetTrigger(attackHash);
-
-		float startTime = Time.time;
-
-		while (true)
-		{
-			transform.rotation = animator.rootRotation;
-
-			if (IsCurrentAnimationName("Armature|IdleFightToIdleAction"))
-			{
-				break;
-			}
-
-			if(Time.time - startTime > 5f)
-			{
-				Debug.LogError("ERROR ATTACK PROCESS STUCK");
-				IsAttackProccess = false;
-				transform.DOMove(transform.root.position, 0.25f);
-				yield break;
-			}
-
-			yield return null;
-		}
+		yield return WaitWhileNode("IdleAction", true);
+		yield return WaitWhileNode("IdleAction");
 		transform.DOMove(transform.root.position, 0.25f);
-
-		yield return WaitWhileAnimation("Armature|IdleAction");
-
 		IsAttackProccess = false;
 	}
+
+	//private IEnumerator UnArmedAttackProcess()
+	//{
+	//	yield return WaitWhileAnimation("Armature|IdleAction");
+
+	//	animator.SetTrigger(attackHash);
+
+	//	float startTime = Time.time;
+
+	//	while (true)
+	//	{
+	//		transform.rotation = animator.rootRotation;
+
+	//		if (IsCurrentAnimationName("Armature|IdleFightToIdleAction"))
+	//		{
+	//			break;
+	//		}
+
+	//		if(Time.time - startTime > 5f)
+	//		{
+	//			Debug.LogError("ERROR ATTACK PROCESS STUCK");
+	//			IsAttackProccess = false;
+	//			transform.DOMove(transform.root.position, 0.25f);
+	//			yield break;
+	//		}
+
+	//		yield return null;
+	//	}
+	//	transform.DOMove(transform.root.position, 0.25f);
+	//	yield return WaitWhileAnimation("Armature|IdleAction");
+
+	//	IsAttackProccess = false;
+	//}
 
 	#region AnimationEvents
 	private void AttackLeftHand()
@@ -96,6 +106,23 @@ public class HumanoidAnimatorControl : AnimatorControl
 	private void AttackKick()
 	{
 		onAttackKick?.Invoke();
+	}
+
+	private void DrawOneHandedWeapon()
+	{
+		Debug.LogError("DrawOneHandedWeapon");
+	}
+	private void DrawTwoHandedWeapon(int type = 0)
+	{
+		Debug.LogError("DrawTwoHandedWeapon");
+		if(type == 0)//bow
+		{
+
+		}
+	}
+	private void DrawArrow()
+	{
+
 	}
 	#endregion
 }

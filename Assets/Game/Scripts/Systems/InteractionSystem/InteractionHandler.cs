@@ -41,16 +41,19 @@ namespace Game.Systems.InteractionSystem
 
 			if (entity is IBattlable from && interactable is IBattlable to)
 			{
-				if (from.InBattle && to.InBattle)
+				if (!from.InAction)
 				{
-					if (from.Sheet.Stats.ActionPoints.CurrentValue > 0)
+					if (from.InBattle && to.InBattle)
 					{
-						from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
-						entity.LastInteractionAction = new Attack(from, to);
-					}
-					else
-					{
-						Debug.LogError("Not Enough actions");
+						if (from.Sheet.Stats.ActionPoints.CurrentValue > 0)
+						{
+							from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
+							entity.LastInteractionAction = new Attack(from, to);
+						}
+						else
+						{
+							Debug.LogError("Not Enough actions");
+						}
 					}
 				}
 			}
@@ -176,8 +179,6 @@ namespace Game.Systems.InteractionSystem
 		{
 			if(to is IEntity entity)
 			{
-				Debug.LogError("Hit");
-
 				//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
 				entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
 				entity.ApplyDamage(from.GetDamage());
