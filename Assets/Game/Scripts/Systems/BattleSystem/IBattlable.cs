@@ -6,7 +6,7 @@ namespace Game.Systems.BattleSystem
 {
 	public interface IBattlable : IEntity
 	{
-		event UnityAction onBattleStateChanged;
+		event UnityAction onBattleChanged;
 
 		public bool InBattle { get; }
 		public bool InAction { get; }
@@ -16,7 +16,5 @@ namespace Game.Systems.BattleSystem
 
 		public bool JoinBattle(Battle battle);
 		public bool LeaveBattle();
-
-		public void Attack();
 	}
 }

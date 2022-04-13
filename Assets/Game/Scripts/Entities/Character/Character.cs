@@ -99,39 +99,6 @@ namespace Game.Entities
 			}
 		}
 
-		public override void Attack()
-		{
-			CharacterSheet sheet = Sheet as CharacterSheet;
-
-			var control = (AnimatorControl as HumanoidAnimatorControl);
-
-			switch (sheet.Equipment.WeaponCurrent.Hands)
-			{
-				case Hands.None:
-				{
-					control.Attack(0, Random.Range(0, 3));
-					break;
-				}
-				case Hands.Main:
-				{
-					control.Attack(1, 0);
-					break;
-				}
-				case Hands.Spare:
-				{
-					control.Attack(0, Random.Range(0, 3));
-					break;
-				}
-				case Hands.Both:
-				{
-					//control.Attack(2, 0);
-					control.Attack(0, Random.Range(0, 3));
-					break;
-				}
-			}
-		}
-
-
 		private void OnReachedDestination()
 		{
 			if (!InBattle)

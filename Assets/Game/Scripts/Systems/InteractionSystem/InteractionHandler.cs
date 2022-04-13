@@ -155,7 +155,7 @@ namespace Game.Systems.InteractionSystem
 
 					sequence
 						.Append(from.Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
-						.AppendCallback(from.Attack);
+						.AppendCallback(from.AnimatorControl.Attack);
 				}
 			}
 			else if (to is IDamegeable)

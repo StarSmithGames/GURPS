@@ -19,6 +19,9 @@ public class AnimatorControl : MonoBehaviour
 	public virtual bool IsAnimationProcess => IsAttackProccess || isWaitAnimationProccess || isWaitTransitionProccess;
 	public bool IsAttackProccess { get; protected set; }
 
+	public bool IsIdleTransaction => IsCurrentNodeName("IdleToIdleAction") || IsCurrentNodeName("IdleActionToIdle");
+
+
 	protected bool isWaitAnimationProccess = false;
 	protected bool isWaitTransitionProccess = false;
 
@@ -84,7 +87,7 @@ public class AnimatorControl : MonoBehaviour
 
 		IsIdle = !entity.IsHasTarget && velocity.magnitude == 0;
 
-		animator.applyRootMotion = IsRootMotion = IsIdle && !IsIdleTransaction();
+		animator.applyRootMotion = IsRootMotion = IsIdle && !IsIdleTransaction;
 
 		animator.SetFloat(forwardSpeedHash, velocity.magnitude);
 		animator.SetFloat(verticalSpeedHash, verticalVelocity.magnitude * VectorMath.GetDotProduct(verticalVelocity, transform.up));
@@ -106,7 +109,7 @@ public class AnimatorControl : MonoBehaviour
 		animator.SetInteger(hitTypeHash, type);
 		animator.SetTrigger(hitHash);
 	}
-	public virtual void Attack(int attackType = 0) { }
+	public virtual void Attack() { }
 
 	public virtual void Death(int type = 0)
 	{
@@ -114,10 +117,6 @@ public class AnimatorControl : MonoBehaviour
 		animator.SetTrigger(deathHash);
 	}
 
-	protected bool IsIdleTransaction()
-	{
-		return IsCurrentNodeName("IdleToIdleAction") || IsCurrentNodeName("IdleActionToIdle");
-	}
 
 
 	protected bool IsCurrentNodeName(string name)
@@ -203,6 +202,11 @@ public class AnimatorControl : MonoBehaviour
 
 			isWaitTransitionProccess = false;
 		}
+	}
+
+	protected void SetLayerWeightByName(string layer, float weight)
+	{
+		animator.SetLayerWeight(animator.GetLayerIndex(layer), weight);
 	}
 
 

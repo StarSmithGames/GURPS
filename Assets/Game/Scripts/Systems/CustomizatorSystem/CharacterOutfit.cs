@@ -1,87 +1,75 @@
 using Game.Systems.InventorySystem;
-using Game.Systems.SheetSystem;
-
 using UnityEngine;
 
-using Zenject;
+using Sirenix.OdinInspector;
 
 namespace Game.Entities
 {
 	public class CharacterOutfit : MonoBehaviour
 	{
-		public bool WeaponInSheath = false;
-		public Hands BusyHands { get; private set; }
+		public CharacterOutfitSlots Slots => slots;
+		[SerializeField] private CharacterOutfitSlots slots;
+	}
 
-		[SerializeField] private Transform leftHand;
-		[SerializeField] private Transform rightHand;
+	[System.Serializable]
+	public class CharacterOutfitSlots
+	{
+		[InlineProperty]
+		public OutfitSlot leftHand;
+		[InlineProperty]
+		public OutfitSlot rightHand;
 
-		private IEquipment equipment;
+		[InlineProperty]
+		public OutfitSlot backSheath;
 
-		[Inject]
-		private void Construct(IEntity entity)
+		[InlineProperty]
+		public OutfitSlot leftSheath;
+		[InlineProperty]
+		public OutfitSlot rightSheath;
+
+		public void Clear()
 		{
-			equipment = ((entity as Character).Sheet as CharacterSheet).Equipment;
+			leftHand.Clear();
+			rightHand.Clear();
+			backSheath.Clear();
+			leftSheath.Clear();
+			rightSheath.Clear();
 		}
+	}
 
-		private void OnDestroy()
+
+	[System.Serializable]
+	public class OutfitSlot
+	{
+		[HideLabel]
+		public Transform slot;
+
+		public void Replace(ItemModel model, OutfitSlotOffset? offset = null)
 		{
-			if (equipment != null)
+			Clear();
+
+			if (model != null)
 			{
-				equipment.WeaponMain.onEquipWeaponChanged -= OnEquipWeaponChanged;
+				var obj = GameObject.Instantiate(model, slot);
+				
+				if(model.Item.ItemData is WeaponItemData)
+				{
+					obj.transform.localPosition = offset?.position ?? Vector3.zero;
+					obj.transform.localRotation = offset?.rotation ?? Quaternion.identity;
+				}
 			}
 		}
 
-		private void Start()
+		public void Clear()
 		{
-			equipment.WeaponMain.onEquipWeaponChanged += OnEquipWeaponChanged;
-
-			OnEquipWeaponChanged();
+			slot.DestroyChildren();
 		}
+	}
 
-		private void OnEquipWeaponChanged()
-		{
-			BusyHands = equipment.WeaponCurrent.Hands;
-
-			leftHand.DestroyChildren();
-			rightHand.DestroyChildren();
-
-			switch (BusyHands)
-			{
-				case Hands.None:
-				{
-					break;
-				}
-				case Hands.Main:
-				{
-					var prefab = equipment.WeaponCurrent.Main.Item.ItemData.prefab;
-
-					if (prefab != null)
-					{
-						Instantiate(prefab, rightHand);
-					}
-					break;
-				}
-				case Hands.Spare:
-				{
-					var prefab = equipment.WeaponCurrent.Spare.Item.ItemData.prefab;
-
-					if (prefab != null)
-					{
-						Instantiate(prefab, leftHand);
-					}
-					break;
-				}
-				case Hands.Both:
-				{
-					var prefab = equipment.WeaponCurrent.Main.Item.ItemData.prefab;
-
-					if (prefab != null)
-					{
-						Instantiate(prefab, rightHand);
-					}
-					break;
-				}
-			}
-		}
+	[System.Serializable]
+	public struct OutfitSlotOffset
+	{
+		public Vector3 position;
+		public Quaternion rotation;
 	}
 }

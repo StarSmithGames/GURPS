@@ -17,7 +17,7 @@ MonoBehaviour:
   - language: 10
     itemName: Bow
     itemDescription: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 6110142699609991594, guid: f0ff6ec76da244b4b96256839d73bc86, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
@@ -30,10 +30,20 @@ MonoBehaviour:
   rarity: 0
   weaponDamage:
     mainDamage:
-      amount: 0
-      damageType: 1
-    isHasSideDamages: 1
-    sideDamages:
-    - amount: 0
-      damageType: 10
+      amount: 1
+      damageType: 3
+    isHasSideDamages: 0
+    sideDamages: []
+  sheathForRightHandTransfrom:
+    position: {x: -0.006, y: -0.182, z: -0.115}
+    rotation: {x: -0.5772711, y: -0.24943961, z: 0.3338396, w: 0.70220304}
+  sheathForLeftHandTransfrom:
+    position: {x: -0.003, y: -0.157, z: -0.126}
+    rotation: {x: -0.58515364, y: -0.23728533, z: 0.35023633, w: 0.6918276}
+  rightHandTransfrom:
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  leftHandTransfrom:
+    position: {x: 0.001, y: 0.096, z: 0.04}
+    rotation: {x: 0.3723924, y: -0.4068866, z: -0.5631574, w: 0.6153219}
   rangedType: 0

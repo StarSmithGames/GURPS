@@ -1,18 +1,27 @@
+using Game.Systems.BattleSystem;
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SkeletonZombieAnimatorControl : MonoBehaviour
+public class SkeletonZombieAnimatorControl : AnimatorControl
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+	private IBattlable humanoid;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	protected override void Start()
+	{
+		humanoid = entity as IBattlable;
+	}
+
+	protected override void Update()
+	{
+		base.Update();
+
+		animator.SetBool(isBattleModeHash, humanoid.InBattle);
+
+		if (humanoid.InBattle)
+		{
+			humanoid.Controller.IsWaitAnimation = IsAnimationProcess;
+		}
+	}
 }
