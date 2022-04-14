@@ -5,6 +5,8 @@ using Sirenix.OdinInspector;
 using Game.Systems.SheetSystem;
 using Zenject;
 
+using DG.Tweening;
+
 namespace Game.Entities
 {
 	public class CharacterOutfit : MonoBehaviour
@@ -117,19 +119,19 @@ namespace Game.Entities
 		[HideLabel]
 		public Transform slot;
 
-		public void Replace(ItemModel model, OutfitSlotOffset? offset = null)
+		public void Set(Transform obj, Transform3 offset, bool isAnimated = false)
 		{
-			Clear();
+			obj.SetParent(slot);
 
-			if (model != null)
+			if (isAnimated)
 			{
-				var obj = GameObject.Instantiate(model, slot);
-				
-				if(model.Item.ItemData is WeaponItemData)
-				{
-					obj.transform.localPosition = offset?.position ?? Vector3.zero;
-					obj.transform.localRotation = offset?.rotation ?? Quaternion.identity;
-				}
+				obj.DOLocalMove(offset.position, 0.25f);
+				obj.DOLocalRotate(offset.rotation.eulerAngles, 0.25f);
+			}
+			else
+			{
+				obj.localPosition = offset.position;
+				obj.localRotation = offset.rotation;
 			}
 		}
 
@@ -145,4 +147,11 @@ namespace Game.Entities
 		public Vector3 position;
 		public Quaternion rotation;
 	}
+}
+[System.Serializable]
+public struct Transform3
+{
+	public Vector3 position;
+	public Quaternion rotation;
+	public Vector3 scale;
 }

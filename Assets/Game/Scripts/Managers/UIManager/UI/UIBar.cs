@@ -49,7 +49,7 @@ public class UIBar : MonoBehaviour
 
     private void UpdateUI()
 	{
-        FillAmount = IsImmortal ? 1f : CurrentStat?.PercentValue ?? 1f;
+        FillAmount = CurrentStat?.PercentValue ?? 1f;
 
         if (IsHasText)
         {

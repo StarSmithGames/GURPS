@@ -165,7 +165,10 @@ namespace Game.Entities
 				if (damage.IsPhysicalDamage)
 				{
 					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.amount.ToString(), type: AnimationType.AdvanceDamage);
-					Sheet.Stats.HitPoints.CurrentValue -= damage.amount;
+					if (!Sheet.Settings.isImmortal)
+					{
+						Sheet.Stats.HitPoints.CurrentValue -= damage.amount;
+					}
 				}
 				else if (damage.IsMagicalDamage)
 				{

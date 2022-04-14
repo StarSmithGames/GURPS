@@ -23,7 +23,7 @@ MonoBehaviour:
     race: 0
     gender: 0
     aligment: 4
-    isImmortal: 0
+    isImmortal: 1
     stats:
       level: 1
       strength: 10

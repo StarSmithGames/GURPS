@@ -8,9 +8,9 @@ namespace Game.Systems.InventorySystem
     {
         public DamageSystem.WeaponDamage weaponDamage;
 
-        public OutfitSlotOffset sheathForRightHandTransfrom;
-        public OutfitSlotOffset sheathForLeftHandTransfrom;
-        public OutfitSlotOffset rightHandTransfrom;
-        public OutfitSlotOffset leftHandTransfrom;
+        public Transform3 sheathForRightHandTransfrom;
+        public Transform3 sheathForLeftHandTransfrom;
+        public Transform3 rightHandTransfrom;
+        public Transform3 leftHandTransfrom;
     }
 }

@@ -34,8 +34,15 @@ namespace Game.Entities
 		}
 		private CharacterSheet characterSheet;
 
+		public CharacterOutfit Outfit { get; private set; }
+
 		public bool IsRangeAttackTest => false;
 
+		[Inject]
+		private void Construct(CharacterOutfit outfit)
+		{
+			Outfit = outfit;
+		}
 
 		protected override void Start()
 		{

@@ -35,17 +35,21 @@ MonoBehaviour:
     isHasSideDamages: 0
     sideDamages: []
   sheathForRightHandTransfrom:
-    position: {x: 0.163, y: -0.009, z: -0.171}
-    rotation: {x: 0.5447988, y: 0.27706313, z: -0.31161904, w: -0.7275466}
+    position: {x: 0.152, y: -0.034, z: -0.165}
+    rotation: {x: -0.57402545, y: -0.23728989, z: 0.20234023, w: 0.7571306}
+    scale: {x: 0, y: 0, z: 0}
   sheathForLeftHandTransfrom:
     position: {x: -0.174, y: -0.058, z: -0.123}
     rotation: {x: -0.31746623, y: -0.58515316, z: -0.73885316, w: -0.104436316}
+    scale: {x: 0, y: 0, z: 0}
   rightHandTransfrom:
     position: {x: 0, y: 0.095, z: 0.0334}
     rotation: {x: 0.6350073, y: -0.51844394, z: -0.44362184, w: 0.36218968}
+    scale: {x: 0, y: 0, z: 0}
   leftHandTransfrom:
     position: {x: 0.007, y: 0.088, z: 0.017}
     rotation: {x: -0.53588176, y: 0.6513209, z: -0.33602065, w: 0.41916826}
+    scale: {x: 0, y: 0, z: 0}
   melleType: 1
   offHandType: 0
   oneHandedType: 4

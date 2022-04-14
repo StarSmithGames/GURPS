@@ -1,5 +1,7 @@
 using DG.Tweening;
 
+using ExitGames.Client.Photon.StructWrapping;
+
 using Game.Entities;
 using Game.Systems.BattleSystem;
 using Game.Systems.InventorySystem;
@@ -9,6 +11,7 @@ using System.Collections;
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UIElements;
 
 using Zenject;
 
@@ -34,13 +37,9 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 	private IBattlable humanoid;
 	private WeaponBehavior currentWeaponBehavior;
 
-	private CharacterOutfit outfit;
-
 	protected override void Start()
 	{
 		humanoid = entity as IBattlable;
-
-		outfit = GetComponent<CharacterOutfit>();//stub
 
 		isAimingHash = Animator.StringToHash("IsAiming");
 
@@ -133,51 +132,27 @@ partial class HumanoidAnimatorControl
 		Hands hands = sheet.Equipment.WeaponCurrent.Hands;
 
 		var weaponMain = sheet.Equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>();
-		var weaponSpare = sheet.Equipment.WeaponCurrent.Spare.Item?.GetItemData<WeaponItemData>();
-
-		bool isInSheath = !humanoid.InBattle;
 
 		var lastBehabior = currentWeaponBehavior;
 
-		if(hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
+		if (hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
 		{
-			if(currentWeaponBehavior != null && currentWeaponBehavior is OneHandedBehavior behavior)
-			{
-				behavior.Reset(weaponMain, weaponSpare, isInSheath);
-			}
-			else
-			{
-				currentWeaponBehavior = new OneHandedBehavior(this, outfit, weaponMain, weaponSpare, isInSheath);
-			}
+			currentWeaponBehavior = new OneHandedBehavior(humanoid);
 		}
 		else if (hands == Hands.Both)
 		{
-			if(weaponMain is MeleeItemData)
+			if (weaponMain is MeleeItemData)
 			{
-				if (currentWeaponBehavior != null && currentWeaponBehavior is TwoHandedBehavior behavior)
-				{
-					behavior.Reset(weaponMain, isInSheath);
-				}
-				else
-				{
-					currentWeaponBehavior = new TwoHandedBehavior(this, outfit, weaponMain, isInSheath);
-				}
+				currentWeaponBehavior = new TwoHandedBehavior(humanoid);
 			}
-			else if(weaponMain is RangedItemData)
+			else if (weaponMain is RangedItemData)
 			{
-				if (currentWeaponBehavior != null && currentWeaponBehavior is TwoHandedBehavior behavior)
-				{
-					behavior.Reset(weaponMain, isInSheath);
-				}
-				else
-				{
-					currentWeaponBehavior = new RangedBehavior(this, outfit, weaponMain, isInSheath);
-				}
+				currentWeaponBehavior = new RangedBehavior(humanoid);
 			}
 		}
 		else
 		{
-			currentWeaponBehavior = new UnArmedBehavior(this, outfit);
+			currentWeaponBehavior = new UnArmedBehavior(humanoid);
 		}
 
 
@@ -200,12 +175,18 @@ partial class HumanoidAnimatorControl
 			{
 				case BattleState.PreBattle:
 				{
-					currentWeaponBehavior.DrawWeapon();
+					if(currentWeaponBehavior is DrawableWeapon drawable)
+					{
+						drawable.DrawWeapon();
+					}
 					break;
 				}
 				case BattleState.EndBattle:
 				{
-					currentWeaponBehavior.SheathWeapon();
+					if (currentWeaponBehavior is DrawableWeapon drawable)
+					{
+						drawable.SheathWeapon();
+					}
 					break;
 				}
 			}
@@ -236,45 +217,174 @@ partial class HumanoidAnimatorControl
 
 	public abstract class WeaponBehavior
 	{
-		protected Animator Animator => control.animator;
-		protected HumanoidAnimatorControl control;
-		protected CharacterOutfit outfit;
-
-		protected int drawTypeHash;//right - 0 left - 1 both - 2
 		protected int weaponTypeHash;
 		protected int attackTypeHash;
 
-		protected int drawWeaponHash;
-		protected int sheathWeaponHash;
+		protected IEquipment equipment;
+		protected Animator animator;
+		protected HumanoidAnimatorControl control;
+		protected CharacterOutfit outfit;
 
-		public WeaponBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit)
+		protected IBattlable owner;
+
+		public WeaponBehavior(IBattlable owner)
 		{
-			this.control = control;
-			this.outfit = outfit;
+			this.owner = owner;
+			equipment = (owner.Sheet as CharacterSheet).Equipment;
+			outfit = (owner as Character).Outfit;
+			control = owner.AnimatorControl as HumanoidAnimatorControl;
+			animator = control.animator;
 
-			drawTypeHash = Animator.StringToHash("DrawType");
 			weaponTypeHash = Animator.StringToHash("WeaponType");
 			attackTypeHash = Animator.StringToHash("AttackType");
-
-			drawWeaponHash = Animator.StringToHash("DrawWeapon");
-			sheathWeaponHash = Animator.StringToHash("SheathWeapon");
 		}
 
 		public virtual void Dispose() { }
 
-
 		public virtual void UpdatePose() { }
 
-		public virtual void DrawWeapon() { }
-
 		public abstract void Attack();
-
-		public virtual void SheathWeapon() { }
 	}
+
+	public abstract class DrawableWeapon : WeaponBehavior
+	{
+		protected bool useAnimationDraw = true;
+		protected bool useAnimationSheath = true;
+
+		protected bool isAnimated = false;
+
+		protected int drawTypeHash;//right - 0 left - 1 both - 2
+		protected int drawWeaponHash;
+		protected int sheathWeaponHash;
+
+		protected DrawableWeapon(IBattlable owner) : base(owner)
+		{
+			drawTypeHash = Animator.StringToHash("DrawType");
+			drawWeaponHash = Animator.StringToHash("DrawWeapon");
+			sheathWeaponHash = Animator.StringToHash("SheathWeapon");
+
+			control.onDrawWeapon += OnWeaponDrawed;
+			control.onSheathWeapon += OnWeaponSheathed;
+
+			outfit.Slots.Clear();
+		}
+
+		public override void UpdatePose()
+		{
+			isAnimated = false;
+			
+			if (owner.InBattle)
+			{
+				OnWeaponDrawed();
+			}
+			else
+			{
+				OnWeaponSheathed();
+			}
+		}
+
+		public virtual void DrawWeapon() { }
+		public virtual void SheathWeapon() { }
+
+		protected virtual void DrawWeaponLeftHand()
+		{
+			isAnimated = true;
+
+			control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0f);
+
+			animator.SetInteger(drawTypeHash, 1);//left hand
+			animator.SetTrigger(drawWeaponHash);
+		}
+		protected virtual void SheathWeaponLeftHand()
+		{
+			isAnimated = true;
+			
+			control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0f);
+
+			animator.SetInteger(drawTypeHash, 1);//left hand
+			animator.SetTrigger(sheathWeaponHash);
+		}
+
+		protected virtual void DrawWeaponRightHand()
+		{
+			isAnimated = true;
+
+			control.SetLayerWeightByName(control.leftArmLayer, 0f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
+
+			animator.SetInteger(drawTypeHash, 0);//right hand
+			animator.SetTrigger(drawWeaponHash);
+		}
+		protected virtual void SheathWeaponRightHand()
+		{
+			isAnimated = true;
+
+			control.SetLayerWeightByName(control.leftArmLayer, 0f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
+
+			animator.SetInteger(drawTypeHash, 0);//right hand
+			animator.SetTrigger(sheathWeaponHash);
+		}
+
+		protected virtual void DrawWeaponBothHand()
+		{
+			isAnimated = true;
+
+			control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
+
+			animator.SetInteger(drawTypeHash, 2);//both hands
+			animator.SetTrigger(drawWeaponHash);
+		}
+		protected virtual void SheathWeaponBothHand()
+		{
+			isAnimated = true;
+
+			control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
+
+			animator.SetInteger(drawTypeHash, 2);//both hands
+			animator.SetTrigger(sheathWeaponHash);
+		}
+
+		protected void AnimateLeftHand()
+		{
+			control.SetLayerWeightByName(control.leftArmLayer, owner.InBattle ? 0f : 0.7f);
+			control.SetLayerWeightByName(control.leftHandLayer, 1f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0);
+			control.SetLayerWeightByName(control.rightHandLayer, 0);
+		}
+		protected void AnimateRightHand()
+		{
+			control.SetLayerWeightByName(control.leftArmLayer, 0);
+			control.SetLayerWeightByName(control.leftHandLayer, 0);
+			control.SetLayerWeightByName(control.rightArmLayer, owner.InBattle ? 0f : 0.7f);
+			control.SetLayerWeightByName(control.rightHandLayer, 1f);
+		}
+		protected void AnimateBothHands()
+		{
+			control.SetLayerWeightByName(control.leftArmLayer, owner.InBattle ? 0f : 0.7f);
+			control.SetLayerWeightByName(control.leftHandLayer, 1f);
+			control.SetLayerWeightByName(control.rightArmLayer, owner.InBattle ? 0f : 0.7f);
+			control.SetLayerWeightByName(control.rightHandLayer, 1f);
+		}
+
+		public virtual void OnWeaponDrawed() { }
+		public virtual void OnWeaponSheathed()
+		{
+			control.SetLayerWeightByName(control.rightArmLayer, 0f);
+			control.SetLayerWeightByName(control.rightHandLayer, 0f);
+			control.SetLayerWeightByName(control.leftArmLayer, 0f);
+			control.SetLayerWeightByName(control.leftHandLayer, 0f);
+		}
+	}
+
 
 	public class UnArmedBehavior : WeaponBehavior
 	{
-		public UnArmedBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit) : base(control, outfit)
+		public UnArmedBehavior(IBattlable owner) : base(owner)
 		{
 			UpdatePose();
 		}
@@ -291,25 +401,32 @@ partial class HumanoidAnimatorControl
 
 		public override void Attack()
 		{
-			Animator.SetInteger(weaponTypeHash, 0);
-			Animator.SetInteger(attackTypeHash, Random.Range(0, 3));
-			Animator.SetTrigger(control.attackHash);
+			animator.SetInteger(weaponTypeHash, 0);
+			animator.SetInteger(attackTypeHash, Random.Range(0, 3));
+			animator.SetTrigger(control.attackHash);
 		}
 	}
 
-	public class OneHandedBehavior : WeaponBehavior
+	public class OneHandedBehavior : DrawableWeapon
 	{
 		private bool IsBoth => IsLeft && IsRight;
 		private bool IsLeft => left != null;
 		private bool IsRight => right != null;
 
+		private ItemModel modelLeft;
+		private ItemModel modelRight;
+
 		private WeaponItemData right;
 		private WeaponItemData left;
-		private bool isInSheath;
 
-		public OneHandedBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit, WeaponItemData right, WeaponItemData left, bool isInSheath) : base(control, outfit)
+		public OneHandedBehavior(IBattlable owner) : base(owner)
 		{
-			Reset(right, left, isInSheath);
+			useAnimationDraw = false;
+
+			right = equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>();
+			left = equipment.WeaponCurrent.Spare.Item?.GetItemData<WeaponItemData>();
+
+			UpdatePose();
 		}
 
 		public override void Dispose()
@@ -318,104 +435,101 @@ partial class HumanoidAnimatorControl
 			control.onSheathWeapon -= OnWeaponSheathed;
 		}
 
-		public void Reset(WeaponItemData right, WeaponItemData left, bool isInSheath)
-		{
-			Dispose();
-
-			this.right = right;
-			this.left = left;
-			this.isInSheath = isInSheath;
-
-			control.onDrawWeapon += OnWeaponDrawed;
-			control.onSheathWeapon += OnWeaponSheathed;
-
-			UpdatePose();
-		}
-
-		public override void UpdatePose()
-		{
-			if (isInSheath)
-			{
-				OnWeaponSheathed();
-			}
-			else
-			{
-				OnWeaponDrawed();
-			}
-		}
-
-		public override void DrawWeapon()
-		{
-			control.SetLayerWeightByName(control.leftArmLayer, IsLeft ? 0.7f : 0f);
-			control.SetLayerWeightByName(control.rightArmLayer, IsRight ? 0.7f : 0f);
-
-			Animator.SetInteger(drawTypeHash, IsBoth ? 2 : (IsRight ? 0 : 1));
-			Animator.SetTrigger(drawWeaponHash);
-		}
 
 		public override void Attack()
 		{
-			Animator.SetInteger(weaponTypeHash, 1);
-			Animator.SetInteger(attackTypeHash, 0);
-			Animator.SetTrigger(control.attackHash);
+			animator.SetInteger(weaponTypeHash, 1);
+			animator.SetInteger(attackTypeHash, Random.Range(0, 5));
+			animator.SetTrigger(control.attackHash);
 		}
-
+		public override void DrawWeapon()
+		{
+			DrawWeaponBothHand();
+		}
 		public override void SheathWeapon()
 		{
-			Animator.SetInteger(drawTypeHash, IsBoth ? 2 : (IsRight ? 0 : 1));
-			Animator.SetTrigger(sheathWeaponHash);
+			if (IsBoth)
+			{
+				SheathWeaponBothHand();
+			}
+
 		}
 
-
-		private void OnWeaponDrawed()
+		public override void OnWeaponDrawed()
 		{
-			control.SetLayerWeightByName(control.leftArmLayer, IsLeft ? 0.7f : 0f);
-			control.SetLayerWeightByName(control.rightArmLayer, IsRight ? 0.7f : 0f);
-			control.SetLayerWeightByName(control.leftHandLayer, IsLeft ? 1f : 0f);
-			control.SetLayerWeightByName(control.rightHandLayer, IsRight ? 1f : 0f);
+			if (IsBoth)
+				AnimateBothHands();
+			else if (IsLeft)
+				AnimateLeftHand();
+			else if (IsRight)
+				AnimateRightHand();
 
-			outfit.Slots.Clear();
 
-			if (IsRight)
+			if (modelLeft == null && left != null)
 			{
-				outfit.Slots.rightHand.Replace(right.prefab, right.rightHandTransfrom);
+				modelLeft = GameObject.Instantiate(left.prefab);
+
+				isAnimated = false;
 			}
 
-			if (IsLeft)
+			if (modelRight == null && right != null)
 			{
-				outfit.Slots.leftHand.Replace(left.prefab, left.leftHandTransfrom);
+				modelRight = GameObject.Instantiate(right.prefab);
+
+				isAnimated = false;
+			}
+
+
+			if (modelLeft != null)
+			{
+				outfit.Slots.leftHand.Set(modelLeft.transform, left.leftHandTransfrom, useAnimationDraw ? isAnimated : false);
+			}
+			if (modelRight != null)
+			{
+				outfit.Slots.rightHand.Set(modelRight.transform, right.rightHandTransfrom, useAnimationDraw ? isAnimated : false);
 			}
 		}
-
-		private void OnWeaponSheathed()
+		public override void OnWeaponSheathed()
 		{
-			control.SetLayerWeightByName(control.leftArmLayer, 0f);
-			control.SetLayerWeightByName(control.rightArmLayer, 0f);
-			control.SetLayerWeightByName(control.leftHandLayer, 0f);
-			control.SetLayerWeightByName(control.rightHandLayer, 0f);
+			base.OnWeaponSheathed();
 
-			outfit.Slots.Clear();
-
-			if (IsRight)
+			if (modelLeft == null && left != null)
 			{
-				outfit.Slots.rightSheath.Replace(right.prefab, right.sheathForRightHandTransfrom);
+				modelLeft = GameObject.Instantiate(left.prefab);
+
+				isAnimated = false;
 			}
 
-			if (IsLeft)
+			if (modelRight == null && right != null)
 			{
-				outfit.Slots.leftSheath.Replace(left.prefab, left.sheathForLeftHandTransfrom);
+				modelRight = GameObject.Instantiate(right.prefab);
+
+				isAnimated = false;
+			}
+
+
+			if (modelLeft != null)
+			{
+				outfit.Slots.leftSheath.Set(modelLeft.transform, left.sheathForLeftHandTransfrom, useAnimationSheath ? isAnimated : false);
+			}
+			if (modelRight != null)
+			{
+				outfit.Slots.rightSheath.Set(modelRight.transform, right.sheathForRightHandTransfrom, useAnimationSheath ? isAnimated : false);
 			}
 		}
 	}
 
-	public class TwoHandedBehavior : WeaponBehavior
+	public class TwoHandedBehavior : DrawableWeapon
 	{
-		private WeaponItemData data;
-		private bool isInSheath;
+		private ItemModel model;
 
-		public TwoHandedBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit, WeaponItemData data, bool isInSheath) : base(control, outfit)
+		private WeaponItemData data;
+
+		public TwoHandedBehavior(IBattlable owner) : base(owner)
 		{
-			Reset(data, isInSheath);
+			data = equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>();
+
+			UpdatePose();
 		}
 
 		public override void Dispose()
@@ -424,80 +538,63 @@ partial class HumanoidAnimatorControl
 			control.onSheathWeapon -= OnWeaponSheathed;
 		}
 
-		public void Reset(WeaponItemData data, bool isInSheath)
-		{
-			Dispose();
-
-			this.data = data;
-			this.isInSheath = isInSheath;
-
-			control.onDrawWeapon += OnWeaponDrawed;
-			control.onSheathWeapon += OnWeaponSheathed;
-
-			UpdatePose();
-		}
-
-
-		public override void UpdatePose()
-		{
-			if (isInSheath)
-			{
-				OnWeaponSheathed();
-			}
-			else
-			{
-				OnWeaponDrawed();
-			}
-		}
-
-		public override void DrawWeapon()
-		{
-			control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
-			Animator.SetInteger(drawTypeHash, 0);//right hand
-			Animator.SetTrigger(drawWeaponHash);
-		}
 
 		public override void Attack()
 		{
-			Animator.SetInteger(weaponTypeHash, 2);
-			Animator.SetInteger(attackTypeHash, 0);
-			Animator.SetTrigger(control.attackHash);
+			animator.SetInteger(weaponTypeHash, 1);
+			animator.SetInteger(attackTypeHash, 1);
+			animator.SetTrigger(control.attackHash);
 		}
-
+		public override void DrawWeapon()
+		{
+			DrawWeaponRightHand();
+		}
 		public override void SheathWeapon()
 		{
-			Animator.SetInteger(drawTypeHash, 0);//right hand
-			Animator.SetTrigger(sheathWeaponHash);
+			SheathWeaponRightHand();
 		}
 
-
-		private void OnWeaponDrawed()
+		public override void OnWeaponDrawed()
 		{
-			control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
-			control.SetLayerWeightByName(control.rightHandLayer, 1f);
+			AnimateRightHand();
 
-			outfit.Slots.Clear();
-			outfit.Slots.rightHand.Replace(data.prefab, data.rightHandTransfrom);
+			if (model == null)
+			{
+				model = GameObject.Instantiate(data.prefab);
+
+				isAnimated = false;
+			}
+
+			outfit.Slots.rightHand.Set(model.transform, data.rightHandTransfrom, useAnimationDraw ? isAnimated : false);
 		}
-
-		private void OnWeaponSheathed()
+		public override void OnWeaponSheathed()
 		{
-			control.SetLayerWeightByName(control.rightArmLayer, 0f);
-			control.SetLayerWeightByName(control.rightHandLayer, 0f);
+			base.OnWeaponSheathed();
 
-			outfit.Slots.Clear();
-			outfit.Slots.backSheath.Replace(data.prefab, data.sheathForRightHandTransfrom);
+			if (model == null)
+			{
+				model = GameObject.Instantiate(data.prefab);
+
+				isAnimated = false;
+			}
+
+			outfit.Slots.backSheath.Set(model.transform, data.sheathForRightHandTransfrom, useAnimationSheath ? isAnimated : false);
 		}
 	}
 
-	public class RangedBehavior : WeaponBehavior
+	public class RangedBehavior : DrawableWeapon
 	{
-		private WeaponItemData data;
-		private bool isInSheath;
+		private ItemModel model;
 
-		public RangedBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit, WeaponItemData data, bool isInSheath) : base(control, outfit)
+		private WeaponItemData data;
+
+		public RangedBehavior(IBattlable owner) : base(owner)
 		{
-			Reset(data, isInSheath);
+			data = equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>();
+
+			outfit.Slots.Clear();
+
+			UpdatePose();
 		}
 
 		public override void Dispose()
@@ -506,69 +603,48 @@ partial class HumanoidAnimatorControl
 			control.onSheathWeapon -= OnWeaponSheathed;
 		}
 
-		public void Reset(WeaponItemData data, bool isInSheath)
-		{
-			Dispose();
-
-			this.data = data;
-			this.isInSheath = isInSheath;
-
-			control.onDrawWeapon += OnWeaponDrawed;
-			control.onSheathWeapon += OnWeaponSheathed;
-
-			UpdatePose();
-		}
-
-		public override void UpdatePose()
-		{
-			if (isInSheath)
-			{
-				OnWeaponSheathed();
-			}
-			else
-			{
-				OnWeaponDrawed();
-			}
-		}
-
-		public override void DrawWeapon()
-		{
-			control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
-
-			Animator.SetInteger(drawTypeHash, 1);//left hand
-			Animator.SetTrigger(drawWeaponHash);
-		}
-
 		public override void Attack()
 		{
-			Animator.SetInteger(weaponTypeHash, 3);
-			Animator.SetInteger(attackTypeHash, 0);
-			Animator.SetTrigger(control.attackHash);
+			animator.SetInteger(weaponTypeHash, 3);
+			animator.SetInteger(attackTypeHash, 0);
+			animator.SetTrigger(control.attackHash);
 		}
-
+		public override void DrawWeapon()
+		{
+			DrawWeaponLeftHand();
+		}
 		public override void SheathWeapon()
 		{
-			Animator.SetInteger(drawTypeHash, 1);//left hand
-			Animator.SetTrigger(sheathWeaponHash);
+			SheathWeaponLeftHand();
 		}
 
 
-		private void OnWeaponDrawed()
+		public override void OnWeaponDrawed()
 		{
-			control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
-			control.SetLayerWeightByName(control.leftHandLayer, 1f);
+			AnimateLeftHand();
 
-			outfit.Slots.Clear();
-			outfit.Slots.leftHand.Replace(data.prefab, data.leftHandTransfrom);
+			if (model == null)
+			{
+				model = GameObject.Instantiate(data.prefab);
+
+				isAnimated = false;
+			}
+
+			outfit.Slots.leftHand.Set(model.transform, data.leftHandTransfrom, useAnimationDraw ? isAnimated : false);
 		}
 
-		private void OnWeaponSheathed()
+		public override void OnWeaponSheathed()
 		{
-			control.SetLayerWeightByName(control.leftArmLayer, 0f);
-			control.SetLayerWeightByName(control.leftHandLayer, 0f);
+			base.OnWeaponSheathed();
 
-			outfit.Slots.Clear();
-			outfit.Slots.backSheath.Replace(data.prefab, data.sheathForLeftHandTransfrom);
+			if (model == null)
+			{
+				model = GameObject.Instantiate(data.prefab);
+
+				isAnimated = false;
+			}
+
+			outfit.Slots.backSheath.Set(model.transform, data.sheathForLeftHandTransfrom, useAnimationSheath ? isAnimated : false);
 		}
 	}
 }
