@@ -28,3 +28,4 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
+  baseMaterial: {fileID: 0}

@@ -7,7 +7,7 @@ namespace Game.Entities
 {
 	public class HumanoidEntity : Entity, IBattlable
 	{
-		public event UnityAction onBattleStateChanged;
+		public event UnityAction onBattleChanged;
 
 		public bool InBattle => CurrentBattle != null;
 		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
@@ -25,7 +25,7 @@ namespace Game.Entities
 			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
 			CurrentBattle.onBattleUpdated += OnBattleUpdated;
 
-			onBattleStateChanged?.Invoke();
+			onBattleChanged?.Invoke();
 
 			return true;
 		}
@@ -39,7 +39,7 @@ namespace Game.Entities
 			}
 			CurrentBattle = null;
 
-			onBattleStateChanged?.Invoke();
+			onBattleChanged?.Invoke();
 
 			return true;
 		}

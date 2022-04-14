@@ -138,6 +138,7 @@ namespace Game.Systems.InventorySystem
 				else if (equip.Item.IsArmor)
 				{
 					equip.SetItem(null);
+					OnEquipmentChanged?.Invoke();
 					return true;
 				}
 			}
@@ -167,7 +168,7 @@ namespace Game.Systems.InventorySystem
 					inventory.Add(equip.Item);
 				}
 				equip.SetItem(item);
-
+				OnEquipmentChanged?.Invoke();
 				return true;
 			}
 
@@ -199,6 +200,7 @@ namespace Game.Systems.InventorySystem
 				if (IsCanAddTo(from.Item, to))
 				{
 					from.Swap(to);
+					OnEquipmentChanged?.Invoke();
 					return true;
 				}
 			}
@@ -294,6 +296,10 @@ namespace Game.Systems.InventorySystem
 					}
 				}
 			}
+
+			weaponTo?.onEquipWeaponChanged();
+			weaponFrom?.onEquipWeaponChanged();
+
 			return false;
 		}
 
@@ -402,10 +408,9 @@ namespace Game.Systems.InventorySystem
 			Spare = spare;
 			Inventory = inventory;
 
-			Main.onEquipChanged += OnEquipWeaponChanged;
-			Spare.onEquipChanged += OnEquipWeaponChanged;
+			onEquipWeaponChanged += OnEquipWeaponChanged;
 
-			CheckHands();
+			OnEquipWeaponChanged();
 		}
 
 		public void Swap(EquipWeapon weapon)
@@ -421,6 +426,9 @@ namespace Game.Systems.InventorySystem
 			Main.SetItem(main);
 			Spare.Mark = mark;
 			Spare.SetItem(spare);
+
+			onEquipWeaponChanged?.Invoke();
+			weapon?.onEquipWeaponChanged();
 		}
 
 		public void SetItemBoth(Item item)
@@ -454,6 +462,7 @@ namespace Game.Systems.InventorySystem
 					}
 
 					SetItemBoth(item);
+					onEquipWeaponChanged?.Invoke();
 					return true;
 				}
 				else
@@ -462,6 +471,7 @@ namespace Game.Systems.InventorySystem
 					{
 						Inventory.Add(Main.Item);
 						SetItemBoth(item);
+						onEquipWeaponChanged?.Invoke();
 						return true;
 					}
 					else//TwoHanded x OneHanded
@@ -472,6 +482,7 @@ namespace Game.Systems.InventorySystem
 							Inventory.Add(Spare.Item);
 						}
 						SetItemBoth(item);
+						onEquipWeaponChanged?.Invoke();
 						return true;
 					}
 				}
@@ -481,6 +492,7 @@ namespace Game.Systems.InventorySystem
 				if (Main.IsEmpty)//одноручное
 				{
 					Main.SetItem(item);
+					onEquipWeaponChanged?.Invoke();
 					return true;
 				}
 				else
@@ -489,6 +501,7 @@ namespace Game.Systems.InventorySystem
 					{
 						Inventory.Add(Main.Item);
 						SetItemUp(item);
+						onEquipWeaponChanged?.Invoke();
 						return true;
 					}
 					else
@@ -497,12 +510,14 @@ namespace Game.Systems.InventorySystem
 						{
 							Spare.Mark = false;
 							Spare.SetItem(item);
+							onEquipWeaponChanged?.Invoke();
 							return true;
 						}
 						else
 						{
 							Inventory.Add(Main.Item);
 							Main.SetItem(item);
+							onEquipWeaponChanged?.Invoke();
 							return true;
 						}
 					}
@@ -520,6 +535,7 @@ namespace Game.Systems.InventorySystem
 				if (equip.IsEmpty)
 				{
 					equip.SetItem(item);
+					onEquipWeaponChanged?.Invoke();
 					return true;
 				}
 				else
@@ -529,12 +545,14 @@ namespace Game.Systems.InventorySystem
 						Inventory.Add(Main.Item);
 						SetItemBoth(null);
 						equip.SetItem(item);
+						onEquipWeaponChanged?.Invoke();
 						return true;
 					}
 					else
 					{
 						Inventory.Add(equip.Item);
 						equip.SetItem(item);
+						onEquipWeaponChanged?.Invoke();
 						return true;
 					}
 				}
@@ -546,11 +564,13 @@ namespace Game.Systems.InventorySystem
 			if (equip.Item.IsTwoHandedWeapon)
 			{
 				SetItemBoth(null);
+				onEquipWeaponChanged?.Invoke();
 				return true;
 			}
 			else
 			{
 				equip.SetItem(null);
+				onEquipWeaponChanged?.Invoke();
 				return true;
 			}
 		}
@@ -561,16 +581,7 @@ namespace Game.Systems.InventorySystem
 		}
 
 
-		public WeaponDamage GetMainDamage()
-		{
-			return (Main.Item.ItemData as WeaponItemData).weaponDamage;
-		}
-		public WeaponDamage GetSpareDamage()
-		{
-			return (Spare.Item.ItemData as WeaponItemData).weaponDamage;
-		}
-
-		private void CheckHands()
+		private void OnEquipWeaponChanged()
 		{
 			if (Main.IsEmpty && Spare.IsEmpty)
 			{
@@ -588,13 +599,6 @@ namespace Game.Systems.InventorySystem
 			{
 				Hands = Hands.Both;
 			}
-		}
-
-		private void OnEquipWeaponChanged()
-		{
-			CheckHands();
-
-			onEquipWeaponChanged?.Invoke();
 		}
 	}
 

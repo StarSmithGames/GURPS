@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d3c52bfe70718e4694ab27e5a395281, type: 3}
+  m_Name: Sword
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: 350e6007c8bc09a47a7e5fdbf3873cc3, type: 3}
+  localizations:
+  - language: 10
+    itemName: Sword
+    itemDescription: 
+  prefab: {fileID: 2827429483417660502, guid: dbfc23a4c52fa454d99c4cb00fcf8826, type: 3}
+  isStackable: 0
+  isInfinityStack: 0
+  stackSize: 1
+  weight: 0.01
+  isBreakable: 0
+  decay:
+    decayOverTime: 0
+    decayInside: 0
+    decayOutsie: 0
+  rarity: 0
+  weaponDamage:
+    mainDamage:
+      amount: 0
+      damageType: 0
+    isHasSideDamages: 0
+    sideDamages: []
+  sheathForRightHandTransfrom:
+    position: {x: 0.152, y: -0.034, z: -0.165}
+    rotation: {x: -0.57402545, y: -0.23728989, z: 0.20234023, w: 0.7571306}
+    scale: {x: 0, y: 0, z: 0}
+  sheathForLeftHandTransfrom:
+    position: {x: -0.174, y: -0.058, z: -0.123}
+    rotation: {x: -0.31746623, y: -0.58515316, z: -0.73885316, w: -0.104436316}
+    scale: {x: 0, y: 0, z: 0}
+  rightHandTransfrom:
+    position: {x: 0, y: 0.095, z: 0.0334}
+    rotation: {x: 0.6350073, y: -0.51844394, z: -0.44362184, w: 0.36218968}
+    scale: {x: 0, y: 0, z: 0}
+  leftHandTransfrom:
+    position: {x: 0.007, y: 0.088, z: 0.017}
+    rotation: {x: -0.53588176, y: 0.6513209, z: -0.33602065, w: 0.41916826}
+    scale: {x: 0, y: 0, z: 0}
+  melleType: 1
+  offHandType: 0
+  oneHandedType: 4
+  twoHandedType: 3

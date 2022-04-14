@@ -19,6 +19,8 @@ namespace Game.Systems.InventorySystem
 		[Required]
 		[OnValueChanged("OnDataChanged")]
 		[SerializeField] private ItemData data;
+		public T GetItemData<T>() where T : ItemData => data as T;
+
 
 		[ShowIf("@IsStackable && !useRandom")]
 		[MinValue("MinimumStackSize"), MaxValue("MaximumStackSize")]

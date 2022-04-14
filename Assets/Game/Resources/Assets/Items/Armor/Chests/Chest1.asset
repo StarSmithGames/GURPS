@@ -17,7 +17,7 @@ MonoBehaviour:
   - language: 10
     itemName: Chest
     itemDescription: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 6620961997215693809, guid: 8b941bf8d20c9b64e88d203fcc23e8c1, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
@@ -28,3 +28,4 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
+  baseMaterial: {fileID: 2100000, guid: acd4079e30a7c3141b7778106324cf97, type: 2}

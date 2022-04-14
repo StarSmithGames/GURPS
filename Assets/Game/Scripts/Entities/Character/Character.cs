@@ -34,8 +34,15 @@ namespace Game.Entities
 		}
 		private CharacterSheet characterSheet;
 
+		public CharacterOutfit Outfit { get; private set; }
+
 		public bool IsRangeAttackTest => false;
 
+		[Inject]
+		private void Construct(CharacterOutfit outfit)
+		{
+			Outfit = outfit;
+		}
 
 		protected override void Start()
 		{
@@ -98,27 +105,6 @@ namespace Game.Entities
 				}
 			}
 		}
-
-		public override void Attack()
-		{
-			CharacterSheet sheet = Sheet as CharacterSheet;
-
-			var control = (AnimatorControl as HumanoidAnimatorControl);
-
-			if (sheet.Equipment.WeaponCurrent.Hands == Hands.None)
-			{
-				control.Attack(0, Random.Range(0, 3));
-			}
-			else if(sheet.Equipment.WeaponCurrent.Hands == Hands.Main)
-			{
-				control.Attack(1, 0);
-			}
-			else
-			{
-				control.Attack(2, 0);
-			}
-		}
-
 
 		private void OnReachedDestination()
 		{

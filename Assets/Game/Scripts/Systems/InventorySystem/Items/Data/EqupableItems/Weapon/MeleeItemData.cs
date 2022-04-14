@@ -11,7 +11,7 @@ namespace Game.Systems.InventorySystem
         [ShowIf("melleType", MelleType.OffHanded)]
         public OffHandedType offHandType = OffHandedType.Shield;
         [ShowIf("melleType", MelleType.OneHanded)]
-        public OneHandedType handedType = OneHandedType.Sword;
+        public OneHandedType oneHandedType = OneHandedType.Sword;
         [ShowIf("melleType", MelleType.TwoHanded)]
         public TwoHandedType twoHandedType = TwoHandedType.Sword;
     }
