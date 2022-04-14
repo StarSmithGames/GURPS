@@ -2,6 +2,8 @@ using Game.Systems.InventorySystem;
 using UnityEngine;
 
 using Sirenix.OdinInspector;
+using Game.Systems.SheetSystem;
+using Zenject;
 
 namespace Game.Entities
 {
@@ -9,23 +11,94 @@ namespace Game.Entities
 	{
 		public CharacterOutfitSlots Slots => slots;
 		[SerializeField] private CharacterOutfitSlots slots;
+		[Space]
+		[SerializeField] private Transform equipmentContent;
+		[SerializeField] private SkinnedMeshRenderer body;
+
+		private Transform head;
+		private Transform sholders;
+		private Transform chest;
+		private Transform forearms;
+		private Transform legs;
+		private Transform feet;
+
+		private IEquipment equipment;
+
+		[Inject]
+		private void Construct(IEntity entity)
+		{
+			equipment = (entity.Sheet as CharacterSheet).Equipment;
+		}
+
+		private void Start()
+		{
+			head = CreateSlot();
+			sholders = CreateSlot();
+			chest = CreateSlot();
+			forearms = CreateSlot();
+			legs = CreateSlot();
+			feet = CreateSlot();
+
+			equipment.OnEquipmentChanged += OnEquipmentChanged;
+		}
+
+		private void OnDestroy()
+		{
+			if (equipment != null)
+			{
+				equipment.OnEquipmentChanged -= OnEquipmentChanged;
+			}
+		}
+
+		private Transform CreateSlot()
+		{
+			Transform slot = new GameObject("_slot").transform;
+			slot.SetParent(equipmentContent);
+
+			return slot;
+		}
+
+		private void SetArmor(Transform root, Item item)
+		{
+			root.DestroyChildren();
+			if(item != null && item.ItemData != null && item.ItemData.prefab != null)
+			{
+				var model = Instantiate(item.ItemData.prefab) as ItemArmorModel;
+				model.transform.SetParent(root);
+				model.Renderer.bones = body.bones;
+				model.Renderer.rootBone = body.rootBone;
+
+				model.Renderer.sharedMaterial = item.GetItemData<ArmorItemData>().baseMaterial;
+			}
+		}
+
+
+		private void OnEquipmentChanged()
+		{
+			SetArmor(head, equipment.Head.Item);
+			SetArmor(sholders, equipment.Sholders.Item);
+			SetArmor(chest, equipment.Chest.Item);
+			SetArmor(forearms, equipment.Forearms.Item);
+			SetArmor(legs, equipment.Legs.Item);
+			SetArmor(feet, equipment.Feet.Item);
+		}
 	}
 
 	[System.Serializable]
 	public class CharacterOutfitSlots
 	{
 		[InlineProperty]
-		public OutfitSlot leftHand;
+		public OutfitWeaponSlot leftHand;
 		[InlineProperty]
-		public OutfitSlot rightHand;
+		public OutfitWeaponSlot rightHand;
 
 		[InlineProperty]
-		public OutfitSlot backSheath;
+		public OutfitWeaponSlot backSheath;
 
 		[InlineProperty]
-		public OutfitSlot leftSheath;
+		public OutfitWeaponSlot leftSheath;
 		[InlineProperty]
-		public OutfitSlot rightSheath;
+		public OutfitWeaponSlot rightSheath;
 
 		public void Clear()
 		{
@@ -39,7 +112,7 @@ namespace Game.Entities
 
 
 	[System.Serializable]
-	public class OutfitSlot
+	public class OutfitWeaponSlot
 	{
 		[HideLabel]
 		public Transform slot;

@@ -138,6 +138,7 @@ namespace Game.Systems.InventorySystem
 				else if (equip.Item.IsArmor)
 				{
 					equip.SetItem(null);
+					OnEquipmentChanged?.Invoke();
 					return true;
 				}
 			}
@@ -167,7 +168,7 @@ namespace Game.Systems.InventorySystem
 					inventory.Add(equip.Item);
 				}
 				equip.SetItem(item);
-
+				OnEquipmentChanged?.Invoke();
 				return true;
 			}
 
@@ -199,6 +200,7 @@ namespace Game.Systems.InventorySystem
 				if (IsCanAddTo(from.Item, to))
 				{
 					from.Swap(to);
+					OnEquipmentChanged?.Invoke();
 					return true;
 				}
 			}

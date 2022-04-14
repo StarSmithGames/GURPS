@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 946d89af8ef09a949a550de2b2eaa40f, type: 3}
-  m_Name: Forearm0
+  m_Script: {fileID: 11500000, guid: 64c6d4de6ea28f24b895967b8009eafa, type: 3}
+  m_Name: Legs1
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: aeaf8f8173b12de4c9a0ffd32c00caca, type: 3}
+  itemSprite: {fileID: 21300000, guid: b32ced07c5f444b429e48cbb9cec5a72, type: 3}
   localizations:
   - language: 10
-    itemName: Bracers
+    itemName: LegsRed
     itemDescription: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 3099327998246346679, guid: 2f5d66044e0fa104f922812575ad9c24, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
@@ -28,4 +28,4 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
-  baseMaterial: {fileID: 0}
+  baseMaterial: {fileID: 2100000, guid: d7e7128dde0838442a26e8275235364e, type: 2}

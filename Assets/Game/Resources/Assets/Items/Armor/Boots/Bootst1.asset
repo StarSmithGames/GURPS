@@ -17,7 +17,7 @@ MonoBehaviour:
   - language: 10
     itemName: Boots
     itemDescription: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 6208013075205180582, guid: 33eb7dea9018b6642abaa7a8a371992e, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
@@ -28,3 +28,4 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
+  baseMaterial: {fileID: 2100000, guid: 9d2541e83115f0545b1a1d05746227aa, type: 2}

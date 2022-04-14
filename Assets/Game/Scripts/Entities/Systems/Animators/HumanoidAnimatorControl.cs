@@ -28,12 +28,11 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 
 	private string leftArmLayer = "LeftArm";
 	private string rightArmLayer = "RightArm";
-	private string bothHandsLayer = "BothHands";
 	private string leftHandLayer = "LeftHand";
 	private string rightHandLayer = "RightHand";
 
 	private IBattlable humanoid;
-	private WeaponBehavior weaponBehavior;
+	private WeaponBehavior currentWeaponBehavior;
 
 	private CharacterOutfit outfit;
 
@@ -73,62 +72,123 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 	{
 		IsAttackProccess = true;
 		yield return WaitWhileNode("IdleAction");
-		weaponBehavior.Attack();
+		currentWeaponBehavior.Attack();
 		yield return WaitWhileNode("IdleAction", true);
 		yield return WaitWhileNode("IdleAction");
 		transform.DOMove(transform.root.position, 0.25f);
 		IsAttackProccess = false;
 	}
 
+	#region AnimationEvents
+	private void AttackLeftHand()
+	{
+		onAttackLeftHand?.Invoke();
+	}
+	private void AttackRightHand()
+	{
+		onAttackRightHand?.Invoke();
+	}
+	private void AttackKick()
+	{
+		onAttackKick?.Invoke();
+	}
+
+	private void DrawWeapon()
+	{
+		onDrawWeapon?.Invoke();
+	}
+	private void SheathWeapon()
+	{
+		onSheathWeapon?.Invoke();
+	}
+
+
+	private void DrawArrow()
+	{
+
+	}
+	#endregion
+}
+
+#region WeaponBehavior
+partial class HumanoidAnimatorControl
+{
+	private Battle currentBattle;
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+
+		if (humanoid != null)
+		{
+			humanoid.onBattleChanged -= OnBattleChanged;
+			(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
+		}
+	}
+
 	private void OnEquipWeaponChanged()
 	{
 		CharacterSheet sheet = humanoid.Sheet as CharacterSheet;
 
+		Hands hands = sheet.Equipment.WeaponCurrent.Hands;
+
 		var weaponMain = sheet.Equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>();
 		var weaponSpare = sheet.Equipment.WeaponCurrent.Spare.Item?.GetItemData<WeaponItemData>();
 
-		switch (sheet.Equipment.WeaponCurrent.Hands)
+		bool isInSheath = !humanoid.InBattle;
+
+		var lastBehabior = currentWeaponBehavior;
+
+		if(hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
 		{
-			case Hands.None:
+			if(currentWeaponBehavior != null && currentWeaponBehavior is OneHandedBehavior behavior)
 			{
-				weaponBehavior = new UnArmedBehavior(this, outfit);
-				break;
+				behavior.Reset(weaponMain, weaponSpare, isInSheath);
 			}
-			case Hands.Main:
-			case Hands.Spare:
+			else
 			{
-				weaponBehavior = new OneHandedBehavior(this, outfit, weaponMain, weaponSpare, !humanoid.InBattle);
-				break;
+				currentWeaponBehavior = new OneHandedBehavior(this, outfit, weaponMain, weaponSpare, isInSheath);
 			}
-			case Hands.Both:
+		}
+		else if (hands == Hands.Both)
+		{
+			if(weaponMain is MeleeItemData)
 			{
-				if(weaponMain is MeleeItemData melee)
+				if (currentWeaponBehavior != null && currentWeaponBehavior is TwoHandedBehavior behavior)
 				{
-					switch (melee.melleType)
-					{
-						case MelleType.OneHanded:
-						{
-							weaponBehavior = new OneHandedBehavior(this, outfit, weaponMain, weaponSpare, !humanoid.InBattle);
-							break;
-						}
-						case MelleType.TwoHanded:
-						{
-							weaponBehavior = new TwoHandedBehavior(this, outfit, weaponMain, !humanoid.InBattle);
-							break;
-						}
-					}
+					behavior.Reset(weaponMain, isInSheath);
 				}
-				else if (weaponMain is RangedItemData)
+				else
 				{
-					weaponBehavior = new RangedBehavior(this, outfit, weaponMain, !humanoid.InBattle);
+					currentWeaponBehavior = new TwoHandedBehavior(this, outfit, weaponMain, isInSheath);
 				}
-				break;
 			}
+			else if(weaponMain is RangedItemData)
+			{
+				if (currentWeaponBehavior != null && currentWeaponBehavior is TwoHandedBehavior behavior)
+				{
+					behavior.Reset(weaponMain, isInSheath);
+				}
+				else
+				{
+					currentWeaponBehavior = new RangedBehavior(this, outfit, weaponMain, isInSheath);
+				}
+			}
+		}
+		else
+		{
+			currentWeaponBehavior = new UnArmedBehavior(this, outfit);
+		}
+
+
+		if (lastBehabior != null && lastBehabior != currentWeaponBehavior)
+		{
+			lastBehabior.Dispose();
 		}
 
 		if (humanoid.InBattle)
 		{
-			weaponBehavior.UpdatePose();
+			currentWeaponBehavior.UpdatePose();
 		}
 	}
 
@@ -140,17 +200,39 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 			{
 				case BattleState.PreBattle:
 				{
-					weaponBehavior.DrawWeapon();
+					currentWeaponBehavior.DrawWeapon();
 					break;
 				}
 				case BattleState.EndBattle:
 				{
-					weaponBehavior.SheathWeapon();
+					currentWeaponBehavior.SheathWeapon();
 					break;
 				}
 			}
 		}
 	}
+
+	private void OnBattleChanged()
+	{
+		if (humanoid.CurrentBattle != null)
+		{
+			if (currentBattle != null)
+			{
+				currentBattle.onBattleStateChanged -= OnBattleStateChanged;
+			}
+
+			currentBattle = humanoid.CurrentBattle;
+			currentBattle.onBattleStateChanged += OnBattleStateChanged;
+		}
+		else
+		{
+			if (currentBattle != null)
+			{
+				currentBattle.onBattleStateChanged -= OnBattleStateChanged;
+			}
+		}
+	}
+
 
 	public abstract class WeaponBehavior
 	{
@@ -178,6 +260,9 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 			sheathWeaponHash = Animator.StringToHash("SheathWeapon");
 		}
 
+		public virtual void Dispose() { }
+
+
 		public virtual void UpdatePose() { }
 
 		public virtual void DrawWeapon() { }
@@ -198,8 +283,9 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 		{
 			control.SetLayerWeightByName(control.leftArmLayer, 0f);
 			control.SetLayerWeightByName(control.leftHandLayer, 0f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0f);
 			control.SetLayerWeightByName(control.rightHandLayer, 0f);
-		
+
 			outfit.Slots.Clear();
 		}
 
@@ -213,105 +299,31 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 
 	public class OneHandedBehavior : WeaponBehavior
 	{
+		private bool IsBoth => IsLeft && IsRight;
+		private bool IsLeft => left != null;
+		private bool IsRight => right != null;
+
 		private WeaponItemData right;
 		private WeaponItemData left;
 		private bool isInSheath;
 
 		public OneHandedBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit, WeaponItemData right, WeaponItemData left, bool isInSheath) : base(control, outfit)
 		{
+			Reset(right, left, isInSheath);
+		}
+
+		public override void Dispose()
+		{
+			control.onDrawWeapon -= OnWeaponDrawed;
+			control.onSheathWeapon -= OnWeaponSheathed;
+		}
+
+		public void Reset(WeaponItemData right, WeaponItemData left, bool isInSheath)
+		{
+			Dispose();
+
 			this.right = right;
 			this.left = left;
-			this.isInSheath = isInSheath;
-
-			UpdatePose();
-		}
-
-		public override void UpdatePose()
-		{
-			if (isInSheath)
-			{
-				if (right != null)
-				{
-					outfit.Slots.rightSheath.Replace(right.prefab, right.sheathForRightHandTransfrom);
-				}
-
-				if (left != null)
-				{
-					outfit.Slots.leftSheath.Replace(left.prefab, left.sheathForLeftHandTransfrom);
-				}
-			}
-			else
-			{
-				control.SetLayerWeightByName(control.leftArmLayer, 0f);
-				control.SetLayerWeightByName(control.leftHandLayer, left != null ? 1f : 0f);
-				control.SetLayerWeightByName(control.rightHandLayer, right != null ? 1f : 0f);
-
-				if (right != null)
-				{
-					outfit.Slots.rightHand.Replace(right.prefab, right.rightHandTransfrom);
-				}
-
-				if (left != null)
-				{
-					outfit.Slots.leftHand.Replace(left.prefab, left.leftHandTransfrom);
-				}
-			}
-		}
-
-		public override void DrawWeapon()
-		{
-			UpdatePose();
-			if (right != null)
-			{
-				Animator.SetInteger(drawTypeHash, 0);
-			}
-			if (left != null)
-			{
-				Animator.SetInteger(drawTypeHash, 1);
-			}
-			Animator.SetTrigger(drawWeaponHash);
-		}
-
-		public override void Attack()
-		{
-			Animator.SetInteger(weaponTypeHash, 1);
-			Animator.SetInteger(attackTypeHash, 0);
-			Animator.SetTrigger(control.attackHash);
-		}
-
-		public override void SheathWeapon()
-		{
-			Animator.SetInteger(drawTypeHash, right != null && left != null ? 2 : (right != null ? 0 : (left != null ? 1 : 0)));
-
-			Sequence sequence = DOTween.Sequence();
-
-			sequence
-				.AppendCallback(() => Animator.SetTrigger(sheathWeaponHash))
-				.AppendInterval(1f)
-				.AppendCallback(() =>
-				{
-					if (right != null)
-					{
-						control.SetLayerWeightByName(control.rightArmLayer, 0f);
-						control.SetLayerWeightByName(control.rightHandLayer, 0f);
-					}
-					if (left != null)
-					{
-						control.SetLayerWeightByName(control.leftArmLayer, 0f);
-						control.SetLayerWeightByName(control.leftHandLayer, 0f);
-					}
-				});
-		}
-	}
-
-	public class TwoHandedBehavior : WeaponBehavior
-	{
-		private WeaponItemData data;
-		private bool isInSheath;
-
-		public TwoHandedBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit, WeaponItemData data, bool isInSheath) : base(control, outfit)
-		{
-			this.data = data;
 			this.isInSheath = isInSheath;
 
 			control.onDrawWeapon += OnWeaponDrawed;
@@ -324,8 +336,113 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 		{
 			if (isInSheath)
 			{
-				outfit.Slots.Clear();
-				outfit.Slots.backSheath.Replace(data.prefab, data.sheathForRightHandTransfrom);
+				OnWeaponSheathed();
+			}
+			else
+			{
+				OnWeaponDrawed();
+			}
+		}
+
+		public override void DrawWeapon()
+		{
+			control.SetLayerWeightByName(control.leftArmLayer, IsLeft ? 0.7f : 0f);
+			control.SetLayerWeightByName(control.rightArmLayer, IsRight ? 0.7f : 0f);
+
+			Animator.SetInteger(drawTypeHash, IsBoth ? 2 : (IsRight ? 0 : 1));
+			Animator.SetTrigger(drawWeaponHash);
+		}
+
+		public override void Attack()
+		{
+			Animator.SetInteger(weaponTypeHash, 1);
+			Animator.SetInteger(attackTypeHash, 0);
+			Animator.SetTrigger(control.attackHash);
+		}
+
+		public override void SheathWeapon()
+		{
+			Animator.SetInteger(drawTypeHash, IsBoth ? 2 : (IsRight ? 0 : 1));
+			Animator.SetTrigger(sheathWeaponHash);
+		}
+
+
+		private void OnWeaponDrawed()
+		{
+			control.SetLayerWeightByName(control.leftArmLayer, IsLeft ? 0.7f : 0f);
+			control.SetLayerWeightByName(control.rightArmLayer, IsRight ? 0.7f : 0f);
+			control.SetLayerWeightByName(control.leftHandLayer, IsLeft ? 1f : 0f);
+			control.SetLayerWeightByName(control.rightHandLayer, IsRight ? 1f : 0f);
+
+			outfit.Slots.Clear();
+
+			if (IsRight)
+			{
+				outfit.Slots.rightHand.Replace(right.prefab, right.rightHandTransfrom);
+			}
+
+			if (IsLeft)
+			{
+				outfit.Slots.leftHand.Replace(left.prefab, left.leftHandTransfrom);
+			}
+		}
+
+		private void OnWeaponSheathed()
+		{
+			control.SetLayerWeightByName(control.leftArmLayer, 0f);
+			control.SetLayerWeightByName(control.rightArmLayer, 0f);
+			control.SetLayerWeightByName(control.leftHandLayer, 0f);
+			control.SetLayerWeightByName(control.rightHandLayer, 0f);
+
+			outfit.Slots.Clear();
+
+			if (IsRight)
+			{
+				outfit.Slots.rightSheath.Replace(right.prefab, right.sheathForRightHandTransfrom);
+			}
+
+			if (IsLeft)
+			{
+				outfit.Slots.leftSheath.Replace(left.prefab, left.sheathForLeftHandTransfrom);
+			}
+		}
+	}
+
+	public class TwoHandedBehavior : WeaponBehavior
+	{
+		private WeaponItemData data;
+		private bool isInSheath;
+
+		public TwoHandedBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit, WeaponItemData data, bool isInSheath) : base(control, outfit)
+		{
+			Reset(data, isInSheath);
+		}
+
+		public override void Dispose()
+		{
+			control.onDrawWeapon -= OnWeaponDrawed;
+			control.onSheathWeapon -= OnWeaponSheathed;
+		}
+
+		public void Reset(WeaponItemData data, bool isInSheath)
+		{
+			Dispose();
+
+			this.data = data;
+			this.isInSheath = isInSheath;
+
+			control.onDrawWeapon += OnWeaponDrawed;
+			control.onSheathWeapon += OnWeaponSheathed;
+
+			UpdatePose();
+		}
+
+
+		public override void UpdatePose()
+		{
+			if (isInSheath)
+			{
+				OnWeaponSheathed();
 			}
 			else
 			{
@@ -380,6 +497,19 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 
 		public RangedBehavior(HumanoidAnimatorControl control, CharacterOutfit outfit, WeaponItemData data, bool isInSheath) : base(control, outfit)
 		{
+			Reset(data, isInSheath);
+		}
+
+		public override void Dispose()
+		{
+			control.onDrawWeapon -= OnWeaponDrawed;
+			control.onSheathWeapon -= OnWeaponSheathed;
+		}
+
+		public void Reset(WeaponItemData data, bool isInSheath)
+		{
+			Dispose();
+
 			this.data = data;
 			this.isInSheath = isInSheath;
 
@@ -393,8 +523,7 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 		{
 			if (isInSheath)
 			{
-				outfit.Slots.Clear();
-				outfit.Slots.backSheath.Replace(data.prefab, data.sheathForLeftHandTransfrom);
+				OnWeaponSheathed();
 			}
 			else
 			{
@@ -428,7 +557,7 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 		{
 			control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
 			control.SetLayerWeightByName(control.leftHandLayer, 1f);
-			
+
 			outfit.Slots.Clear();
 			outfit.Slots.leftHand.Replace(data.prefab, data.leftHandTransfrom);
 		}
@@ -442,71 +571,5 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 			outfit.Slots.backSheath.Replace(data.prefab, data.sheathForLeftHandTransfrom);
 		}
 	}
-
-	#region AnimationEvents
-	private void AttackLeftHand()
-	{
-		onAttackLeftHand?.Invoke();
-	}
-	private void AttackRightHand()
-	{
-		onAttackRightHand?.Invoke();
-	}
-	private void AttackKick()
-	{
-		onAttackKick?.Invoke();
-	}
-
-	private void DrawWeapon()
-	{
-		onDrawWeapon?.Invoke();
-	}
-	private void SheathWeapon()
-	{
-		onSheathWeapon?.Invoke();
-	}
-
-
-	private void DrawArrow()
-	{
-
-	}
-	#endregion
 }
-
-partial class HumanoidAnimatorControl
-{
-	private Battle currentBattle;
-
-	protected override void OnDestroy()
-	{
-		base.OnDestroy();
-
-		if (humanoid != null)
-		{
-			humanoid.onBattleChanged -= OnBattleChanged;
-			(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
-		}
-	}
-
-	private void OnBattleChanged()
-	{
-		if (humanoid.CurrentBattle != null)
-		{
-			if (currentBattle != null)
-			{
-				currentBattle.onBattleStateChanged -= OnBattleStateChanged;
-			}
-
-			currentBattle = humanoid.CurrentBattle;
-			currentBattle.onBattleStateChanged += OnBattleStateChanged;
-		}
-		else
-		{
-			if (currentBattle != null)
-			{
-				currentBattle.onBattleStateChanged -= OnBattleStateChanged;
-			}
-		}
-	}
-}
+#endregion
