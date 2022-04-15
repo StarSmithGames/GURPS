@@ -21,7 +21,7 @@ MonoBehaviour:
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
-  weight: 0.01
+  weight: 2.5
   isBreakable: 0
   decay:
     decayOverTime: 0
@@ -30,10 +30,13 @@ MonoBehaviour:
   rarity: 0
   weaponDamage:
     mainDamage:
-      amount: 0
-      damageType: 0
+      amount: {x: 2, y: 8}
+      damageType: 1
     isHasSideDamages: 0
     sideDamages: []
+    criticalDamage: 150
+    criticalChance: 0
+  weaponRange: 1.2
   sheathForRightHandTransfrom:
     position: {x: 0.152, y: -0.034, z: -0.165}
     rotation: {x: -0.57402545, y: -0.23728989, z: 0.20234023, w: 0.7571306}

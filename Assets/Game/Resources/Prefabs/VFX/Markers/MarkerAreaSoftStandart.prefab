@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1683472277735339248}
   - component: {fileID: 2208969980977933498}
   m_Layer: 0
-  m_Name: MarkerSoftAreaStandart
+  m_Name: MarkerAreaSoftStandart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc2c1d39f590a9d4e93285dfbc7798ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Line>k__BackingField: {fileID: 2208969980977933498}
+  line: {fileID: 2208969980977933498}
   lookFrom: {x: 0, y: 1.8, z: 0}
   offset: {x: 0, y: 0.01, z: 0}
   isDebub: 0

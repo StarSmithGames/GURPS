@@ -151,35 +151,45 @@ namespace Game.Entities
 		{
 			return new Damage()
 			{
-				amount = GetDamageFromTable(Sheet.Stats.Strength.CurrentValue),
+				amount = GetDamageFromTable(),
 				damageType = DamageType.Crushing,
 			};
 		}
 
-		public virtual void ApplyDamage<T>(T value) where T : struct
+		public virtual void ApplyDamage<T>(T value)
 		{
 			if (value is Damage damage)
 			{
-				floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.damageType.ToString(), type: AnimationType.BasicDamageType);
+				float dmg = (int)Mathf.Max(damage.DMG - 2, 0);
 
-				if (damage.IsPhysicalDamage)
+				if(dmg == 0)
 				{
-					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.amount.ToString(), type: AnimationType.AdvanceDamage);
-					if (!Sheet.Settings.isImmortal)
-					{
-						Sheet.Stats.HitPoints.CurrentValue -= damage.amount;
-					}
+					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), "Miss!", type: AnimationType.BasicDamageType);
 				}
-				else if (damage.IsMagicalDamage)
+				else
 				{
+					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.damageType.ToString(), type: AnimationType.BasicDamageType);
 
+					if (damage.IsPhysicalDamage)
+					{
+
+						floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), dmg.ToString(), type: AnimationType.AdvanceDamage);
+						if (!Sheet.Settings.isImmortal)
+						{
+							Sheet.Stats.HitPoints.CurrentValue -= dmg;
+						}
+					}
+					else if (damage.IsMagicalDamage)
+					{
+
+					}
 				}
 			}
 		}
 
-		private float GetDamageFromTable(float strength)
+		private Vector2 GetDamageFromTable()
 		{
-			return Mathf.Max(Random.Range(1, 7) - 2, 0);
+			return new Vector2(1, 7);
 		}
 	}
 }

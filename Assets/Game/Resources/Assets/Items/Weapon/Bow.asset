@@ -30,10 +30,13 @@ MonoBehaviour:
   rarity: 0
   weaponDamage:
     mainDamage:
-      amount: 1
+      amount: {x: 0, y: 0}
       damageType: 3
     isHasSideDamages: 0
     sideDamages: []
+    criticalDamage: 150
+    criticalChance: 0
+  weaponRange: 10
   sheathForRightHandTransfrom:
     position: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0, w: 0}

@@ -48,7 +48,14 @@ namespace Game.Systems.InteractionSystem
 						if (from.Sheet.Stats.ActionPoints.CurrentValue > 0)
 						{
 							from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
-							entity.LastInteractionAction = new Attack(from, to);
+							if(entity is HumanoidEntity)
+							{
+								entity.LastInteractionAction = new HumanoidAttack(from, to);
+							}
+							else
+							{
+								entity.LastInteractionAction = new Attack(from, to);
+							}
 						}
 						else
 						{
@@ -113,34 +120,22 @@ namespace Game.Systems.InteractionSystem
 
 	public class Attack : IAction
 	{
-		private IBattlable from;
-		private IDamegeable to;
+		protected IBattlable from;
+		protected IDamegeable to;
 
 		public Attack(IBattlable from, IDamegeable to)
 		{
 			this.from = from;
 			this.to = to;
 
-			var control = (from.AnimatorControl as HumanoidAnimatorControl);
-
-			control.onAttackEvent += OnAttacked;
-
-			control.onAttackLeftHand += OnAttacked;
-			control.onAttackRightHand += OnAttacked;
-			control.onAttackKick += OnAttacked;
+			from.AnimatorControl.onAttackEvent += OnAttacked;
 		}
 
-		private void Dispose()
+		protected virtual void Dispose()
 		{
-			var control = (from.AnimatorControl as HumanoidAnimatorControl);
-
-			if (control != null)
+			if (from != null)
 			{
-				control.onAttackEvent -= OnAttacked;
-
-				control.onAttackLeftHand -= OnAttacked;
-				control.onAttackRightHand -= OnAttacked;
-				control.onAttackKick -= OnAttacked;
+				from.AnimatorControl.onAttackEvent -= OnAttacked;
 			}
 		}
 
@@ -164,18 +159,33 @@ namespace Game.Systems.InteractionSystem
 			}
 
 			//wait start and then end attack
-			var anim = from.AnimatorControl as HumanoidAnimatorControl;
-
-			yield return new WaitWhile(() => !anim.IsAttackProccess);
-			yield return new WaitWhile(() => anim.IsAttackProccess);
+			yield return new WaitWhile(() => !from.AnimatorControl.IsAttackProccess);
+			yield return new WaitWhile(() => from.AnimatorControl.IsAttackProccess);
 
 			Dispose();
+		}
+
+		protected virtual void CheckDeath(IEntity entity)
+		{
+			if (entity.Sheet.Stats.HitPoints.CurrentValue == 0)
+			{
+				if (!entity.Sheet.Conditions.IsContains<Death>())
+				{
+					if (entity.Sheet.Conditions.Add(new Death()))
+					{
+						entity.AnimatorControl.Death();
+						entity.Kill();
+
+						Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {from.MonoBehaviour.gameObject.name}");
+					}
+				}
+			}
 		}
 
 		/// <summary>
 		/// from attacked to
 		/// </summary>
-		private void OnAttacked()
+		protected void OnAttacked()
 		{
 			if(to is IEntity entity)
 			{
@@ -183,22 +193,76 @@ namespace Game.Systems.InteractionSystem
 				entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
 				entity.ApplyDamage(from.GetDamage());
 
-				if (entity.Sheet.Stats.HitPoints.CurrentValue == 0)
-				{
-					if (!entity.Sheet.Conditions.IsContains<Death>())
-					{
-						if (entity.Sheet.Conditions.Add(new Death()))
-						{
-							entity.AnimatorControl.Death();
-							entity.Kill();
+				CheckDeath(entity);
+			}
+		}
 
-							Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {from.MonoBehaviour.gameObject.name}");
-						}
-					}
+	}
+
+	public class HumanoidAttack : Attack
+	{
+		private HumanoidAnimatorControl control;
+		private IEquipment equipment;
+
+		public HumanoidAttack(IBattlable from, IDamegeable to) : base(from, to)
+		{
+			control = (from.AnimatorControl as HumanoidAnimatorControl);
+			equipment = (from.Sheet as CharacterSheet).Equipment;
+
+			control.onAttackLeftHand += OnAttackedLeftHand;
+			control.onAttackRightHand += OnAttackRightHand;
+			control.onAttackKick += OnAttacked;
+		}
+
+		protected override void Dispose()
+		{
+			base.Dispose();
+
+			if(control != null)
+			{
+				control.onAttackLeftHand -= OnAttackedLeftHand;
+				control.onAttackRightHand -= OnAttackRightHand;
+				control.onAttackKick -= OnAttacked;
+			}
+		}
+
+		private void OnAttackedLeftHand()
+		{
+			if (!equipment.WeaponCurrent.Spare.IsEmpty)
+			{
+				if (to is IEntity entity)
+				{
+					entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
+					entity.ApplyDamage(equipment.WeaponCurrent.Spare.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
+
+					CheckDeath(entity);
 				}
+			}
+			else
+			{
+				OnAttacked();
+			}
+		}
+		private void OnAttackRightHand()
+		{
+			if (!equipment.WeaponCurrent.Main.IsEmpty)
+			{
+				if (to is IEntity entity)
+				{
+					entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
+					entity.ApplyDamage(equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
+
+					CheckDeath(entity);
+				}
+			}
+			else
+			{
+				OnAttacked();
 			}
 		}
 	}
+
+
 
 	public class BaseInteraction : IAction
 	{

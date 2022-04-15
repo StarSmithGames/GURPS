@@ -8,9 +8,12 @@ namespace Game.Systems.VFX
 		[OnValueChanged("DrawCircle")]
 		[Min(0)]
 		[SerializeField] private int pointCount;
+
+		public float Radius { get => radius; set => radius = value; }
 		[OnValueChanged("DrawCircle")]
 		[Min(0)]
 		[SerializeField] private float radius;
+
 
 		public void DrawCircle()
 		{
