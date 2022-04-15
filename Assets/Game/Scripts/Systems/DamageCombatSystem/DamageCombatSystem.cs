@@ -22,6 +22,11 @@ namespace Game.Systems.DamageSystem
 		public bool isHasSideDamages = false;
 		[ShowIf("isHasSideDamages")]
 		public List<Damage> sideDamages = new List<Damage>();
+		[Space]
+		[SuffixLabel("%", true)]
+		public float criticalDamage = 150;
+		[SuffixLabel("%", true)]
+		public float criticalChance = 0;
 
 		[ReadOnly][ShowInInspector] public bool IsHasPhysicalDamage => mainDamage.IsPhysicalDamage || sideDamages.Any((x) => x.IsPhysicalDamage);
 		[ReadOnly][ShowInInspector] public bool IsHasMagicalDamage => mainDamage.IsMagicalDamage || sideDamages.Any((x) => x.IsMagicalDamage);
@@ -36,10 +41,13 @@ namespace Game.Systems.DamageSystem
 	}
 
 	[System.Serializable]
-	public struct Damage
+	public class Damage
 	{
-		public float amount;
+		[MinMaxSlider(0, 99, true)]
+		public Vector2 amount;
 		public DamageType damageType;
+
+		public float DMG => amount.GetRandomBtw();
 
 		public bool IsPhysicalDamage =>
 			damageType == DamageType.Slashing ||

@@ -21,7 +21,7 @@ MonoBehaviour:
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
-  weight: 0.01
+  weight: 6
   isBreakable: 0
   decay:
     decayOverTime: 0
@@ -30,22 +30,29 @@ MonoBehaviour:
   rarity: 0
   weaponDamage:
     mainDamage:
-      amount: 0
-      damageType: 0
+      amount: {x: 0, y: 10}
+      damageType: 2
     isHasSideDamages: 0
     sideDamages: []
+    criticalDamage: 150
+    criticalChance: 0
+  weaponRange: 1.5
   sheathForRightHandTransfrom:
     position: {x: 0.093, y: -0.123, z: -0.112}
     rotation: {x: -0.6369565, y: -0.29059395, z: 0.17485435, w: 0.69229144}
+    scale: {x: 0, y: 0, z: 0}
   sheathForLeftHandTransfrom:
     position: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0, w: 0}
+    scale: {x: 0, y: 0, z: 0}
   rightHandTransfrom:
     position: {x: -0.271, y: 0.099, z: -0.09}
     rotation: {x: -0.0014118173, y: -0.85126776, z: -0.002093344, w: 0.5247254}
+    scale: {x: 0, y: 0, z: 0}
   leftHandTransfrom:
     position: {x: 0, y: 0, z: 0}
     rotation: {x: 0, y: 0, z: 0, w: 0}
+    scale: {x: 0, y: 0, z: 0}
   melleType: 2
   offHandType: 0
   oneHandedType: 4

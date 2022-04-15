@@ -8,7 +8,8 @@ namespace Game.Systems.VFX
 	{
 		public bool IsEnabled { get; protected set; }
 
-		[field: SerializeField] public LineRenderer Line { get; set; }
+		public LineRenderer Line => line;
+		[SerializeField] private LineRenderer line;
 
 		[SerializeField] protected Vector3 lookFrom = new Vector3(0, 1f, 0);
 		[SerializeField] protected Vector3 offset = new Vector3(0, 0.01f, 0);
@@ -22,6 +23,24 @@ namespace Game.Systems.VFX
 		[SerializeField] protected float rayLength = 100f;
 		[ShowIf("useRaycast")]
 		[SerializeField] protected LayerMask raycastLayerMask = ~0;
+		[Space]
+		[SerializeField] private bool isCanMove = false;
+		[ShowIf("isCanMove")]
+		[MinValue(-1f), MaxValue(1f)]
+		[SerializeField] private Vector2 moveDirection = Vector2.left;
+		[ShowIf("isCanMove")]
+		[SerializeField] private float speed = 2f;
+
+		private void Update()
+		{
+			if (IsEnabled)
+			{
+				if (isCanMove)
+				{
+					line.material.SetTextureOffset("_MainTex", moveDirection * speed * Time.time);
+				}
+			}
+		}
 
 		public void Enable(bool trigger)
 		{

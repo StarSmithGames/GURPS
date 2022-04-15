@@ -36,12 +36,28 @@ namespace Game.Entities
 
 		public CharacterOutfit Outfit { get; private set; }
 
-		public bool IsRangeAttackTest => false;
+		public float CharacterRange => equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>().weaponRange ?? 0f;
+
+		public bool IsWithRangedWeapon { get; private set; }
+
+		private IEquipment equipment;
 
 		[Inject]
 		private void Construct(CharacterOutfit outfit)
 		{
 			Outfit = outfit;
+
+			equipment = (Sheet as CharacterSheet).Equipment;
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			if(equipment != null)
+			{
+				equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
+			}
 		}
 
 		protected override void Start()
@@ -49,33 +65,12 @@ namespace Game.Entities
 			base.Start();
 
 			Controller.onReachedDestination += OnReachedDestination;
+			equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 		}
 
-		public override Damage GetDamage()
+		private void OnEquipWeaponChanged()
 		{
-			CharacterSheet sheet = Sheet as CharacterSheet;
-
-			switch (sheet.Equipment.WeaponCurrent.Hands)
-			{
-				case Hands.None:
-				{
-					return base.GetDamage();
-				}
-				case Hands.Main:
-				{
-					return base.GetDamage();
-				}
-				case Hands.Spare:
-				{
-					return base.GetDamage();
-				}
-				case Hands.Both:
-				{
-					return base.GetDamage();
-				}
-			}
-
-			return base.GetDamage();
+			IsWithRangedWeapon = equipment.WeaponCurrent.Main.Item?.IsRangedWeapon ?? false;
 		}
 	}
 

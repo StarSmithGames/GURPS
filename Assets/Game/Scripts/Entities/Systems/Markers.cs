@@ -13,6 +13,8 @@ namespace Game.Entities
 		[field: SerializeField] public LineRendererCircleVFX FollowMarker { get; private set; }
 		[field: SerializeField] public LineRendererCircleVFX TargetMarker { get; private set; }
 		[field: SerializeField] public LineRendererCircleVFX AreaMarker { get; private set; }
+		[field: SerializeField] public LineRendererSplineVFX SplineMarker { get; private set; }
+		[field: SerializeField] public LineRendererSplineVFX AdditionalSplineMarker { get; private set; }
 		[field: Space]
 		[field: SerializeField] public LineRendererLineVFX LineMarker { get; private set; }
 		[Space]

@@ -10,4 +10,9 @@ public static class TransformExtensions
         }
         return transform;
     }
+
+    public static float GetRandomBtw(this Vector2 vector2)
+	{
+        return Random.Range(vector2.x, vector2.y);
+	}
 }

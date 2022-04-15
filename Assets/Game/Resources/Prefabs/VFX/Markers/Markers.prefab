@@ -32,6 +32,8 @@ Transform:
   - {fileID: 336236680263186832}
   - {fileID: 5861811361040990805}
   - {fileID: 2383919258447284749}
+  - {fileID: 8527172746470356246}
+  - {fileID: 5566370755584535495}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -50,12 +52,87 @@ MonoBehaviour:
   <FollowMarker>k__BackingField: {fileID: 8407005811403228121}
   <TargetMarker>k__BackingField: {fileID: 7537893166986840958}
   <AreaMarker>k__BackingField: {fileID: 6386778288062437904}
+  <SplineMarker>k__BackingField: {fileID: 8820703741667094511}
+  <AdditionalSplineMarker>k__BackingField: {fileID: 4683828873647518014}
   <LineMarker>k__BackingField: {fileID: 1734002520515147124}
   materials:
   - {fileID: 2100000, guid: 483d4c918c5032940bfe35de04c29733, type: 2}
   - {fileID: 2100000, guid: a2492c9a70d652e4bbc904d96f522062, type: 2}
   - {fileID: 2100000, guid: 904280a30ee890b458b02de7e35f5410, type: 2}
   - {fileID: 2100000, guid: dbe4f8c638a5ec049b3081c579e4dc2c, type: 2}
+--- !u!1001 &674264366133791907
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2383919258542754038}
+    m_Modifications:
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6830617372628650916, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+      propertyPath: m_Name
+      value: MarkerSplineSoftStandartAnimated
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+--- !u!4 &5566370755584535495 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+  m_PrefabInstance: {fileID: 674264366133791907}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4683828873647518014 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5213825131270487453, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
+  m_PrefabInstance: {fileID: 674264366133791907}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500b551443944b94aaa7f20a2e53cb48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2383919258157480685
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -440,29 +517,13 @@ PrefabInstance:
       propertyPath: m_Parameters.widthMultiplier
       value: 0.1
       objectReference: {fileID: 0}
-    - target: {fileID: 1048525448597392365, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.a
-      value: 0.39215687
-      objectReference: {fileID: 0}
-    - target: {fileID: 1048525448597392365, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
-      propertyPath: m_Parameters.colorGradient.key1.g
-      value: 0.9372549
-      objectReference: {fileID: 0}
-    - target: {fileID: 1048525448597392365, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
-      propertyPath: m_Parameters.colorGradient.key1.r
-      value: 0.61960787
-      objectReference: {fileID: 0}
     - target: {fileID: 1048525448597392367, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
       propertyPath: m_Name
       value: MarkerLineDottedStandart
       objectReference: {fileID: 0}
-    - target: {fileID: 4001474256616797333, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
-      propertyPath: useSmooth
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4001474256616797333, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
-      propertyPath: useRaycast
-      value: 0
+    - target: {fileID: 1048525448597392367, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4001474256616797333, guid: d24c8c3add52b9340a0eb596e0a61543, type: 3}
       propertyPath: raycastLayerMask.m_Bits
@@ -484,6 +545,95 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39f99e93348f2364692c53416d09595c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1001 &4035351012246166003
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2383919258542754038}
+    m_Modifications:
+    - target: {fileID: 810158343001951058, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0071f9c3d0e666d44aeaf59a4349be90, type: 2}
+    - target: {fileID: 810158343001951058, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_Parameters.numCapVertices
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 810158343001951058, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_Parameters.widthMultiplier
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4785388017172133404, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: raycastLayerMask.m_Bits
+      value: 255
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6122957150620844069, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+      propertyPath: m_Name
+      value: MarkerSplineSoftStandart
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+--- !u!4 &8527172746470356246 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+  m_PrefabInstance: {fileID: 4035351012246166003}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8820703741667094511 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4785388017172133404, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
+  m_PrefabInstance: {fileID: 4035351012246166003}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500b551443944b94aaa7f20a2e53cb48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &4405988510486344266

@@ -83,6 +83,12 @@ namespace Game.Systems.TooltipSystem
 					Message.color = Color.white;
 					break;
 				}
+				case TooltipMessageType.OutOfRange:
+				{
+					Message.text = "OutOfRange";
+					Message.color = Color.red;
+					break;
+				}
 			}
 		}
 
@@ -94,5 +100,6 @@ namespace Game.Systems.TooltipSystem
 		InvalidTarget,
 		NotEnoughMovement,
 		CanNotReachDesination,
+		OutOfRange,
 	}
 }

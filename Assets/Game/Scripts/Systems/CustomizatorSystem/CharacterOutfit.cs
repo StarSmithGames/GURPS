@@ -11,8 +11,10 @@ namespace Game.Entities
 {
 	public class CharacterOutfit : MonoBehaviour
 	{
-		public CharacterOutfitSlots Slots => slots;
+		public Transform LeftHandPivot;
+		[Space]
 		[SerializeField] private CharacterOutfitSlots slots;
+		public CharacterOutfitSlots Slots => slots;
 		[Space]
 		[SerializeField] private Transform equipmentContent;
 		[SerializeField] private SkinnedMeshRenderer body;
