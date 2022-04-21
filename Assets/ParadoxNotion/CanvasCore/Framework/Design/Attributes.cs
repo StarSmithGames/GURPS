@@ -2,7 +2,7 @@
 
 namespace NodeCanvas.Framework
 {
-    ///<summary>An attribute to help with URLs in the welcome window. Thats all.</summary>
+    //An attribute to help with URLs in the welcome window. Thats all.
     [AttributeUsage(AttributeTargets.Class)]
     public class GraphInfoAttribute : Attribute
     {

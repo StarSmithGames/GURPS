@@ -35,8 +35,7 @@ namespace NodeCanvas.Framework
 
         ///----------------------------------------------------------------------------------------------
         [SerializeField] private SerializationPair[] _serializedExposedParameters;
-        ///<summary>The list of exposed parameters if any</summary>
-        public List<ExposedParameter> exposedParameters { get; set; }
+        internal List<ExposedParameter> exposedParameters { get; set; }
 
         //serialize exposed parameters
         void ISerializationCallbackReceiver.OnBeforeSerialize() {
@@ -350,13 +349,13 @@ namespace NodeCanvas.Framework
                         StartBehaviour();
                         InvokeStartEvent();
                     }
-                    initialized = true;
                 });
             } else {
                 graph.LoadOverwrite(loadData);
                 BindExposedParameters();
-                initialized = true;
             }
+
+            initialized = true;
         }
 
         ///<summary>Bind exposed parameters to local graph blackboard variables</summary>
@@ -437,7 +436,7 @@ namespace NodeCanvas.Framework
         protected Graph boundGraphInstance;
 
         ///<summary>Editor. Called after assigned graph is serialized.</summary>
-        public void OnAfterGraphSerialized(Graph serializedGraph) {
+        internal void OnAfterGraphSerialized(Graph serializedGraph) {
             //If the graph is bound, we store the serialization data here.
             if ( this.graphIsBound && this.boundGraphInstance == serializedGraph ) {
 
@@ -466,7 +465,7 @@ namespace NodeCanvas.Framework
         ///<summary>Editor. Validate.</summary>
         protected void OnValidate() { Validate(); }
         ///<summary>Editor. Validate.</summary>
-        public void Validate() {
+        internal void Validate() {
 
             if ( !UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode ) {
                 //everything here is relevant to bound graphs only.
@@ -487,12 +486,14 @@ namespace NodeCanvas.Framework
                     graph.Validate();
                 }
 
-                // BindExposedParameters(); // DISABLE: was creating confusion when editing multiple graphowner instances using asset graphs and having different variable overrides
+                //done in editor as well only for convenience purposes.
+                // DISABLE: was creating confusion when editing multiple graphowner instances using asset graphs and having different variable overrides
+                // BindExposedParameters();
             }
         }
 
         ///<summary>Editor. Binds the target graph (null to delete current bound).</summary>
-        public void SetBoundGraphReference(Graph target) {
+        internal void SetBoundGraphReference(Graph target) {
 
             if ( UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode ) {
                 Debug.LogError("SetBoundGraphReference method is an Editor only method!");
@@ -527,7 +528,7 @@ namespace NodeCanvas.Framework
 
         //...
         protected void OnDrawGizmos() {
-
+            Gizmos.DrawIcon(transform.position, "GraphOwnerGizmo.png", true);
         }
 
         ///<summary>Forward Gizmos callback</summary>
@@ -552,10 +553,8 @@ namespace NodeCanvas.Framework
     abstract public class GraphOwner<T> : GraphOwner where T : Graph
     {
 
-        [SerializeField, Tooltip("The graph to use.")]
-        private T _graph;
-        [SerializeField, Tooltip("The GameObject Blackboard to use.")]
-        private Object _blackboard;
+        [SerializeField] private T _graph;
+        [SerializeField] private Object _blackboard;
 
         ///<summary>The current behaviour Graph assigned</summary>
         sealed public override Graph graph {

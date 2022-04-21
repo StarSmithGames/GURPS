@@ -159,7 +159,6 @@ namespace NodeCanvas.Editor
             }
         }
 
-        //...
         void SaveParameters() {
             foreach ( var pair in missingParametersMap ) {
                 var change = missingParameterChangesMap[pair.Key];

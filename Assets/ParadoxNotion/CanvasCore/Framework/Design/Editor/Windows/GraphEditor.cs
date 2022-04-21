@@ -40,7 +40,7 @@ namespace NodeCanvas.Editor
         const int TOP_MARGIN = TAB_HEIGHT + 0;
         const int BOTTOM_MARGIN = 5;
         const int SIDE_MARGIN = 5;
-        const int GRID_SIZE = 20;
+        const int GRID_SIZE = 15;
         private static Rect canvasRect; //rect within which the graph is drawn (the window)
         private static Rect viewRect; //the panning rect that is drawn within canvasRect
         private static Rect minimapRect; //rect to show minimap within
@@ -233,7 +233,7 @@ namespace NodeCanvas.Editor
 
 #if UNITY_2018_3_OR_NEWER
         void OnPrefabStageClosing(UnityEditor.Experimental.SceneManagement.PrefabStage stage) {
-            //when exiting prefab stage we are left with a floating graph instance which can creat confusion
+            //when exiting prefab state we are left with a floating graph instance which can creat confusion
             SetReferences(null, null, null);
         }
 #endif
@@ -322,7 +322,7 @@ namespace NodeCanvas.Editor
         public static GraphEditor OpenWindow(Graph newGraph, GraphOwner owner, IBlackboard blackboard) {
             var window = GetWindow<GraphEditor>();
             SetReferences(newGraph, owner, blackboard);
-            if ( !Prefs.hideWelcomeWindow && !Application.isPlaying && welcomeShown == false ) {
+            if ( Prefs.showWelcomeWindow && !Application.isPlaying && welcomeShown == false ) {
                 welcomeShown = true;
                 var graphType = newGraph != null ? newGraph.GetType() : null;
                 WelcomeWindow.ShowWindow(graphType);
@@ -454,7 +454,7 @@ namespace NodeCanvas.Editor
             //canvas an minimap rects
             canvasRect = Rect.MinMaxRect(SIDE_MARGIN, TOP_MARGIN, position.width - SIDE_MARGIN, position.height - BOTTOM_MARGIN);
             var aspect = canvasRect.width / canvasRect.height;
-            minimapRect = Rect.MinMaxRect(canvasRect.xMax - ( Prefs.minimapSize * aspect ), canvasRect.yMax - Prefs.minimapSize, canvasRect.xMax - 2, canvasRect.yMax - 2);
+            minimapRect = Rect.MinMaxRect(canvasRect.xMax - ( Prefs.minimapSize.y * aspect ), canvasRect.yMax - Prefs.minimapSize.y, canvasRect.xMax - 2, canvasRect.yMax - 2);
             //canvas bg
             Styles.Draw(canvasRect, StyleSheet.canvasBG);
 
@@ -538,7 +538,7 @@ namespace NodeCanvas.Editor
             }
 
             //repaint?
-            if ( willRepaint || rootGraph.isRunning /*|| e.type == EventType.MouseMove*/ ) {
+            if ( willRepaint || e.type == EventType.MouseMove || rootGraph.isRunning ) {
                 Repaint();
             }
 
@@ -1076,7 +1076,7 @@ namespace NodeCanvas.Editor
                 isResizingMinimap = false;
             }
             if ( isResizingMinimap && e.type == EventType.MouseDrag ) {
-                Prefs.minimapSize -= e.delta.y;
+                Prefs.minimapSize -= e.delta;
                 e.Use();
             }
 
@@ -1232,7 +1232,7 @@ namespace NodeCanvas.Editor
             var bWidth = 96;
             var bHeight = 22;
 
-#if !UNITY_2019_3_OR_NEWER // O.o
+#if !UNITY_2019_3_OR_NEWER
             bWidth = 98;
             bHeight = 25;
 #endif
@@ -1285,7 +1285,7 @@ namespace NodeCanvas.Editor
         //an idea but it's taking up space i dont like
         void ShowConsoleLog() {
             var rect = Rect.MinMaxRect(canvasRect.xMin + 2, canvasRect.yMax + 5, canvasRect.xMax, canvasRect.yMax + 20);
-            var msg = GraphConsole.GetLastMessageForGraph(currentGraph);
+            var msg = GraphConsole.GetFirstMessageForGraph(currentGraph);
             if ( msg.IsValid() ) {
                 EditorGUIUtility.AddCursorRect(rect, MouseCursor.Link);
                 if ( GUI.Button(rect, GraphConsole.GetFormatedGUIContentForMessage(msg), StyleSheet.labelOnCanvas) ) {

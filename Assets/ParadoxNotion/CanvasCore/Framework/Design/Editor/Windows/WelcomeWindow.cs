@@ -55,14 +55,14 @@ namespace NodeCanvas.Editor
 
             GUILayout.Space(10);
             GUILayout.Label(string.Format("<size=26><b>Welcome to {0}!</b></size>", packageName));
-            GUILayout.Label(string.Format("Thank you for purchasing {0}! Following are a few important links to get you started!", packageName));
+            GUILayout.Label(string.Format("<i>Thanks for using {0}! Following are a few important links to get you started!</i>", packageName));
             GUILayout.Space(10);
 
             ///----------------------------------------------------------------------------------------------
 
             ShowEntry(docsIcon, "<size=16><b>Documentation</b></size>\nRead thorough documentation and API reference online.", docsURL);
             ShowEntry(resourcesIcon, "<size=16><b>Resources</b></size>\nDownload samples, extensions and other resources.", resourcesURL);
-            ShowEntry(supportIcon, "<size=16><b>Support</b></size>\nJoin the online forums, get support and give feedback.", forumsURL);
+            ShowEntry(supportIcon, "<size=16><b>Support</b></size>\nJoin the online forums, give feedback and get support.", forumsURL);
             ShowEntry(communityIcon, "<size=16><b>Community</b></size>\nJoin the online Discord community.", discordUrl);
 
 
@@ -70,11 +70,11 @@ namespace NodeCanvas.Editor
 
             GUILayout.FlexibleSpace();
 
-            GUILayout.Label("Please consider leaving a review to support the product! Thank you!");
+            GUILayout.Label("Please consider leaving a review to support the product. Thank you!");
 
             GUILayout.Space(5);
 
-            Prefs.hideWelcomeWindow = EditorGUILayout.ToggleLeft("Don't show again.", Prefs.hideWelcomeWindow);
+            Prefs.showWelcomeWindow = EditorGUILayout.ToggleLeft("Show On Startup", Prefs.showWelcomeWindow);
 
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();

@@ -147,7 +147,7 @@ namespace NodeCanvas.Framework
                     GraphEditorUtility.activeElement = this;
                     relinkClickPos = e.mousePosition;
                     relinkSnaped = false;
-                    if ( onConnection ) { relinkState = norm <= 0.55f || e.shift ? RelinkState.Source : RelinkState.Target; }
+                    if ( onConnection ) { relinkState = norm <= 0.1f || e.shift ? RelinkState.Source : RelinkState.Target; }
                     if ( onStart ) { relinkState = RelinkState.Source; }
                     if ( onEnd ) { relinkState = RelinkState.Target; }
                     if ( onCenter ) { relinkState = e.shift ? RelinkState.Source : RelinkState.Target; }

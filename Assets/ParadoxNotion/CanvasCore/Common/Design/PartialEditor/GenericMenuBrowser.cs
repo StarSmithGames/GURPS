@@ -156,7 +156,7 @@ namespace ParadoxNotion.Design
         //...
         public override Vector2 GetWindowSize() { return new Vector2(480, Mathf.Max(500 + helpRectRequiredHeight, 500)); }
 
-        ///<summary>Shows the popup menu at position and with title. getMenu is called async</summary>
+        ///<summary>Shows the popup menu at position and with title immediately</summary>
         public static void ShowAsync(Vector2 pos, string title, System.Type keyType, System.Func<GenericMenu> getMenu) {
             var browser = new GenericMenuBrowser(null, title, keyType);
             var task = Task.Run(() => getMenu()).ContinueWith((m) => browser.SetMenu(m.Result));

@@ -148,7 +148,7 @@ namespace NodeCanvas.Editor
 
             menu.AddItem(new GUIContent("Export JSON"), false, () =>
           {
-              var path = EditorUtility.SaveFilePanelInProject(string.Format("Export '{0}' Graph", graph.GetType().Name), graph.name, graph.GetGraphJSONFileExtension(), string.Empty);
+              var path = EditorUtility.SaveFilePanelInProject(string.Format("Export '{0}' Graph", graph.GetType().Name), string.Empty, graph.GetGraphJSONFileExtension(), string.Empty);
               if ( !string.IsNullOrEmpty(path) ) {
                   var json = graph.Serialize(null);
                   json = ParadoxNotion.Serialization.JSONSerializer.PrettifyJson(json);
@@ -156,19 +156,6 @@ namespace NodeCanvas.Editor
                   AssetDatabase.Refresh();
               }
           });
-
-            menu.AddItem(new GUIContent("Export JSON (Include SubGraphs)"), false, () =>
-            {
-                foreach ( var subgraph in graph.GetAllNestedGraphs<Graph>(true).Prepend(graph) ) {
-                    var subpath = EditorUtility.SaveFilePanelInProject(string.Format("Export '{0}' Graph", subgraph.GetType().Name), subgraph.name, subgraph.GetGraphJSONFileExtension(), string.Empty);
-                    if ( !string.IsNullOrEmpty(subpath) ) {
-                        var subjson = subgraph.Serialize(null);
-                        subjson = ParadoxNotion.Serialization.JSONSerializer.PrettifyJson(subjson);
-                        System.IO.File.WriteAllText(subpath, subjson);
-                    }
-                }
-                AssetDatabase.Refresh();
-            });
 
             menu.AddItem(new GUIContent("Show JSON"), false, () =>
            {
@@ -249,6 +236,8 @@ namespace NodeCanvas.Editor
         //PREFS MENU
         static GenericMenu GetToolbarMenu_Prefs(Graph graph, GraphOwner owner) {
             var menu = new GenericMenu();
+            menu.AddItem(new GUIContent("Show Icons"), Prefs.showIcons, () => { Prefs.showIcons = !Prefs.showIcons; });
+            menu.AddItem(new GUIContent("Show Node Help"), Prefs.showNodeInfo, () => { Prefs.showNodeInfo = !Prefs.showNodeInfo; });
             menu.AddItem(new GUIContent("Show Comments"), Prefs.showComments, () => { Prefs.showComments = !Prefs.showComments; });
             menu.AddItem(new GUIContent("Show Summary Info"), Prefs.showTaskSummary, () => { Prefs.showTaskSummary = !Prefs.showTaskSummary; });
             menu.AddItem(new GUIContent("Show Node IDs"), Prefs.showNodeIDs, () => { Prefs.showNodeIDs = !Prefs.showNodeIDs; });
@@ -260,7 +249,7 @@ namespace NodeCanvas.Editor
             menu.AddItem(new GUIContent("Breakpoints Pause Editor"), Prefs.breakpointPauseEditor, () => { Prefs.breakpointPauseEditor = !Prefs.breakpointPauseEditor; });
             menu.AddItem(new GUIContent("Animate Inspector Panel"), Prefs.animatePanels, () => { Prefs.animatePanels = !Prefs.animatePanels; });
             menu.AddItem(new GUIContent("Show Hierarchy Icons"), Prefs.showHierarchyIcons, () => { Prefs.showHierarchyIcons = !Prefs.showHierarchyIcons; });
-            menu.AddItem(new GUIContent("Collapse Generics In Browser"), Prefs.collapseGenericTypes, () => { Prefs.collapseGenericTypes = !Prefs.collapseGenericTypes; });
+            menu.AddItem(new GUIContent("Collapse Generics In Browser"), Prefs.collapseGenericTypes, () => { Prefs.collapseGenericTypes = !Prefs.collapseGenericTypes; EditorUtils.FlushScriptInfos(); });
             menu.AddItem(new GUIContent("Connection Style/Hard"), false, () => { Prefs.connectionsMLT = 1f; });
             menu.AddItem(new GUIContent("Connection Style/Soft"), false, () => { Prefs.connectionsMLT = 0.75f; });
             menu.AddItem(new GUIContent("Connection Style/Softer"), false, () => { Prefs.connectionsMLT = 0.5f; });

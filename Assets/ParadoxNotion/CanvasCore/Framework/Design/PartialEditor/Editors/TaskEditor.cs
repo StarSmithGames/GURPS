@@ -160,7 +160,7 @@ namespace NodeCanvas.Editor
 
             if ( !showTitlebar || ShowTitlebar(callback) == true ) {
 
-                if ( !string.IsNullOrEmpty(task.description) ) {
+                if ( Prefs.showNodeInfo && !string.IsNullOrEmpty(task.description) ) {
                     EditorGUILayout.HelpBox(task.description, MessageType.None);
                 }
 

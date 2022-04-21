@@ -122,20 +122,20 @@ namespace NodeCanvas.Framework
             }
         }
 
-        // ///<summary>Link subgraph variables to parent graph variables matching name and type. This is not used.</summary>
-        // public static void AutoLinkByName(this IGraphAssignable assignable) {
-        //     if ( assignable.subGraph == null || assignable.variablesMap == null ) { return; }
-        //     foreach ( var bbParam in assignable.variablesMap ) {
-        //         var thatVariable = assignable.subGraph.blackboard.GetVariableByID(bbParam.targetSubGraphVariableID);
-        //         if ( thatVariable != null && thatVariable.isExposedPublic && !thatVariable.isPropertyBound ) {
-        //             var thisVariable = assignable.graph.blackboard.GetVariable(thatVariable.name, thatVariable.varType);
-        //             if ( thisVariable != null ) {
-        //                 bbParam.SetType(thatVariable.varType);
-        //                 bbParam.name = thatVariable.name;
-        //             }
-        //         }
-        //     }
-        // }
+        ///<summary>Link subgraph variables to parent graph variables matching name and type</summary>
+        public static void AutoLinkByName(this IGraphAssignable assignable) {
+            if ( assignable.subGraph == null || assignable.variablesMap == null ) { return; }
+            foreach ( var bbParam in assignable.variablesMap ) {
+                var thatVariable = assignable.subGraph.blackboard.GetVariableByID(bbParam.targetSubGraphVariableID);
+                if ( thatVariable != null && thatVariable.isExposedPublic && !thatVariable.isPropertyBound ) {
+                    var thisVariable = assignable.graph.blackboard.GetVariable(thatVariable.name, thatVariable.varType);
+                    if ( thisVariable != null ) {
+                        bbParam.SetType(thatVariable.varType);
+                        bbParam.name = thatVariable.name;
+                    }
+                }
+            }
+        }
 
         ///----------------------------------------------------------------------------------------------
 

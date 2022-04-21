@@ -211,9 +211,8 @@ namespace NodeCanvas.Framework
 
         ///----------------------------------------------------------------------------------------------
 
-        //TODO: refactor global bbs
-        ///<summary>Set the target blackboard variable to link this parameter with</summary>
-        public void SetTargetVariable(IBlackboard targetBB, Variable targetVariable) {
+        //TODO: seriously...refactor global bbs
+        internal void SetTargetVariable(IBlackboard targetBB, Variable targetVariable) {
             if ( targetVariable != null ) {
                 _targetVariableID = targetVariable.ID;
                 _name = ( targetBB is GlobalBlackboard ) ? string.Format("{0}/{1}", targetBB.identifier, targetVariable.name) : targetVariable.name;
