@@ -7,12 +7,14 @@ public class ClickToStartDialogue : MonoBehaviour
 
     public DialogueTreeController dialogueController;
 
-    void OnMouseDown() {
-        gameObject.SetActive(false);
-        dialogueController.StartDialogue(OnDialogueEnd);
-    }
-
-    void OnDialogueEnd(bool success) {
-        gameObject.SetActive(true);
-    }
+	private void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.A))
+		{
+			if (!dialogueController.isRunning)
+			{
+				dialogueController.StartDialogue();
+			}
+		}
+	}
 }

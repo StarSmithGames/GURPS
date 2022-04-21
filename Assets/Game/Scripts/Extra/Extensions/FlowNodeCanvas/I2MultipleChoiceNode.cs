@@ -150,7 +150,14 @@ public class I2MultipleChoiceNode : DTNode
 
         if (GUILayout.Button("Add Choice"))
         {
-            availableChoices.Add(new Choice());
+            Choice choice = new Choice();
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                choice.statements.Add(new Statement("I am a choice..."));
+            }
+
+            availableChoices.Add(choice);
         }
 
         if (availableChoices.Count == 0)
@@ -197,7 +204,7 @@ public class I2MultipleChoiceNode : DTNode
         var list = LocalizationManager.GetAllLanguages(true);
 
         GUILayout.Space(10);
-        for (int i = 0; i < c.statements.Length; i++)
+        for (int i = 0; i < c.statements.Count; i++)
 		{
             GUILayout.BeginVertical("box");
             Statement s = c.statements[i];
@@ -223,26 +230,14 @@ public class Choice
 {
     public bool isUnfolded = true;
 
-    public Statement[] statements;
+    public List<Statement> statements = new List<Statement>();
 
     public ConditionTask condition;
-    public Choice()
-    {
-        LocalizationManager.UpdateSources();
-        var list = LocalizationManager.GetAllLanguages(true);
-        
-        statements = new Statement[list.Count];
-		for (int i = 0; i < statements.Length; i++)
-		{
-            statements[i] = new Statement("I am a choice...");
-		}
-    }
 
     public Statement GetStatement()
     {
-        LocalizationManager.UpdateSources();
         int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
-        if (index < statements.Length)
+        if (index >= 0 && index < statements.Count)
         {
             return statements[index];
         }

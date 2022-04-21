@@ -16,21 +16,22 @@ using UnityEditor;
 [Description("Make the selected Dialogue Actor talk. You can make the text more dynamic by using variable names in square brackets\ne.g. [myVarName] or [Global/myVarName]")]
 public class I2StatementNode : DTNode
 {
-    [SerializeField] private Statement[] statements;
+    [SerializeField]
+    private Statement[] statements;
 
-    public override bool requireActorSelection { get { return true; } }
+	public override bool requireActorSelection { get { return true; } }
 
 	public override void OnCreate(Graph assignedGraph)
 	{
-        var list = LocalizationManager.GetAllLanguages(true);
-        statements = new Statement[list.Count];
+		var list = LocalizationManager.GetAllLanguages(true);
+		statements = new Statement[list.Count];
 
 		for (int i = 0; i < statements.Length; i++)
 		{
-            statements[i] = new Statement("This is a dialogue text");
-        }
+			statements[i] = new Statement("This is a dialogue text");
+		}
 
-        base.OnCreate(assignedGraph);
+		base.OnCreate(assignedGraph);
 	}
 
 	protected override Status OnExecute(Component agent, IBlackboard bb)
@@ -46,7 +47,7 @@ public class I2StatementNode : DTNode
 	{
         LocalizationManager.UpdateSources();
         int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
-        if (index < statements.Length)
+        if (index >= 0 && index < statements.Length)
 		{
             return statements[index];
         }
@@ -92,7 +93,6 @@ public class I2StatementNode : DTNode
             s.meta = EditorGUILayout.TextField("Meta Data", s.meta);
             GUILayout.EndVertical();
         }
-
 
         GUILayout.Space(5f);
 	}
