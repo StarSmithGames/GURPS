@@ -189,53 +189,180 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &295723713
+--- !u!1 &436045956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 436045957}
+  - component: {fileID: 436045960}
+  - component: {fileID: 436045959}
+  - component: {fileID: 436045958}
+  m_Layer: 5
+  m_Name: Text (TMP)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &436045957
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436045956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1467932611}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &436045958
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 436045956}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c3f478ef69fbe04fa9ed3664a8a443e, type: 3}
-  m_Name: DialogueTree DialogueTree
+  m_Script: {fileID: 11500000, guid: 344445a89b4f74a0e9a0a766903df87e, type: 3}
+  m_Name: 
   m_EditorClassIdentifier: 
-  _serializedGraph: '{"type":"NodeCanvas.DialogueTrees.DialogueTree","nodes":[{"statement":{"_text":"So
-    what shall it be?"},"_actorName":"John","_UID":"c03acbed-186e-4f10-9b77-f0020280296d","_position":{"x":5501.0,"y":5015.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"0"},{"statement":{"_text":"I
-    say we take him down.\nWho cares?"},"_actorName":"Doe","_UID":"83ad2366-47c5-4410-b752-5e0e638360a1","_position":{"x":5490.0,"y":5099.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"1"},{"availableTime":6.0,"saySelection":true,"availableChoices":[{"isUnfolded":false,"statement":{"_text":"You
-    need me alive!"},"condition":{"valueA":{"_name":"aliveSaid","_targetVariableID":"f5fa86f2-c05a-4f4b-b29f-de988afd4b0d"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"}},{"isUnfolded":false,"statement":{"_text":"You
-    have no bullets left! Ha!"},"condition":{"valueA":{"_name":"bulletsSaid","_targetVariableID":"07045430-b698-4ba6-811f-fd9e4e4a61d5"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"}},{"isUnfolded":false,"statement":{"_text":"Go
-    on. I am not afraid."}}],"_actorName":"Player","_UID":"160f3e9c-9ad6-4510-a393-8f1bbea34c02","_tag":"MultipleChoice","_position":{"x":5461.0,"y":5206.0},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"2"},{"statement":{"_text":"Why
-    is that?"},"_actorName":"John","_UID":"d24d8e03-7f2c-46f8-aba0-8bf94b6ba22b","_position":{"x":5300.0,"y":5496.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"3"},{"statement":{"_text":"Um..."},"_actorName":"Player","_UID":"acdb9a5a-6742-4997-9db3-f92fd8fae458","_position":{"x":5283.0,"y":5579.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"4"},{"_action":{"boolVariable":{"_name":"aliveSaid","_targetVariableID":"f5fa86f2-c05a-4f4b-b29f-de988afd4b0d"},"$type":"NodeCanvas.Tasks.Actions.SetBoolean"},"_actorName":"Player","_UID":"646a1d44-201c-4d91-9cb5-9fc918fee92b","_position":{"x":5244.0,"y":5670.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"5"},{"_sourceNodeUID":"160f3e9c-9ad6-4510-a393-8f1bbea34c02","_UID":"28e31cf9-0420-4252-a21b-dce24ed769a2","_position":{"x":5236.0,"y":5746.0},"$type":"NodeCanvas.DialogueTrees.Jumper","$id":"6"},{"statement":{"_text":"Yeah
-    I bet!"},"_actorName":"John","_UID":"efdf3fce-4dc9-4ecd-99cb-dadd4dc35901","_position":{"x":5551.0,"y":5492.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"7"},{"_action":{"animationClip":{"_value":1},"waitActionFinish":false,"$type":"NodeCanvas.Tasks.Actions.PlayAnimationSimple"},"_actorName":"John","_UID":"ea6cfe1a-b1a8-4726-a6e1-1717429186cf","_position":{"x":5546.0,"y":5573.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"8"},{"_action":{"boolVariable":{"_name":"bulletsSaid","_targetVariableID":"07045430-b698-4ba6-811f-fd9e4e4a61d5"},"$type":"NodeCanvas.Tasks.Actions.SetBoolean"},"_actorName":"Player","_UID":"20b722c4-1d3e-4350-b9c0-094a68e1ee87","_position":{"x":5542.0,"y":5651.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"9"},{"_sourceNodeUID":"160f3e9c-9ad6-4510-a393-8f1bbea34c02","_position":{"x":5546.0,"y":5736.0},"$type":"NodeCanvas.DialogueTrees.Jumper","$id":"10"},{"_action":{"animationClip":{"_value":2},"waitActionFinish":false,"$type":"NodeCanvas.Tasks.Actions.PlayAnimationSimple"},"_actorName":"John","_UID":"4b32f2c4-2589-4611-bbfd-907f782e60b2","_position":{"x":5842.0,"y":5492.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"11"},{"statement":{"_text":"??
-    That was easy..."},"_actorName":"Doe","_UID":"8df2886f-27ec-47bc-abc2-af70791a9218","_position":{"x":5840.0,"y":5578.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"12"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"7"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"11"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"5"},"_targetNode":{"$ref":"6"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"8"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"9"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"9"},"_targetNode":{"$ref":"10"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"11"},"_targetNode":{"$ref":"12"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"aliveSaid":{"_name":"aliveSaid","_id":"f5fa86f2-c05a-4f4b-b29f-de988afd4b0d","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"bulletsSaid":{"_name":"bulletsSaid","_id":"07045430-b698-4ba6-811f-fd9e4e4a61d5","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}},"derivedData":{"actorParameters":[{"_keyName":"John","_id":"a9fa02b0-a578-46b8-bc51-f42b60997f55","_actorObject":3},{"_keyName":"Doe","_id":"e844da15-967e-4e34-be83-037d694d29d3","_actorObject":4},{"_keyName":"Player","_id":"894ee11b-85e3-4749-beb1-55df2ecc0ea1","_actorObject":5}],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
-  _objectReferences:
-  - {fileID: 0}
-  - {fileID: 7400000, guid: 9d050ebeea5fa46adaf512596eda0e60, type: 3}
-  - {fileID: 7400000, guid: 6008cc211c6684caca78771af67e2602, type: 3}
-  - {fileID: 507071749}
-  - {fileID: 857540712}
-  - {fileID: 1573641285}
-  _graphSource:
-    _version: 3.22
-    _category: 
-    _comments: 
-    _translation: {x: -4849, y: -5279}
-    _zoomFactor: 1
-  _haltSerialization: 0
-  actorParameters:
-  - _keyName: John
-    _id: a9fa02b0-a578-46b8-bc51-f42b60997f55
-    _actorObject: {fileID: 507071749}
-  - _keyName: Doe
-    _id: e844da15-967e-4e34-be83-037d694d29d3
-    _actorObject: {fileID: 857540712}
-  - _keyName: Player
-    _id: 894ee11b-85e3-4749-beb1-55df2ecc0ea1
-    _actorObject: {fileID: 1573641285}
+  mTerm: Hello
+  mTermSecondary: 
+  PrimaryTermModifier: 0
+  SecondaryTermModifier: 0
+  TermPrefix: 
+  TermSuffix: 
+  LocalizeOnAwake: 1
+  IgnoreRTL: 0
+  MaxCharactersInRTL: 0
+  IgnoreNumbersInRTL: 1
+  CorrectAlignmentForRTL: 1
+  AddSpacesToJoinedLanguages: 0
+  AllowLocalizedParameters: 1
+  AllowParameters: 1
+  TranslatedObjects: []
+  LocalizeEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  AlwaysForceLocalize: 0
+  LocalizeCallBack:
+    Target: {fileID: 0}
+    MethodName: 
+  mGUI_ShowReferences: 0
+  mGUI_ShowTems: 0
+  mGUI_ShowCallback: 0
+  mLocalizeTarget: {fileID: 1350820181}
+  mLocalizeTargetName: I2.Loc.LocalizeTarget_TextMeshPro_UGUI
+--- !u!114 &436045959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436045956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Hello
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 36
+  m_fontSizeBase: 36
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 1
+  m_VerticalAlignment: 256
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_enableWordWrapping: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 1
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &436045960
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436045956}
+  m_CullTransparentMesh: 1
 --- !u!1 &507071747 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100120, guid: 2e48c6ed0a1314879b908d9786d87c9b, type: 3}
@@ -717,6 +844,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1350820181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 481ab606793a67349be805c13febeba0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mTarget: {fileID: 436045959}
+  mAlignment_RTL: 260
+  mAlignment_LTR: 257
+  mAlignmentWasRTL: 0
+  mInitializeAlignment: 0
 --- !u!1 &1382890255
 GameObject:
   m_ObjectHideFlags: 0
@@ -843,6 +987,106 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1467932607
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1467932611}
+  - component: {fileID: 1467932610}
+  - component: {fileID: 1467932609}
+  - component: {fileID: 1467932608}
+  m_Layer: 5
+  m_Name: Canvas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1467932608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467932607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 255
+--- !u!114 &1467932609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467932607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UiScaleMode: 0
+  m_ReferencePixelsPerUnit: 100
+  m_ScaleFactor: 1
+  m_ReferenceResolution: {x: 800, y: 600}
+  m_ScreenMatchMode: 0
+  m_MatchWidthOrHeight: 0
+  m_PhysicalUnit: 3
+  m_FallbackScreenDPI: 96
+  m_DefaultSpriteDPI: 96
+  m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
+--- !u!223 &1467932610
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467932607}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!224 &1467932611
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467932607}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_Children:
+  - {fileID: 436045957}
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0, y: 0}
 --- !u!1001 &1571879217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1159,29 +1403,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _serializedExposedParameters: []
-  _boundGraphSerialization: '{"type":"NodeCanvas.DialogueTrees.DialogueTree","nodes":[{"statement":{"_text":"So
-    what shall it be?"},"_actorName":"John","_UID":"c03acbed-186e-4f10-9b77-f0020280296d","_position":{"x":5505.0,"y":4965.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"0"},{"statement":{"_text":"I
-    say we take him down.\nWho cares?"},"_actorName":"Doe","_UID":"83ad2366-47c5-4410-b752-5e0e638360a1","_position":{"x":5505.0,"y":5085.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"1"},{"availableTime":6.0,"saySelection":true,"availableChoices":[{"isUnfolded":false,"statement":{"_text":"You
-    need me alive!"},"condition":{"valueA":{"_name":"aliveSaid","_targetVariableID":"f5fa86f2-c05a-4f4b-b29f-de988afd4b0d"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"}},{"statement":{"_text":"You
-    have no bullets left! Ha!"},"condition":{"valueA":{"_name":"bulletsSaid","_targetVariableID":"07045430-b698-4ba6-811f-fd9e4e4a61d5"},"valueB":{},"$type":"NodeCanvas.Tasks.Conditions.CheckBoolean"}},{"isUnfolded":false,"statement":{"_text":"Go
-    on. I am not afraid."}}],"_actorName":"Player","_UID":"160f3e9c-9ad6-4510-a393-8f1bbea34c02","_tag":"MultipleChoice","_position":{"x":5490.0,"y":5190.0},"$type":"NodeCanvas.DialogueTrees.MultipleChoiceNode","$id":"2"},{"statement":{"_text":"Why
-    is that?"},"_actorName":"John","_UID":"d24d8e03-7f2c-46f8-aba0-8bf94b6ba22b","_position":{"x":5250.0,"y":5490.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"3"},{"statement":{"_text":"Um..."},"_actorName":"Player","_UID":"acdb9a5a-6742-4997-9db3-f92fd8fae458","_position":{"x":5265.0,"y":5595.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"4"},{"_action":{"boolVariable":{"_name":"aliveSaid","_targetVariableID":"f5fa86f2-c05a-4f4b-b29f-de988afd4b0d"},"$type":"NodeCanvas.Tasks.Actions.SetBoolean"},"_actorName":"Player","_UID":"646a1d44-201c-4d91-9cb5-9fc918fee92b","_position":{"x":5235.0,"y":5700.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"5"},{"_sourceNodeUID":"160f3e9c-9ad6-4510-a393-8f1bbea34c02","_UID":"28e31cf9-0420-4252-a21b-dce24ed769a2","_position":{"x":5235.0,"y":5790.0},"$type":"NodeCanvas.DialogueTrees.Jumper","$id":"6"},{"statement":{"_text":"Yeah
-    I bet!"},"_actorName":"John","_UID":"efdf3fce-4dc9-4ecd-99cb-dadd4dc35901","_position":{"x":5535.0,"y":5490.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"7"},{"_action":{"animationClip":{"_value":1},"waitActionFinish":false,"$type":"NodeCanvas.Tasks.Actions.PlayAnimationSimple"},"_actorName":"John","_UID":"ea6cfe1a-b1a8-4726-a6e1-1717429186cf","_position":{"x":5520.0,"y":5580.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"8"},{"_action":{"boolVariable":{"_name":"bulletsSaid","_targetVariableID":"07045430-b698-4ba6-811f-fd9e4e4a61d5"},"$type":"NodeCanvas.Tasks.Actions.SetBoolean"},"_actorName":"Player","_UID":"20b722c4-1d3e-4350-b9c0-094a68e1ee87","_position":{"x":5505.0,"y":5685.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"9"},{"_sourceNodeUID":"160f3e9c-9ad6-4510-a393-8f1bbea34c02","_position":{"x":5505.0,"y":5790.0},"$type":"NodeCanvas.DialogueTrees.Jumper","$id":"10"},{"_action":{"animationClip":{"_value":2},"waitActionFinish":false,"$type":"NodeCanvas.Tasks.Actions.PlayAnimationSimple"},"_actorName":"John","_UID":"4b32f2c4-2589-4611-bbfd-907f782e60b2","_position":{"x":5835.0,"y":5490.0},"$type":"NodeCanvas.DialogueTrees.ActionNode","$id":"11"},{"statement":{"_text":"??
-    That was easy..."},"_actorName":"Doe","_UID":"8df2886f-27ec-47bc-abc2-af70791a9218","_position":{"x":5805.0,"y":5595.0},"$type":"NodeCanvas.DialogueTrees.StatementNode","$id":"12"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"1"},"_targetNode":{"$ref":"2"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"3"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"7"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"2"},"_targetNode":{"$ref":"11"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"3"},"_targetNode":{"$ref":"4"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"4"},"_targetNode":{"$ref":"5"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"5"},"_targetNode":{"$ref":"6"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"7"},"_targetNode":{"$ref":"8"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"8"},"_targetNode":{"$ref":"9"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"9"},"_targetNode":{"$ref":"10"},"$type":"NodeCanvas.DialogueTrees.DTConnection"},{"_sourceNode":{"$ref":"11"},"_targetNode":{"$ref":"12"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{"aliveSaid":{"_name":"aliveSaid","_id":"f5fa86f2-c05a-4f4b-b29f-de988afd4b0d","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"},"bulletsSaid":{"_name":"bulletsSaid","_id":"07045430-b698-4ba6-811f-fd9e4e4a61d5","$type":"NodeCanvas.Framework.Variable`1[[System.Boolean,
-    mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]"}}},"derivedData":{"actorParameters":[{"_keyName":"John","_id":"a9fa02b0-a578-46b8-bc51-f42b60997f55","_actorObject":3},{"_keyName":"Doe","_id":"e844da15-967e-4e34-be83-037d694d29d3","_actorObject":4},{"_keyName":"Player","_id":"894ee11b-85e3-4749-beb1-55df2ecc0ea1","_actorObject":5}],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
-  _boundGraphObjectReferences:
-  - {fileID: 0}
-  - {fileID: 7400000, guid: 9d050ebeea5fa46adaf512596eda0e60, type: 3}
-  - {fileID: 7400000, guid: 6008cc211c6684caca78771af67e2602, type: 3}
-  - {fileID: 507071749}
-  - {fileID: 857540712}
-  - {fileID: 1573641285}
+  _boundGraphSerialization: 
+  _boundGraphObjectReferences: []
   _boundGraphSource:
-    _version: 3.22
+    _version: 0
     _category: 
     _comments: 
-    _translation: {x: -4526, y: -4854}
+    _translation: {x: 0, y: 0}
     _zoomFactor: 1
   _firstActivation: 0
   _enableAction: 1
@@ -1189,7 +1417,7 @@ MonoBehaviour:
   _lockBoundGraphPrefabOverrides: 1
   _preInitializeSubGraphs: 0
   _updateMode: 0
-  _graph: {fileID: 295723713}
+  _graph: {fileID: 0}
   _blackboard: {fileID: 0}
 --- !u!4 &2089821173
 Transform:
