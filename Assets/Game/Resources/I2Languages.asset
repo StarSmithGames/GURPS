@@ -27,7 +27,7 @@ MonoBehaviour:
     - Name: Russian
       Code: ru
       Flags: 0
-    IgnoreDeviceLanguage: 0
+    IgnoreDeviceLanguage: 1
     _AllowUnloadingLanguages: 0
     Google_WebServiceURL: 
     Google_SpreadsheetKey: 
