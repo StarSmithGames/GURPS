@@ -4,6 +4,7 @@ using Game.Entities;
 using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
 using Game.Systems.DamageSystem;
+using Game.Systems.DialogueSystem;
 using Game.Systems.FloatingTextSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
@@ -24,10 +25,12 @@ namespace Game.Systems.InteractionSystem
 		private Coroutine interactionCoroutine = null;
 
 		private AsyncManager asyncManager;
+		private DialogueSystem.DialogueSystem dialogueSystem;
 
-		public InteractionHandler(AsyncManager asyncManager)
+		public InteractionHandler(AsyncManager asyncManager, DialogueSystem.DialogueSystem dialogueSystem)
 		{
 			this.asyncManager = asyncManager;
+			this.dialogueSystem = dialogueSystem;
 		}
 
 		public void Interact(IEntity entity, IInteractable interactable)
@@ -39,6 +42,28 @@ namespace Game.Systems.InteractionSystem
 
 			entity.LastInteractionAction = null;
 
+			if (interactable is IEntity actor)
+			{
+				dialogueSystem.StartDialogue(entity);
+			}
+			else
+			{
+				entity.LastInteractionAction = new BaseInteraction(entity, interactable);
+			}
+
+			if(entity.LastInteractionAction != null)
+			{
+				interactionCoroutine = asyncManager.StartCoroutine(Interaction(entity.LastInteractionAction));
+			}
+		}
+
+		public void InteractInBattle(IEntity entity, IInteractable interactable)
+		{
+			if (IsInteractionProcess) return;
+
+			this.entity = entity;
+			this.interactable = interactable;
+
 			if (entity is IBattlable from && interactable is IBattlable to)
 			{
 				if (!from.InAction)
@@ -48,7 +73,7 @@ namespace Game.Systems.InteractionSystem
 						if (from.Sheet.Stats.ActionPoints.CurrentValue > 0)
 						{
 							from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
-							if(entity is HumanoidEntity)
+							if (entity is HumanoidEntity)
 							{
 								entity.LastInteractionAction = new HumanoidAttack(from, to);
 							}
@@ -64,12 +89,8 @@ namespace Game.Systems.InteractionSystem
 					}
 				}
 			}
-			else
-			{
-				entity.LastInteractionAction = new BaseInteraction(entity, interactable);
-			}
 
-			if(entity.LastInteractionAction != null)
+			if (entity.LastInteractionAction != null)
 			{
 				interactionCoroutine = asyncManager.StartCoroutine(Interaction(entity.LastInteractionAction));
 			}

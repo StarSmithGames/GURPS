@@ -10,12 +10,7 @@ namespace NodeCanvas.DialogueTrees
     [AddComponentMenu("NodeCanvas/Dialogue Tree Controller")]
     public class DialogueTreeController : GraphOwner<DialogueTree>, IDialogueActor
     {
-
         string IDialogueActor.name => name;
-        Texture2D IDialogueActor.portrait => null;
-        Sprite IDialogueActor.portraitSprite => null;
-        Color IDialogueActor.dialogueColor => Color.white;
-        Vector3 IDialogueActor.dialoguePosition => Vector3.zero;
         Transform IDialogueActor.transform => transform;
 
 

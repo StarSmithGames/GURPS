@@ -1,3 +1,5 @@
+using NodeCanvas.DialogueTrees;
+
 using UnityEngine;
 
 using Zenject;
@@ -7,15 +9,18 @@ namespace Game.Systems.DialogueSystem
 	[CreateAssetMenu(fileName = "DialogueSystemInstaller", menuName = "Installers/DialogueSystemInstaller")]
 	public class DialogueSystemInstaller : ScriptableObjectInstaller<DialogueSystemInstaller>
 	{
-		public UIChoice choicePrefab;
 		public DialogueSystemHandler.Settings settings;
-
+		[Space]
+		public DialogueTreeController controllerPrefab;
+		public UIChoice choicePrefab;
 
 		public override void InstallBindings()
 		{
 			Container.BindInstance(settings);
 
+			Container.BindInterfacesAndSelfTo<DialogueSystem>().AsSingle();
 			Container.BindInterfacesAndSelfTo<DialogueSystemHandler>().AsSingle();
+			Container.Bind<DialogueTreeController>().FromComponentInNewPrefab(controllerPrefab).WhenInjectedInto<DialogueSystem>();
 
 			Container
 				.BindFactory<UIChoice, UIChoice.Factory>()

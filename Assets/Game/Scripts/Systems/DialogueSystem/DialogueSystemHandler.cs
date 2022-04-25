@@ -74,8 +74,8 @@ namespace Game.Systems.DialogueSystem
 			//actorPortrait.sprite = actor.portraitSprite;
 
 			if (settings.additionalText)
-{
-				dialogue.ActorSpeech.text += $"<color=#{ColorUtility.ToHtmlStringRGBA(actor.dialogueColor)}>{actor.name}</color> - {text}\n";
+			{
+				//dialogue.ActorSpeech.text += $"<color=#{ColorUtility.ToHtmlStringRGBA(actor.ActorColor)}>{actor.ActorName}</color> - {text}\n";
 			}
 			else
 			{

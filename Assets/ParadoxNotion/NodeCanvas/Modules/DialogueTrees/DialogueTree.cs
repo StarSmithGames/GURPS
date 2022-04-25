@@ -79,6 +79,11 @@ namespace NodeCanvas.DialogueTrees
                 this.name = name;
                 this.actor = actor;
             }
+            public ActorParameter(IDialogueActor actor)
+            {
+                //this.name = actor.ac;
+                this.actor = actor;
+            }
 
             public override string ToString() { return name; }
         }
@@ -153,10 +158,10 @@ namespace NodeCanvas.DialogueTrees
 
                 //Otherwise use the default actor and set name and transform from agent
                 if ( agent != null ) {
-                    return new ProxyDialogueActor(agent.gameObject.name, agent.transform);
+                    return new DefaultDialogueActor(agent.gameObject.name, agent.transform);
                 }
 
-                return new ProxyDialogueActor("NO ACTOR", null);
+                return new DefaultDialogueActor("NO ACTOR", null);
             }
 
             //Check for non INSTIGATOR selection. If there IS an actor reference return it
@@ -167,7 +172,7 @@ namespace NodeCanvas.DialogueTrees
 
             //Otherwise use the default actor and set the name to the key and null transform
             Logger.Log(string.Format("An actor entry '{0}' on DialogueTree has no reference. A dummy Actor will be used with the entry Key for name", paramName), "Dialogue Tree", this);
-            return new ProxyDialogueActor(paramName, null);
+            return new DefaultDialogueActor(paramName, null);
         }
 
 

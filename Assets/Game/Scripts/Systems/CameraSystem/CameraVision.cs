@@ -183,7 +183,7 @@ namespace Game.Systems.CameraSystem
 								{
 									if (leader.Navigation.IsCanReach || interactable.IsInRange(leader))
 									{
-										interactionHandler.Interact(leader, interactable);
+										interactionHandler.InteractInBattle(leader, interactable);
 									}
 								}
 								else

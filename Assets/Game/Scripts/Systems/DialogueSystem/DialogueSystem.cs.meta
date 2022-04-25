@@ -1,11 +1,7 @@
 fileFormatVersion: 2
-guid: 3d71fb7c52372e244baf2e69a9d0d116
-labels:
-- Node
-- visualscripting
-- dialogue
-- Graph
+guid: 5f4336a37ce6abe47a3dddadebca8e2e
 MonoImporter:
+  externalObjects: {}
   serializedVersion: 2
   defaultReferences: []
   executionOrder: 0

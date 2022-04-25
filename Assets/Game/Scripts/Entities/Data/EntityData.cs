@@ -1,4 +1,7 @@
-﻿using Game.Systems.SheetSystem;
+﻿using Game.Systems.DialogueSystem;
+using Game.Systems.SheetSystem;
+
+using Sirenix.OdinInspector;
 
 using UnityEngine;
 
@@ -8,5 +11,5 @@ namespace Game.Entities
     {
         public T information;
         public SheetSettings sheet;
-	}
+    }
 }

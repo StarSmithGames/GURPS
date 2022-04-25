@@ -12,4 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2131cd42dad2eff4caa1d5622af6b880, type: 3}
   m_Name: DialogueSystemInstaller
   m_EditorClassIdentifier: 
+  settings:
+    additionalText: 1
+    skipOnInput: 0
+    waitForInput: 1
+    delays:
+      characterDelay: 0.05
+      sentenceDelay: 0.5
+      commaDelay: 0.1
+      finalDelay: 1.2
+  controllerPrefab: {fileID: 5182385358193413308, guid: a7aa897ba9cd9394e8dfbfe0abb832c0, type: 3}
   choicePrefab: {fileID: 1092970522015848505, guid: 795c135bc3b87114cad19a22be832e79, type: 3}
