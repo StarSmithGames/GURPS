@@ -6,6 +6,13 @@ using System.Security.Cryptography;
 
 public static class CollectionExtensions
 {
+    public static T RandomItem<T>(this IList<T> list)
+	{
+        if (list.Count == 0) return default;
+        return list[UnityEngine.Random.Range(0, list.Count)];
+	}
+
+
     /// <summary>
     /// https://stackoverflow.com/questions/273313/randomize-a-listt
     /// </summary>
@@ -25,7 +32,6 @@ public static class CollectionExtensions
             list[n] = value;
         }
     }
-
 
     /// <summary>
     /// https://stackoverflow.com/questions/1287567/is-using-random-and-orderby-a-good-shuffle-algorithm

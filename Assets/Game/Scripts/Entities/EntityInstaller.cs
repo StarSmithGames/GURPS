@@ -1,6 +1,7 @@
 using EPOOutline;
 
 using Game.Systems.CameraSystem;
+using Game.Systems.DialogueSystem;
 
 using UnityEngine;
 using UnityEngine.AI;
@@ -23,6 +24,8 @@ namespace Game.Entities
 		[SerializeField] private Markers markers;
 		[SerializeField] private Outlinable outline;
 		[SerializeField] private Entity entity;
+		[Space]
+		[SerializeField] private Barker barker;
 
 		public override void InstallBindings()
 		{
@@ -37,6 +40,7 @@ namespace Game.Entities
 			Container.BindInstance(markers);
 			Container.BindInstance(outline);
 			Container.BindInstance<IEntity>(entity);
+			Container.BindInstance(barker);
 		}
 	}
 }

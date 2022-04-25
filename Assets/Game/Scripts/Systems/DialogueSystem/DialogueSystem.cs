@@ -1,10 +1,7 @@
-using Game.Entities;
 using Game.Managers.CharacterManager;
 
 using NodeCanvas.DialogueTrees;
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Systems.DialogueSystem
@@ -20,10 +17,17 @@ namespace Game.Systems.DialogueSystem
 			this.characterManager = characterManager;
 		}
 
-		public void StartDialogue(IEntity initiator)
+		public void StartConversation(IActor initiator)
 		{
-			Debug.LogError("HERE");
-			dialogueController.StartDialogue();
+
+		}
+
+		public void StartDialogue(IActor initiator)
+		{
+			if (!dialogueController.isRunning)
+			{
+				dialogueController.StartDialogue();
+			}
 		}
 	}
 }

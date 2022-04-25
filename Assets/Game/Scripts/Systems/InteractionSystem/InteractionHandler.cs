@@ -42,9 +42,9 @@ namespace Game.Systems.InteractionSystem
 
 			entity.LastInteractionAction = null;
 
-			if (interactable is IEntity actor)
+			if (entity is IActor actor)
 			{
-				dialogueSystem.StartDialogue(entity);
+				dialogueSystem.StartDialogue(actor);
 			}
 			else
 			{

@@ -58,21 +58,21 @@ namespace NodeCanvas.Editor
                     UndoUtility.SetDirty(dialogue);
                 }
                 GUI.backgroundColor = Color.white;
-                var newReference = (Object)EditorGUILayout.ObjectField(reference.actor as Object, typeof(Object), true);
-                if ( !ReferenceEquals(newReference, reference.actor) ) {
-                    UndoUtility.RecordObject(dialogue, "Actor Assignment");
-                    //all this jazz because ObjectField does not work with interfaces...
-                    if ( newReference == null ) {
-                        reference.actor = null;
-                    } else {
-                        if ( newReference is Component ) { newReference = ( newReference as Component ).GetComponent(typeof(IDialogueActor)); }
-                        if ( newReference is GameObject ) { newReference = ( newReference as GameObject ).GetComponent(typeof(IDialogueActor)); }
-                        if ( newReference is IDialogueActor ) {
-                            reference.actor = (IDialogueActor)newReference;
-                        } else { ParadoxNotion.Services.Logger.LogWarning("Object is not an IDialogueActor and none of the components attached is an IDialogueActor either."); }
-                    }
-                    UndoUtility.SetDirty(dialogue);
-                }
+                //var newReference = (Object)EditorGUILayout.ObjectField(reference.actor as Object, typeof(Object), true);
+                //if ( !ReferenceEquals(newReference, reference.actor) ) {
+                //    UndoUtility.RecordObject(dialogue, "Actor Assignment");
+                //    //all this jazz because ObjectField does not work with interfaces...
+                //    if ( newReference == null ) {
+                //        reference.actor = null;
+                //    } else {
+                //        if ( newReference is Component ) { newReference = ( newReference as Component ).GetComponent(typeof(IDialogueActor)); }
+                //        if ( newReference is GameObject ) { newReference = ( newReference as GameObject ).GetComponent(typeof(IDialogueActor)); }
+                //        if ( newReference is IDialogueActor ) {
+                //            reference.actor = (IDialogueActor)newReference;
+                //        } else { ParadoxNotion.Services.Logger.LogWarning("Object is not an IDialogueActor and none of the components attached is an IDialogueActor either."); }
+                //    }
+                //    UndoUtility.SetDirty(dialogue);
+                //}
                 GUILayout.EndHorizontal();
             });
 

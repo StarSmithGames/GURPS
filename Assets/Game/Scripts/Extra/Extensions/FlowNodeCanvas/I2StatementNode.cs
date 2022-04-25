@@ -21,6 +21,11 @@ public class I2StatementNode : DTNode
 
 	public override bool requireActorSelection { get { return true; } }
 
+    public Statement GetSubtitles()
+	{
+        return GetCurrentStatement();
+    }
+
 	public override void OnCreate(Graph assignedGraph)
 	{
 		var list = LocalizationManager.GetAllLanguages(true);
@@ -36,14 +41,14 @@ public class I2StatementNode : DTNode
 
 	protected override Status OnExecute(Component agent, IBlackboard bb)
     {
-        var tempStatement = GetStatement()?.BlackboardReplace(bb);
+        var tempStatement = GetCurrentStatement()?.BlackboardReplace(bb);
         if (tempStatement == null) return Status.Error;
 
         DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(finalActor, tempStatement, OnStatementFinish));
         return Status.Running;
     }
 
-    private Statement GetStatement()
+    private Statement GetCurrentStatement()
 	{
         LocalizationManager.UpdateSources();
         int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
@@ -99,7 +104,7 @@ public class I2StatementNode : DTNode
 	protected override void OnNodeGUI()
     {
         GUILayout.BeginVertical(Styles.roundedBox);
-        GUILayout.Label("\"<i> " + (GetStatement()?.text.CapLength(30)?? "Empty") + "</i> \"");
+        GUILayout.Label("\"<i>" + (GetCurrentStatement()?.text.CapLength(30)?? "Empty") + "</i> \"");
         GUILayout.EndVertical();
     }
 #endif

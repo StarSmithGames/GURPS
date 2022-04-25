@@ -1,8 +1,6 @@
 using Game.Systems.BattleSystem;
 using UnityEngine.Events;
 
-using Zenject;
-
 namespace Game.Entities
 {
 	public class HumanoidEntity : Entity, IBattlable

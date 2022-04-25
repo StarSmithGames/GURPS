@@ -10,6 +10,7 @@ namespace Game.Systems.DialogueSystem
 	public class DialogueSystemInstaller : ScriptableObjectInstaller<DialogueSystemInstaller>
 	{
 		public DialogueSystemHandler.Settings settings;
+		public Barker.Settings barkSettings;
 		[Space]
 		public DialogueTreeController controllerPrefab;
 		public UIChoice choicePrefab;
@@ -17,6 +18,7 @@ namespace Game.Systems.DialogueSystem
 		public override void InstallBindings()
 		{
 			Container.BindInstance(settings);
+			Container.BindInstance(barkSettings);
 
 			Container.BindInterfacesAndSelfTo<DialogueSystem>().AsSingle();
 			Container.BindInterfacesAndSelfTo<DialogueSystemHandler>().AsSingle();

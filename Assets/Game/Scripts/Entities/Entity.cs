@@ -1,9 +1,14 @@
 using EPOOutline;
 using Game.Systems.CameraSystem;
 using Game.Systems.DamageSystem;
+using Game.Systems.DialogueSystem;
 using Game.Systems.FloatingTextSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
+
+using NodeCanvas.DialogueTrees;
+
+using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -11,9 +16,11 @@ using UnityEngine.Events;
 
 using Zenject;
 
+using static Zenject.CheatSheet;
+
 namespace Game.Entities
 {
-	public abstract partial class Entity : InteractableModel, IEntity
+	public abstract partial class Entity : InteractableModel, IEntity, IActor
 	{
 		public MonoBehaviour MonoBehaviour => this;
 
@@ -30,7 +37,6 @@ namespace Game.Entities
 
 		protected SignalBus signalBus;
 		protected UIManager uiManager;
-		protected FloatingSystem floatingSystem;
 
 		[Inject]
 		private void Construct(
@@ -42,7 +48,9 @@ namespace Game.Entities
 			Outlinable outline,
 			CameraPivot cameraPivot,
 			UIManager uiManager,
-			FloatingSystem floatingTextSystem)
+			FloatingSystem floatingTextSystem,
+			DialogueSystem dialogueSystem,
+			Barker barker)
 		{
 			this.signalBus = signalBus;
 
@@ -54,6 +62,9 @@ namespace Game.Entities
 			CameraPivot = cameraPivot;
 			this.uiManager = uiManager;
 			this.floatingSystem = floatingTextSystem;
+
+			this.dialogueSystem = dialogueSystem;
+			this.barker = barker;
 
 			Validate();
 		}
@@ -141,6 +152,9 @@ namespace Game.Entities
 	{
 		public event UnityAction<IEntity> onDied;
 
+		protected FloatingSystem floatingSystem;
+
+
 		public void Kill()
 		{
 			Controller.Enable(false);
@@ -190,6 +204,56 @@ namespace Game.Entities
 		private Vector2 GetDamageFromTable()
 		{
 			return new Vector2(1, 7);
+		}
+	}
+	
+	partial class Entity
+	{
+		protected DialogueSystem dialogueSystem;
+		protected Barker barker;
+
+		[SerializeField] protected BarkTree barks;
+
+		[Sirenix.OdinInspector.Button]
+		public virtual void Bark()
+		{
+			if (barker == null) return;
+			if (barker.IsShowing) return;
+
+			var bark = barks.allNodes.FirstOrDefault();
+
+			switch (barks.barkType)
+			{
+				case BarkType.First:
+				case BarkType.Random:
+				{
+					bark = barks.allNodes.RandomItem();
+
+					Statement subtitles = null;
+					if (bark is I2StatementNode node)
+					{
+						subtitles = node.GetSubtitles();
+					}
+
+					ShowBarkSubtitles(subtitles);
+
+					break;
+				}
+				case BarkType.Sequence:
+				{
+					//TODO
+					break;
+				}
+			}
+		}
+
+		private void ShowBarkSubtitles(Statement subtitles)
+		{
+			if (subtitles != null)
+			{
+				barker.Text.text = subtitles.text;
+				barker.Show();
+			}
 		}
 	}
 }

@@ -1,18 +1,11 @@
 using Game.Systems.BattleSystem;
-using Game.Systems.DamageSystem;
-using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
-using DG.Tweening;
-
-using System.Collections;
 
 using UnityEngine;
-using UnityEngine.Events;
 
 using Zenject;
-using CMF;
-using static UnityEngine.EventSystems.EventTrigger;
+using Game.Systems.DialogueSystem;
 
 namespace Game.Entities
 {

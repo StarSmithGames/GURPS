@@ -13,7 +13,6 @@ namespace NodeCanvas.Editor
     [CustomEditor(typeof(Graph), true)]
     public class GraphInspector : UnityEditor.Editor
     {
-
         private Graph graph => (Graph)target;
 
         public override void OnInspectorGUI() {
