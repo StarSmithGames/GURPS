@@ -18,6 +18,11 @@ namespace Game.Managers.InputManager
 			this.bindings = bindings;
 		}
 
+		public bool IsAnyKeyDown()
+		{
+			return Input.anyKeyDown;
+		}
+
 		public bool GetKeyUp(KeyAction action)
 		{
 			return Input.GetKeyUp(bindings[action]);
@@ -51,6 +56,10 @@ namespace Game.Managers.InputManager
 		}
 
 
+		public bool IsMiddleMouseButtonDown()
+		{
+			return Input.GetMouseButtonDown(2);
+		}
 		public bool IsScroolWheelUp()
 		{
 			return Input.mouseScrollDelta.y > 0;

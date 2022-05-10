@@ -58,16 +58,16 @@ namespace Game.Systems.ContextMenu
 		}
 	}
 
-	public class Attack : BaseCommand
+	public class CommandAttack : BaseCommand
 	{
 		public override void Execute()
 		{
 		}
 	}
 
-	public class Examine : BaseCommand
+	public class CommandExamine : BaseCommand
 	{
-		public Examine(IObservable observable)
+		public CommandExamine(IObservable observable)
 		{
 
 		}
@@ -77,14 +77,14 @@ namespace Game.Systems.ContextMenu
 		}
 	}
 
-	public class PickUp : BaseCommand
+	public class CommandPickUp : BaseCommand
 	{
 		public override void Execute()
 		{
 		}
 	}
 
-	public class SeparateCharacter : BaseCommand
+	public class CommandSeparateCharacter : BaseCommand
 	{
 		public override void Execute()
 		{
@@ -92,7 +92,7 @@ namespace Game.Systems.ContextMenu
 	}
 
 
-	public class Rob : BaseCommand
+	public class CommandRob : BaseCommand
 	{
 		public override void Execute()
 		{

@@ -51,9 +51,13 @@ namespace Game.Systems.ContextMenu
 		{
 			if (IsShowing)
 			{
-				if (inputManager.IsLeftMouseButtonDown())
+				//Check all inputs
+				if(inputManager.IsScroolWheelDown() || inputManager.IsScroolWheelUp() || (inputManager.IsAnyKeyDown() && !inputManager.IsRightMouseButtonDown() && !inputManager.IsLeftMouseButtonDown()))
 				{
-					//Click Outside
+					Hide();
+				}
+				else if (inputManager.IsLeftMouseButtonDown())//Click Outside
+				{
 					if(!RectTransformUtility.RectangleContainsScreenPoint(contextMenu.transform as RectTransform, GetMouseCoordsInCanvas(brain.OutputCamera, false)))
 					{
 						Hide();
@@ -80,14 +84,14 @@ namespace Game.Systems.ContextMenu
 					AddCommand(new CommandOpenContainer(interactionHandler, characterManager.CurrentParty.LeaderParty, container) { name = "Open" });
 				}
 
-				AddCommand(new Attack() { name = "Attack" });
-				AddCommand(new Examine(observable) { name = "Examine" });
+				AddCommand(new CommandAttack() { name = "Attack" });
+				AddCommand(new CommandExamine(observable) { name = "Examine" });
 			}
 			else if (observable is Character character)
 			{
-				AddCommand(new Examine(observable) { name = "Examine" });
+				AddCommand(new CommandAttack() { name = "Attack" }, ContextType.Negative);
+				AddCommand(new CommandExamine(observable) { name = "Examine" });
 			}
-
 
 			return this;
 		}
@@ -117,11 +121,11 @@ namespace Game.Systems.ContextMenu
 			contextMenu.gameObject.SetActive(trigger);
 		}
 
-		private void AddCommand(ICommand command)
+		private void AddCommand(ICommand command, ContextType type = ContextType.Normal)
 		{
 			var action = contextMenuFactory.Create();
 			action.onClicked += OnActionClicked;
-			action.SetCommand(command);
+			action.SetCommand(command, type);
 
 			action.transform.SetParent(contextMenu.transform);
 
