@@ -147,6 +147,14 @@ namespace Game.Entities
 			Controller.SetDestination(destination, maxPathDistance: maxPathDistance);
 			onDestinationChanged?.Invoke();
 		}
+
+		public virtual void Stop()
+		{
+			if (IsHasTarget)
+			{
+				Controller.Stop();
+			}
+		}
 	}
 
 	//IDamegeable, IKillable implementation

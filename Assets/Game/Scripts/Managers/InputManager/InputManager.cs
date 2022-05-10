@@ -45,6 +45,11 @@ namespace Game.Managers.InputManager
 		{
 			return Input.GetMouseButton(0);
 		}
+		public bool IsRightMouseButtonDown()
+		{
+			return Input.GetMouseButtonDown(1);
+		}
+
 
 		public bool IsScroolWheelUp()
 		{

@@ -94,6 +94,13 @@ namespace Game.Entities
 			}
 		}
 
+		public override void Stop()
+		{
+			base.Stop();
+
+			OnReachedDestination();
+		}
+
 		private void OnReachedDestination()
 		{
 			if (!InBattle)

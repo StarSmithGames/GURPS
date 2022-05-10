@@ -24,9 +24,9 @@ namespace Game.Systems.InteractionSystem
 
 		public void Interact(IEntity entity, IInteractable interactable)
 		{
-			if (entity is IActor actor)
+			if (entity is IActor actor && interactable is IActor)
 			{
-				dialogueSystem.StartDialogue(actor);
+				//dialogueSystem.StartDialogue(actor);
 			}
 			else if (interactable is IContainer container)
 			{

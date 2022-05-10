@@ -1,4 +1,5 @@
 using Game.Systems.BattleSystem;
+using Game.Systems.ContextMenu;
 using Game.Systems.InventorySystem;
 
 using UnityEngine;
@@ -9,6 +10,7 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 {
 	[Header("General")]
 	[SerializeField] private UIAvatar avatarPrefab;
+	[SerializeField] private UIContextAction contextActionPrefab;
 	[Header("Inventory-Container")]
 	[SerializeField] private UIItemCursor itemCursorPrefab;
 	[SerializeField] private UIContainerWindow chestPopupWindowPrefab;
@@ -21,18 +23,27 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 	public override void InstallBindings()
 	{
 		Container.BindInstance(GameObject.FindObjectOfType<UIManager>());//stub
-
 		Container.Bind<UIWindowsManager>().WhenInjectedInto<UIManager>();
 
 		Container.BindFactory<UIAvatar, UIAvatar.Factory>()
 			.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
 			.FromComponentInNewPrefab(avatarPrefab));
 
+		BindContextMenu();
+
 		BindInventoryContainer();
 
 		BindBattleSystem();
 
 		BindActionFactory();
+	}
+
+	private void BindContextMenu()
+	{
+		Container.BindFactory<UIContextAction, UIContextAction.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
+				.FromComponentInNewPrefab(contextActionPrefab))
+				.WhenInjectedInto<ContextMenuHandler>();
 	}
 
 	private void BindInventoryContainer()

@@ -17,5 +17,6 @@ namespace Game.Entities
 
 		void SetTarget(Vector3 point, float maxPathDistance = -1);
 		void SetDestination(Vector3 destination, float maxPathDistance = -1);
+		void Stop();
 	}
 }

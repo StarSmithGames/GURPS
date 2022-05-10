@@ -4,6 +4,7 @@ using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Managers.InputManager;
+using Game.Systems.ContextMenu;
 using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
@@ -13,6 +14,7 @@ using System;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 using Zenject;
 
@@ -55,6 +57,7 @@ namespace Game.Systems.CameraSystem
 		private Settings settings;
 		private UIManager uiManager;
 		private InteractionHandler interactionHandler;
+		private ContextMenuHandler contextMenuHandler;
 
 		public CameraVision(SignalBus signalBus,
 			CinemachineBrain brain,
@@ -63,7 +66,8 @@ namespace Game.Systems.CameraSystem
 			CharacterManager characterManager,
 			GlobalSettings settings,
 			UIManager uiManager,
-			InteractionHandler interactionHandler)
+			InteractionHandler interactionHandler,
+			ContextMenuHandler contextMenuHandler)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
@@ -73,6 +77,7 @@ namespace Game.Systems.CameraSystem
 			this.settings = settings.cameraVision;
 			this.uiManager = uiManager;
 			this.interactionHandler = interactionHandler;
+			this.contextMenuHandler = contextMenuHandler;
 		}
 
 		public void Initialize()
@@ -172,7 +177,7 @@ namespace Game.Systems.CameraSystem
 			{
 				if (CurrentObserve != null)
 				{
-					if(leader != CurrentObserve)
+					if (leader != CurrentObserve)
 					{
 						//Interaction
 						if (inputManager.IsLeftMouseButtonDown())
@@ -213,6 +218,23 @@ namespace Game.Systems.CameraSystem
 								}
 							}
 						}
+					}
+				}
+			}
+			else
+			{
+				//ContextMenu
+				if (inputManager.IsRightMouseButtonDown())
+				{
+					leader.Stop();
+
+					if (CurrentObserve != null && leader != CurrentObserve)
+					{
+						contextMenuHandler.SetTarget(CurrentObserve).Show();
+					}
+					else
+					{
+						contextMenuHandler.Hide();
 					}
 				}
 			}

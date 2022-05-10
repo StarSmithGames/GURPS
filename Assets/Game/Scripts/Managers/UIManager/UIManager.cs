@@ -3,6 +3,7 @@ using Game.Systems.BattleSystem;
 using Game.Systems.DialogueSystem;
 using Game.Systems.SheetSystem;
 using Game.Systems.TooltipSystem;
+using Game.Systems.ContextMenu;
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,7 @@ public class UIManager : MonoBehaviour
 	[field: SerializeField] public UIBattle Battle { get; private set; }
 	[field: SerializeField] public UIBars Bars { get; private set; }
 	[field: SerializeField] public TooltipSystem Tooltip { get; private set; }
+	[field: SerializeField] public UIContextMenu ContextMenu { get; private set; }
 	[field: Space]
 	[field: SerializeField] public UIDialogue Dialogue { get; private set; }
 	[Space]

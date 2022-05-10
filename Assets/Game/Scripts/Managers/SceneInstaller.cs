@@ -2,6 +2,7 @@ using Cinemachine;
 
 using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
+using Game.Systems.ContextMenu;
 
 using System.Collections.Generic;
 
@@ -24,5 +25,12 @@ public class SceneInstaller : MonoInstaller
 		Container.BindInterfacesAndSelfTo<CameraVision>().AsSingle();
 
 		Container.BindInterfacesAndSelfTo<CameraController>().AsSingle();
+
+		BindContexMenu();
+	}
+
+	private void BindContexMenu()
+	{
+		Container.BindInterfacesAndSelfTo<ContextMenuHandler>().AsSingle();
 	}
 }

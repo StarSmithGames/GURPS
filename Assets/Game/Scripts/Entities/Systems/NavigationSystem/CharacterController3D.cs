@@ -101,8 +101,7 @@ public class CharacterController3D : MonoBehaviour
 
 		if (IsFreezed && IsHasTarget)
 		{
-			IsHasTarget = false;
-			CurrentDestination = Vector3.zero;
+			Stop();
 		}
 	}
 
@@ -124,6 +123,12 @@ public class CharacterController3D : MonoBehaviour
 		CurrentDestination = IsHasTarget ? navigationController.CurrentNavMeshDestination : Vector3.zero;
 
 		return IsHasTarget;
+	}
+
+	public void Stop()
+	{
+		IsHasTarget = false;
+		CurrentDestination = Vector3.zero;
 	}
 
 	public void RotateTo(Vector3 point)
