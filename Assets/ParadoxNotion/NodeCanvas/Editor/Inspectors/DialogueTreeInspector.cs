@@ -13,7 +13,6 @@ namespace NodeCanvas.Editor
     [CustomEditor(typeof(DialogueTree))]
     public class DialogueTreeInspector : GraphInspector
     {
-
         private DialogueTree dialogue {
             get { return target as DialogueTree; }
         }

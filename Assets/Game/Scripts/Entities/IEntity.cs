@@ -5,6 +5,8 @@ using Game.Systems.DamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -24,7 +26,7 @@ namespace Game.Entities
 		Markers Markers { get; }
 		Outlinable Outlines { get; }
 
-		IAction LastInteractionAction { get; set; }
+		TaskSequence TaskSequence { get; }
 
 		void Freeze(bool trigger);
 	}

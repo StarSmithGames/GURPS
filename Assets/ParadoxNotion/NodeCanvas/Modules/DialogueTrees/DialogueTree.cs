@@ -75,15 +75,6 @@ namespace NodeCanvas.DialogueTrees
 
             public ActorParameter() { }
             public ActorParameter(string name) { this.name = name; }
-            public ActorParameter(string name, IDialogueActor actor) {
-                this.name = name;
-                this.actor = actor;
-            }
-            public ActorParameter(IDialogueActor actor)
-            {
-                //this.name = actor.ac;
-                this.actor = actor;
-            }
 
             public override string ToString() { return name; }
         }

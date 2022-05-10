@@ -2,14 +2,12 @@ using DG.Tweening;
 
 using Game.Entities;
 using Game.Systems.BattleSystem;
-using Game.Systems.CameraSystem;
-using Game.Systems.DamageSystem;
 using Game.Systems.DialogueSystem;
-using Game.Systems.FloatingTextSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 
 using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -17,53 +15,37 @@ namespace Game.Systems.InteractionSystem
 {
 	public class InteractionHandler
 	{
-		private bool terminate = false;
-		private IEntity entity;
-		private IInteractable interactable;
-
-		public bool IsInteractionProcess => interactionCoroutine != null;
-		private Coroutine interactionCoroutine = null;
-
-		private AsyncManager asyncManager;
 		private DialogueSystem.DialogueSystem dialogueSystem;
 
-		public InteractionHandler(AsyncManager asyncManager, DialogueSystem.DialogueSystem dialogueSystem)
+		public InteractionHandler(DialogueSystem.DialogueSystem dialogueSystem)
 		{
-			this.asyncManager = asyncManager;
 			this.dialogueSystem = dialogueSystem;
 		}
 
 		public void Interact(IEntity entity, IInteractable interactable)
 		{
-			if (IsInteractionProcess) return;
-
-			this.entity = entity;
-			this.interactable = interactable;
-
-			entity.LastInteractionAction = null;
-
 			if (entity is IActor actor)
 			{
 				dialogueSystem.StartDialogue(actor);
 			}
-			else
+			else if (interactable is IContainer container)
 			{
-				entity.LastInteractionAction = new BaseInteraction(entity, interactable);
-			}
-
-			if(entity.LastInteractionAction != null)
-			{
-				interactionCoroutine = asyncManager.StartCoroutine(Interaction(entity.LastInteractionAction));
+				if (interactable.IsInRange(entity))//контейнер в области
+				{
+					entity.TaskSequence.Execute(new ContainerInteraction(entity, container));
+				}
+				else
+				{
+					entity.TaskSequence
+						.Append(new GoToAction(entity, interactable.GetIteractionPosition(entity)))
+						.Append(new ContainerInteraction(entity, container))
+						.Execute();
+				}
 			}
 		}
 
 		public void InteractInBattle(IEntity entity, IInteractable interactable)
 		{
-			if (IsInteractionProcess) return;
-
-			this.entity = entity;
-			this.interactable = interactable;
-
 			if (entity is IBattlable from && interactable is IBattlable to)
 			{
 				if (!from.InAction)
@@ -75,11 +57,11 @@ namespace Game.Systems.InteractionSystem
 							from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
 							if (entity is HumanoidEntity)
 							{
-								entity.LastInteractionAction = new HumanoidAttack(from, to);
+								entity.TaskSequence.Execute(new HumanoidAttack(from, to));
 							}
 							else
 							{
-								entity.LastInteractionAction = new Attack(from, to);
+								entity.TaskSequence.Execute(new Attack(from, to));
 							}
 						}
 						else
@@ -89,80 +71,161 @@ namespace Game.Systems.InteractionSystem
 					}
 				}
 			}
+		}
+	}
 
-			if (entity.LastInteractionAction != null)
-			{
-				interactionCoroutine = asyncManager.StartCoroutine(Interaction(entity.LastInteractionAction));
-			}
+
+
+	#region ITask
+
+	/// <summary>
+	/// Если currentTask.Status == TaskActionStatus.Cancelled тогда последовательность обрывается.
+	/// </summary>
+	public class TaskSequence
+	{
+		public bool IsSequenceProcess => sequenceCoroutine != null;
+		private Coroutine sequenceCoroutine = null;
+
+		private ITaskAction currentTask = null;
+		private List<ITaskAction> tasks = new List<ITaskAction>();
+
+		private MonoBehaviour owner;
+
+		public TaskSequence(MonoBehaviour owner)
+		{
+			this.owner = owner;
 		}
 
-		private IEnumerator Interaction(IAction action)
+		public TaskSequence Append(ITaskAction task)
 		{
-			yield return PreInteraction();
-			if (terminate)
-			{
-				terminate = false;
-				interactionCoroutine = null;
-				yield break;
-			}
-			yield return action.Interaction();
-
-			interactionCoroutine = null;
+			tasks.Add(task);
+			return this;
 		}
 
-		private IEnumerator PreInteraction()
+		private void Dispose()
 		{
-			if (!interactable.IsInRange(entity))
+			tasks.Clear();
+			sequenceCoroutine = null;
+			currentTask = null;
+		}
+
+		public void Execute()
+		{
+			if (!IsSequenceProcess)
 			{
-				entity.SetDestination(interactable.GetIteractionPosition(entity));
-
-				Vector3 lastDestination = entity.Navigation.CurrentNavMeshDestination;
-
-				yield return new WaitWhile(() =>
+				if(tasks.Count > 0)
 				{
-					if (lastDestination != entity.Navigation.CurrentNavMeshDestination)
-					{
-						terminate = true;
-						return false;
-					}
-					return !entity.Navigation.NavMeshAgent.IsReachedDestination();
-				});
+					sequenceCoroutine = owner.StartCoroutine(Sequence());
+				}
 			}
+		}
+
+		public void Execute(ITaskAction task)
+		{
+			if (!IsSequenceProcess)
+			{
+				if (task != null)
+				{
+					Append(task).Execute();
+				}
+			}
+		}
+
+
+		private IEnumerator Sequence()
+		{
+			for (int i = 0; i < tasks.Count; i++)
+			{
+				currentTask = tasks[i];
+
+				yield return currentTask.Implementation();
+				
+				if(currentTask.Status == TaskActionStatus.Cancelled)
+				{
+					Debug.LogError("Breaked");
+					break;
+				}
+			}
+
+			Dispose();
+		}
+	}
+
+	public interface ITaskAction
+	{
+		TaskActionStatus Status { get; }
+		IEnumerator Implementation();
+	}
+	public abstract class TaskActionBase : ITaskAction
+	{
+		public TaskActionStatus Status => status;
+		protected TaskActionStatus status = TaskActionStatus.Preparing;
+
+		protected IEntity entity;
+
+		public TaskActionBase(IEntity entity)
+		{
+			this.entity = entity;
+		}
+
+		public abstract IEnumerator Implementation();
+	}
+	public abstract class TaskActionInteraction : TaskActionBase
+	{
+		protected IInteractable interactable;
+
+		protected TaskActionInteraction(IEntity entity, IInteractable interactable) : base(entity)
+		{
+			this.interactable = interactable;
+		}
+	}
+
+	public class GoToAction : TaskActionBase
+	{
+		protected Vector3 destination;
+
+		public GoToAction(IEntity entity, Vector3 destination) : base(entity)
+		{
+			this.destination = destination;
+		}
+
+		public override IEnumerator Implementation()
+		{
+			entity.SetDestination(destination);
+
+			Vector3 lastDestination = entity.Navigation.CurrentNavMeshDestination;
+
+			yield return new WaitWhile(() =>
+			{
+				if (lastDestination != entity.Navigation.CurrentNavMeshDestination)
+				{
+					status = TaskActionStatus.Cancelled;
+					return false;
+				}
+				return !entity.Navigation.NavMeshAgent.IsReachedDestination();
+			});
 		}
 	}
 
 
-
-	#region IAction
-	public interface IAction
+	public class Attack : TaskActionInteraction
 	{
-		IEnumerator Interaction();
-	}
-
-	public class Attack : IAction
-	{
-		protected IBattlable from;
-		protected IDamegeable to;
-
-		public Attack(IBattlable from, IDamegeable to)
+		public Attack(IBattlable from, IInteractable to) : base(from, to)
 		{
-			this.from = from;
-			this.to = to;
-
-			from.AnimatorControl.onAttackEvent += OnAttacked;
+			entity.AnimatorControl.onAttackEvent += OnAttacked;
 		}
 
 		protected virtual void Dispose()
 		{
-			if (from != null)
+			if (entity != null)
 			{
-				from.AnimatorControl.onAttackEvent -= OnAttacked;
+				entity.AnimatorControl.onAttackEvent -= OnAttacked;
 			}
 		}
 
-		public IEnumerator Interaction()
+		public override IEnumerator Implementation()
 		{
-			if (to is IEntity entity)
+			//if (to is IEntity entity)
 			{
 				if (!entity.Sheet.Conditions.IsContains<Death>())
 				{
@@ -170,21 +233,22 @@ namespace Game.Systems.InteractionSystem
 					Sequence sequence = DOTween.Sequence();
 
 					sequence
-						.Append(from.Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
-						.AppendCallback(from.AnimatorControl.Attack);
+						.Append(entity.Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
+						.AppendCallback(entity.AnimatorControl.Attack);
 				}
 			}
-			else if (to is IDamegeable)
-			{
+			//else if (to is IDamegeable)
+			//{
 
-			}
+			//}
 
 			//wait start and then end attack
-			yield return new WaitWhile(() => !from.AnimatorControl.IsAttackProccess);
-			yield return new WaitWhile(() => from.AnimatorControl.IsAttackProccess);
+			yield return new WaitWhile(() => !entity.AnimatorControl.IsAttackProccess);
+			yield return new WaitWhile(() => entity.AnimatorControl.IsAttackProccess);
 
 			Dispose();
 		}
+		
 
 		protected virtual void CheckDeath(IEntity entity)
 		{
@@ -197,7 +261,7 @@ namespace Game.Systems.InteractionSystem
 						entity.AnimatorControl.Death();
 						entity.Kill();
 
-						Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {from.MonoBehaviour.gameObject.name}");
+						Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {entity.MonoBehaviour.gameObject.name}");
 					}
 				}
 			}
@@ -208,16 +272,17 @@ namespace Game.Systems.InteractionSystem
 		/// </summary>
 		protected void OnAttacked()
 		{
-			if(to is IEntity entity)
+			if(interactable is IEntity entity)
 			{
 				//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
 				entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
-				entity.ApplyDamage(from.GetDamage());
+				entity.ApplyDamage(entity.GetDamage());
 
 				CheckDeath(entity);
 			}
 		}
 
+		
 	}
 
 	public class HumanoidAttack : Attack
@@ -225,7 +290,7 @@ namespace Game.Systems.InteractionSystem
 		private HumanoidAnimatorControl control;
 		private IEquipment equipment;
 
-		public HumanoidAttack(IBattlable from, IDamegeable to) : base(from, to)
+		public HumanoidAttack(IBattlable from, IInteractable to) : base(from, to)
 		{
 			control = (from.AnimatorControl as HumanoidAnimatorControl);
 			equipment = (from.Sheet as CharacterSheet).Equipment;
@@ -251,7 +316,7 @@ namespace Game.Systems.InteractionSystem
 		{
 			if (!equipment.WeaponCurrent.Spare.IsEmpty)
 			{
-				if (to is IEntity entity)
+				if (interactable is IEntity entity)
 				{
 					entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
 					entity.ApplyDamage(equipment.WeaponCurrent.Spare.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
@@ -268,7 +333,7 @@ namespace Game.Systems.InteractionSystem
 		{
 			if (!equipment.WeaponCurrent.Main.IsEmpty)
 			{
-				if (to is IEntity entity)
+				if (interactable is IEntity entity)
 				{
 					entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
 					entity.ApplyDamage(equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
@@ -284,34 +349,37 @@ namespace Game.Systems.InteractionSystem
 	}
 
 
-
-	public class BaseInteraction : IAction
+	public class ContainerInteraction : TaskActionInteraction
 	{
-		private IEntity entity;
-		private IInteractable interactable;
+		public ContainerInteraction(IEntity entity, IContainer container) : base(entity, container) { }
 
-		public BaseInteraction(IEntity entity, IInteractable interactable)
+		public override IEnumerator Implementation()
 		{
-			this.entity = entity;
-			this.interactable = interactable;
-		}
+			IContainer container = interactable as IContainer;
 
-		public IEnumerator Interaction()
-		{
-			if (interactable is IContainer container)
+			if (!container.IsOpened)
 			{
 				container.Open();
+			}
 
-				while (container.IsOpened)
+			while (container.IsOpened)
+			{
+				if (!interactable.IsInRange(entity))
 				{
-					if (!interactable.IsInRange(entity))
-					{
-						container.Close();
-					}
-					yield return null;
+					container.Close();
 				}
+				yield return null;
 			}
 		}
+	}
+
+
+	public enum TaskActionStatus
+	{
+		Preparing,
+		Running,
+		Cancelled,
+		Done,
 	}
 	#endregion
 }

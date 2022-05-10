@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2c3f478ef69fbe04fa9ed3664a8a443e, type: 3}
-  m_Name: Conversation
+  m_Name: Dialogue
   m_EditorClassIdentifier: 
   _serializedGraph: '{"type":"NodeCanvas.DialogueTrees.DialogueTree","nodes":[{"statements":[{"_text":"This
     is a dialogue text"},{"_text":"This is a dialogue text"}],"_actorName":"Hero","_actorParameterID":"e6241865-52fd-4cfc-8996-d1fe1236fd16","_position":{"x":525.0,"y":180.0},"$type":"I2StatementNode","$id":"0"},{"statements":[{"_text":"dialogue

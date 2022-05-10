@@ -8,6 +8,8 @@ using Game.Systems.SheetSystem;
 
 using NodeCanvas.DialogueTrees;
 
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
@@ -15,8 +17,6 @@ using UnityEngine.Assertions;
 using UnityEngine.Events;
 
 using Zenject;
-
-using static Zenject.CheatSheet;
 
 namespace Game.Entities
 {
@@ -33,7 +33,7 @@ namespace Game.Entities
 
 		public CameraPivot CameraPivot { get; private set; }
 
-		public IAction LastInteractionAction { get; set; }
+		public TaskSequence TaskSequence { get; private set; }
 
 		protected SignalBus signalBus;
 		protected UIManager uiManager;
@@ -65,6 +65,8 @@ namespace Game.Entities
 
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
+
+			TaskSequence = new TaskSequence(this);
 
 			Validate();
 		}

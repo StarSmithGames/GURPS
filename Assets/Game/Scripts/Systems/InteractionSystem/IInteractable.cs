@@ -1,7 +1,5 @@
 using Game.Entities;
 
-using System.Collections;
-
 using UnityEngine;
 
 namespace Game.Systems.InteractionSystem

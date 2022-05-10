@@ -1,6 +1,8 @@
+using Game.Systems.InteractionSystem;
+
 namespace Game.Systems.InventorySystem
 {
-    public interface IContainer
+    public interface IContainer : IInteractable
     {
         bool IsOpened { get; }
 
