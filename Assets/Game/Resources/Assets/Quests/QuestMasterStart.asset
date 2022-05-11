@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9533687fe01daa458033e3d606044f3, type: 3}
+  m_Name: QuestMasterStart
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: objectives
+      Entry: 7
+      Data: 0|System.Collections.Generic.List`1[[Game.Systems.QuestSystem.QuestObjectiveData,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 1|Game.Systems.QuestSystem.QuestObjectiveData, Assembly-CSharp
+    - Name: title
+      Entry: 1
+      Data: Meeting
+    - Name: description
+      Entry: 6
+      Data: 
+    - Name: isOverrideMainDescription
+      Entry: 5
+      Data: false
+    - Name: mainDescription
+      Entry: 6
+      Data: 
+    - Name: goals
+      Entry: 7
+      Data: 2|System.Collections.Generic.List`1[[Game.Systems.QuestSystem.QuestGoalData,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 3|Game.Systems.QuestSystem.QuestGoalData, Assembly-CSharp
+    - Name: title
+      Entry: 1
+      Data: Meet Gire
+    - Name: questGoal
+      Entry: 7
+      Data: 4|Game.Systems.QuestSystem.QuestGoalWait, Assembly-CSharp
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  questName: FirstQuest
+  title: Gire
+  description: A wary sage named Vandrocleo seeks a company of adventurers to recover
+    and destroy an evil artifact from the Fortress of Zeiram the Lich.

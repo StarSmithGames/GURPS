@@ -18,12 +18,37 @@ namespace Game.Systems.ContextMenu
 		public abstract void Execute();
 	}
 
-	public class Use : BaseCommand//eat, drink, use spells
+	public class CommandUse : BaseCommand//eat, drink, use spells
 	{
 		public override void Execute()
 		{
 		}
 	}
+
+
+	public class CommandTalk : BaseCommand
+	{
+		public CommandTalk()
+		{
+
+		}
+
+		public override void Execute()
+		{
+		}
+	}
+	public class CommandExamine : BaseCommand
+	{
+		public CommandExamine(IObservable observable)
+		{
+
+		}
+
+		public override void Execute()
+		{
+		}
+	}
+
 
 	public class CommandOpenContainer : BaseCommand
 	{
@@ -42,7 +67,6 @@ namespace Game.Systems.ContextMenu
 			interactionHandler.Interact(character, container);
 		}
 	}
-
 	public class CommandCloseContainer : BaseCommand
 	{
 		private IContainer container;
@@ -65,17 +89,6 @@ namespace Game.Systems.ContextMenu
 		}
 	}
 
-	public class CommandExamine : BaseCommand
-	{
-		public CommandExamine(IObservable observable)
-		{
-
-		}
-
-		public override void Execute()
-		{
-		}
-	}
 
 	public class CommandPickUp : BaseCommand
 	{
