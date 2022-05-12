@@ -18,26 +18,30 @@ namespace Game.Entities
 		[field: Space]
 		[field: SerializeField] public LineRendererLineVFX LineMarker { get; private set; }
 		[Space]
-		[SerializeField] private List<Material> materials = new List<Material>();
+		[SerializeField] private List<Material> markerColors = new List<Material>();
+
+		[field: Space]
+		[field: SerializeField] public IndicatorVFX Exclamation { get; private set; }
+		[field: SerializeField] public IndicatorVFX Question { get; private set; }
 
 		private void Awake()
 		{
-			Assert.AreEqual(materials.Count, Enum.GetValues(typeof(MaterialType)).Length, "Materials count are not equal enum");
+			Assert.AreEqual(markerColors.Count, Enum.GetValues(typeof(MaterialType)).Length, "Materials count are not equal enum");
 
 			TargetMarker.transform.parent = null;
 		}
 
 		public void SetFollowMaterial(MaterialType type)
 		{
-			FollowMarker.Line.material = materials[(int)type];
+			FollowMarker.Line.material = markerColors[(int)type];
 		}
 	}
 
 	public enum MaterialType : int
 	{
-		Leader		= 0,
-		Companion	= 1,
-		Friend		= 2,
-		Enemy		= 3,
+		Leader		= 0,//white
+		Companion	= 1,//blue
+		Friend		= 2,//green
+		Enemy		= 3,//red
 	}
 }

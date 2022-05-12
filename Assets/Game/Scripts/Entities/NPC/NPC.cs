@@ -2,6 +2,7 @@ using Game.Managers.CharacterManager;
 using Game.Systems.BattleSystem;
 using Game.Systems.SheetSystem;
 
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -43,10 +44,11 @@ namespace Game.Entities
 			this.battleSystem = battleSystem;
 		}
 
-		protected override void Start()
+		protected override IEnumerator Start()
 		{
-			base.Start();
 			fov.StartView();
+
+			yield return base.Start();
 		}
 
 		private void Update()

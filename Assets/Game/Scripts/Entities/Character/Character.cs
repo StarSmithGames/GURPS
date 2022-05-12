@@ -6,6 +6,8 @@ using UnityEngine;
 
 using Zenject;
 using Game.Systems.DialogueSystem;
+using System.Collections;
+using Game.Managers.CharacterManager;
 
 namespace Game.Entities
 {
@@ -53,12 +55,12 @@ namespace Game.Entities
 			}
 		}
 
-		protected override void Start()
+		protected override IEnumerator Start()
 		{
-			base.Start();
-
 			Controller.onReachedDestination += OnReachedDestination;
 			equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
+
+			yield return base.Start();
 		}
 
 		private void OnEquipWeaponChanged()

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Zenject;
+using Game.Systems.NotificationSystem;
 
 public class UIManager : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class UIManager : MonoBehaviour
 	[field: SerializeField] public UIContextMenu ContextMenu { get; private set; }
 	[field: Space]
 	[field: SerializeField] public UIDialogue Dialogue { get; private set; }
+	[field: Space]
+	[field: SerializeField] public UIJournalNotification JournalNotification { get; private set; }
 	[Space]
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
 

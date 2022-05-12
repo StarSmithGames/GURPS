@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Game.Entities
 {
-	public class Player : Character { }
+	public class Player : Character
+	{
+		protected override void CheckReplicas() { }
+	}
 }

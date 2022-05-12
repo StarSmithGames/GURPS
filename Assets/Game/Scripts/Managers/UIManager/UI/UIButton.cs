@@ -1,12 +1,6 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class UIButton : MonoBehaviour
+public class UIButton : UIBase
 {
     [field: SerializeField] public UIButtonPointer ButtonPointer { get; private set; }
-
-    public void Enable(bool trigger)
-	{
-		gameObject.SetActive(trigger);
-	}
 }

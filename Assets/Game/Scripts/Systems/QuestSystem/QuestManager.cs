@@ -10,8 +10,12 @@ namespace Game.Systems.QuestSystem
 		public List<Quest> AllQuests { get; private set; }
 		public List<Quest> CurrentQuests { get; private set; }
 
-		public QuestManager(UIManager uiManager)
+		private NotificationSystem.NotificationSystem notificationSystem;
+
+		public QuestManager(NotificationSystem.NotificationSystem notificationSystem)
 		{
+			this.notificationSystem = notificationSystem;
+
 			 CurrentQuests = new List<Quest>();
 		}
 
@@ -21,6 +25,8 @@ namespace Game.Systems.QuestSystem
 			if (!CurrentQuests.Contains(quest))
 			{
 				CurrentQuests.Add(quest);
+
+				notificationSystem.PushJournal(quest.CurrentData.title);
 			}
 		}
 

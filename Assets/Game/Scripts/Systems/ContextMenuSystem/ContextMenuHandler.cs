@@ -8,6 +8,7 @@ using Game.Entities;
 using Game.Managers.InputManager;
 using Game.Managers.CharacterManager;
 using Game.Systems.InteractionSystem;
+using Game.Systems.DialogueSystem;
 
 namespace Game.Systems.ContextMenu
 {
@@ -24,6 +25,7 @@ namespace Game.Systems.ContextMenu
 		private InputManager inputManager;
 		private CharacterManager characterManager;
 		private InteractionHandler interactionHandler;
+		private DialogueSystem.DialogueSystem dialogueSystem;
 
 		public ContextMenuHandler(
 			UIContextAction.Factory contextMenuFactory,
@@ -31,7 +33,8 @@ namespace Game.Systems.ContextMenu
 			Cinemachine.CinemachineBrain brain,
 			InputManager inputManager,
 			CharacterManager characterManager,
-			InteractionHandler interactionHandler)
+			InteractionHandler interactionHandler,
+			DialogueSystem.DialogueSystem dialogueSystem)
 		{
 			this.contextMenuFactory = contextMenuFactory;
 			this.contextMenu = uiManager.ContextMenu;
@@ -39,6 +42,7 @@ namespace Game.Systems.ContextMenu
 			this.inputManager = inputManager;
 			this.characterManager = characterManager;
 			this.interactionHandler = interactionHandler;
+			this.dialogueSystem = dialogueSystem;
 		}
 
 		public void Initialize()
@@ -87,8 +91,12 @@ namespace Game.Systems.ContextMenu
 				AddCommand(new CommandAttack() { name = "Attack" });
 				AddCommand(new CommandExamine(observable) { name = "Examine" });
 			}
-			else if (observable is Character character)
+			else if (observable is IActor actor)
 			{
+				if (actor.IsHaveSomethingToSay)
+				{
+					AddCommand(new CommandTalk(dialogueSystem, characterManager.CurrentParty.LeaderParty, actor) { name = "Talk" });
+				}
 				AddCommand(new CommandAttack() { name = "Attack" }, ContextType.Negative);
 				AddCommand(new CommandExamine(observable) { name = "Examine" });
 			}

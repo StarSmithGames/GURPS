@@ -1,4 +1,5 @@
 using Game.Entities;
+using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 
@@ -28,13 +29,20 @@ namespace Game.Systems.ContextMenu
 
 	public class CommandTalk : BaseCommand
 	{
-		public CommandTalk()
-		{
+		private DialogueSystem.DialogueSystem dialogueSystem;
+		private Character character;
+		private IActor actor;
 
+		public CommandTalk(DialogueSystem.DialogueSystem dialogueSystem, Character character, IActor actor)
+		{
+			this.dialogueSystem = dialogueSystem;
+			this.character = character;
+			this.actor = actor;
 		}
 
 		public override void Execute()
 		{
+			dialogueSystem.StartConversation(actor);
 		}
 	}
 	public class CommandExamine : BaseCommand

@@ -8,15 +8,16 @@ using Game.Systems.SheetSystem;
 
 using NodeCanvas.DialogueTrees;
 
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
+using DG.Tweening;
+
 using Zenject;
+using System.Collections;
 
 namespace Game.Entities
 {
@@ -75,11 +76,17 @@ namespace Game.Entities
 		{
 		}
 
-		protected virtual void Start()
+		protected virtual IEnumerator Start()
 		{
 			Outlines.enabled = false;
 
 			ResetMarkers();
+
+			Markers.Exclamation.Enable(false);
+			Markers.Question.Enable(false);
+
+			yield return new WaitForSeconds(2.5f);
+			CheckReplicas();
 		}
 
 		public void Freeze(bool trigger)
@@ -217,8 +224,11 @@ namespace Game.Entities
 		}
 	}
 	
+	//IActor implementation
 	partial class Entity
 	{
+		public virtual bool IsHaveSomethingToSay => barks != null;
+
 		protected DialogueSystem dialogueSystem;
 		protected Barker barker;
 
@@ -255,6 +265,8 @@ namespace Game.Entities
 					break;
 				}
 			}
+
+			Markers.Exclamation.Hide();
 		}
 
 		private void ShowBarkSubtitles(Statement subtitles)
@@ -263,6 +275,21 @@ namespace Game.Entities
 			{
 				barker.Text.text = subtitles.text;
 				barker.Show();
+			}
+		}
+	
+		protected virtual void CheckReplicas()
+		{
+			if (IsHaveSomethingToSay)
+			{
+				Markers.Exclamation.Show();
+			}
+			else
+			{
+				if (Markers.Exclamation.IsSwowing && !Markers.Exclamation.IsHideProcess)
+				{
+					Markers.Exclamation.Hide();
+				}
 			}
 		}
 	}

@@ -19,7 +19,7 @@ namespace Game.Systems.DialogueSystem
 
 		public void StartConversation(IActor initiator)
 		{
-
+			initiator.Bark();
 		}
 
 		public void StartDialogue(IActor initiator)
