@@ -2,10 +2,11 @@ using ParadoxNotion;
 using NodeCanvas.Framework;
 using UnityEngine;
 using System.Linq;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 namespace NodeCanvas.DialogueTrees
 {
-
     ///<summary>An interface to use for whats being said by a dialogue actor</summary>
     public interface IStatement
     {
@@ -18,13 +19,14 @@ namespace NodeCanvas.DialogueTrees
     [System.Serializable]
     public class Statement : IStatement
     {
-
         [SerializeField]
         private string _text = string.Empty;
         [SerializeField]
         private AudioClip _audio;
         [SerializeField]
         private string _meta = string.Empty;
+
+        public bool isShowFoldout = false;
 
         public string text {
             get { return _text; }
@@ -83,6 +85,24 @@ namespace NodeCanvas.DialogueTrees
             return copy;
         }
 
+
+#if UNITY_EDITOR
+        public void OnGUI(string language)
+		{
+            string foldoutLabel = (string.IsNullOrEmpty(text) ? "Empty" : text.CapLength(50)).Replace("\n", "/n ");
+            isShowFoldout = EditorGUILayout.Foldout(isShowFoldout, $"{language}: {foldoutLabel}", true);
+
+            if (isShowFoldout)
+            {
+                GUILayout.BeginVertical("box");
+                GUILayout.Label(language);
+                text = EditorGUILayout.TextField(text);
+                audio = EditorGUILayout.ObjectField("Audio File", audio, typeof(AudioClip), false) as AudioClip;
+                meta = EditorGUILayout.TextField("Meta Data", meta);
+                GUILayout.EndVertical();
+            }
+        }
+#endif
         public override string ToString() {
             return text;
         }

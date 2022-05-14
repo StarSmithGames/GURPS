@@ -18,6 +18,7 @@ using DG.Tweening;
 
 using Zenject;
 using System.Collections;
+using Sirenix.OdinInspector;
 
 namespace Game.Entities
 {
@@ -227,27 +228,28 @@ namespace Game.Entities
 	//IActor implementation
 	partial class Entity
 	{
-		public virtual bool IsHaveSomethingToSay => barks != null;
+		public virtual bool IsHaveSomethingToSay => ActorSettings.barks != null;
+
+		public ActorSettings ActorSettings => actorSettings;
+		[SerializeField] protected ActorSettings actorSettings;
 
 		protected DialogueSystem dialogueSystem;
 		protected Barker barker;
 
-		[SerializeField] protected BarkTree barks;
-
-		[Sirenix.OdinInspector.Button]
+		[Button]
 		public virtual void Bark()
 		{
 			if (barker == null) return;
 			if (barker.IsShowing) return;
 
-			var bark = barks.allNodes.FirstOrDefault();
+			var bark = ActorSettings.barks.allNodes.FirstOrDefault();
 
-			switch (barks.barkType)
+			switch (ActorSettings.barks.barkType)
 			{
 				case BarkType.First:
 				case BarkType.Random:
 				{
-					bark = barks.allNodes.RandomItem();
+					bark = ActorSettings.barks.allNodes.RandomItem();
 
 					Statement subtitles = null;
 					if (bark is I2StatementNode node)

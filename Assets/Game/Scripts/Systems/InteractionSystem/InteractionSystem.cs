@@ -13,20 +13,20 @@ using UnityEngine;
 
 namespace Game.Systems.InteractionSystem
 {
-	public class InteractionHandler
+	public class InteractionSystem
 	{
 		private DialogueSystem.DialogueSystem dialogueSystem;
 
-		public InteractionHandler(DialogueSystem.DialogueSystem dialogueSystem)
+		public InteractionSystem(DialogueSystem.DialogueSystem dialogueSystem)
 		{
 			this.dialogueSystem = dialogueSystem;
 		}
 
 		public void Interact(IEntity entity, IInteractable interactable)
 		{
-			if (entity is IActor actor && interactable is IActor)
+			if (entity is IActor initiator && interactable is IActor actor)
 			{
-				//dialogueSystem.StartDialogue(actor);
+				dialogueSystem.StartDialogue(initiator, actor);
 			}
 			else if (interactable is IContainer container)
 			{

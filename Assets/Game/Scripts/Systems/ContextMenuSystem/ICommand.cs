@@ -60,10 +60,10 @@ namespace Game.Systems.ContextMenu
 
 	public class CommandOpenContainer : BaseCommand
 	{
-		private InteractionHandler interactionHandler;
+		private InteractionSystem.InteractionSystem interactionHandler;
 		private Character character;
 		private IContainer container;
-		public CommandOpenContainer(InteractionHandler interactionHandler, Character character, IContainer container)
+		public CommandOpenContainer(InteractionSystem.InteractionSystem interactionHandler, Character character, IContainer container)
 		{
 			this.interactionHandler = interactionHandler;
 			this.character = character;

@@ -56,7 +56,7 @@ namespace Game.Systems.CameraSystem
 		private CharacterManager characterManager;
 		private Settings settings;
 		private UIManager uiManager;
-		private InteractionHandler interactionHandler;
+		private InteractionSystem.InteractionSystem interactionHandler;
 		private ContextMenuHandler contextMenuHandler;
 
 		public CameraVision(SignalBus signalBus,
@@ -66,7 +66,7 @@ namespace Game.Systems.CameraSystem
 			CharacterManager characterManager,
 			GlobalSettings settings,
 			UIManager uiManager,
-			InteractionHandler interactionHandler,
+			InteractionSystem.InteractionSystem interactionHandler,
 			ContextMenuHandler contextMenuHandler)
 		{
 			this.signalBus = signalBus;

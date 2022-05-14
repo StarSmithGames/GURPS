@@ -1,11 +1,22 @@
+using NodeCanvas.DialogueTrees;
+
+using UnityEngine;
+
 namespace Game.Systems.DialogueSystem
 {
     public interface IActor
     {
         bool IsHaveSomethingToSay { get; }
 
-        void Bark();
+        ActorSettings ActorSettings { get; }
 
-        //void StartDialogue();
+        void Bark();
+	}
+
+    [System.Serializable]
+	public class ActorSettings
+    {
+        public BarkTree barks;
+        public DialogueTree dialogues;
     }
 }

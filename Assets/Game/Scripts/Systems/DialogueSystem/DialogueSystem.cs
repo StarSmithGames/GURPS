@@ -17,12 +17,22 @@ namespace Game.Systems.DialogueSystem
 			this.characterManager = characterManager;
 		}
 
+		public void StartBark()
+		{
+
+		}
+
 		public void StartConversation(IActor initiator)
 		{
 			initiator.Bark();
 		}
 
-		public void StartDialogue(IActor initiator)
+		/// <summary>
+		/// Запуск диалогового окна между инициатором и с кем говорим.
+		/// </summary>
+		/// <param name="initiator">Обычно игрок.</param>
+		/// <param name="actor">Актёр у которого есть диалоговое дерево.</param>
+		public void StartDialogue(IActor initiator, IActor actor)
 		{
 			if (!dialogueController.isRunning)
 			{

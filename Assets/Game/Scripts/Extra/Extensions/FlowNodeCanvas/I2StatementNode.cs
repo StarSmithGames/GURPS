@@ -83,20 +83,9 @@ public class I2StatementNode : DTNode
 
         EditorGUILayout.HelpBox(languages, MessageType.Warning);
 
-
         for (int i = 0; i < statements.Length; i++)
         {
-
-            GUILayout.BeginVertical("box");
-            Statement s = statements[i];
-            GUILayout.Label(list[i]);
-
-            GUIStyle style = new GUIStyle(EditorStyles.textArea);
-            s.text = EditorGUILayout.TextArea(s.text, style);
-
-            s.audio = EditorGUILayout.ObjectField("Audio File", s.audio, typeof(AudioClip), false) as AudioClip;
-            s.meta = EditorGUILayout.TextField("Meta Data", s.meta);
-            GUILayout.EndVertical();
+            statements[i].OnGUI(list[i]);
         }
 
         GUILayout.Space(5f);

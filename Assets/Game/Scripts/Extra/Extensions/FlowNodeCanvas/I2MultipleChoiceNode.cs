@@ -84,7 +84,7 @@ public class I2MultipleChoiceNode : DTNode
 #if UNITY_EDITOR
     public override void OnConnectionInspectorGUI(int i)
     {
-        DoChoiceGUI(availableChoices[i]);
+        availableChoices[i].OnGUI(graph);
     }
 
     public override string GetConnectionInfo(int i)
@@ -170,10 +170,10 @@ public class I2MultipleChoiceNode : DTNode
             var choice = availableChoices[i];
             GUILayout.BeginHorizontal("box");
 
-            var text = string.Format("{0} {1}", choice.isUnfolded ? "-" : "+", choice.GetStatement().text);
+            var text = string.Format("{0} {1}", choice.isShowFoldout ? "-" : "+", choice.GetStatement().text);
             if (GUILayout.Button(text, (GUIStyle)"label", GUILayout.Width(0), GUILayout.ExpandWidth(true)))
             {
-                choice.isUnfolded = !choice.isUnfolded;
+                choice.isShowFoldout = !choice.isShowFoldout;
             }
 
             if (GUILayout.Button("X", GUILayout.Width(20)))
@@ -187,48 +187,19 @@ public class I2MultipleChoiceNode : DTNode
 
             GUILayout.EndHorizontal();
 
-            if (choice.isUnfolded)
+            if (choice.isShowFoldout)
             {
-                DoChoiceGUI(choice);
+                choice.OnGUI(graph);
             }
         });
 
     }
-
-    void DoChoiceGUI(Choice c)
-    {
-        GUILayout.BeginHorizontal();
-        GUILayout.Space(10);
-        GUILayout.BeginVertical("box");
-
-        var list = LocalizationManager.GetAllLanguages(true);
-
-        GUILayout.Space(10);
-        for (int i = 0; i < c.statements.Count; i++)
-		{
-            GUILayout.BeginVertical("box");
-            Statement s = c.statements[i];
-            GUILayout.Label(list[i]);
-            s.text = EditorGUILayout.TextField(s.text);
-            s.audio = EditorGUILayout.ObjectField("Audio File", s.audio, typeof(AudioClip), false) as AudioClip;
-            s.meta = EditorGUILayout.TextField("Meta Data", s.meta);
-            GUILayout.EndVertical();
-        }
-
-        NodeCanvas.Editor.TaskEditor.TaskFieldMulti<ConditionTask>(c.condition, graph, (choice) => { c.condition = choice; });
-
-        GUILayout.EndVertical();
-        GUILayout.EndHorizontal();
-
-        GUILayout.Space(10);
-    }
-
 #endif
 }
 [System.Serializable]
 public class Choice
 {
-    public bool isUnfolded = true;
+    public bool isShowFoldout = true;
 
     public List<Statement> statements = new List<Statement>();
 
@@ -242,5 +213,27 @@ public class Choice
             return statements[index];
         }
         return null;
+    }
+
+    public void OnGUI(Graph graph)
+	{
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(10);
+        GUILayout.BeginVertical("box");
+
+        var list = LocalizationManager.GetAllLanguages(true);
+
+        GUILayout.Space(10);
+        for (int i = 0; i < statements.Count; i++)
+        {
+            statements[i].OnGUI(list[i]);
+        }
+
+        NodeCanvas.Editor.TaskEditor.TaskFieldMulti<ConditionTask>(condition, graph, (choice) => { condition = choice; });
+
+        GUILayout.EndVertical();
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
     }
 }

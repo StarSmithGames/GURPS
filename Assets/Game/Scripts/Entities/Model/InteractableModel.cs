@@ -1,25 +1,30 @@
 using EPOOutline;
 
 using Game.Entities;
-using Game.Systems.BattleSystem;
 
 using Sirenix.OdinInspector;
 
-using System.Collections;
-
 using UnityEngine;
+
+using Zenject;
 
 namespace Game.Systems.InteractionSystem
 {
 	public class InteractableModel : MonoBehaviour, IInteractable, IObservable
 	{
 		[SerializeField] protected Settings interactableSettings;
-		[Space]
-		[SerializeField] protected Outlinable outline;
 
 		public bool IsInteractable => outline.enabled;
 
 		protected IEntity interactorInitiator = null;//тот кто взаимодействует с этим объектом
+
+		private Outlinable outline;
+
+		[Inject]
+		private void Construct(Outlinable outline)
+		{
+			this.outline = outline;
+		}
 
 		private void Awake()
 		{

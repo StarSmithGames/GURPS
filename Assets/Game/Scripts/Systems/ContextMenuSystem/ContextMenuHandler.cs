@@ -24,7 +24,7 @@ namespace Game.Systems.ContextMenu
 		private Cinemachine.CinemachineBrain brain;
 		private InputManager inputManager;
 		private CharacterManager characterManager;
-		private InteractionHandler interactionHandler;
+		private InteractionSystem.InteractionSystem interactionHandler;
 		private DialogueSystem.DialogueSystem dialogueSystem;
 
 		public ContextMenuHandler(
@@ -33,7 +33,7 @@ namespace Game.Systems.ContextMenu
 			Cinemachine.CinemachineBrain brain,
 			InputManager inputManager,
 			CharacterManager characterManager,
-			InteractionHandler interactionHandler,
+			InteractionSystem.InteractionSystem interactionHandler,
 			DialogueSystem.DialogueSystem dialogueSystem)
 		{
 			this.contextMenuFactory = contextMenuFactory;

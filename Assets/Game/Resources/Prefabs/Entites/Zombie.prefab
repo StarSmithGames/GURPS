@@ -1456,7 +1456,7 @@ MonoBehaviour:
   characterController: {fileID: 3487759787228950684}
   model: {fileID: 4030082236215686382}
   cameraPivot: {fileID: 4552419610492030707}
-  animatorControl: {fileID: 0}
+  animatorControl: {fileID: 5381552049680324084}
   controller: {fileID: 4370297988305595994}
   navigationController: {fileID: 3487759787228950659}
   markers: {fileID: 5251255900471269995}
@@ -1481,7 +1481,9 @@ MonoBehaviour:
     interaction: 0
     position: {x: 0, y: 0, z: 0}
   outline: {fileID: 4370297988305595989}
-  barks: {fileID: 0}
+  actorSettings:
+    barks: {fileID: 0}
+    dialogues: {fileID: 0}
   data: {fileID: 11400000, guid: 3d0965b4c2f5ded48a4313efa89b19ea, type: 2}
 --- !u!143 &3487759787228950684
 CharacterController:

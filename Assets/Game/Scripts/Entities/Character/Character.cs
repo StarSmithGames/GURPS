@@ -5,9 +5,7 @@ using Game.Systems.SheetSystem;
 using UnityEngine;
 
 using Zenject;
-using Game.Systems.DialogueSystem;
 using System.Collections;
-using Game.Managers.CharacterManager;
 
 namespace Game.Entities
 {
