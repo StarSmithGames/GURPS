@@ -1,30 +1,39 @@
+using Game.Entities;
 using Game.Managers.CharacterManager;
 
 using NodeCanvas.DialogueTrees;
 
+using System.Collections;
+using System.Collections.Generic;
+
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Game.Systems.DialogueSystem
 {
-	public class DialogueSystem
+	public partial class DialogueSystem
 	{
+		public bool IsDialogueProcess => dialogueCoroutine != null;
+		private Coroutine dialogueCoroutine = null;
+		public DialogueTree CurrentDialogue { get; private set; }
+
+		private Dictionary<string, IDialogueActor> actorsDictionary = new Dictionary<string, IDialogueActor>();
+
 		private DialogueTreeController dialogueController;
+		private AsyncManager asyncManager;
 		private CharacterManager characterManager;
 
-		public DialogueSystem(DialogueTreeController dialogueController, CharacterManager characterManager)
+		public DialogueSystem(DialogueTreeController dialogueController, AsyncManager asyncManager, CharacterManager characterManager)
 		{
 			this.dialogueController = dialogueController;
+			this.asyncManager = asyncManager;
 			this.characterManager = characterManager;
 		}
 
-		public void StartBark()
-		{
-
-		}
-
-		public void StartConversation(IActor initiator)
+		public void StartBarkConversation(IActor initiator, IActor actor)
 		{
 			initiator.Bark();
+			actor.Bark();
 		}
 
 		/// <summary>
@@ -34,10 +43,36 @@ namespace Game.Systems.DialogueSystem
 		/// <param name="actor">Актёр у которого есть диалоговое дерево.</param>
 		public void StartDialogue(IActor initiator, IActor actor)
 		{
-			if (!dialogueController.isRunning)
+			if (!dialogueController.isRunning && !IsDialogueProcess)
 			{
-				dialogueController.StartDialogue();
+				dialogueController.graph = CurrentDialogue = actor.ActorSettings.dialogues;
+				JoinToDialogue(initiator);
+				JoinToDialogue(actor);
+
+				Assert.AreEqual(actorsDictionary.Count, CurrentDialogue.actorParameters.Count, "dialogueActors.Count != CurrentDialogue.actorParameters.Count");
+
+				CurrentDialogue.SetActorReferences(actorsDictionary);
+
+				dialogueCoroutine = asyncManager.StartCoroutine(Dialogue());
 			}
+		}
+
+		public void JoinToDialogue(IActor actor)
+		{
+			actorsDictionary.Add((actor as IEntity).Sheet.Information.nameId, actor);
+		}
+
+		private IEnumerator Dialogue()
+		{
+			dialogueController.StartDialogue();
+
+			yield return new WaitWhile(() =>
+			{
+				return dialogueController.isRunning;
+			});
+
+			actorsDictionary.Clear();
+			dialogueCoroutine = null;
 		}
 	}
 }

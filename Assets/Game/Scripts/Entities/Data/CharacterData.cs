@@ -5,5 +5,8 @@ using UnityEngine;
 namespace Game.Entities
 {
 	[CreateAssetMenu(fileName = "Character", menuName = "Game/Character")]
-	public class CharacterData : EntityData<CharacterInformation> { }
+	public class CharacterData : EntityData
+	{
+        public CharacterInformation information;
+	}
 }

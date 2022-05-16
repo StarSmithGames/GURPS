@@ -45,7 +45,7 @@ namespace NodeCanvas.DialogueTrees
             get
             {
                 var result = DLGTree.GetParameterByID(_actorParameterID);
-                return result != null ? result.name : _actorName;
+                return result != null ? result.Name : _actorName;
             }
             private set
             {

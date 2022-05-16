@@ -86,7 +86,7 @@ public class UIAvatar : PoolableObject
 
 	private void UpdateUI()
 	{
-		Avatar.sprite = (CurrentCharacter.Sheet.Information as EntityAvatarInformation).icon;
+		Avatar.sprite = (CurrentCharacter.Sheet.Information as HumanoidEntityInformation).portrait;
 		UpdateBattleUI();
 	}
 

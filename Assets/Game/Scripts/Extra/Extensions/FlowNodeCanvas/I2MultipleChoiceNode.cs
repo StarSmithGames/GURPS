@@ -42,7 +42,7 @@ public class I2MultipleChoiceNode : DTNode
         for (var i = 0; i < availableChoices.Count; i++)
         {
             var condition = availableChoices[i].condition;
-            if (condition == null || condition.CheckOnce(finalActor.transform, bb))
+            if (condition == null || condition.CheckOnce(finalActor.Transform, bb))
             {
                 var tempStatement = availableChoices[i].GetStatement().BlackboardReplace(bb);
                 finalOptions[tempStatement] = i;
@@ -93,7 +93,7 @@ public class I2MultipleChoiceNode : DTNode
         {
             return "NOT SET";
         }
-        var text = string.Format("'{0}'", availableChoices[i].GetStatement().text);
+        var text = string.Format("'{0}'", availableChoices[i].GetStatement().Text);
         if (availableChoices[i].condition == null)
         {
             return text;
@@ -114,7 +114,7 @@ public class I2MultipleChoiceNode : DTNode
             var choice = availableChoices[i];
             var connection = i < outConnections.Count ? outConnections[i] : null;
             GUILayout.BeginHorizontal(Styles.roundedBox);
-            GUILayout.Label(string.Format("{0} {1}", connection != null ? "O" : "X", choice.GetStatement().text.CapLength(30)), Styles.leftLabel);
+            GUILayout.Label(string.Format("{0} {1}", connection != null ? "O" : "X", choice.GetStatement().Text.CapLength(30)), Styles.leftLabel);
             GUILayout.EndHorizontal();
         }
 
@@ -170,7 +170,7 @@ public class I2MultipleChoiceNode : DTNode
             var choice = availableChoices[i];
             GUILayout.BeginHorizontal("box");
 
-            var text = string.Format("{0} {1}", choice.isShowFoldout ? "-" : "+", choice.GetStatement().text);
+            var text = string.Format("{0} {1}", choice.isShowFoldout ? "-" : "+", choice.GetStatement().Text);
             if (GUILayout.Button(text, (GUIStyle)"label", GUILayout.Width(0), GUILayout.ExpandWidth(true)))
             {
                 choice.isShowFoldout = !choice.isShowFoldout;

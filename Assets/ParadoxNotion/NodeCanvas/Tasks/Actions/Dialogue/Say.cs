@@ -15,7 +15,7 @@ namespace NodeCanvas.Tasks.Actions
         public Statement statement = new Statement("This is a dialogue text...");
 
         protected override string info {
-            get { return string.Format("<i>' {0} '</i>", ( statement.text.CapLength(30) )); }
+            get { return string.Format("<i>' {0} '</i>", ( statement.Text.CapLength(30) )); }
         }
 
         protected override void OnExecute() {

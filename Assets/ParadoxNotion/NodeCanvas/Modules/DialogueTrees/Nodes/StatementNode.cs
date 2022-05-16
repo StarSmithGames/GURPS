@@ -32,7 +32,7 @@ namespace NodeCanvas.DialogueTrees
 #if UNITY_EDITOR
         protected override void OnNodeGUI() {
             GUILayout.BeginVertical(Styles.roundedBox);
-            GUILayout.Label("\"<i> " + statement.text.CapLength(30) + "</i> \"");
+            GUILayout.Label("\"<i> " + statement.Text.CapLength(30) + "</i> \"");
             GUILayout.EndVertical();
         }
 #endif

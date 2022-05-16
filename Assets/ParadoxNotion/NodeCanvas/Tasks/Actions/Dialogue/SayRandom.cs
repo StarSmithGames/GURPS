@@ -37,9 +37,9 @@ namespace NodeCanvas.Tasks.Actions
             {
                 if ( statements[i] == null ) { statements[i] = new Statement("..."); }
                 var statement = statements[i];
-                statement.text = UnityEditor.EditorGUILayout.TextArea(statement.text, (GUIStyle)"textField", GUILayout.Height(50));
-                statement.audio = (AudioClip)UnityEditor.EditorGUILayout.ObjectField("Audio Clip", statement.audio, typeof(AudioClip), false);
-                statement.meta = UnityEditor.EditorGUILayout.TextField("Meta", statement.meta);
+                statement.Text = UnityEditor.EditorGUILayout.TextArea(statement.Text, (GUIStyle)"textField", GUILayout.Height(50));
+                statement.Audio = (AudioClip)UnityEditor.EditorGUILayout.ObjectField("Audio Clip", statement.Audio, typeof(AudioClip), false);
+                statement.Meta = UnityEditor.EditorGUILayout.TextField("Meta", statement.Meta);
                 EditorUtils.Separator();
             });
         }

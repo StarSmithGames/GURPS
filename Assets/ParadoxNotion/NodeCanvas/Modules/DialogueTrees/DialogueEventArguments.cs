@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
 
-
 namespace NodeCanvas.DialogueTrees
 {
-
     ///<summary>Send along with a OnSubtitlesRequest event. Holds info about the actor speaking, the statement that being said as well as a callback to be called when dialogue is done showing</summary>
     public class SubtitlesRequestInfo
     {
-
         ///<summary>The actor speaking</summary>
         public IDialogueActor actor;
         ///<summary>The statement said</summary>

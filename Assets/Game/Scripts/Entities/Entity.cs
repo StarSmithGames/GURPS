@@ -25,6 +25,7 @@ namespace Game.Entities
 	public abstract partial class Entity : InteractableModel, IEntity, IActor
 	{
 		public MonoBehaviour MonoBehaviour => this;
+		public Transform Transform => transform;
 
 		public virtual ISheet Sheet { get; private set; }
 
@@ -137,8 +138,6 @@ namespace Game.Entities
 		public event UnityAction onTargetChanged;
 		public event UnityAction onDestinationChanged;
 
-		public Transform Transform => transform;
-
 		public bool IsHasTarget => Controller.IsHasTarget;
 
 		public NavigationController Navigation { get; private set; }
@@ -228,7 +227,7 @@ namespace Game.Entities
 	//IActor implementation
 	partial class Entity
 	{
-		public virtual bool IsHaveSomethingToSay => ActorSettings.barks != null;
+		public virtual bool IsHaveSomethingToSay => ActorSettings.barks != null || ActorSettings.dialogues != null;
 
 		public ActorSettings ActorSettings => actorSettings;
 		[SerializeField] protected ActorSettings actorSettings;
@@ -236,10 +235,13 @@ namespace Game.Entities
 		protected DialogueSystem dialogueSystem;
 		protected Barker barker;
 
-		[Button]
 		public virtual void Bark()
 		{
-			if (barker == null) return;
+			if (barker == null || ActorSettings.barks == null)
+			{
+				Debug.LogError($"{gameObject.name} barker == null || ActorSettings.barks == null", gameObject);
+				return;
+			}
 			if (barker.IsShowing) return;
 
 			var bark = ActorSettings.barks.allNodes.FirstOrDefault();
@@ -275,7 +277,7 @@ namespace Game.Entities
 		{
 			if (subtitles != null)
 			{
-				barker.Text.text = subtitles.text;
+				barker.Text.text = subtitles.Text;
 				barker.Show();
 			}
 		}

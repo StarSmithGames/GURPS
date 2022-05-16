@@ -1,33 +1,23 @@
 ﻿using UnityEngine;
 
-
 namespace NodeCanvas.DialogueTrees
 {
-    ///<summary> An interface to use for DialogueActors within a DialogueTree.</summary>
-	public interface IDialogueActor
+	///<summary> An interface to use for DialogueActors within a DialogueTree.</summary>
+	public partial interface IDialogueActor
     {
-        string name { get; }
-        Transform transform { get; }
+        Transform Transform { get; }
     }
 
     ///<summary>A basic rather limited implementation of IDialogueActor</summary>
     [System.Serializable]
     public class DefaultDialogueActor : IDialogueActor
     {
-        private string _name;
-        private Transform _transform;
-
-        public string name {
-            get { return _name; }
-        }
-
-        public Transform transform {
-            get { return _transform; }
-        }
+        public string Name { get; private set; }
+        public Transform Transform { get; private set; }
 
         public DefaultDialogueActor(string name, Transform transform) {
-            this._name = name;
-            this._transform = transform;
+            Name = name;
+            Transform = transform;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace NodeCanvas.DialogueTrees
             }
 
             status = Status.Running;
-            this.TryStartSubGraph(finalActor.transform, OnFlowScriptFinish);
+            this.TryStartSubGraph(finalActor.Transform, OnFlowScriptFinish);
             return status;
         }
 

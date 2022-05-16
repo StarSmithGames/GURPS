@@ -1,5 +1,7 @@
 using FlowCanvas.Nodes;
 
+using Game.Entities;
+
 using NodeCanvas.DialogueTrees;
 
 using System;
@@ -8,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 using Zenject;
 
@@ -64,22 +67,23 @@ namespace Game.Systems.DialogueSystem
 
 		IEnumerator Internal_OnSubtitlesRequestInfo(SubtitlesRequestInfo info)
 		{
-			var text = info.statement.text;
-			var audio = info.statement.audio;
-			var actor = info.actor;
+			var text = info.statement.Text;
+			var audio = info.statement.Audio;
+			var actor = info.actor as IActor;
 
-			//actorSpeech.color = ;
+			Assert.IsNotNull(actor, "IActor == null");
 
-			//actorPortrait.gameObject.SetActive(actor.portraitSprite != null);
-			//actorPortrait.sprite = actor.portraitSprite;
+			var sheet = (actor as IEntity).Sheet;
+			dialogue.ActorPortrait.gameObject.SetActive(sheet.Information.IsHasPortrait);
+			dialogue.ActorPortrait.sprite = sheet.Information.portrait;
 
 			if (settings.additionalText)
 			{
-				//dialogue.ActorSpeech.text += $"<color=#{ColorUtility.ToHtmlStringRGBA(actor.ActorColor)}>{actor.ActorName}</color> - {text}\n";
+				dialogue.ActorSpeech.text += $"{sheet.Information.Name} - {text}\n";
 			}
 			else
 			{
-				dialogue.ActorSpeech.text = text;
+				dialogue.ActorSpeech.text = $"{sheet.Information.Name} - {text}\n";
 			}
 
 
@@ -111,6 +115,7 @@ namespace Game.Systems.DialogueSystem
 		void OnDialogueFinished(DialogueTree tree)
 		{
 			dialogue.Enable(false);
+			dialogue.ActorSpeech.text = "";
 		}
 
 		void OnSubtitlesRequest(SubtitlesRequestInfo info)
@@ -137,7 +142,7 @@ namespace Game.Systems.DialogueSystem
 			foreach (KeyValuePair<IStatement, int> pair in info.options)
 			{
 				UIChoice choice = choiceFactory.Create();
-				choice.Text.text = $"[{index+1}] {pair.Value} {pair.Key.text}";
+				choice.Text.text = $"[{index+1}] {pair.Value} {pair.Key.Text}";
 				choice.onButtonClick += OnChoiced;
 				choice.transform.SetParent(dialogue.ChoiceContent);
 

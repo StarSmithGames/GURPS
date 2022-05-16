@@ -8,8 +8,10 @@ using Game.Systems.SheetSystem;
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Timers;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Systems.InteractionSystem
 {
@@ -26,18 +28,22 @@ namespace Game.Systems.InteractionSystem
 		{
 			if (entity is IActor initiator && interactable is IActor actor)
 			{
-				dialogueSystem.StartDialogue(initiator, actor);
+				entity.TaskSequence
+					.Append(new GoToAction(entity, interactable))
+					.Append(() => dialogueSystem.StartDialogue(initiator, actor))
+					.Execute();
 			}
 			else if (interactable is IContainer container)
 			{
 				if (interactable.IsInRange(entity))//контейнер в области
 				{
-					entity.TaskSequence.Execute(new ContainerInteraction(entity, container));
+					entity.TaskSequence
+						.Execute(new ContainerInteraction(entity, container));
 				}
 				else
 				{
 					entity.TaskSequence
-						.Append(new GoToAction(entity, interactable.GetIteractionPosition(entity)))
+						.Append(new GoToAction(entity, interactable))
 						.Append(new ContainerInteraction(entity, container))
 						.Execute();
 				}
@@ -77,17 +83,22 @@ namespace Game.Systems.InteractionSystem
 
 
 	#region ITask
-
 	/// <summary>
 	/// Если currentTask.Status == TaskActionStatus.Cancelled тогда последовательность обрывается.
 	/// </summary>
 	public class TaskSequence
 	{
+		public bool IsCanBeBreaked => IsSequenceProcess && ProcessTimeInMilliSeconds >= 250;//1/4 sec
+
 		public bool IsSequenceProcess => sequenceCoroutine != null;
 		private Coroutine sequenceCoroutine = null;
 
-		private ITaskAction currentTask = null;
-		private List<ITaskAction> tasks = new List<ITaskAction>();
+		private int ProcessTimeInMilliSeconds = -1;
+		private Timer timer;
+
+		private object currentTask = null;
+		private List<object> tasks = new List<object>();
+
 
 		private MonoBehaviour owner;
 
@@ -102,11 +113,20 @@ namespace Game.Systems.InteractionSystem
 			return this;
 		}
 
+		public TaskSequence Append(UnityAction action)
+		{
+			tasks.Add(action);
+			return this;
+		}
+
 		private void Dispose()
 		{
 			tasks.Clear();
 			sequenceCoroutine = null;
 			currentTask = null;
+
+			timer.Stop();
+			ProcessTimeInMilliSeconds = -1;
 		}
 
 		public void Execute()
@@ -134,20 +154,37 @@ namespace Game.Systems.InteractionSystem
 
 		private IEnumerator Sequence()
 		{
+			StartTimer();
+
 			for (int i = 0; i < tasks.Count; i++)
 			{
 				currentTask = tasks[i];
 
-				yield return currentTask.Implementation();
-				
-				if(currentTask.Status == TaskActionStatus.Cancelled)
+				if(currentTask is ITaskAction taskAction)
 				{
-					Debug.LogError("Breaked");
-					break;
+					yield return taskAction.Implementation();
+
+					if (taskAction.Status == TaskActionStatus.Cancelled)
+					{
+						Debug.LogError("taskAction.Status == TaskActionStatus.Cancelled, Breaked");
+						break;
+					}
+				}
+				else if (currentTask is UnityAction action)
+				{
+					action?.Invoke();
 				}
 			}
 
 			Dispose();
+		}
+
+		private void StartTimer()
+		{
+			timer = new Timer();
+			timer.Elapsed += new ElapsedEventHandler((o, e) => ProcessTimeInMilliSeconds = e.SignalTime.Millisecond );
+			timer.Interval = 100;
+			timer.Enabled = true;
 		}
 	}
 
@@ -189,11 +226,18 @@ namespace Game.Systems.InteractionSystem
 			this.destination = destination;
 		}
 
+		public GoToAction(IEntity entity, IInteractable interactable) : base(entity)
+		{
+			this.destination = interactable.GetIteractionPosition(entity);
+		}
+
 		public override IEnumerator Implementation()
 		{
 			entity.SetDestination(destination);
 
 			Vector3 lastDestination = entity.Navigation.CurrentNavMeshDestination;
+
+			status = TaskActionStatus.Running;
 
 			yield return new WaitWhile(() =>
 			{
@@ -204,6 +248,11 @@ namespace Game.Systems.InteractionSystem
 				}
 				return !entity.Navigation.NavMeshAgent.IsReachedDestination();
 			});
+
+			if(status != TaskActionStatus.Cancelled)
+			{
+				status = TaskActionStatus.Done;
+			}
 		}
 	}
 

@@ -1,15 +1,11 @@
-﻿using Game.Systems.DialogueSystem;
-using Game.Systems.SheetSystem;
-
-using Sirenix.OdinInspector;
+﻿using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
 namespace Game.Entities
 {
-	public class EntityData<T> : ScriptableObject where T : IInformation
+	public class EntityData : ScriptableObject
     {
-        public T information;
         public SheetSettings sheet;
     }
 }

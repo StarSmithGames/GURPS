@@ -36,7 +36,7 @@ namespace NodeCanvas.DialogueTrees
             currentInstance = (DialogueTree)this.CheckInstance();
             this.TryWriteAndBindMappedVariables();
             TryWriteMappedActorParameters();
-            currentInstance.StartGraph(finalActor is Component ? (Component)finalActor : finalActor.transform, bb.parent, Graph.UpdateMode.Manual, OnSubDialogueFinish);
+            currentInstance.StartGraph(finalActor is Component ? (Component)finalActor : finalActor.Transform, bb.parent, Graph.UpdateMode.Manual, OnSubDialogueFinish);
             return Status.Running;
         }
 
@@ -58,7 +58,7 @@ namespace NodeCanvas.DialogueTrees
                 var targetParam = currentInstance.GetParameterByID(pair.Key);
                 var sourceParam = this.DLGTree.GetParameterByID(pair.Value);
                 if ( targetParam != null && sourceParam != null ) {
-                    currentInstance.SetActorReference(targetParam.name, sourceParam.actor);
+                    currentInstance.SetActorReference(targetParam.Name, sourceParam.Actor);
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace NodeCanvas.DialogueTrees
                     _actorParametersMap[param.ID] = string.Empty;
                 }
                 var currentParam = this.DLGTree.GetParameterByID(this._actorParametersMap[param.ID]);
-                var newParam = EditorUtils.Popup<DialogueTree.ActorParameter>(param.name, currentParam, this.DLGTree.actorParameters);
+                var newParam = EditorUtils.Popup<DialogueTree.ActorParameter>(param.Name, currentParam, this.DLGTree.actorParameters);
                 if ( newParam != currentParam ) {
                     this._actorParametersMap[param.ID] = newParam != null ? newParam.ID : string.Empty;
                 }

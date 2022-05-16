@@ -85,7 +85,7 @@ namespace Game.Systems.BattleSystem
 
         private void UpdateUI()
 		{
-            Avatar.sprite = (CurrentEntity.Sheet.Information as EntityAvatarInformation).icon;
+            Avatar.sprite = (CurrentEntity.Sheet.Information as HumanoidEntityInformation).portrait;
         }
 
         private void OnClickChanged(int count)

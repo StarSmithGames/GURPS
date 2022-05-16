@@ -12,11 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d2829bb1971f20489187d34bfda2c07, type: 3}
   m_Name: Character1
   m_EditorClassIdentifier: 
-  information:
-    localizations:
-    - language: 10
-      name: Character
-    icon: {fileID: 21300000, guid: 3f80cbec08daddb44bb5316bd40a3414, type: 3}
   sheet:
     identity: 0
     age: -1
@@ -236,9 +231,11 @@ MonoBehaviour:
         currentStackSize: 1
         currentWeight: 0.01
         currentDurability: 100
-  isActor: 1
-  actor:
-    actorColor: {r: 0, g: 0, b: 0, a: 0}
+  information:
+    nameId: Player
     localizations:
     - language: 10
-      actorName: 
+      name: Help
+    isHasPortrait: 1
+    portrait: {fileID: 21300000, guid: 3f80cbec08daddb44bb5316bd40a3414, type: 3}
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

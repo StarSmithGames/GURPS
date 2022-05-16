@@ -202,19 +202,22 @@ namespace Game.Systems.CameraSystem
 				else
 				{
 					//Targeting
-					if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
+					if (!leader.TaskSequence.IsSequenceProcess || leader.TaskSequence.IsCanBeBreaked)
 					{
-						if (isMouseHit && !isUI)
+						if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 						{
-							if (!leader.InBattle)
+							if (isMouseHit && !isUI)
 							{
-								leader.SetDestination(point);
-							}
-							else
-							{
-								if (!leader.IsHasTarget && leader.Sheet.Stats.Move.CurrentValue >= 0.1f)
+								if (!leader.InBattle)
 								{
 									leader.SetDestination(point);
+								}
+								else
+								{
+									if (!leader.IsHasTarget && leader.Sheet.Stats.Move.CurrentValue >= 0.1f)
+									{
+										leader.SetDestination(point);
+									}
 								}
 							}
 						}

@@ -93,7 +93,7 @@ public class I2StatementNode : DTNode
 	protected override void OnNodeGUI()
     {
         GUILayout.BeginVertical(Styles.roundedBox);
-        GUILayout.Label("\"<i>" + (GetCurrentStatement()?.text.CapLength(30)?? "Empty") + "</i> \"");
+        GUILayout.Label("\"<i>" + (GetCurrentStatement()?.Text.CapLength(30)?? "Empty") + "</i> \"");
         GUILayout.EndVertical();
     }
 #endif

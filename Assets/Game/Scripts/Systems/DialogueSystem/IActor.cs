@@ -1,17 +1,15 @@
 using NodeCanvas.DialogueTrees;
 
-using UnityEngine;
-
 namespace Game.Systems.DialogueSystem
 {
-    public interface IActor
+    public interface IActor : IDialogueActor//>:c
     {
         bool IsHaveSomethingToSay { get; }
 
         ActorSettings ActorSettings { get; }
 
         void Bark();
-	}
+    }
 
     [System.Serializable]
 	public class ActorSettings

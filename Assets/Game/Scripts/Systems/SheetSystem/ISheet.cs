@@ -8,7 +8,7 @@ namespace Game.Systems.SheetSystem
 {
     public interface ISheet
     {
-        IInformation Information { get; }
+        EntityInformation Information { get; }
         IStats Stats { get; }
         IConditions Conditions { get; }
         IInventory Inventory { get; }
@@ -18,14 +18,14 @@ namespace Game.Systems.SheetSystem
 
     public abstract class EntitySheet : ISheet
     {
-        public virtual IInformation Information { get; protected set; }
+        public virtual EntityInformation Information { get; protected set; }
         public virtual IStats Stats { get; private set; }
 		public virtual IConditions Conditions { get; }
         public virtual IInventory Inventory { get; private set; }
 
 		public SheetSettings Settings { get; private set; }
 
-		public EntitySheet(IInformation information, SheetSettings sheetSettings)
+		public EntitySheet(EntityInformation information, SheetSettings sheetSettings)
         {
             Settings = sheetSettings;
 

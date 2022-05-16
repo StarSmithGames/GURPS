@@ -42,7 +42,7 @@ namespace Game.Systems.ContextMenu
 
 		public override void Execute()
 		{
-			dialogueSystem.StartConversation(actor);
+			dialogueSystem.StartDialogue(character, actor);
 		}
 	}
 	public class CommandExamine : BaseCommand

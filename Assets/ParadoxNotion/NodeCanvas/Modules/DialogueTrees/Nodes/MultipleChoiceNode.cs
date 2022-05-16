@@ -50,7 +50,7 @@ namespace NodeCanvas.DialogueTrees
 
             for ( var i = 0; i < availableChoices.Count; i++ ) {
                 var condition = availableChoices[i].condition;
-                if ( condition == null || condition.CheckOnce(finalActor.transform, bb) ) {
+                if ( condition == null || condition.CheckOnce(finalActor.Transform, bb) ) {
                     var tempStatement = availableChoices[i].statement.BlackboardReplace(bb);
                     finalOptions[tempStatement] = i;
                 }
@@ -95,7 +95,7 @@ namespace NodeCanvas.DialogueTrees
             if ( i >= availableChoices.Count ) {
                 return "NOT SET";
             }
-            var text = string.Format("'{0}'", availableChoices[i].statement.text);
+            var text = string.Format("'{0}'", availableChoices[i].statement.Text);
             if ( availableChoices[i].condition == null ) {
                 return text;
             }
@@ -113,7 +113,7 @@ namespace NodeCanvas.DialogueTrees
                 var choice = availableChoices[i];
                 var connection = i < outConnections.Count ? outConnections[i] : null;
                 GUILayout.BeginHorizontal(Styles.roundedBox);
-                GUILayout.Label(string.Format("{0} {1}", connection != null ? "■" : "□", choice.statement.text.CapLength(30)), Styles.leftLabel);
+                GUILayout.Label(string.Format("{0} {1}", connection != null ? "■" : "□", choice.statement.Text.CapLength(30)), Styles.leftLabel);
                 GUILayout.EndHorizontal();
             }
 
@@ -144,7 +144,7 @@ namespace NodeCanvas.DialogueTrees
                 var choice = availableChoices[i];
                 GUILayout.BeginHorizontal("box");
 
-                var text = string.Format("{0} {1}", choice.isUnfolded ? "▼ " : "► ", choice.statement.text);
+                var text = string.Format("{0} {1}", choice.isUnfolded ? "▼ " : "► ", choice.statement.Text);
                 if ( GUILayout.Button(text, (GUIStyle)"label", GUILayout.Width(0), GUILayout.ExpandWidth(true)) ) {
                     choice.isUnfolded = !choice.isUnfolded;
                 }
@@ -170,9 +170,9 @@ namespace NodeCanvas.DialogueTrees
             GUILayout.Space(10);
             GUILayout.BeginVertical("box");
 
-            choice.statement.text = UnityEditor.EditorGUILayout.TextField(choice.statement.text);
-            choice.statement.audio = UnityEditor.EditorGUILayout.ObjectField("Audio File", choice.statement.audio, typeof(AudioClip), false) as AudioClip;
-            choice.statement.meta = UnityEditor.EditorGUILayout.TextField("Meta Data", choice.statement.meta);
+            choice.statement.Text = UnityEditor.EditorGUILayout.TextField(choice.statement.Text);
+            choice.statement.Audio = UnityEditor.EditorGUILayout.ObjectField("Audio File", choice.statement.Audio, typeof(AudioClip), false) as AudioClip;
+            choice.statement.Meta = UnityEditor.EditorGUILayout.TextField("Meta Data", choice.statement.Meta);
 
             NodeCanvas.Editor.TaskEditor.TaskFieldMulti<ConditionTask>(choice.condition, graph, (c) => { choice.condition = c; });
 

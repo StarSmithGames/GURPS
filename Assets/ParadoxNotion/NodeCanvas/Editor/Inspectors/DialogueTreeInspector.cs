@@ -47,13 +47,13 @@ namespace NodeCanvas.Editor
             {
                 var reference = dialogue.actorParameters[i];
                 GUILayout.BeginHorizontal();
-                if ( dialogue.actorParameters.Where(r => r != reference).Select(r => r.name).Contains(reference.name) ) {
+                if ( dialogue.actorParameters.Where(r => r != reference).Select(r => r.Name).Contains(reference.Name) ) {
                     GUI.backgroundColor = Color.red;
                 }
-                var newRefName = EditorGUILayout.DelayedTextField(reference.name);
-                if ( newRefName != reference.name ) {
+                var newRefName = EditorGUILayout.DelayedTextField(reference.Name);
+                if ( newRefName != reference.Name ) {
                     UndoUtility.RecordObject(dialogue, "Actor Parameter Name Change");
-                    reference.name = newRefName;
+                    reference.Name = newRefName;
                     UndoUtility.SetDirty(dialogue);
                 }
                 GUI.backgroundColor = Color.white;

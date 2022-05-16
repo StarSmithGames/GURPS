@@ -12,7 +12,6 @@ namespace Game.Systems.DialogueSystem
 		public DialogueSystemHandler.Settings settings;
 		public Barker.Settings barkSettings;
 		[Space]
-		public DialogueTreeController controllerPrefab;
 		public UIChoice choicePrefab;
 
 		public override void InstallBindings()
@@ -22,7 +21,7 @@ namespace Game.Systems.DialogueSystem
 
 			Container.BindInterfacesAndSelfTo<DialogueSystem>().AsSingle();
 			Container.BindInterfacesAndSelfTo<DialogueSystemHandler>().AsSingle();
-			Container.Bind<DialogueTreeController>().FromComponentInNewPrefab(controllerPrefab).WhenInjectedInto<DialogueSystem>();
+			Container.Bind<DialogueTreeController>().FromNewComponentOnNewGameObject().WhenInjectedInto<DialogueSystem>();//:/
 
 			Container
 				.BindFactory<UIChoice, UIChoice.Factory>()

@@ -6,12 +6,10 @@ using ParadoxNotion;
 
 namespace NodeCanvas.DialogueTrees
 {
-
     [AddComponentMenu("NodeCanvas/Dialogue Tree Controller")]
     public class DialogueTreeController : GraphOwner<DialogueTree>, IDialogueActor
     {
-        string IDialogueActor.name => name;
-        Transform IDialogueActor.transform => transform;
+        public Transform Transform => transform;
 
 
         ///<summary>Start the DialogueTree without an Instigator</summary>
@@ -38,7 +36,7 @@ namespace NodeCanvas.DialogueTrees
         ///<summary>Start the already assgined DialogueTree with provided actor as instigator and callback</summary>
         public void StartDialogue(IDialogueActor instigator, Action<bool> callback) {
             graph = GetInstance(graph);
-            graph.StartGraph(instigator is Component ? (Component)instigator : instigator.transform, blackboard, updateMode, callback);
+            graph.StartGraph(instigator is Component ? (Component)instigator : instigator.Transform, blackboard, updateMode, callback);
         }
 
         ///<summary>Pause the DialogueTree</summary>

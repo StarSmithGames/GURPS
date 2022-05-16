@@ -45,7 +45,7 @@ namespace NodeCanvas.DialogueTrees
             successIndeces = new List<int>();
             for ( var i = 0; i < outConnections.Count; i++ ) {
                 var condition = childOptions[i].condition;
-                if ( condition == null || condition.CheckOnce(finalActor.transform, blackboard) ) {
+                if ( condition == null || condition.CheckOnce(finalActor.Transform, blackboard) ) {
                     successIndeces.Add(i);
                 }
             }
