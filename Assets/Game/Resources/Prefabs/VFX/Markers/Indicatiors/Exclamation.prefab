@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4033523548019343746}
   - component: {fileID: 4313200519670484629}
+  - component: {fileID: 2040801283309696097}
   m_Layer: 0
   m_Name: Exclamation
   m_TagString: Untagged
@@ -159,4 +160,20 @@ MonoBehaviour:
   renderer: {fileID: 2686683711768915658}
   body: {fileID: 6808817304282395620}
   mesh: {fileID: 3819659712053351845}
-  relativeDirection: {fileID: 0}
+  relativePosition: {fileID: 0}
+--- !u!114 &2040801283309696097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8715193456676156993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d487ba39d9eea6489b2001babb15133, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  indicator: {fileID: 4313200519670484629}
+  isPointer3d: 0
+  pointer3DPrefab: {fileID: 4355197723161465512, guid: 043b3cff038ae4f4f98eaa50d16a331b, type: 3}
+  pointer2DPrefab: {fileID: 8295302268580238078, guid: a71730313e2e8c949bb4a78656ccddfa, type: 3}

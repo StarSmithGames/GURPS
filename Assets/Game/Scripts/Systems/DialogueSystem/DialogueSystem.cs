@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+using Zenject;
+
 namespace Game.Systems.DialogueSystem
 {
 	public partial class DialogueSystem
@@ -19,12 +21,14 @@ namespace Game.Systems.DialogueSystem
 
 		private Dictionary<string, IDialogueActor> actorsDictionary = new Dictionary<string, IDialogueActor>();
 
+		private SignalBus signalBus;
 		private DialogueTreeController dialogueController;
 		private AsyncManager asyncManager;
 		private CharacterManager characterManager;
 
-		public DialogueSystem(DialogueTreeController dialogueController, AsyncManager asyncManager, CharacterManager characterManager)
+		public DialogueSystem(SignalBus signalBus, DialogueTreeController dialogueController, AsyncManager asyncManager, CharacterManager characterManager)
 		{
+			this.signalBus = signalBus;
 			this.dialogueController = dialogueController;
 			this.asyncManager = asyncManager;
 			this.characterManager = characterManager;
@@ -52,6 +56,9 @@ namespace Game.Systems.DialogueSystem
 				Assert.AreEqual(actorsDictionary.Count, CurrentDialogue.actorParameters.Count, "dialogueActors.Count != CurrentDialogue.actorParameters.Count");
 
 				CurrentDialogue.SetActorReferences(actorsDictionary);
+				CurrentDialogue.TreeData.isFirstTime = false;
+
+				signalBus?.Fire(new StartDialogueSignal() { dialogue = CurrentDialogue });
 
 				dialogueCoroutine = asyncManager.StartCoroutine(Dialogue());
 			}
@@ -73,6 +80,8 @@ namespace Game.Systems.DialogueSystem
 
 			actorsDictionary.Clear();
 			dialogueCoroutine = null;
+
+			signalBus?.Fire(new EndDialogueSignal() { dialogue = CurrentDialogue });
 		}
 	}
 }

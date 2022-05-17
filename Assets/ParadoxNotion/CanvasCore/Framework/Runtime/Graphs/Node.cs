@@ -461,8 +461,8 @@ namespace NodeCanvas.Framework
 
             string result = null;
             var assignable = this as ITaskAssignable;
-            if ( assignable != null && assignable.task != null ) {
-                result = assignable.task.GetWarningOrError();
+            if ( assignable != null && assignable.Task != null ) {
+                result = assignable.Task.GetWarningOrError();
             }
 
             return result;

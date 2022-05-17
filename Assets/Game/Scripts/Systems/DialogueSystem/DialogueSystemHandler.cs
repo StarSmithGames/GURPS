@@ -2,6 +2,8 @@ using FlowCanvas.Nodes;
 
 using Game.Entities;
 
+using I2.Loc;
+
 using NodeCanvas.DialogueTrees;
 
 using System;
@@ -28,13 +30,15 @@ namespace Game.Systems.DialogueSystem
 		private List<UIChoice> choices = new List<UIChoice>();
 
 		private Settings settings;
+		private SignalBus signalBus;
 		private UIManager uiManager;
 		private AsyncManager asyncManager;
 		private UIChoice.Factory choiceFactory;
 
-		public DialogueSystemHandler(Settings settings, UIManager uiManager, AsyncManager asyncManager, UIChoice.Factory choiceFactory)
+		public DialogueSystemHandler(Settings settings, SignalBus signalBus, UIManager uiManager, AsyncManager asyncManager, UIChoice.Factory choiceFactory)
 		{
 			this.settings = settings;
+			this.signalBus = signalBus;
 			this.uiManager = uiManager;
 			this.asyncManager = asyncManager;
 			this.choiceFactory = choiceFactory;
@@ -65,7 +69,7 @@ namespace Game.Systems.DialogueSystem
 		}
 
 
-		IEnumerator Internal_OnSubtitlesRequestInfo(SubtitlesRequestInfo info)
+		private IEnumerator Subtitles(SubtitlesRequestInfo info)
 		{
 			var text = info.statement.Text;
 			var audio = info.statement.Audio;
@@ -104,29 +108,29 @@ namespace Game.Systems.DialogueSystem
 			info.Continue();
 		}
 
-		void OnDialogueStarted(DialogueTree tree)
+		private void OnDialogueStarted(DialogueTree tree)
 		{
 			dialogue.ActorSpeech.text = "";
 			dialogue.Enable(true);
 		}
 
-		void OnDialoguePaused(DialogueTree tree) { }
+		private void OnDialoguePaused(DialogueTree tree) { }
 
-		void OnDialogueFinished(DialogueTree tree)
+		private void OnDialogueFinished(DialogueTree tree)
 		{
 			dialogue.Enable(false);
 			dialogue.ActorSpeech.text = "";
 		}
 
-		void OnSubtitlesRequest(SubtitlesRequestInfo info)
+		private void OnSubtitlesRequest(SubtitlesRequestInfo info)
 		{
 			if (!IsDialogueProcess)
 			{
-				dialogueCoroutine = asyncManager.StartCoroutine(Internal_OnSubtitlesRequestInfo(info));
+				dialogueCoroutine = asyncManager.StartCoroutine(Subtitles(info));
 			}
 		}
 
-		void OnMultipleChoiceRequest(MultipleChoiceRequestInfo info)
+		private void OnMultipleChoiceRequest(MultipleChoiceRequestInfo info)
 		{
 			cachedChoiceInfo = info;
 
@@ -138,25 +142,40 @@ namespace Game.Systems.DialogueSystem
 				choices.Remove(choices[i]);
 			}
 
-			int index = 0;
-			foreach (KeyValuePair<IStatement, int> pair in info.options)
+
+			int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
+
+			//fill
+			for (int i = 0; i < info.choices.Count; i++)
 			{
-				UIChoice choice = choiceFactory.Create();
-				choice.Text.text = $"[{index+1}] {pair.Value} {pair.Key.Text}";
-				choice.onButtonClick += OnChoiced;
-				choice.transform.SetParent(dialogue.ChoiceContent);
+				var choice = info.choices[i];
+				
+				if (!(index >= 0 && index < choice.options.Count))
+				{
+					throw new Exception("LocalizationManager index out of bounds!");
+				}
 
-				choices.Add(choice);
+				var option = choice.options[index];
 
-				index++;
+
+				UIChoice c = choiceFactory.Create();
+
+				c.Text.color = choice.isSelected ? Color.gray : Color.white;
+				c.Text.text = $"{i + 1}. {option.Statement.Text}";//1. (Aligment) [Action or Requirement] Text.
+
+				c.onButtonClick += OnChoiced;
+				c.transform.SetParent(dialogue.ChoiceContent);
+
+				choices.Add(c);
 			}
 		}
 
-		void OnChoiced(UIChoice choice)
+		private void OnChoiced(UIChoice choice)
 		{
 			int index = choices.IndexOf(choice);
 
 			isWaitingChoice = false;
+
 			//clear
 			for (int i = choices.Count - 1; i >= 0; i--)
 			{

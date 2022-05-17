@@ -19,6 +19,7 @@ using DG.Tweening;
 using Zenject;
 using System.Collections;
 using Sirenix.OdinInspector;
+using System.Collections.Generic;
 
 namespace Game.Entities
 {
@@ -76,10 +77,13 @@ namespace Game.Entities
 
 		protected virtual void OnDestroy()
 		{
+			signalBus?.Unsubscribe<StartDialogueSignal>(OnDialogueStarted);
 		}
 
 		protected virtual IEnumerator Start()
 		{
+			signalBus?.Subscribe<StartDialogueSignal>(OnDialogueStarted);
+
 			Outlines.enabled = false;
 
 			ResetMarkers();
@@ -227,7 +231,7 @@ namespace Game.Entities
 	//IActor implementation
 	partial class Entity
 	{
-		public virtual bool IsHaveSomethingToSay => ActorSettings.barks != null || ActorSettings.dialogues != null;
+		public virtual bool IsHaveSomethingToSay => (ActorSettings.barks != null && IsHasFreshAndImportantBarks()) || (ActorSettings.dialogues != null && IsHasFreshAndImportantDialogues());
 
 		public ActorSettings ActorSettings => actorSettings;
 		[SerializeField] protected ActorSettings actorSettings;
@@ -270,10 +274,22 @@ namespace Game.Entities
 				}
 			}
 
-			Markers.Exclamation.Hide();
+			ActorSettings.barks.TreeData.isFirstTime = false;
+			//Markers.Exclamation.Hide();
 		}
 
-		private void ShowBarkSubtitles(Statement subtitles)
+
+		private bool IsHasFreshAndImportantBarks()
+		{
+			return ActorSettings.barks.TreeData.isFirstTime && ActorSettings.isImportanatBark;
+		}
+		private bool IsHasFreshAndImportantDialogues()
+		{
+			return ActorSettings.dialogues.TreeData.isFirstTime;
+		}
+
+
+		protected void ShowBarkSubtitles(Statement subtitles)
 		{
 			if (subtitles != null)
 			{
@@ -281,7 +297,7 @@ namespace Game.Entities
 				barker.Show();
 			}
 		}
-	
+
 		protected virtual void CheckReplicas()
 		{
 			if (IsHaveSomethingToSay)
@@ -294,6 +310,14 @@ namespace Game.Entities
 				{
 					Markers.Exclamation.Hide();
 				}
+			}
+		}
+
+		private void OnDialogueStarted(StartDialogueSignal signal)
+		{
+			if(signal.dialogue == actorSettings.dialogues)
+			{
+				CheckReplicas();
 			}
 		}
 	}

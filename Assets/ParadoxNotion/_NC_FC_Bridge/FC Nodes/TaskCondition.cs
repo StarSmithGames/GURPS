@@ -19,7 +19,7 @@ namespace FlowCanvas.Nodes
             set { _condition = value; }
         }
 
-        Task ITaskAssignable.task {
+        Task ITaskAssignable.Task {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }

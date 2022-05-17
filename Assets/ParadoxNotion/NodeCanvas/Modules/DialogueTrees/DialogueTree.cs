@@ -14,7 +14,7 @@ namespace NodeCanvas.DialogueTrees
         resourcesURL = "https://nodecanvas.paradoxnotion.com/downloads/",
         forumsURL = "https://nodecanvas.paradoxnotion.com/forums-page/"
         )]
-    [CreateAssetMenu(menuName = "ParadoxNotion/NodeCanvas/Dialogue Tree Asset")]
+    [CreateAssetMenu(menuName = "Game/Dialogues/DialogueTree")]
     public partial class DialogueTree : Graph
     {
         ///----------------------------------------------------------------------------------------------
@@ -49,6 +49,9 @@ namespace NodeCanvas.DialogueTrees
         ///<summary>The current node of this DialogueTree</summary>
         public DTNode currentNode { get; private set; }
 
+        public int LastNodeConnectionIndex { get; private set; }
+        public DTNode LastNode { get; private set; }
+
         ///----------------------------------------------------------------------------------------------
         public override System.Type baseNodeType => typeof(DTNode);
         public override bool requiresAgent => false;
@@ -65,11 +68,14 @@ namespace NodeCanvas.DialogueTrees
                 return;
             }
             currentNode.outConnections[index].status = Status.Success; //editor vis
+            LastNodeConnectionIndex = index;
             EnterNode((DTNode)currentNode.outConnections[index].targetNode);
         }
 
         ///<summary>Enters the provided node</summary>
-        public void EnterNode(DTNode node) {
+        public void EnterNode(DTNode node)
+        {
+            LastNode = currentNode;
             currentNode = node;
             currentNode.Reset(false);
             if ( currentNode.Execute(agent, blackboard) == Status.Error ) {
@@ -87,8 +93,8 @@ namespace NodeCanvas.DialogueTrees
 #endif
     }
 
-    //IDialogueActor
-    public partial class DialogueTree
+	//IDialogueActor
+	public partial class DialogueTree
 	{
         ///<summary>The dialogue actor parameters. We let Unity serialize this as well</summary>
         [SerializeField] public List<ActorParameter> actorParameters = new List<ActorParameter>();
@@ -301,6 +307,29 @@ namespace NodeCanvas.DialogueTrees
             if (OnMultipleChoiceRequest != null)
                 OnMultipleChoiceRequest(info);
             else Logger.LogWarning("Multiple Choice Request event has no subscribers. Make sure to add the default '@DialogueGUI' prefab or create your own GUI.", "Dialogue Tree");
+        }
+    }
+
+    //Data
+    public partial class DialogueTree
+    {
+        public Data TreeData
+        {
+            get
+            {
+                if (data == null)
+                {
+                    data = new Data();
+                }
+
+                return data;
+            }
+        }
+        private Data data;
+
+        public class Data
+        {
+            public bool isFirstTime = true;
         }
     }
 }

@@ -46,7 +46,7 @@ namespace NodeCanvas.Framework
     ///<summary>Denotes that the node can be assigned a Task and it's functionality is based on that task.</summary>
     public interface ITaskAssignable : IGraphElement
     {
-        Task task { get; set; }
+        Task Task { get; set; }
     }
 
     ///<summary>Use the generic ITaskAssignable when the Task type is known</summary>

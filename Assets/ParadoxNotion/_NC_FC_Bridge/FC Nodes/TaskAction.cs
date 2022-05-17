@@ -29,7 +29,7 @@ namespace FlowCanvas.Nodes
             }
         }
 
-        Task ITaskAssignable.task {
+        Task ITaskAssignable.Task {
             get { return action; }
             set { action = (ActionTask)value; }
         }

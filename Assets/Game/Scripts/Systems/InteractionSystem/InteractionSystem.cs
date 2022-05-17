@@ -29,7 +29,15 @@ namespace Game.Systems.InteractionSystem
 			if (entity is IActor initiator && interactable is IActor actor)
 			{
 				entity.TaskSequence
-					.Append(new GoToAction(entity, interactable))
+					.Append(new GoToAction(entity, interactable));
+				
+				if(interactable is IEntity e)
+				{
+					entity.TaskSequence
+						.Append(new RotateToAction(e, entity.Transform));
+				}
+				
+				entity.TaskSequence
 					.Append(() => dialogueSystem.StartDialogue(initiator, actor))
 					.Execute();
 			}
@@ -219,7 +227,7 @@ namespace Game.Systems.InteractionSystem
 
 	public class GoToAction : TaskActionBase
 	{
-		protected Vector3 destination;
+		private Vector3 destination;
 
 		public GoToAction(IEntity entity, Vector3 destination) : base(entity)
 		{
@@ -255,7 +263,31 @@ namespace Game.Systems.InteractionSystem
 			}
 		}
 	}
+	public class RotateToAction : TaskActionBase
+	{
+		private Vector3 point;
+		private float duration;
 
+		public RotateToAction(IEntity entity, Vector3 point, float duration = 0.25f) : base(entity)
+		{
+			this.point = point;
+			this.duration = duration; 
+		}
+		public RotateToAction(IEntity entity, Transform lookAt, float duration = 0.25f) : base(entity)
+		{
+			point = lookAt.position;
+			this.duration = duration;
+		}
+
+		public override IEnumerator Implementation()
+		{
+			status = TaskActionStatus.Running;
+
+			yield return entity.Controller.RotateAnimatedTo(point, duration);
+
+			status = TaskActionStatus.Done;
+		}
+	}
 
 	public class Attack : TaskActionInteraction
 	{

@@ -2,10 +2,8 @@ using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using UnityEngine;
 
-
 namespace NodeCanvas.DialogueTrees
 {
-
     [ParadoxNotion.Design.Icon("Condition")]
     [Name("Task Condition")]
     [Category("Branch")]
@@ -13,22 +11,13 @@ namespace NodeCanvas.DialogueTrees
     [Color("b3ff7f")]
     public class ConditionNode : DTNode, ITaskAssignable<ConditionTask>
     {
+        [SerializeField] private ConditionTask condition;
 
-        [SerializeField]
-        private ConditionTask _condition;
+        public ConditionTask Condition { get => condition; set => condition = value; }
+        public Task Task { get => Condition; set => Condition = (ConditionTask)value; }
 
-        public ConditionTask condition {
-            get { return _condition; }
-            set { _condition = value; }
-        }
-
-        public Task task {
-            get { return condition; }
-            set { condition = (ConditionTask)value; }
-        }
-
-        public override int maxOutConnections { get { return 2; } }
-        public override bool requireActorSelection { get { return true; } }
+        public override int maxOutConnections => 2;
+        public override bool requireActorSelection => true;
 
         protected override Status OnExecute(Component agent, IBlackboard bb) {
 
@@ -36,11 +25,11 @@ namespace NodeCanvas.DialogueTrees
                 return Error("There are no connections on the Dialogue Condition Node");
             }
 
-            if ( condition == null ) {
+            if ( Condition == null ) {
                 return Error("There is no Conidition on the Dialoge Condition Node");
             }
 
-            var isSuccess = condition.CheckOnce(finalActor.Transform, graphBlackboard);
+            var isSuccess = Condition.CheckOnce(finalActor.Transform, graphBlackboard);
             status = isSuccess ? Status.Success : Status.Failure;
             DLGTree.Continue(isSuccess ? 0 : 1);
             return status;

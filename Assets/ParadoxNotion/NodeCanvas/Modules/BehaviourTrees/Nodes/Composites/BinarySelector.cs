@@ -29,7 +29,7 @@ namespace NodeCanvas.BehaviourTrees
             get { return base.name.ToUpper(); }
         }
 
-        public Task task {
+        public Task Task {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }

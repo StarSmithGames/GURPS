@@ -6,8 +6,11 @@ using NodeCanvas.Framework;
 using ParadoxNotion;
 using ParadoxNotion.Design;
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEditor;
 
 using UnityEngine;
@@ -25,7 +28,7 @@ public class I2MultipleChoiceNode : DTNode
     public bool saySelection;
 
     [SerializeField, AutoSortWithChildrenConnections]
-    private List<Choice> availableChoices = new List<Choice>();
+    [HideInInspector] public List<ChoiceWrapper> availableChoices = new List<ChoiceWrapper>();
 
     public override int maxOutConnections { get { return availableChoices.Count; } }
     public override bool requireActorSelection { get { return true; } }
@@ -37,47 +40,38 @@ public class I2MultipleChoiceNode : DTNode
             return Error("There are no connections to the Multiple Choice Node!");
         }
 
-        var finalOptions = new Dictionary<IStatement, int>();
-
-        for (var i = 0; i < availableChoices.Count; i++)
-        {
-            var condition = availableChoices[i].condition;
-            if (condition == null || condition.CheckOnce(finalActor.Transform, bb))
-            {
-                var tempStatement = availableChoices[i].GetStatement().BlackboardReplace(bb);
-                finalOptions[tempStatement] = i;
-            }
-        }
-
-        if (finalOptions.Count == 0)
-        {
-            ParadoxNotion.Services.Logger.Log("Multiple Choice Node has no available options. Dialogue Ends.", LogTag.EXECUTION, this);
-            DLGTree.Stop(false);
-            return Status.Failure;
-        }
-
-        var optionsInfo = new MultipleChoiceRequestInfo(finalActor, finalOptions, availableTime, OnOptionSelected);
+        var optionsInfo = new MultipleChoiceRequestInfo()
+		{
+            actor = finalActor,
+            choices = availableChoices.Select((x) => x.choice).ToList(),
+            availableTime = availableTime,
+            SelectOption = OnOptionSelected,
+        };
         optionsInfo.showLastStatement = inConnections.Count > 0 && inConnections[0].sourceNode is StatementNode;
         DialogueTree.RequestMultipleChoices(optionsInfo);
         return Status.Running;
     }
 
-    void OnOptionSelected(int index)
+    private void OnOptionSelected(int index)
     {
-
         status = Status.Success;
 
-        System.Action Finalize = () => { DLGTree.Continue(index); };
+        Action action = () =>
+        {
+            DLGTree.Continue(index);
+            availableChoices[index].choice.isSelected = true;
+        };
 
         if (saySelection)
         {
+            //Персонаж проговаривает выбраную опцию
             var tempStatement = availableChoices[index].GetStatement().BlackboardReplace(graphBlackboard);
-            var speechInfo = new SubtitlesRequestInfo(finalActor, tempStatement, Finalize);
+            var speechInfo = new SubtitlesRequestInfo(finalActor, tempStatement, action);
             DialogueTree.RequestSubtitles(speechInfo);
         }
         else
         {
-            Finalize();
+            action?.Invoke();
         }
     }
 
@@ -150,14 +144,14 @@ public class I2MultipleChoiceNode : DTNode
 
         if (GUILayout.Button("Add Choice"))
         {
-            Choice choice = new Choice();
+            ChoiceWrapper wrapper = new ChoiceWrapper();
 
             for (int i = 0; i < list.Count; i++)
             {
-                choice.statements.Add(new Statement("I am a choice..."));
+                wrapper.choice.options.Add(new ChoiceOption("I am a choice..."));
             }
 
-            availableChoices.Add(choice);
+            availableChoices.Add(wrapper);
         }
 
         if (availableChoices.Count == 0)
@@ -196,37 +190,42 @@ public class I2MultipleChoiceNode : DTNode
     }
 #endif
 }
-[System.Serializable]
-public class Choice
+
+public class ChoiceWrapper
 {
+    public Choice choice;
+
     public bool isShowFoldout = true;
 
-    public List<Statement> statements = new List<Statement>();
-
     public ConditionTask condition;
+
+    public ChoiceWrapper()
+	{
+        choice = new Choice();
+    }
 
     public Statement GetStatement()
     {
         int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
-        if (index >= 0 && index < statements.Count)
+        if (index >= 0 && index < choice.options.Count)
         {
-            return statements[index];
+            return choice.options[index].Statement as Statement;
         }
         return null;
     }
 
+
     public void OnGUI(Graph graph)
-	{
+    {
         GUILayout.BeginHorizontal();
-        GUILayout.Space(10);
+        GUILayout.Space(10f);
         GUILayout.BeginVertical("box");
 
         var list = LocalizationManager.GetAllLanguages(true);
-
-        GUILayout.Space(10);
-        for (int i = 0; i < statements.Count; i++)
+        for (int i = 0; i < choice.options.Count; i++)
         {
-            statements[i].OnGUI(list[i]);
+            (choice.options[i].Statement as Statement).OnGUI(list[i]);
+            GUILayout.Space(10);
         }
 
         NodeCanvas.Editor.TaskEditor.TaskFieldMulti<ConditionTask>(condition, graph, (choice) => { condition = choice; });

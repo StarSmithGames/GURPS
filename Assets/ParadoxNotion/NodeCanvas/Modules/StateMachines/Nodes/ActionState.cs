@@ -16,7 +16,7 @@ namespace NodeCanvas.StateMachines
         [SerializeField]
         private bool _repeatStateActions;
 
-        public Task task {
+        public Task Task {
             get { return actionList; }
             set { actionList = (ActionList)value; }
         }

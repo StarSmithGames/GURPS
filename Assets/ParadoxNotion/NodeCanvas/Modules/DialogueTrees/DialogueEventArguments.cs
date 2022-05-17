@@ -1,5 +1,11 @@
+using ICSharpCode.NRefactory.Ast;
+
+using NodeCanvas.Framework;
+
 using System;
 using System.Collections.Generic;
+
+using UnityEngine;
 
 namespace NodeCanvas.DialogueTrees
 {
@@ -23,31 +29,50 @@ namespace NodeCanvas.DialogueTrees
     ///<summary>Send along with a OnMultipleChoiceRequest event. Holds information of the options, time available as well as a callback to be called providing the selected option</summary>
     public class MultipleChoiceRequestInfo
     {
+        ///<summary>Call this with to select the option to continue with in the DialogueTree</summary>
+        public Action<int> SelectOption;
 
         ///<summary>The actor related. This is usually the actor that will also say the options</summary>
         public IDialogueActor actor;
+
+        public bool saySelection;
         ///<summary>The available choice option. Key: The statement, Value: the child index of the option</summary>
-        public Dictionary<IStatement, int> options;
+        public List<Choice> choices;
         ///<summary>The available time for a choice</summary>
         public float availableTime;
         ///<summary>Should the previous statement be shown along the options?</summary>
         public bool showLastStatement;
-        ///<summary>Call this with to select the option to continue with in the DialogueTree</summary>
-        public Action<int> SelectOption;
+    }
 
-        public MultipleChoiceRequestInfo(IDialogueActor actor, Dictionary<IStatement, int> options, float availableTime, bool showLastStatement, Action<int> callback) {
-            this.actor = actor;
-            this.options = options;
-            this.availableTime = availableTime;
-            this.showLastStatement = showLastStatement;
-            this.SelectOption = callback;
+    [System.Serializable]
+    public class Choice
+	{
+        public bool isSelected = false;
+        public List<ChoiceOption> options = new List<ChoiceOption>();//ru, en ...
+
+        public Data GetData()
+		{
+            return new Data()
+            {
+                isSelected = isSelected,
+            };
+		}
+
+        public class Data
+		{
+            public bool isSelected;
         }
+	}
 
-        public MultipleChoiceRequestInfo(IDialogueActor actor, Dictionary<IStatement, int> options, float availableTime, Action<int> callback) {
-            this.actor = actor;
-            this.options = options;
-            this.availableTime = availableTime;
-            this.SelectOption = callback;
+    [System.Serializable]
+    public class ChoiceOption
+    {
+        public IStatement Statement => statement;
+        [SerializeField] private Statement statement;
+
+        public ChoiceOption(string text)
+		{
+            statement = new Statement(text);
         }
     }
 }

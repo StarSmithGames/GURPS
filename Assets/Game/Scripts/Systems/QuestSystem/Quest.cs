@@ -65,13 +65,6 @@ namespace Game.Systems.QuestSystem
 		public List<IQuestGoal> goals = new List<IQuestGoal>();
 	}
 
-	public enum QuestIndicator
-	{
-		Nothing,
-		Question,
-		Exclamation,
-	}
-
 	public enum QuestStatus
 	{
 		Unassigned,

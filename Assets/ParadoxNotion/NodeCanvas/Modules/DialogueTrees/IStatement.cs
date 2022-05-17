@@ -2,6 +2,7 @@ using ParadoxNotion;
 using NodeCanvas.Framework;
 using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -81,5 +82,56 @@ namespace NodeCanvas.DialogueTrees
         public override string ToString() {
             return Text;
         }
+    }
+
+
+    [System.Serializable]
+    public class Statements
+	{
+        public Statement[] statements;
+
+        public bool isShowFoldout = false;
+
+        public Statements(List<string> languages)
+		{
+            statements = new Statement[languages.Count];
+
+            for (int i = 0; i < languages.Count; i++)
+			{
+                statements[i] = new Statement("This is a dialogue text");
+            }
+		}
+
+        public string GetCurrentStatementLabel(int index)
+        {
+            if (index >= 0 && index < statements.Length)
+			{
+                string statementText = (statements[index]?.Text.CapLength(30) ?? "Empty");
+                string label = (string.IsNullOrEmpty(statementText) ? "Empty" : statementText.CapLength(50)).Replace("\n", "/n ");
+
+                return label;
+            }
+
+            return "ERROR SOMETHING WRONG!";
+        }
+
+#if UNITY_EDITOR
+        public void OnGUI(string label, string currentLanguage, List<string> languages)
+		{
+            isShowFoldout = EditorGUILayout.Foldout(isShowFoldout, $"{label} {currentLanguage} : {GetCurrentStatementLabel(languages.IndexOf(currentLanguage))}", true);
+            if (isShowFoldout)
+            {
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(10f);
+                GUILayout.BeginVertical("box");
+                for (int i = 0; i < statements.Length; i++)
+                {
+                    statements[i].OnGUI(languages[i]);
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.EndVertical();
+            }
+        }
+#endif
     }
 }

@@ -21,7 +21,7 @@ namespace NodeCanvas.BehaviourTrees
             set { _condition = value; }
         }
 
-        public Task task {
+        public Task Task {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }

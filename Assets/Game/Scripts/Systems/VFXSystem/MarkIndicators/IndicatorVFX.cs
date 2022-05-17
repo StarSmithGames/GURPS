@@ -109,6 +109,7 @@ namespace Game.Systems.VFX
 
 
 
+
 		private bool isFlipped;
 
 		public void FlipToBack()
@@ -127,5 +128,12 @@ namespace Game.Systems.VFX
 			transform.DOLocalRotate(
 				new Vector3(-180f, 0, 0), 1f, RotateMode.LocalAxisAdd);
 		}
+	}
+
+
+	public enum MarkIndicator
+	{
+		Question,
+		Exclamation,
 	}
 }

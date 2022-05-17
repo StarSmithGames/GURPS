@@ -16,7 +16,7 @@ namespace NodeCanvas.BehaviourTrees
         [SerializeField]
         private ConditionTask _condition;
 
-        public Task task {
+        public Task Task {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }

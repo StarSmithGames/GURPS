@@ -16,7 +16,7 @@ namespace NodeCanvas.BehaviourTrees
         [SerializeField]
         private ActionTask _action;
 
-        public Task task {
+        public Task Task {
             get { return action; }
             set { action = (ActionTask)value; }
         }

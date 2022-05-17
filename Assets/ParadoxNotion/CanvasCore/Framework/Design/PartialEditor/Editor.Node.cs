@@ -166,7 +166,7 @@ namespace NodeCanvas.Framework
                 if ( _icon == null ) {
                     if ( this is ITaskAssignable ) {
                         var assignable = this as ITaskAssignable;
-                        _icon = assignable.task != null ? assignable.task.icon : null;
+                        _icon = assignable.Task != null ? assignable.Task.icon : null;
                     }
                     if ( _icon == null ) {
                         var iconAtt = this.GetType().RTGetAttribute<ParadoxNotion.Design.IconAttribute>(true);
@@ -355,7 +355,7 @@ namespace NodeCanvas.Framework
                 if ( !EditorGUIUtility.isProSkin ) {
                     var assignable = node as ITaskAssignable;
                     ParadoxNotion.Design.IconAttribute att = null;
-                    if ( assignable != null && assignable.task != null ) { att = assignable.task.GetType().RTGetAttribute<ParadoxNotion.Design.IconAttribute>(true); }
+                    if ( assignable != null && assignable.Task != null ) { att = assignable.Task.GetType().RTGetAttribute<ParadoxNotion.Design.IconAttribute>(true); }
                     if ( att == null ) { att = node.GetType().RTGetAttribute<ParadoxNotion.Design.IconAttribute>(true); }
                     if ( att != null && att.fixedColor == false ) { GUI.color = Color.black.WithAlpha(0.7f); }
                 }
@@ -411,8 +411,8 @@ namespace NodeCanvas.Framework
                     if ( node is IGraphAssignable && ( node as IGraphAssignable ).subGraph != null ) {
                         node.graph.SetCurrentChildGraphAssignable(node as IGraphAssignable);
                         node.nodeIsPressed = false;
-                    } else if ( node is ITaskAssignable && ( node as ITaskAssignable ).task != null ) {
-                        EditorUtils.OpenScriptOfType(( node as ITaskAssignable ).task.GetType());
+                    } else if ( node is ITaskAssignable && ( node as ITaskAssignable ).Task != null ) {
+                        EditorUtils.OpenScriptOfType(( node as ITaskAssignable ).Task.GetType());
                     } else {
                         EditorUtils.OpenScriptOfType(node.GetType());
                     }
@@ -488,7 +488,7 @@ namespace NodeCanvas.Framework
         static void TaskAssignableNodeGUI(Node node) {
             if ( node is ITaskAssignable ) {
                 GUILayout.BeginVertical(Styles.roundedBox);
-                var task = ( node as ITaskAssignable ).task;
+                var task = ( node as ITaskAssignable ).Task;
                 GUILayout.Label(task != null ? task.summaryInfo : "No Task");
                 GUILayout.EndVertical();
             }
@@ -579,20 +579,20 @@ namespace NodeCanvas.Framework
 
             if ( node is ITaskAssignable ) {
                 var assignable = node as ITaskAssignable;
-                if ( assignable.task != null ) {
-                    menu.AddItem(new GUIContent("Copy Assigned Task"), false, () => { CopyBuffer.SetCache<Task>(assignable.task); });
+                if ( assignable.Task != null ) {
+                    menu.AddItem(new GUIContent("Copy Assigned Task"), false, () => { CopyBuffer.SetCache<Task>(assignable.Task); });
                 } else { menu.AddDisabledItem(new GUIContent("Copy Assigned Task")); }
 
                 if ( CopyBuffer.TryGetCache<Task>(out Task copy) ) {
                     menu.AddItem(new GUIContent("Paste Assigned Task"), false, () =>
                    {
-                       if ( assignable.task != null ) {
-                           if ( !EditorUtility.DisplayDialog("Paste Task", string.Format("Node already has a Task assigned '{0}'. Replace assigned task with pasted task '{1}'?", assignable.task.name, copy.name), "YES", "NO") ) {
+                       if ( assignable.Task != null ) {
+                           if ( !EditorUtility.DisplayDialog("Paste Task", string.Format("Node already has a Task assigned '{0}'. Replace assigned task with pasted task '{1}'?", assignable.Task.name, copy.name), "YES", "NO") ) {
                                return;
                            }
                        }
 
-                       try { assignable.task = copy.Duplicate(node.graph); }
+                       try { assignable.Task = copy.Duplicate(node.graph); }
                        catch { ParadoxNotion.Services.Logger.LogWarning("Can't paste Task here. Incombatible Types", LogTag.EDITOR, node); }
                    });
 
@@ -801,7 +801,7 @@ namespace NodeCanvas.Framework
                 }
 
                 if ( taskType != null ) {
-                    TaskEditor.TaskFieldMulti(assignable.task, node.graph, taskType, (t) => { node._icon = null; assignable.task = t; });
+                    TaskEditor.TaskFieldMulti(assignable.Task, node.graph, taskType, (t) => { node._icon = null; assignable.Task = t; });
                 }
             }
         }

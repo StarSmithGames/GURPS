@@ -23,7 +23,7 @@ namespace NodeCanvas.BehaviourTrees
         private ConditionTask _condition;
         private bool accessed;
 
-        public Task task {
+        public Task Task {
             get { return condition; }
             set { condition = (ConditionTask)value; }
         }

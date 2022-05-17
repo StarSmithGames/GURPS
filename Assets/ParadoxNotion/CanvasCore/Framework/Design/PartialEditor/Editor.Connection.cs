@@ -365,20 +365,20 @@ namespace NodeCanvas.Framework
             var assignable = this as ITaskAssignable;
             if ( assignable != null ) {
 
-                if ( assignable.task != null ) {
-                    menu.AddItem(new GUIContent("Copy Assigned Condition"), false, () => { CopyBuffer.Set<Task>(assignable.task); });
+                if ( assignable.Task != null ) {
+                    menu.AddItem(new GUIContent("Copy Assigned Condition"), false, () => { CopyBuffer.Set<Task>(assignable.Task); });
                 } else { menu.AddDisabledItem(new GUIContent("Copy Assigned Condition")); }
 
                 if ( CopyBuffer.TryGet<Task>(out Task copy) ) {
                     menu.AddItem(new GUIContent(string.Format("Paste Assigned Condition ({0})", copy.name)), false, () =>
                     {
-                        if ( assignable.task != null ) {
-                            if ( !EditorUtility.DisplayDialog("Paste Condition", string.Format("Connection already has a Condition assigned '{0}'. Replace assigned condition with pasted condition '{1}'?", assignable.task.name, copy.name), "YES", "NO") ) {
+                        if ( assignable.Task != null ) {
+                            if ( !EditorUtility.DisplayDialog("Paste Condition", string.Format("Connection already has a Condition assigned '{0}'. Replace assigned condition with pasted condition '{1}'?", assignable.Task.name, copy.name), "YES", "NO") ) {
                                 return;
                             }
                         }
 
-                        try { assignable.task = copy.Duplicate(graph); }
+                        try { assignable.Task = copy.Duplicate(graph); }
                         catch { Logger.LogWarning("Can't paste Condition here. Incombatible Types.", LogTag.EDITOR, this); }
                     });
 

@@ -16,6 +16,9 @@ namespace Game.Systems.DialogueSystem
 
 		public override void InstallBindings()
 		{
+			Container.DeclareSignal<StartDialogueSignal>();
+			Container.DeclareSignal<EndDialogueSignal>();
+
 			Container.BindInstance(settings);
 			Container.BindInstance(barkSettings);
 

@@ -11,6 +11,7 @@ namespace I2.Loc
     {
         #region Variables: CurrentLanguage
 
+        public static int CurrentLanguageIndex => GetAllLanguages(true).IndexOf(CurrentLanguage);
         public static string CurrentLanguage
         {
             get {

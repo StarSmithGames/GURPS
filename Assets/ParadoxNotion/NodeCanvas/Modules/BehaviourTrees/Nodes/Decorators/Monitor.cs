@@ -39,7 +39,7 @@ namespace NodeCanvas.BehaviourTrees
             set { _action = value; }
         }
 
-        public Task task {
+        public Task Task {
             get { return action; }
             set { action = (ActionTask)value; }
         }

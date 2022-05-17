@@ -30,7 +30,7 @@ namespace NodeCanvas.BehaviourTrees
             if ( node is ITaskAssignable && newNode is ITaskAssignable ) {
                 var assignableNode = node as ITaskAssignable;
                 var assignableNewNode = newNode as ITaskAssignable;
-                try { assignableNewNode.task = assignableNode.task; }
+                try { assignableNewNode.Task = assignableNode.Task; }
                 catch { /* cant assign */ }
             }
 
