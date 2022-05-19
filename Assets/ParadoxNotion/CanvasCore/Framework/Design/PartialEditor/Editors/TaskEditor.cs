@@ -34,15 +34,15 @@ namespace NodeCanvas.Editor
         }
 
         ///<summary>Show a Task's field. If task null allow add task. Multiple tasks can be added to form a list.</summary>
-        public static void TaskFieldMulti<T>(T task, ITaskSystem ownerSystem, Action<T> callback) where T : Task {
-            TaskFieldMulti(task, ownerSystem, typeof(T), (Task t) => { callback((T)t); });
+        public static void TaskFieldMulti<T>(T task, ITaskSystem ownerSystem, Action<T> callback, string label = "", string postfix = "") where T : Task {
+            TaskFieldMulti(task, ownerSystem, typeof(T), (Task t) => { callback((T)t); }, label, postfix);
         }
 
         ///<summary>Show a Task's field. If task null allow add task. Multiple tasks can be added to form a list.</summary>
-        public static void TaskFieldMulti(Task task, ITaskSystem ownerSystem, Type baseType, Action<Task> callback) {
+        public static void TaskFieldMulti(Task task, ITaskSystem ownerSystem, Type baseType, Action<Task> callback, string label = "", string postfix = "") {
             //if null simply show an assignment button
             if ( task == null ) {
-                ShowCreateTaskSelectionButton(ownerSystem, baseType, callback);
+                ShowCreateTaskSelectionButton(ownerSystem, baseType, callback, label, postfix);
                 return;
             }
 
@@ -56,7 +56,7 @@ namespace NodeCanvas.Editor
                             newList.AddAction((ActionTask)task);
                             newList.AddAction((ActionTask)t);
                             callback(newList);
-                        });
+                        }, label, postfix);
                 }
 
                 ShowTaskInspectorGUI(task, callback);
@@ -81,7 +81,7 @@ namespace NodeCanvas.Editor
                             newList.AddCondition((ConditionTask)task);
                             newList.AddCondition((ConditionTask)t);
                             callback(newList);
-                        });
+                        }, label, postfix);
                 }
 
                 ShowTaskInspectorGUI(task, callback);
@@ -107,16 +107,16 @@ namespace NodeCanvas.Editor
         }
 
         //Shows a button that when clicked, pops a context menu with a list of tasks deriving the base type specified. When something is selected the callback is called
-        public static void ShowCreateTaskSelectionButton<T>(ITaskSystem ownerSystem, Action<T> callback) where T : Task {
-            ShowCreateTaskSelectionButton(ownerSystem, typeof(T), (Task t) => { callback((T)t); });
+        public static void ShowCreateTaskSelectionButton<T>(ITaskSystem ownerSystem, Action<T> callback, string label = "", string postfix = "") where T : Task {
+            ShowCreateTaskSelectionButton(ownerSystem, typeof(T), (Task t) => { callback((T)t); }, label, postfix);
         }
 
         //Shows a button that when clicked, pops a context menu with a list of tasks deriving the base type specified. When something is selected the callback is called
         //On top of that it also shows a search field for Tasks
-        public static void ShowCreateTaskSelectionButton(ITaskSystem ownerSystem, Type baseType, Action<Task> callback) {
+        public static void ShowCreateTaskSelectionButton(ITaskSystem ownerSystem, Type baseType, Action<Task> callback, string l = "", string pf = "") {
 
             GUI.backgroundColor = Colors.lightBlue;
-            var label = "Assign " + baseType.Name.SplitCamelCase();
+            var label = string.IsNullOrEmpty(l) ? "Assign " + baseType.Name.SplitCamelCase() + (!string.IsNullOrEmpty(pf) ? pf : "") : l;
             if ( GUILayout.Button(label) ) {
 
                 Action<Type> TaskTypeSelected = (t) =>

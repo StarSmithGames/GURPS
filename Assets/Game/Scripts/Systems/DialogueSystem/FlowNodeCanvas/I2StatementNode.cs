@@ -44,7 +44,7 @@ public class I2StatementNode : DTNode
         var tempStatement = GetCurrentStatement()?.BlackboardReplace(bb);
         if (tempStatement == null) return Status.Error;
 
-        DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(finalActor, tempStatement, OnStatementFinish));
+        DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(FinalActor, tempStatement, OnStatementFinish));
         return Status.Running;
     }
 

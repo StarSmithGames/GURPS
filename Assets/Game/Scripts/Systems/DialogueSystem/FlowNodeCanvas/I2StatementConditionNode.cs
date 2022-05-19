@@ -46,11 +46,11 @@ public class I2StatementConditionNode : ConditionNode
             return Error("There is no Conidition on the Dialoge Condition Node");
         }
 
-        isTrue = Condition.CheckOnce(finalActor.Transform, graphBlackboard);
+        isTrue = Condition.CheckOnce(FinalActor.Transform, graphBlackboard);
         var statement = (isTrue? statementsTrue : statementsFalse).statements[LocalizationManager.CurrentLanguageIndex]?.BlackboardReplace(bb);
         if (statement == null) return Status.Error;
 
-        DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(finalActor, statement, OnStatementFinish));
+        DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(FinalActor, statement, OnStatementFinish));
 
         return Status.Running;
     }

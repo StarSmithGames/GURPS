@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 namespace Game.Systems.SheetSystem
 {
-	public interface IModifiable
+	public interface IModifiable<T> where T : struct
 	{
-		List<IModifier> Modifiers { get; }
+		List<IModifier<T>> Modifiers { get; }
 
-		float ModifyValue { get; }
+		T ModifyValue { get; }
 
-		void AddModifier(IModifier modifier);
-		void RemoveModifier(IModifier modifier);
+		void AddModifier(IModifier<T> modifier);
+		void RemoveModifier(IModifier<T> modifier);
 	}
 }

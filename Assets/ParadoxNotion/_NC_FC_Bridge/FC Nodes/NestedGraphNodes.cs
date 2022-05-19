@@ -34,7 +34,7 @@ namespace FlowCanvas.Nodes
     {
         protected override void RegisterPorts() {
             base.RegisterPorts();
-            AddValueOutput<IDialogueActor>("Actor", () => currentInstance.currentNode?.finalActor);
+            AddValueOutput<IDialogueActor>("Actor", () => currentInstance.CurrentNode?.FinalActor);
         }
     }
 }

@@ -47,7 +47,7 @@ namespace NodeCanvas.DialogueTrees
         public static DialogueTree previousDialogue { get; private set; }
 
         ///<summary>The current node of this DialogueTree</summary>
-        public DTNode currentNode { get; private set; }
+        public DTNode CurrentNode { get; private set; }
 
         public int LastNodeConnectionIndex { get; private set; }
         public DTNode LastNode { get; private set; }
@@ -63,22 +63,22 @@ namespace NodeCanvas.DialogueTrees
 
         ///<summary>Continues the DialogueTree at provided child connection index of currentNode</summary>
         public void Continue(int index = 0) {
-            if ( index < 0 || index > currentNode.outConnections.Count - 1 ) {
+            if ( index < 0 || index > CurrentNode.outConnections.Count - 1 ) {
                 Stop(true);
                 return;
             }
-            currentNode.outConnections[index].status = Status.Success; //editor vis
+            CurrentNode.outConnections[index].status = Status.Success; //editor vis
             LastNodeConnectionIndex = index;
-            EnterNode((DTNode)currentNode.outConnections[index].targetNode);
+            EnterNode((DTNode)CurrentNode.outConnections[index].targetNode);
         }
 
         ///<summary>Enters the provided node</summary>
         public void EnterNode(DTNode node)
         {
-            LastNode = currentNode;
-            currentNode = node;
-            currentNode.Reset(false);
-            if ( currentNode.Execute(agent, blackboard) == Status.Error ) {
+            LastNode = CurrentNode;
+            CurrentNode = node;
+            CurrentNode.Reset(false);
+            if ( CurrentNode.Execute(agent, blackboard) == Status.Error ) {
                 Stop(false);
             }
         }
@@ -247,13 +247,13 @@ namespace NodeCanvas.DialogueTrees
                 Logger.Log("Agent used in DialogueTree does not implement IDialogueActor. A dummy actor will be used.", "Dialogue Tree", this);
             }
 
-            currentNode = currentNode != null ? currentNode : (DTNode)primeNode;
-            EnterNode(currentNode);
+            CurrentNode = CurrentNode != null ? CurrentNode : (DTNode)primeNode;
+            EnterNode(CurrentNode);
         }
 
         protected override void OnGraphUpdate()
         {
-            if (currentNode is IUpdatable updatable)
+            if (CurrentNode is IUpdatable updatable)
             {
                 updatable.Update();
             }
@@ -263,7 +263,7 @@ namespace NodeCanvas.DialogueTrees
         {
             currentDialogue = previousDialogue;
             previousDialogue = null;
-            currentNode = null;
+            CurrentNode = null;
 
             Logger.Log(string.Format("Dialogue Finished '{0}'", this.name), "Dialogue Tree", this);
             if (OnDialogueFinished != null)
@@ -283,8 +283,8 @@ namespace NodeCanvas.DialogueTrees
 
         protected override void OnGraphUnpaused()
         {
-            currentNode = currentNode != null ? currentNode : (DTNode)primeNode;
-            EnterNode(currentNode);
+            CurrentNode = CurrentNode != null ? CurrentNode : (DTNode)primeNode;
+            EnterNode(CurrentNode);
 
             Logger.Log(string.Format("Dialogue Resumed '{0}'", this.name), "Dialogue Tree", this);
             if (OnDialogueStarted != null)

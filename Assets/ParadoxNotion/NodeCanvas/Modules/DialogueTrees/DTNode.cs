@@ -58,14 +58,13 @@ namespace NodeCanvas.DialogueTrees
         }
 
         ///<summary>The DialogueActor that will execute the node</summary>
-        public IDialogueActor finalActor {
+        public IDialogueActor FinalActor {
             get
             {
                 var result = DLGTree.GetActorReferenceByID(_actorParameterID);
                 return result != null ? result : DLGTree.GetActorReferenceByName(_actorName);
             }
         }
-
 
         ///----------------------------------------------------------------------------------------------
         ///---------------------------------------UNITY EDITOR-------------------------------------------

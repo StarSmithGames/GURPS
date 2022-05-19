@@ -1,15 +1,15 @@
 namespace Game.Systems.SheetSystem
 {
-	public interface IModifier
+	public interface IModifier<T> where T : struct
 	{
-		float Value { get; }
+		T Value { get; }
 	}
 
-	public class Modifier : IModifier
+	public class Modifier<T> : IModifier<T> where T : struct
 	{
-		public float Value { get; set; }
+		public T Value { get; set; }
 
-		public Modifier(float value)
+		public Modifier(T value)
 		{
 			Value = value;
 		}

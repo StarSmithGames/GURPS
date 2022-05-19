@@ -10,14 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d2829bb1971f20489187d34bfda2c07, type: 3}
-  m_Name: Character1
+  m_Name: Player
   m_EditorClassIdentifier: 
   sheet:
     identity: 0
     age: -1
     race: 0
     gender: 0
-    aligment: 4
     isImmortal: 0
     stats:
       level: 1
@@ -31,6 +30,8 @@ MonoBehaviour:
       addSpeed: 0
       addWill: 0
       addPerception: 0
+    characteristics:
+      alignment: 0
     inventory:
       useRandomItems: 0
       shuffleList: 0

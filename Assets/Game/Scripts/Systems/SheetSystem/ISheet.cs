@@ -10,6 +10,10 @@ namespace Game.Systems.SheetSystem
     {
         EntityInformation Information { get; }
         IStats Stats { get; }
+        ICharacteristics Characteristics { get; }
+        //ITalents
+        //abilities
+        //traits 
         IConditions Conditions { get; }
         IInventory Inventory { get; }
 
@@ -20,7 +24,8 @@ namespace Game.Systems.SheetSystem
     {
         public virtual EntityInformation Information { get; protected set; }
         public virtual IStats Stats { get; private set; }
-		public virtual IConditions Conditions { get; }
+		public virtual ICharacteristics Characteristics { get; private set; }
+        public virtual IConditions Conditions { get; private set; }
         public virtual IInventory Inventory { get; private set; }
 
 		public SheetSettings Settings { get; private set; }
@@ -31,6 +36,7 @@ namespace Game.Systems.SheetSystem
 
             Information = information;
             Stats = new Stats(Settings.stats);
+            Characteristics = new Characteristics(Settings.characteristics);
             Conditions = new Conditions();
             Inventory = new Inventory(Settings.inventory);
         }
@@ -68,11 +74,12 @@ namespace Game.Systems.SheetSystem
         public Race race = Race.Human;
         [HideIf("IsLifeless")]
         public Gender gender = Gender.Male;
-        [HideIf("IsLifeless")]
-        public Aligment aligment = Aligment.TrueNeutral;
+        //[HideIf("IsLifeless")]
+        //public Aligment aligment = Aligment.TrueNeutral;
         [Space]
         public bool isImmortal = false;
         public StatsSettigns stats;
+        public CharacteristicsSettings characteristics;
         public InventorySettings inventory;
         [ShowIf("@IsHumanoid && !IsLifeless")]
         public EquipmentSettings equipment;
@@ -114,19 +121,5 @@ namespace Game.Systems.SheetSystem
         Male,
         Female,
         Neutral,
-    }
-
-    //https://rpg.fandom.com/ru/wiki/%D0%9C%D0%B8%D1%80%D0%BE%D0%B2%D0%BE%D0%B7%D0%B7%D1%80%D0%B5%D0%BD%D0%B8%D0%B5
-    public enum Aligment
-    {
-        LawfulGood,
-        NeutralGood,
-        ChaoticGood,
-        LawfulNeutral,
-        TrueNeutral,
-        ChaoticNeutral,
-        LawfulEvil,
-        NeutralEvil,
-        ChaoticEvil,
     }
 }

@@ -3,8 +3,6 @@ using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 
-using static Cinemachine.DocumentationSortingAttribute;
-
 namespace Game.Systems.SheetSystem
 {
 	public interface IStats

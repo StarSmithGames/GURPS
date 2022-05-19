@@ -27,7 +27,7 @@ namespace Game.Systems.DialogueSystem
 		private MultipleChoiceRequestInfo cachedChoiceInfo;
 
 		private UIDialogue dialogue;
-		private List<UIChoice> choices = new List<UIChoice>();
+		private List<ChoiceWrapper> choices = new List<ChoiceWrapper>();
 
 		private Settings settings;
 		private SignalBus signalBus;
@@ -137,8 +137,8 @@ namespace Game.Systems.DialogueSystem
 			//clear
 			for (int i = choices.Count - 1; i >= 0; i--)
 			{
-				choices[i].DespawnIt();
-				choices[i].onButtonClick -= OnChoiced;
+				choices[i].ui.DespawnIt();
+				choices[i].ui.onButtonClick -= OnChoiced;
 				choices.Remove(choices[i]);
 			}
 
@@ -148,7 +148,7 @@ namespace Game.Systems.DialogueSystem
 			//fill
 			for (int i = 0; i < info.choices.Count; i++)
 			{
-				var choice = info.choices[i];
+				Choice choice = info.choices[i];
 				
 				if (!(index >= 0 && index < choice.options.Count))
 				{
@@ -158,32 +158,60 @@ namespace Game.Systems.DialogueSystem
 				var option = choice.options[index];
 
 
-				UIChoice c = choiceFactory.Create();
+				UIChoice choiceUI = choiceFactory.Create();
 
-				c.Text.color = choice.isSelected ? Color.gray : Color.white;
-				c.Text.text = $"{i + 1}. {option.Statement.Text}";//1. (Aligment) [Action or Requirement] Text.
+				if(choice.choiceConditionState == ChoiceConditionState.None)
+				{
+					choiceUI.Text.color = choice.isSelected ? Color.gray : Color.white;
+					choiceUI.Text.text = $"{i + 1}. {option.Statement.Text}";//1. (Aligment or Lie-True) [Requirements or Action] Actor - Text.
+				}
+				else if(choice.choiceConditionState == ChoiceConditionState.Inactive)
+				{
+					choiceUI.Text.color = Color.gray;
+					choiceUI.Text.text = $"[Conditions Not Met] {i + 1}. {option.Statement.Text}";
+				}
+				else if(choice.choiceConditionState == ChoiceConditionState.Unavailable)
+				{
+					choiceUI.Text.color = Color.red;
+					choiceUI.Text.text = $"[Not Unavailable Choice]";
+				}
 
-				c.onButtonClick += OnChoiced;
-				c.transform.SetParent(dialogue.ChoiceContent);
+				choiceUI.onButtonClick += OnChoiced;
+				choiceUI.transform.SetParent(dialogue.ChoiceContent);
 
-				choices.Add(c);
+				choices.Add(new ChoiceWrapper()
+				{
+					choice = choice,
+					ui = choiceUI
+				});
 			}
 		}
 
 		private void OnChoiced(UIChoice choice)
 		{
-			int index = choices.IndexOf(choice);
+			var wrapper = choices.Find((x) => x.ui == choice);
 
-			isWaitingChoice = false;
-
-			//clear
-			for (int i = choices.Count - 1; i >= 0; i--)
+			if(wrapper.choice.choiceConditionState == ChoiceConditionState.None)
 			{
-				choices[i].DespawnIt();
-				choices[i].onButtonClick -= OnChoiced;
-				choices.Remove(choices[i]);
+				isWaitingChoice = false;
+
+				int index = choices.IndexOf(wrapper);
+
+				//clear
+				for (int i = choices.Count - 1; i >= 0; i--)
+				{
+					choices[i].ui.DespawnIt();
+					choices[i].ui.onButtonClick -= OnChoiced;
+					choices.Remove(choices[i]);
+				}
+				cachedChoiceInfo.SelectOption(index);
 			}
-			cachedChoiceInfo.SelectOption(index);
+		}
+
+		public class ChoiceWrapper
+		{
+			public Choice choice;
+			public UIChoice ui;
 		}
 
 

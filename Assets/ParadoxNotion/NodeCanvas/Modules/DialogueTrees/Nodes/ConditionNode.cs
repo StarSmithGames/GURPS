@@ -29,7 +29,7 @@ namespace NodeCanvas.DialogueTrees
                 return Error("There is no Conidition on the Dialoge Condition Node");
             }
 
-            var isSuccess = Condition.CheckOnce(finalActor.Transform, graphBlackboard);
+            var isSuccess = Condition.CheckOnce(FinalActor.Transform, graphBlackboard);
             status = isSuccess ? Status.Success : Status.Failure;
             DLGTree.Continue(isSuccess ? 0 : 1);
             return status;

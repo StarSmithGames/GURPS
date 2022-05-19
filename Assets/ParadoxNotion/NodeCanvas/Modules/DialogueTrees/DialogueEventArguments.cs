@@ -48,6 +48,7 @@ namespace NodeCanvas.DialogueTrees
     public class Choice
 	{
         public bool isSelected = false;
+        public ChoiceConditionState choiceConditionState = ChoiceConditionState.None;
         public List<ChoiceOption> options = new List<ChoiceOption>();//ru, en ...
 
         public Data GetData()
@@ -74,5 +75,13 @@ namespace NodeCanvas.DialogueTrees
 		{
             statement = new Statement(text);
         }
+    }
+
+    public enum ChoiceConditionState
+    {
+        None,
+        Inactive,
+        Unavailable,
+        Ignore,
     }
 }

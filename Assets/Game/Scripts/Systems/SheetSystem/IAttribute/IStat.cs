@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
-    public interface IStat : IAttribute, IModifiable
+    public interface IStat : IAttribute, IModifiable<float>
     {
 		event UnityAction onStatChanged;
 
@@ -18,7 +18,7 @@ namespace Game.Systems.SheetSystem
 		float PercentValue { get; }
 	}
 
-	public abstract class Stat : AttributeModifiable, IStat
+	public abstract class Stat : AttributeFloatModifiable, IStat
 	{
 		public event UnityAction onStatChanged;
 
@@ -52,7 +52,7 @@ namespace Game.Systems.SheetSystem
 		}
 	}
 
-	public abstract class StatBar : AttributeModifiable, IStatBar
+	public abstract class StatBar : AttributeFloatModifiable, IStatBar
 	{
 		public event UnityAction onStatChanged;
 
