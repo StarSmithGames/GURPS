@@ -11,7 +11,8 @@ namespace Game.Entities
 	public class DummyModel : InteractableModel, ISheetable, IActor
 	{
 		public bool IsHaveSomethingToSay => actorSettings != null;
-		
+		public bool IsInDialogue { get; set; }
+
 		public Transform Transform => transform;
 
 		public ActorSettings ActorSettings => actorSettings;
@@ -29,6 +30,7 @@ namespace Game.Entities
 				return sheet;
 			}
 		}
+
 		private ModelSheet sheet;
 		[SerializeField] private ModelData data;
 

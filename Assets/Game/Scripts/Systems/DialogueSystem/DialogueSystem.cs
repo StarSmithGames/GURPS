@@ -14,7 +14,7 @@ using Zenject;
 
 namespace Game.Systems.DialogueSystem
 {
-	public partial class DialogueSystem
+	public class DialogueSystem
 	{
 		public bool IsDialogueProcess => dialogueCoroutine != null;
 		private Coroutine dialogueCoroutine = null;
@@ -67,7 +67,8 @@ namespace Game.Systems.DialogueSystem
 
 		public void JoinToDialogue(IActor actor)
 		{
-			actorsDictionary.Add((actor as ISheetable).Sheet.Information.nameId, actor);
+			actor.IsInDialogue = true;
+			actorsDictionary.Add(actor.Sheet.Information.nameId, actor);
 		}
 
 		private IEnumerator Dialogue()
@@ -79,6 +80,10 @@ namespace Game.Systems.DialogueSystem
 				return dialogueController.isRunning;
 			});
 
+			foreach (var actor in actorsDictionary.Values)
+			{
+				(actor as IActor).IsInDialogue = false;
+			}
 			actorsDictionary.Clear();
 			dialogueCoroutine = null;
 

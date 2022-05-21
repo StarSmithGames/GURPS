@@ -3,6 +3,8 @@ using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 
+using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace Game.Systems.ContextMenu
@@ -139,7 +141,10 @@ namespace Game.Systems.ContextMenu
 	#region SheetCommnads
 	public class CommandSetAlignment : SheetCommand
 	{
-		public Alignment Result { get; private set; }
+		public Alignment Target { get; private set; }
+		public Alignment Current { get; private set; }
+		public Alignment Forecast { get; private set; }
+		public Vector2 ForecastAlignment { get; private set; }
 
 		private Alignment type = Alignment.TrueNeutral;
 		private float percentAlignment = 0;
@@ -150,9 +155,12 @@ namespace Game.Systems.ContextMenu
 		{
 			this.vectorAlignment = vectorAlignment;
 
-			//Result = vectorAlignment;
-
+			Target = AlignmentCharacteristic.ConvertVector2ToAlignment(vectorAlignment);
+			Current = (sheet.Characteristics.Alignment as AlignmentCharacteristic).Alignment;
 			usePercents = false;
+			Calculate();
+
+			Forecast = AlignmentCharacteristic.ConvertVector2ToAlignment(ForecastAlignment);
 		}
 
 		public CommandSetAlignment(ISheet sheet, Alignment type, float percentAlignment) : base(sheet)
@@ -160,20 +168,28 @@ namespace Game.Systems.ContextMenu
 			this.type = type;
 			this.percentAlignment = percentAlignment;
 
-			Result = type;
-
+			Target = type;
+			Current = (sheet.Characteristics.Alignment as AlignmentCharacteristic).Alignment;
 			usePercents = true;
+			Calculate();
+
+			Forecast = AlignmentCharacteristic.ConvertVector2ToAlignment(ForecastAlignment);
 		}
 
 		public override void Execute()
 		{
+			sheet.Characteristics.Alignment.CurrentValue = ForecastAlignment;
+		}
+
+		private void Calculate()
+		{
 			if (usePercents)
 			{
-				sheet.Characteristics.Alignment.CurrentValue = Vector2.Lerp(sheet.Characteristics.Alignment.CurrentValue, AlignmentCharacteristic.ConvertAligmentToVector2(type), percentAlignment);
+				ForecastAlignment = Vector2.Lerp(sheet.Characteristics.Alignment.CurrentValue, AlignmentCharacteristic.ConvertAlignmentToVector2(type), percentAlignment);
 			}
 			else
 			{
-				sheet.Characteristics.Alignment.CurrentValue += vectorAlignment;
+				ForecastAlignment = sheet.Characteristics.Alignment.CurrentValue + vectorAlignment;
 			}
 		}
 	}

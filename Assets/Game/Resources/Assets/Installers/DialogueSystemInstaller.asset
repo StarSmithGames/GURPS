@@ -13,13 +13,9 @@ MonoBehaviour:
   m_Name: DialogueSystemInstaller
   m_EditorClassIdentifier: 
   settings:
-    additionalText: 1
-    skipOnInput: 0
-    waitForInput: 1
-    delays:
-      characterDelay: 0.05
-      sentenceDelay: 0.5
-      commaDelay: 0.1
-      finalDelay: 1.2
-  controllerPrefab: {fileID: 5182385358193413308, guid: a7aa897ba9cd9394e8dfbfe0abb832c0, type: 3}
+    isSayChoice: 1
+  barkSettings:
+    waitTime: 2
+  subtitlePrefab: {fileID: 2050203861053860432, guid: 9a33bde89302bff45ae13469be5aaf9e, type: 3}
+  notificationPrefab: {fileID: 9069833195844291702, guid: f79c3b264b0263846b2da1681cd59825, type: 3}
   choicePrefab: {fileID: 1092970522015848505, guid: 795c135bc3b87114cad19a22be832e79, type: 3}

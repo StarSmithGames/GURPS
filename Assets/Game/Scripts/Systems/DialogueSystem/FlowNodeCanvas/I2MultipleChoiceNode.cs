@@ -29,7 +29,6 @@ namespace Game.Systems.DialogueSystem.Nodes
 
         [SliderField(0f, 10f)]
         public float availableTime;
-        public bool saySelection;
         [ShowIf("saySelection", 1)]
         public bool waitForInput = false;
 
@@ -160,29 +159,14 @@ namespace Game.Systems.DialogueSystem.Nodes
         {
             status = Status.Success;
 
-            Action action = () =>
-            {
-                var choice = currentChoices[index];
+            var choice = currentChoices[index];
 
-                choice.actionAfter?.Execute(FinalActor.Transform, cashedBB);
-                DLGTree.Continue(index);
+            choice.actionAfter?.Execute(FinalActor.Transform, cashedBB);
+            DLGTree.Continue(index);
 
-                choice.choice.isSelected = true;
+            choice.choice.isSelected = true;
 
-                choice.choice.Dispose();
-            };
-
-            if (saySelection)
-            {
-                //Персонаж проговаривает выбраную опцию
-                var tempStatement = currentChoices[index].GetStatement().BlackboardReplace(graphBlackboard);
-                var speechInfo = new SubtitlesRequestInfo(FinalActor, tempStatement, action) { waitForInput = waitForInput };
-                DialogueTree.RequestSubtitles(speechInfo);
-            }
-            else
-            {
-                action?.Invoke();
-            }
+            currentChoices.ForEach((x) => x.choice.Dispose());
         }
 
 
@@ -214,12 +198,13 @@ namespace Game.Systems.DialogueSystem.Nodes
                 return;
             }
 
+            GUILayout.Label($"Choices Count {availableChoices.Count}");
             for (var i = 0; i < availableChoices.Count; i++)
             {
                 var choice = availableChoices[i];
                 var connection = i < outConnections.Count ? outConnections[i] : null;
                 GUILayout.BeginHorizontal(Styles.roundedBox);
-                GUILayout.Label(string.Format("{0} {1}", connection != null ? "O" : "X", choice.GetStatement().Text.CapLength(30)), Styles.leftLabel);
+                GUILayout.Label(string.Format("{0} {1} {2}", connection != null ? "O" : "X", $"[{i + 1}]", choice.GetStatement().Text.CapLength(30)), Styles.leftLabel);
                 GUILayout.EndHorizontal();
             }
 
@@ -227,10 +212,6 @@ namespace Game.Systems.DialogueSystem.Nodes
             if (availableTime > 0)
             {
                 GUILayout.Label(availableTime + "' Seconds");
-            }
-            if (saySelection)
-            {
-                GUILayout.Label("Say Selection");
             }
             GUILayout.EndHorizontal();
         }
@@ -259,7 +240,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 
                 for (int i = 0; i < list.Count; i++)
                 {
-                    wrapper.choice.options.Add(new ChoiceOption("I am a choice..."));
+                    wrapper.choice.options.Add(new ChoiceOption($"I am a choice..."));
                 }
 
                 availableChoices.Add(wrapper);
@@ -270,12 +251,13 @@ namespace Game.Systems.DialogueSystem.Nodes
                 return;
             }
 
+            GUILayout.Label($"Choices Count {availableChoices.Count}");
             EditorUtils.ReorderableList(availableChoices, (i, picked) =>
             {
                 var choice = availableChoices[i];
                 GUILayout.BeginHorizontal("box");
 
-                var text = string.Format("{0} {1}", choice.isShowFoldout ? "-" : "+", choice.GetStatement().Text);
+                var text = string.Format("{0} {1} {2}", choice.isShowFoldout ? "-" : "+", $"[{i + 1}]", choice.GetStatement().Text);
                 if (GUILayout.Button(text, (GUIStyle)"label", GUILayout.Width(0), GUILayout.ExpandWidth(true)))
                 {
                     choice.isShowFoldout = !choice.isShowFoldout;
@@ -305,7 +287,7 @@ namespace Game.Systems.DialogueSystem.Nodes
     {
         public Choice choice;
 
-        public bool isShowFoldout = true;
+        public bool isShowFoldout = false;
 
         public ConditionTask conditionBefore;
         public ActionTask actionAfter;

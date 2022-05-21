@@ -232,6 +232,7 @@ namespace Game.Entities
 	partial class Entity
 	{
 		public virtual bool IsHaveSomethingToSay => (ActorSettings.barks != null && IsHasFreshAndImportantBarks()) || (ActorSettings.dialogues != null && IsHasFreshAndImportantDialogues());
+		public virtual bool IsInDialogue { get; set; }
 
 		public ActorSettings ActorSettings => actorSettings;
 		[SerializeField] protected ActorSettings actorSettings;

@@ -72,7 +72,7 @@ namespace NodeCanvas.DialogueTrees
             {
                 GUILayout.BeginVertical("box");
                 GUILayout.Label(language);
-                Text = EditorGUILayout.TextField(Text);
+                Text = EditorGUILayout.TextArea(Text);
                 Audio = EditorGUILayout.ObjectField("Audio File", Audio, typeof(AudioClip), false) as AudioClip;
                 Meta = EditorGUILayout.TextField("Meta Data", Meta);
                 GUILayout.EndVertical();

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System;
 using Game.Managers.InputManager;
 using Game.Entities;
+using Game.Systems.DialogueSystem;
 
 namespace Game.Systems.CameraSystem
 {
@@ -22,7 +23,6 @@ namespace Game.Systems.CameraSystem
 		public Vector2 zoomMinMax = new Vector2(0.01f, 10f);
 		public float zoomStandart = 5f;
 		public float zoomSpeed = 10f;
-
 		private float currentZoom;
 
 		private CameraPivot currentPivot;
@@ -37,13 +37,16 @@ namespace Game.Systems.CameraSystem
 		private CinemachineBrain brain;
 		private List<CinemachineVirtualCamera> characterCamers;
 		private InputManager inputManager;
+		private CameraVision cameraVision;
 		private AsyncManager asyncManager;
 		private CharacterManager characterManager;
+		private Character leader;
 
 		public CameraController(SignalBus signalBus,
 			CinemachineBrain brain,
 			[Inject(Id = "CharacterCamers")] List<CinemachineVirtualCamera> characterCamers,
 			InputManager inputManager,
+			CameraVision cameraVision,
 			AsyncManager asyncManager,
 			CharacterManager characterManager)
 		{
@@ -51,18 +54,23 @@ namespace Game.Systems.CameraSystem
 			this.brain = brain;
 			this.characterCamers = characterCamers;
 			this.inputManager = inputManager;
+			this.cameraVision = cameraVision;
 			this.asyncManager = asyncManager;
 			this.characterManager = characterManager;
 		}
 
 		public void Initialize()
 		{
+			leader = characterManager.CurrentParty.LeaderParty;
+
 			currentTransposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
 
 			SetZoom(zoomStandart);
 
 			LookAt(characterManager.CurrentParty.LeaderParty);
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+
+			signalBus?.Subscribe<StartDialogueSignal>(OnStartDialogue);
 		}
 
 		public void Dispose()
@@ -122,30 +130,33 @@ namespace Game.Systems.CameraSystem
 			#endregion
 
 			#region Zoom
-			if (inputManager.GetKey(KeyAction.CameraZoomIn))
+			if (!cameraVision.IsUI)
 			{
-				currentZoom += zoomSpeed * Time.deltaTime;
+				if (inputManager.GetKey(KeyAction.CameraZoomIn))
+				{
+					currentZoom += zoomSpeed * Time.deltaTime;
 
-				SetZoom(currentZoom);
-			}
-			if (inputManager.IsScroolWheelDown())
-			{
-				currentZoom += zoomSpeed * 10f * Time.deltaTime;
+					SetZoom(currentZoom);
+				}
+				if (inputManager.IsScroolWheelDown())
+				{
+					currentZoom += zoomSpeed * 10f * Time.deltaTime;
 
-				SetZoom(currentZoom);
-			}
+					SetZoom(currentZoom);
+				}
 
-			if (inputManager.GetKey(KeyAction.CameraZoomOut))
-			{
-				currentZoom -= zoomSpeed * Time.deltaTime;
+				if (inputManager.GetKey(KeyAction.CameraZoomOut))
+				{
+					currentZoom -= zoomSpeed * Time.deltaTime;
 
-				SetZoom(currentZoom);
-			}
-			if (inputManager.IsScroolWheelUp())
-			{
-				currentZoom -= zoomSpeed * 10f * Time.deltaTime;
+					SetZoom(currentZoom);
+				}
+				if (inputManager.IsScroolWheelUp())
+				{
+					currentZoom -= zoomSpeed * 10f * Time.deltaTime;
 
-				SetZoom(currentZoom);
+					SetZoom(currentZoom);
+				}
 			}
 			#endregion
 		}
@@ -204,7 +215,13 @@ namespace Game.Systems.CameraSystem
 
 		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 		{
-			LookAt(signal.leader);
+			leader = signal.leader;
+			LookAt(leader);
+		}
+
+		private void OnStartDialogue(StartDialogueSignal signal)
+		{
+			SetZoom(zoomStandart);
 		}
 	}
 }

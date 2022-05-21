@@ -27,7 +27,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 
 		public override bool Check()
 		{
-			return alignmentRequired == (sheet.Characteristics.Alignment as AlignmentCharacteristic).Aligment;
+			return alignmentRequired == (sheet.Characteristics.Alignment as AlignmentCharacteristic).Alignment;
 		}
 	}
 }

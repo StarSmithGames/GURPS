@@ -23,6 +23,8 @@ namespace Game.Systems.CameraSystem
 	public class CameraVision : IInitializable, IDisposable, ITickable
 	{
 		public bool IsCanHoldMouse { get; private set; }
+		public bool IsMouseHit { get; private set; }
+		public bool IsUI { get; private set; }
 
 		private IObservable CurrentObserve
 		{
@@ -46,8 +48,6 @@ namespace Game.Systems.CameraSystem
 		private IObservable currentEntity = null;
 
 		private Character leader;
-		private bool isMouseHit;
-		private bool isUI;
 
 		private SignalBus signalBus;
 		private CinemachineBrain brain;
@@ -58,6 +58,7 @@ namespace Game.Systems.CameraSystem
 		private UIManager uiManager;
 		private InteractionSystem.InteractionSystem interactionHandler;
 		private ContextMenuHandler contextMenuHandler;
+		private DialogueSystem.DialogueSystem dialogueSystem;
 
 		public CameraVision(SignalBus signalBus,
 			CinemachineBrain brain,
@@ -67,7 +68,8 @@ namespace Game.Systems.CameraSystem
 			GlobalSettings settings,
 			UIManager uiManager,
 			InteractionSystem.InteractionSystem interactionHandler,
-			ContextMenuHandler contextMenuHandler)
+			ContextMenuHandler contextMenuHandler,
+			DialogueSystem.DialogueSystem dialogueSystem)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
@@ -78,6 +80,7 @@ namespace Game.Systems.CameraSystem
 			this.uiManager = uiManager;
 			this.interactionHandler = interactionHandler;
 			this.contextMenuHandler = contextMenuHandler;
+			this.dialogueSystem = dialogueSystem;
 		}
 
 		public void Initialize()
@@ -98,19 +101,22 @@ namespace Game.Systems.CameraSystem
 		{
 			RaycastHit hit;
 			Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
-			isMouseHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore);
-			isUI = EventSystem.current.IsPointerOverGameObject();
+			IsMouseHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore);
+			IsUI = EventSystem.current.IsPointerOverGameObject();
 			Vector3 point = hit.point;
 
-			//Looking
-			CurrentObserve = isMouseHit && !isUI ? hit.transform.root.GetComponent<IObservable>() : null;
+			if (!leader.IsInDialogue)
+			{
+				//Looking
+				CurrentObserve = IsMouseHit && !IsUI ? hit.transform.root.GetComponent<IObservable>() : null;
 
-			HandleHover(point);
-			HandleMouseClick(point);
+				HandleHover(point);
+				HandleMouseClick(point);
 
-			TooltipRuler();
+				TooltipRuler();
 
-			ValidatePath(point);
+				ValidatePath(point);
+			}
 		}
 
 		private void HandleHover(Vector3 point)
@@ -206,7 +212,7 @@ namespace Game.Systems.CameraSystem
 					{
 						if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 						{
-							if (isMouseHit && !isUI)
+							if (IsMouseHit && !IsUI)
 							{
 								if (!leader.InBattle)
 								{
@@ -248,7 +254,7 @@ namespace Game.Systems.CameraSystem
 		{
 			if (leader.InBattle && !leader.IsHasTarget)
 			{
-				if (isMouseHit && !isUI)
+				if (IsMouseHit && !IsUI)
 				{
 					string text = Math.Round(leader.Navigation.CurrentNavMeshPathDistance, 2) +
 						SymbolCollector.METRE.ToString() + "-" +
@@ -271,9 +277,9 @@ namespace Game.Systems.CameraSystem
 		{
 			float pathDistance = CurrentObserve != null ? leader.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leader.Navigation.FullPathDistance, 2);
 
-			bool isInvalidTarget = !isMouseHit || !leader.Navigation.NavMeshAgent.IsPathValid(point);
-			bool isOutOfRange = isMouseHit && !isUI && leader.InBattle && leader.IsWithRangedWeapon && CurrentObserve != null && !IsPointInLeaderRange(point);
-			bool isNotEnoughMovement = isMouseHit && !isUI &&
+			bool isInvalidTarget = !IsMouseHit || !leader.Navigation.NavMeshAgent.IsPathValid(point);
+			bool isOutOfRange = IsMouseHit && !IsUI && leader.InBattle && leader.IsWithRangedWeapon && CurrentObserve != null && !IsPointInLeaderRange(point);
+			bool isNotEnoughMovement = IsMouseHit && !IsUI &&
 				leader.InBattle && !leader.IsHasTarget &&
 				(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
 
