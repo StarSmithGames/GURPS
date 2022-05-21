@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e041519adf50fd4c9ddea3646afc87a, type: 3}
   m_Name: Barks
   m_EditorClassIdentifier: 
-  _serializedGraph: '{"type":"Game.Systems.DialogueSystem.BarkTree","nodes":[{"statements":[{"_text":"*Clack!*"},{"_text":"This
-    is a dialogue text"}],"_position":{"x":300.0,"y":270.0},"$type":"I2StatementNode"},{"statements":[{"_text":"*Clack!
-    Clack!*"},{"_text":"This is a dialogue text"}],"_position":{"x":240.0,"y":390.0},"$type":"I2StatementNode"},{"statements":[{"_text":"Yar!"},{"_text":"This
-    is a dialogue text"}],"_position":{"x":465.0,"y":330.0},"$type":"I2StatementNode"}],"connections":[],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
+  _serializedGraph: '{"type":"Game.Systems.DialogueSystem.BarkTree","nodes":[{"statements":[{"text":"Do
+    not talk to me.","isShowFoldout":true},{}],"_position":{"x":300.0,"y":270.0},"$type":"I2StatementNode"},{"statements":[{"text":"What?","isShowFoldout":true},{}],"_position":{"x":240.0,"y":390.0},"$type":"I2StatementNode"},{"statements":[{"text":"You
+    stink! Stop talk to me.","isShowFoldout":true},{}],"_position":{"x":465.0,"y":330.0},"$type":"I2StatementNode"}],"connections":[],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
   _objectReferences: []
   _graphSource:
     _version: 3.22

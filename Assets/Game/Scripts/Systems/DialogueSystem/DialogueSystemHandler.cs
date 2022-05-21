@@ -1,6 +1,8 @@
-using FlowCanvas.Nodes;
 
 using Game.Entities;
+using Game.Systems.ContextMenu;
+using Game.Systems.DialogueSystem.Nodes;
+using Game.Systems.SheetSystem;
 
 using I2.Loc;
 
@@ -9,7 +11,6 @@ using NodeCanvas.DialogueTrees;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -77,7 +78,7 @@ namespace Game.Systems.DialogueSystem
 
 			Assert.IsNotNull(actor, "IActor == null");
 
-			var sheet = (actor as IEntity).Sheet;
+			var sheet = (actor as ISheetable).Sheet;
 			dialogue.ActorPortrait.gameObject.SetActive(sheet.Information.IsHasPortrait);
 			dialogue.ActorPortrait.sprite = sheet.Information.portrait;
 
@@ -90,8 +91,8 @@ namespace Game.Systems.DialogueSystem
 				dialogue.ActorSpeech.text = $"{sheet.Information.Name} - {text}\n";
 			}
 
-
-			if (settings.waitForInput)
+			//Wait For Input
+			if (info.waitForInput)
 			{
 				dialogue.WaitIndicator.SetActive(true);
 				while (!Input.anyKeyDown)
@@ -99,7 +100,7 @@ namespace Game.Systems.DialogueSystem
 					yield return null;
 				}
 				dialogue.WaitIndicator.SetActive(false);
-			}
+			} 
 
 			yield return null;
 
@@ -143,47 +144,98 @@ namespace Game.Systems.DialogueSystem
 			}
 
 
-			int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
+			int langIndex = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
 
 			//fill
 			for (int i = 0; i < info.choices.Count; i++)
 			{
 				Choice choice = info.choices[i];
 				
-				if (!(index >= 0 && index < choice.options.Count))
+				if (!(langIndex >= 0 && langIndex < choice.options.Count))
 				{
 					throw new Exception("LocalizationManager index out of bounds!");
 				}
 
-				var option = choice.options[index];
-
-
 				UIChoice choiceUI = choiceFactory.Create();
 
-				if(choice.choiceConditionState == ChoiceConditionState.None)
+				ChoiceWrapper wrapper = new ChoiceWrapper()
 				{
-					choiceUI.Text.color = choice.isSelected ? Color.gray : Color.white;
-					choiceUI.Text.text = $"{i + 1}. {option.Statement.Text}";//1. (Aligment or Lie-True) [Requirements or Action] Actor - Text.
-				}
-				else if(choice.choiceConditionState == ChoiceConditionState.Inactive)
-				{
-					choiceUI.Text.color = Color.gray;
-					choiceUI.Text.text = $"[Conditions Not Met] {i + 1}. {option.Statement.Text}";
-				}
-				else if(choice.choiceConditionState == ChoiceConditionState.Unavailable)
-				{
-					choiceUI.Text.color = Color.red;
-					choiceUI.Text.text = $"[Not Unavailable Choice]";
-				}
+					choice = choice,
+					option = choice.options[langIndex],
+					ui = choiceUI
+				};
+
+				FillChoice(i + 1, wrapper);
 
 				choiceUI.onButtonClick += OnChoiced;
 				choiceUI.transform.SetParent(dialogue.ChoiceContent);
 
-				choices.Add(new ChoiceWrapper()
+				choices.Add(wrapper);
+			}
+		}
+
+		private void FillChoice(int index, ChoiceWrapper wrapper)
+		{
+			switch (wrapper.choice.choiceConditionState)
+			{
+				case ChoiceConditionState.Normal:
 				{
-					choice = choice,
-					ui = choiceUI
+					wrapper.ui.Text.color = wrapper.choice.isSelected ? Color.gray : Color.white;
+					wrapper.ui.Text.text = $"{index}. {GetConsequence()}{GetRequirements()}{wrapper.option.Statement.Text}";//1. (Aligment or Lie-True) [Requirements or Action] Actor - Text.
+					break;
+				}
+				case ChoiceConditionState.Inactive:
+				{
+					wrapper.ui.Text.color = new Color(0.35f, 0.35f, 0.35f);//dark gray
+					wrapper.ui.Text.text = $"{index}. {GetConsequence()}[Conditions Not Met] {wrapper.option.Statement.Text}";
+					break;
+				}
+				case ChoiceConditionState.Unavailable:
+				{
+					wrapper.ui.Text.color = Color.red;
+					wrapper.ui.Text.text = $"{index}. [Unavailable Choice]";
+					break;
+				}
+				case ChoiceConditionState.Reason:
+				{
+					wrapper.ui.Text.color = Color.red;
+					wrapper.ui.Text.text = $"{index}. {GetConsequence()} {GetRequirements(true)}";
+					break;
+				}
+			}
+
+
+			string GetRequirements(bool includeLabel = false)
+			{
+				string requires = "";
+				string errors = "";
+
+				wrapper.choice.requirements.ForEach((x) =>
+				{
+					if (x is AlignmentRequirement alignmentRequirement)
+					{
+						requires += alignmentRequirement.alignmentRequired;
+						errors += "Specific alignment required";
+					}
 				});
+				requires = !string.IsNullOrEmpty(requires) ? $"{requires} " : "";//spaces
+
+				return string.IsNullOrEmpty(requires) ? "" : $"[Requires {requires}] " + (includeLabel ? errors : "");
+			}
+			string GetConsequence()
+			{
+				string consequence = "";
+
+				wrapper.choice.consequence.ForEach((x) =>
+				{
+					if (x is CommandSetAlignment commandAlignment)
+					{
+						consequence += commandAlignment.Result;
+					}
+				});
+				consequence = !string.IsNullOrEmpty(consequence) ? $"{consequence} " : "";//spaces
+
+				return consequence;
 			}
 		}
 
@@ -191,7 +243,7 @@ namespace Game.Systems.DialogueSystem
 		{
 			var wrapper = choices.Find((x) => x.ui == choice);
 
-			if(wrapper.choice.choiceConditionState == ChoiceConditionState.None)
+			if(wrapper.choice.choiceConditionState == ChoiceConditionState.Normal)
 			{
 				isWaitingChoice = false;
 
@@ -211,6 +263,7 @@ namespace Game.Systems.DialogueSystem
 		public class ChoiceWrapper
 		{
 			public Choice choice;
+			public ChoiceOption option;
 			public UIChoice ui;
 		}
 
@@ -220,7 +273,6 @@ namespace Game.Systems.DialogueSystem
 		{
 			public bool additionalText = true;
 			public bool skipOnInput;
-			public bool waitForInput = true;
 
 			public SubtitleDelays delays;
 

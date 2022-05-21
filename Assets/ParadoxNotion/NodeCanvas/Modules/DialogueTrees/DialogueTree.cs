@@ -14,7 +14,7 @@ namespace NodeCanvas.DialogueTrees
         resourcesURL = "https://nodecanvas.paradoxnotion.com/downloads/",
         forumsURL = "https://nodecanvas.paradoxnotion.com/forums-page/"
         )]
-    [CreateAssetMenu(menuName = "Game/Dialogues/DialogueTree")]
+    [CreateAssetMenu(menuName = "Game/Dialogues/Dialogue")]
     public partial class DialogueTree : Graph
     {
         ///----------------------------------------------------------------------------------------------

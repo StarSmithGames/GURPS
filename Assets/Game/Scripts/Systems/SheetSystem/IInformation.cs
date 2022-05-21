@@ -76,5 +76,17 @@ namespace Game.Systems.SheetSystem
 
 
     [System.Serializable]
-    public class ContainerInformation : EntityInformation { }
+    public class ModelInformation : EntityInformation
+    {
+        public override string Name
+        {
+            get
+            {
+                string name = string.IsNullOrEmpty(base.Name) ? "EMPTY" : base.Name;
+                return $"<color=#{ColorUtility.ToHtmlStringRGBA(nameColor)}>{name}</color>";
+            }
+        }
+
+        public Color nameColor = Color.white;
+    }
 }

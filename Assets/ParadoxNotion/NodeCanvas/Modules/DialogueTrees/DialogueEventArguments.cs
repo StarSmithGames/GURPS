@@ -16,6 +16,9 @@ namespace NodeCanvas.DialogueTrees
         public IDialogueActor actor;
         ///<summary>The statement said</summary>
         public IStatement statement;
+
+        public bool waitForInput = true;
+
         ///<summary>Call this to Continue the DialogueTree</summary>
         public Action Continue;
 
@@ -48,8 +51,13 @@ namespace NodeCanvas.DialogueTrees
     public class Choice
 	{
         public bool isSelected = false;
-        public ChoiceConditionState choiceConditionState = ChoiceConditionState.None;
-        public List<ChoiceOption> options = new List<ChoiceOption>();//ru, en ...
+
+        public List<object> requirements = new List<object>();
+        public List<object> consequence = new List<object>();
+        public List<object> actions = new List<object>();
+
+        public ChoiceConditionState choiceConditionState = ChoiceConditionState.Normal;
+        public List<ChoiceOption> options = new List<ChoiceOption>();//ru, en ...translations
 
         public Data GetData()
 		{
@@ -58,6 +66,14 @@ namespace NodeCanvas.DialogueTrees
                 isSelected = isSelected,
             };
 		}
+
+
+        public void Dispose()
+		{
+            requirements.Clear();
+            consequence.Clear();
+            actions.Clear();
+        }
 
         public class Data
 		{
@@ -79,9 +95,10 @@ namespace NodeCanvas.DialogueTrees
 
     public enum ChoiceConditionState
     {
-        None,
+        Normal,
         Inactive,
         Unavailable,
+        Reason,
         Ignore,
     }
 }

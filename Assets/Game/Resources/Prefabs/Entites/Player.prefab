@@ -131,8 +131,8 @@ MonoBehaviour:
     interaction: 0
     position: {x: 0, y: 0, z: 0}
   actorSettings:
-    name: Player
-    nameColor: {r: 1, g: 1, b: 1, a: 1}
+    isImportanatBark: 0
+    indicator: 1
     barks: {fileID: 0}
     dialogues: {fileID: 0}
   data: {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
@@ -4669,7 +4669,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3417484273925124429, guid: e6ca0e9c887812c46ba0d4cc2db83691, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 2.25
       objectReference: {fileID: 0}
     - target: {fileID: 3417484273925124429, guid: e6ca0e9c887812c46ba0d4cc2db83691, type: 3}
       propertyPath: m_LocalPosition.z

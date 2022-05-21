@@ -2,16 +2,17 @@ using Game.Entities;
 using Game.Systems.SheetSystem;
 
 using NodeCanvas.DialogueTrees;
-using NodeCanvas.Framework;
 
 using ParadoxNotion.Design;
+
+using UnityEngine.Assertions;
 
 namespace Game.Systems.DialogueSystem.Nodes
 {
 	[Name("Check Alignment")]
 	[Description("Check Current Actor Alignment.")]
 	[Category("\x2724 Sheet")]
-	public class SheetCheckAlignmentCondition : ConditionTask
+	public class SheetAlignmentRequirement : RequirementConditionTask
 	{
 		public Alignment alignmentRequired = Alignment.TrueNeutral;
 
@@ -23,14 +24,16 @@ namespace Game.Systems.DialogueSystem.Nodes
 				var node = dt.CurrentNode;
 
 				var sheet = (node.FinalActor as IEntity)?.Sheet;
-			
-				if(sheet != null)
+
+				if (sheet != null)
 				{
-					return (sheet.Characteristics.Alignment as AlignmentCharacteristic).Aligment == alignmentRequired;
+					requirement = new AlignmentRequirement(sheet) { alignmentRequired = alignmentRequired };
 				}
 			}
 
-			return false;
+			Assert.IsNotNull(requirement, "Alignment requirement == null");
+
+			return requirement?.Check() ?? false;
 		}
 	}
 }

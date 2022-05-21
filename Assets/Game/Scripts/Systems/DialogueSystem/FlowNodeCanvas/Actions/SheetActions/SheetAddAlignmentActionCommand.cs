@@ -1,0 +1,79 @@
+using Game.Entities;
+using Game.Systems.ContextMenu;
+using Game.Systems.SheetSystem;
+
+using NodeCanvas.DialogueTrees;
+using NodeCanvas.Framework;
+
+using ParadoxNotion.Design;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+using UnityEngine;
+using UnityEngine.Assertions;
+
+namespace Game.Systems.DialogueSystem.Nodes
+{
+	[Name("Add Alignment")]
+	[Description("Is Use CommandSetAlignment")]
+	[Category("\x2724 Sheet")]
+	public class SheetAddAlignmentActionCommand : CommandActionTask
+	{
+		public bool usePercents = true;
+		public Alignment type = Alignment.TrueNeutral;
+		public float percentAlignment = 0;
+		public Vector2 addAlignment = Vector2.zero;
+
+		public override void Initialize()
+		{
+			var dt = ownerSystem as DialogueTree;
+			if (dt != null)
+			{
+				var node = dt.CurrentNode;
+				var sheet = (node.FinalActor as IEntity)?.Sheet;
+
+				if (sheet != null)
+				{
+					if (usePercents)
+					{
+						command = new CommandSetAlignment(sheet, type, percentAlignment);
+					}
+					else
+					{
+						command = new CommandSetAlignment(sheet, addAlignment);
+					}
+				}
+			}
+
+			Assert.IsNotNull(command, "Alignment command == null");
+		}
+
+		protected override void OnExecute()
+		{
+			command?.Execute();
+
+			EndAction(true);
+		}
+
+#if UNITY_EDITOR
+		protected override void OnTaskInspectorGUI()
+		{
+			usePercents = EditorGUILayout.Toggle("Use Percents", usePercents);
+
+			if (usePercents)
+			{
+				type = (Alignment)EditorGUILayout.EnumPopup("Type", type);
+				percentAlignment = EditorGUILayout.FloatField("Percent Alignment", percentAlignment);
+				percentAlignment = Mathf.Clamp(percentAlignment, 0.01f, 100f);
+			}
+			else
+			{
+				addAlignment = EditorGUILayout.Vector2Field("Add Alignment", addAlignment);
+				addAlignment = new Vector2(Mathf.Clamp(addAlignment.x, -1, 1), Mathf.Clamp(addAlignment.y, -1, 1));
+			}
+		}
+#endif
+	}
+}

@@ -18,7 +18,7 @@ using UnityEngine;
 namespace Game.Systems.DialogueSystem.Nodes
 {
     [ParadoxNotion.Design.Icon("List")]
-    [Name("I2Multiple Choice")]
+    [Name("Multiple Choice")]
     [Category("Branch")]
     [Description("Prompt a Dialogue Multiple Choice. A choice will be available if the choice condition(s) are true or there is no choice conditions. The Actor selected is used for the condition checks and will also Say the selection if the option is checked.")]
     [Color("b3ff7f")]
@@ -27,10 +27,11 @@ namespace Game.Systems.DialogueSystem.Nodes
         public override int maxOutConnections { get { return availableChoices.Count; } }
         public override bool requireActorSelection { get { return true; } }
 
-
         [SliderField(0f, 10f)]
         public float availableTime;
         public bool saySelection;
+        [ShowIf("saySelection", 1)]
+        public bool waitForInput = false;
 
         [SerializeField, AutoSortWithChildrenConnections]
         [HideInInspector] public List<ChoiceWrapper> availableChoices = new List<ChoiceWrapper>();
@@ -49,35 +50,35 @@ namespace Game.Systems.DialogueSystem.Nodes
 
             availableChoices.ForEach((availableChoice) =>
             {
-                if(availableChoice.conditionBefore != null)
+                if (availableChoice.conditionBefore != null)
 				{
+                    //conditionBefore check on ActorSheetCondition
                     if (IsActorSheetCondition(availableChoice.conditionBefore, out ActorSheetCondition actorSheetCondition))
                     {
                         if (actorSheetCondition.CheckOnce(FinalActor.Transform, bb))
                         {
-                            availableChoice.choice.choiceConditionState = ChoiceConditionState.None;
+                            availableChoice.choice.choiceConditionState = ChoiceConditionState.Normal;
                             currentChoices.Add(availableChoice);
                         }
-                        else//Если не прошёл условие то игнорируем чойс или делаем не доступным.
+                        else if (actorSheetCondition.state != ChoiceConditionState.Ignore)//Если не прошёл условие то игнорируем чойс или делаем не доступным.
                         {
-                            if (actorSheetCondition.state != ChoiceConditionState.Ignore)
-							{
-                                availableChoice.choice.choiceConditionState = actorSheetCondition.state;
-                                currentChoices.Add(availableChoice);
-                            }
+                            availableChoice.choice.choiceConditionState = actorSheetCondition.state;
+                            currentChoices.Add(availableChoice);
                         }
                     }
                     else if (availableChoice.conditionBefore.CheckOnce(FinalActor.Transform, bb))
                     {
-                        availableChoice.choice.choiceConditionState = ChoiceConditionState.None;
+                        availableChoice.choice.choiceConditionState = ChoiceConditionState.Normal;
                         currentChoices.Add(availableChoice);
                     }
-				}
+                }
 				else
 				{
                     currentChoices.Add(availableChoice);
                 }
             });
+
+            AddStuff();
 
             var optionsInfo = new MultipleChoiceRequestInfo()
             {
@@ -91,30 +92,48 @@ namespace Game.Systems.DialogueSystem.Nodes
             return Status.Running;
         }
 
-        private void OnOptionSelected(int index)
+        private void AddStuff()
         {
-            status = Status.Success;
-
-            Action action = () =>
+            currentChoices.ForEach((currentChoice) =>
             {
-                currentChoices[index].actionAfter.Execute(FinalActor.Transform, cashedBB);
-                DLGTree.Continue(index);
+                //conditionBefore add requirements
+                if (IsActorSheetCondition(currentChoice.conditionBefore, out ActorSheetCondition actorSheetCondition))
+                {
+                    if (actorSheetCondition.condition.Is<ConditionList>(out ConditionList list))
+                    {
+                        var conditionTasks = list.conditions.OfType<RequirementConditionTask>().ToList();
+                        currentChoice.choice.consequence.AddRange(conditionTasks.Select((x) => x.requirement));
+                    }
+                    else
+                    {
+                        if (actorSheetCondition.condition is RequirementConditionTask requirementCondition)
+                        {
+                            currentChoice.choice.requirements.Add(requirementCondition.requirement);
+                        }
+                    }
+                }
 
-                currentChoices[index].choice.isSelected = true;
-            };
-
-            if (saySelection)
-            {
-                //Персонаж проговаривает выбраную опцию
-                var tempStatement = currentChoices[index].GetStatement().BlackboardReplace(graphBlackboard);
-                var speechInfo = new SubtitlesRequestInfo(FinalActor, tempStatement, action);
-                DialogueTree.RequestSubtitles(speechInfo);
-            }
-            else
-            {
-                action?.Invoke();
-            }
+                //actionAfter initialize and select commands
+                if (currentChoice.actionAfter != null)
+                {
+                    if (currentChoice.actionAfter.Is<ActionList>(out ActionList list))
+                    {
+                        var actionTasks = list.actions.OfType<CommandActionTask>().ToList();
+                        actionTasks.ForEach((x) => x.Initialize());
+                        currentChoice.choice.consequence.AddRange(actionTasks.Select((x) => x.command));
+                    }
+                    else
+                    {
+                        if (currentChoice.actionAfter is CommandActionTask commandAction)
+                        {
+                            commandAction.Initialize();
+                            currentChoice.choice.consequence.Add(commandAction.command);
+                        }
+                    }
+                }
+            });
         }
+
 
         private bool IsActorSheetCondition(ConditionTask condition, out ActorSheetCondition actorSheetCondition)
         {
@@ -134,6 +153,36 @@ namespace Game.Systems.DialogueSystem.Nodes
             }
 
             return false;
+        }
+
+
+        private void OnOptionSelected(int index)
+        {
+            status = Status.Success;
+
+            Action action = () =>
+            {
+                var choice = currentChoices[index];
+
+                choice.actionAfter?.Execute(FinalActor.Transform, cashedBB);
+                DLGTree.Continue(index);
+
+                choice.choice.isSelected = true;
+
+                choice.choice.Dispose();
+            };
+
+            if (saySelection)
+            {
+                //Персонаж проговаривает выбраную опцию
+                var tempStatement = currentChoices[index].GetStatement().BlackboardReplace(graphBlackboard);
+                var speechInfo = new SubtitlesRequestInfo(FinalActor, tempStatement, action) { waitForInput = waitForInput };
+                DialogueTree.RequestSubtitles(speechInfo);
+            }
+            else
+            {
+                action?.Invoke();
+            }
         }
 
 

@@ -37,9 +37,18 @@ namespace Game.Systems.InteractionSystem
 						.Append(new RotateToAction(e, entity.Transform));
 				}
 				
-				entity.TaskSequence
-					.Append(() => dialogueSystem.StartDialogue(initiator, actor))
-					.Execute();
+				if(actor.ActorSettings.dialogues == null && actor.ActorSettings.barks != null)
+				{
+					entity.TaskSequence
+						.Append(() => actor.Bark());
+				}
+				else
+				{
+					entity.TaskSequence
+						.Append(() => dialogueSystem.StartDialogue(initiator, actor));
+				}
+
+				entity.TaskSequence.Execute();
 			}
 			else if (interactable is IContainer container)
 			{

@@ -1,5 +1,4 @@
 using Game.Entities;
-using Game.Systems.SheetSystem;
 
 using NodeCanvas.DialogueTrees;
 using NodeCanvas.Framework;
@@ -10,7 +9,7 @@ using UnityEngine;
 
 namespace Game.Systems.DialogueSystem.Nodes
 {
-	[Name("CheckActorSheet")]
+	[Name("Check Actor Sheet")]
 	[Description("Work only with Choices.\nПри ложном условии choice будет:\nNone-Ничего не происходит. Inactive-Нельзя использовать(серый).\nUnavailable-Недоступный(красный). Ignore-Игнорируется.")]
 	public class ActorSheetCondition : ConditionTask
 	{

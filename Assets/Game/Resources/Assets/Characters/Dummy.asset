@@ -1,0 +1,152 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d12ddcda80a29274a8797e9716ef3857, type: 3}
+  m_Name: Dummy
+  m_EditorClassIdentifier: 
+  sheet:
+    identity: 0
+    age: -1
+    race: 0
+    gender: 0
+    isImmortal: 0
+    stats:
+      level: 1
+      strength: 10
+      dexterity: 10
+      intelligence: 10
+      health: 10
+      addHitPoints: 0
+      addFatiguePoints: 0
+      addMove: 0
+      addSpeed: 0
+      addWill: 0
+      addPerception: 0
+    characteristics:
+      alignment: 4
+    inventory:
+      useRandomItems: 0
+      shuffleList: 1
+      items: []
+      randomSettings:
+        isUnique: 0
+        useRandomCount: 1
+        itemsCount: 1
+        itemsMinMaxCount: {x: 1, y: 5}
+        staticItems: []
+        useConsumableItems: 1
+        useFireItems: 1
+        useAccelerantItems: 1
+        useFuelItems: 1
+        useStarterItems: 1
+        useTinderItems: 1
+        useToolItems: 1
+        useMaterialItems: 1
+        ignoreList: []
+    equipment:
+      head:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      sholders:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      chest:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      forearms:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      legs:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      feet:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon00:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon01:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon10:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      weapon11:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      cloak:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      jewelry:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      ring0:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      ring1:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+      trinket:
+        useRandom: 0
+        data: {fileID: 0}
+        currentStackSize: 1
+        currentWeight: 0.01
+        currentDurability: 100
+  information:
+    nameId: Dummy
+    localizations:
+    - language: 10
+      name: Dummy
+    isHasPortrait: 0
+    portrait: {fileID: 0}
+    nameColor: {r: 0.974854, g: 1, b: 0.3066038, a: 1}

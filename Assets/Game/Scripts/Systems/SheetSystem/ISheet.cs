@@ -57,9 +57,15 @@ namespace Game.Systems.SheetSystem
         public NPCSheet(NPCData data) : base(data.information, data.sheet) { }
 	}
 
-	public class ContainerSheet : EntitySheet
+
+	public class ModelSheet : EntitySheet
 	{
-		public ContainerSheet(ContainerData data) : base(data.information, data.sheet) { }
+		public ModelSheet(ModelData data) : base(data.information, data.sheet) { }
+	}
+
+	public class ContainerSheet : ModelSheet
+    {
+		public ContainerSheet(ContainerData data) : base(data) { }
 	}
 
 

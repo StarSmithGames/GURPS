@@ -260,7 +260,7 @@ namespace Game.Entities
 					Statement subtitles = null;
 					if (bark is I2StatementNode node)
 					{
-						subtitles = node.GetSubtitles();
+						subtitles = node.GetCurrentStatement();
 					}
 
 					ShowBarkSubtitles(subtitles);

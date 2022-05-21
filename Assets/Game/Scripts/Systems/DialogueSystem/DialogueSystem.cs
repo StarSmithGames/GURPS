@@ -1,5 +1,6 @@
 using Game.Entities;
 using Game.Managers.CharacterManager;
+using Game.Systems.SheetSystem;
 
 using NodeCanvas.DialogueTrees;
 
@@ -66,7 +67,7 @@ namespace Game.Systems.DialogueSystem
 
 		public void JoinToDialogue(IActor actor)
 		{
-			actorsDictionary.Add((actor as IEntity).Sheet.Information.nameId, actor);
+			actorsDictionary.Add((actor as ISheetable).Sheet.Information.nameId, actor);
 		}
 
 		private IEnumerator Dialogue()

@@ -2920,8 +2920,11 @@ MonoBehaviour:
     maxRange: 1.5
     interaction: 0
     position: {x: 0, y: 0, z: 0}
-  outline: {fileID: 3660278991495728768}
-  barks: {fileID: 11400000, guid: baf191f27f173a54981dc2a8122708d8, type: 2}
+  actorSettings:
+    isImportanatBark: 0
+    indicator: 1
+    barks: {fileID: 0}
+    dialogues: {fileID: 0}
   data: {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
 --- !u!143 &6753425058046806693
 CharacterController:
@@ -5783,7 +5786,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3417484273925124429, guid: e6ca0e9c887812c46ba0d4cc2db83691, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 2.25
       objectReference: {fileID: 0}
     - target: {fileID: 3417484273925124429, guid: e6ca0e9c887812c46ba0d4cc2db83691, type: 3}
       propertyPath: m_LocalPosition.z

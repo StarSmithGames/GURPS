@@ -69,11 +69,11 @@ namespace Game.Systems.SheetSystem
 		}
 
 
-		private static Alignment ConvertVector2ToAligment(Vector2 vector)
+		public static Alignment ConvertVector2ToAligment(Vector2 vector)
 		{
 			return Alignment.TrueNeutral;
 		}
-		private static Vector2 ConvertAligmentToVector2(Alignment aligment)
+		public static Vector2 ConvertAligmentToVector2(Alignment aligment)
 		{
 			switch (aligment)
 			{
