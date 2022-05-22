@@ -35,6 +35,6 @@ namespace Game.Systems.SheetSystem
 	[System.Serializable]
 	public class CharacteristicsSettings
 	{
-		public Alignment alignment = Alignment.TrueNeutral;
+		public AlignmentType alignment = AlignmentType.TrueNeutral;
 	}
 }

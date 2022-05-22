@@ -1,7 +1,11 @@
-using Sirenix.OdinInspector;
-
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections.Generic;
+using UnityEngine.Assertions;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Game.Systems.InventorySystem
 {
@@ -10,20 +14,12 @@ namespace Game.Systems.InventorySystem
 	{
 		public UnityAction OnItemChanged;
 
-		[ShowIf("IsCanBeRandom")]
-		public bool useRandom = false;
-		private bool IsCanBeRandom => IsStackable || IsBreakable || IsWeapon;
-
-
 		public ItemData ItemData => data;
-		[Required]
-		[OnValueChanged("OnDataChanged")]
 		[SerializeField] private ItemData data;
-		public T GetItemData<T>() where T : ItemData => data as T;
 
+		public bool useRandom = false;
 
-		[ShowIf("@IsStackable && !useRandom")]
-		[MinValue("MinimumStackSize"), MaxValue("MaximumStackSize")]
+		#region StackSize
 		[SerializeField] private int currentStackSize = 1;
 		public int CurrentStackSize
 		{
@@ -45,13 +41,10 @@ namespace Game.Systems.InventorySystem
 
 		public bool IsStackable => data?.isStackable ?? false;
 		public bool IsInfinityStack => data?.isInfinityStack ?? false;
+		#endregion
 
-
-		[InfoBox("@WeightInfo")]
-		[HideIf("@useRandom")]
-		[MinValue("MinimumWeight"), MaxValue("MaximumWeight")]
-		[SuffixLabel("kg", true)]
-		[ReadOnly] [SerializeField] private float currentWeight = 0.01f;
+		#region Weight
+		[SerializeField] private float currentWeight = 0.01f;
 		public float CurrentWeight
 		{
 			get => currentWeight;
@@ -67,10 +60,10 @@ namespace Game.Systems.InventorySystem
 		public float MaximumWeight => data?.weight ?? 99.99f;
 		public float MinimumWeight => 0.01f;
 
+		public bool IsWeighty => data?.isWeighty ?? false;
+		#endregion
 
-		[ShowIf("@IsBreakable && !useRandom")]
-		[MinValue("MinimumDurability"), MaxValue("MaximumDurability")]
-		[SuffixLabel("%", true)]
+		#region Durability
 		[SerializeField] private float currentDurability = 100f;
 		public float CurrentDurability
 		{
@@ -86,6 +79,7 @@ namespace Game.Systems.InventorySystem
 		public float MinimumDurability => 0;
 
 		public bool IsBreakable => data?.isBreakable ?? false;
+		#endregion
 
 		public bool IsEquippable => data != null && data is EquippableItemData;
 		public bool IsArmor => data != null && data is ArmorItemData;
@@ -137,6 +131,8 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
+		public T GetItemData<T>() where T : ItemData => data as T;
+
 		public Item GenerateItem()//rnd item
 		{
 			return null;
@@ -153,26 +149,116 @@ namespace Game.Systems.InventorySystem
 			};
 		}
 
-
-		private string Tittle
+		public override string ToString()
 		{
-			get
+			Assert.IsNotNull(data);
+
+			return $"{data.ItemName}{(data.isStackable ? $" x{CurrentStackSize}" : "")}";
+		}
+
+#if UNITY_EDITOR
+		public bool isShowFoldout = false;
+		public bool IsCanBeRandom => IsStackable /*|| IsWeighty*/ || IsBreakable;
+
+		public void OnGUI()
+		{
+			var oldData = data;
+
+			data = (ItemData)EditorGUILayout.ObjectField("Data", data, typeof(ItemData), true);
+			if (IsCanBeRandom)
 			{
-				if (data != null && data.localizations.Count > 0)
+				useRandom = EditorGUILayout.Toggle("Use Random?", useRandom);
+			}
+
+			if (!useRandom)
+			{
+				//Data Changed
+				if (data != oldData)
 				{
-					return data.GetLocalization().itemName;
+					currentStackSize = Mathf.Clamp(MaximumStackSize / 2, MinimumStackSize, MaximumStackSize);
+					currentWeight = data.weight;
+					currentDurability = MaximumDurability;
 				}
 
-				return "";
+				if (data != null)
+				{
+					if (data.isStackable)
+					{
+						currentStackSize = EditorGUILayout.IntSlider($"Stack Size {(data.isInfinityStack ? "inf" : "")}", currentStackSize, MinimumStackSize, MaximumStackSize);
+					}
+
+					if (data.isWeighty)
+					{
+						EditorGUILayout.LabelField($"Current Weight = {MaximumWeight} * {currentStackSize} == {MaximumWeight * currentStackSize}");
+						EditorGUILayout.HelpBox("Weight == CurrentWeight * StackSize", MessageType.Info);
+					}
+
+					if (data.isBreakable)
+					{
+						currentDurability = EditorGUILayout.Slider("Durability %", currentDurability, MinimumDurability, MaximumDurability);
+					}
+				}
 			}
 		}
 
-		private string WeightInfo => "Weight == " + currentStackSize * MaximumWeight;
-
-		private void OnDataChanged()
+		public static void OnGUIList(List<Item> items)
 		{
-			currentStackSize = MaximumStackSize;
-			currentWeight = MaximumWeight;
+			if (GUILayout.Button("Add Item"))
+			{
+				items.Add(new Item());
+			}
+
+			ParadoxNotion.Design.EditorUtils.ReorderableList(items, (i, picked) =>
+			{
+				var item = items[i];
+				bool lastFoldout = item.isShowFoldout;
+
+				GUILayout.BeginHorizontal("box");
+
+				var text = string.Format("{0} {1} {2}", item.isShowFoldout ? "-" : "+", $"[{i + 1}]", item.data?.name ?? "Empty");
+				if (GUILayout.Button(text, (GUIStyle)"label", GUILayout.Width(0), GUILayout.ExpandWidth(true)))
+				{
+					item.isShowFoldout = !item.isShowFoldout;
+				}
+
+				if (GUILayout.Button("X", GUILayout.Width(20)))//remove
+				{
+					items.RemoveAt(i);
+				}
+
+				GUILayout.EndHorizontal();
+
+				if (item.isShowFoldout)
+				{
+					GUILayout.BeginHorizontal();
+					GUILayout.Space(10f);
+					GUILayout.BeginVertical();
+					item?.OnGUI();
+					GUILayout.EndVertical();
+					GUILayout.EndHorizontal();
+				}
+				else
+				{
+					if (lastFoldout != item.isShowFoldout)//close all
+					{
+
+					}
+				}
+			});
 		}
+#endif
 	}
+
+
+//#if UNITY_EDITOR
+//	[CustomEditor(typeof(Test))]
+//	public class ItemEditor : Editor
+//	{
+//		public override void OnInspectorGUI()
+//		{
+//			((Test)target).item.OnGUI();
+//			Item.OnGUIList(((Test)target).items);
+//		}
+//	}
+//#endif
 }

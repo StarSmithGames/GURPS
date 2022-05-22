@@ -12,6 +12,8 @@ namespace Game.Systems.InventorySystem
         List<Item> Items { get; }
 
         bool Add(Item item);
+        bool AddRange(IEnumerable<Item> items);
+
         bool Remove(Item item);
 
         void Clear();

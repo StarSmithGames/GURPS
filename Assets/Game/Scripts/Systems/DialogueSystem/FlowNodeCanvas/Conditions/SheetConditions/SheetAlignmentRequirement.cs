@@ -14,7 +14,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 	[Category("\x2724 Sheet")]
 	public class SheetAlignmentRequirement : RequirementConditionTask
 	{
-		public Alignment alignmentRequired = Alignment.TrueNeutral;
+		public AlignmentType alignmentRequired = AlignmentType.TrueNeutral;
 
 		protected override bool OnCheck()
 		{
@@ -27,13 +27,13 @@ namespace Game.Systems.DialogueSystem.Nodes
 
 				if (sheet != null)
 				{
-					requirement = new AlignmentRequirement(sheet) { alignmentRequired = alignmentRequired };
+					Requirement = new AlignmentRequirement(sheet) { alignmentRequired = alignmentRequired };
 				}
 			}
 
-			Assert.IsNotNull(requirement, "Alignment requirement == null");
+			Assert.IsNotNull(Requirement, "Alignment requirement == null");
 
-			return requirement?.Check() ?? false;
+			return Requirement?.Check() ?? false;
 		}
 	}
 }

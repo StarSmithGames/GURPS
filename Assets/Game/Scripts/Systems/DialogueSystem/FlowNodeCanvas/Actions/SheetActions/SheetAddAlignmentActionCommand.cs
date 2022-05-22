@@ -22,7 +22,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 	public class SheetAddAlignmentActionCommand : CommandActionTask
 	{
 		public bool usePercents = true;
-		public Alignment type = Alignment.TrueNeutral;
+		public AlignmentType type = AlignmentType.TrueNeutral;
 		public float percentAlignment = 0;
 		public Vector2 addAlignment = Vector2.zero;
 
@@ -38,21 +38,21 @@ namespace Game.Systems.DialogueSystem.Nodes
 				{
 					if (usePercents)
 					{
-						command = new CommandSetAlignment(sheet, type, percentAlignment);
+						Command = new CommandSetAlignment(sheet, type, percentAlignment);
 					}
 					else
 					{
-						command = new CommandSetAlignment(sheet, addAlignment);
+						Command = new CommandSetAlignment(sheet, addAlignment);
 					}
 				}
 			}
 
-			Assert.IsNotNull(command, "Alignment command == null");
+			Assert.IsNotNull(Command, "Add Alignment command == null");
 		}
 
 		protected override void OnExecute()
 		{
-			command?.Execute();
+			Command?.Execute();
 
 			EndAction(true);
 		}
@@ -64,7 +64,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 
 			if (usePercents)
 			{
-				type = (Alignment)EditorGUILayout.EnumPopup("Type", type);
+				type = (AlignmentType)EditorGUILayout.EnumPopup("Type", type);
 				percentAlignment = EditorGUILayout.FloatField("Percent Alignment", percentAlignment);
 				percentAlignment = Mathf.Clamp(percentAlignment, 0.01f, 100f);
 			}

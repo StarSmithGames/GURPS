@@ -6,6 +6,6 @@ namespace Game.Systems.DialogueSystem.Nodes
 {
 	public abstract class RequirementConditionTask : ConditionTask
 	{
-		[HideInInspector] public IRequirement requirement;
+		public IRequirement Requirement { get; protected set; }
 	}
 }

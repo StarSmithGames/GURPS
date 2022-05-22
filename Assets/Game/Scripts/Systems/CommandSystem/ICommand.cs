@@ -141,12 +141,11 @@ namespace Game.Systems.ContextMenu
 	#region SheetCommnads
 	public class CommandSetAlignment : SheetCommand
 	{
-		public Alignment Target { get; private set; }
-		public Alignment Current { get; private set; }
-		public Alignment Forecast { get; private set; }
+		public AlignmentType Target { get; private set; }
+		public AlignmentType Current { get; private set; }
+		public AlignmentType Forecast { get; private set; }
 		public Vector2 ForecastAlignment { get; private set; }
 
-		private Alignment type = Alignment.TrueNeutral;
 		private float percentAlignment = 0;
 		private Vector2 vectorAlignment;
 		private bool usePercents = false;
@@ -155,25 +154,24 @@ namespace Game.Systems.ContextMenu
 		{
 			this.vectorAlignment = vectorAlignment;
 
-			Target = AlignmentCharacteristic.ConvertVector2ToAlignment(vectorAlignment);
-			Current = (sheet.Characteristics.Alignment as AlignmentCharacteristic).Alignment;
+			Target = Alignment.ConvertVector2ToAlignment(vectorAlignment);
+			Current = (sheet.Characteristics.Alignment as AlignmentCharacteristic).AlignmentType;
 			usePercents = false;
 			Calculate();
 
-			Forecast = AlignmentCharacteristic.ConvertVector2ToAlignment(ForecastAlignment);
+			Forecast = Alignment.ConvertVector2ToAlignment(ForecastAlignment);
 		}
 
-		public CommandSetAlignment(ISheet sheet, Alignment type, float percentAlignment) : base(sheet)
+		public CommandSetAlignment(ISheet sheet, AlignmentType type, float percentAlignment) : base(sheet)
 		{
-			this.type = type;
 			this.percentAlignment = percentAlignment;
 
 			Target = type;
-			Current = (sheet.Characteristics.Alignment as AlignmentCharacteristic).Alignment;
+			Current = (sheet.Characteristics.Alignment as AlignmentCharacteristic).AlignmentType;
 			usePercents = true;
 			Calculate();
 
-			Forecast = AlignmentCharacteristic.ConvertVector2ToAlignment(ForecastAlignment);
+			Forecast = Alignment.ConvertVector2ToAlignment(ForecastAlignment);
 		}
 
 		public override void Execute()
@@ -185,11 +183,29 @@ namespace Game.Systems.ContextMenu
 		{
 			if (usePercents)
 			{
-				ForecastAlignment = Vector2.Lerp(sheet.Characteristics.Alignment.CurrentValue, AlignmentCharacteristic.ConvertAlignmentToVector2(type), percentAlignment);
+				ForecastAlignment = Vector2.Lerp(sheet.Characteristics.Alignment.CurrentValue, Alignment.ConvertAlignmentToVector2(Target), percentAlignment);
 			}
 			else
 			{
 				ForecastAlignment = sheet.Characteristics.Alignment.CurrentValue + vectorAlignment;
+			}
+		}
+	}
+
+	public class CommandAddItems : SheetCommand
+	{
+		public List<Item> Items { get; private set; }
+
+		public CommandAddItems(ISheet sheet, List<Item> items) : base(sheet)
+		{
+			this.Items = items;
+		}
+
+		public override void Execute()
+		{
+			for (int i = 0; i < Items.Count; i++)
+			{
+				sheet.Inventory.Add(Items[i]);
 			}
 		}
 	}

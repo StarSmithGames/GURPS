@@ -21,13 +21,13 @@ namespace Game.Systems.DialogueSystem.Nodes
 
 	public class AlignmentRequirement : SheetRequirement
 	{
-		public Alignment alignmentRequired;
+		public AlignmentType alignmentRequired;
 
 		public AlignmentRequirement(ISheet sheet) : base(sheet) { }
 
 		public override bool Check()
 		{
-			return alignmentRequired == (sheet.Characteristics.Alignment as AlignmentCharacteristic).Alignment;
+			return alignmentRequired == (sheet.Characteristics.Alignment as AlignmentCharacteristic).AlignmentType;
 		}
 	}
 }

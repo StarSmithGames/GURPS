@@ -21,6 +21,7 @@ MonoBehaviour:
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
+  isWeighty: 1
   weight: 6
   isBreakable: 0
   decay:

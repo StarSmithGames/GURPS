@@ -32,6 +32,8 @@ namespace Game.Systems.DialogueSystem.Nodes
         [ShowIf("saySelection", 1)]
         public bool waitForInput = false;
 
+        private bool saySelection;//don`t remove, internal errors
+
         [SerializeField, AutoSortWithChildrenConnections]
         [HideInInspector] public List<ChoiceWrapper> availableChoices = new List<ChoiceWrapper>();
         private List<ChoiceWrapper> currentChoices = new List<ChoiceWrapper>();
@@ -101,13 +103,13 @@ namespace Game.Systems.DialogueSystem.Nodes
                     if (actorSheetCondition.condition.Is<ConditionList>(out ConditionList list))
                     {
                         var conditionTasks = list.conditions.OfType<RequirementConditionTask>().ToList();
-                        currentChoice.choice.consequence.AddRange(conditionTasks.Select((x) => x.requirement));
+                        currentChoice.choice.consequence.AddRange(conditionTasks.Select((x) => x.Requirement));
                     }
                     else
                     {
                         if (actorSheetCondition.condition is RequirementConditionTask requirementCondition)
                         {
-                            currentChoice.choice.requirements.Add(requirementCondition.requirement);
+                            currentChoice.choice.requirements.Add(requirementCondition.Requirement);
                         }
                     }
                 }
@@ -119,14 +121,14 @@ namespace Game.Systems.DialogueSystem.Nodes
                     {
                         var actionTasks = list.actions.OfType<CommandActionTask>().ToList();
                         actionTasks.ForEach((x) => x.Initialize());
-                        currentChoice.choice.consequence.AddRange(actionTasks.Select((x) => x.command));
+                        currentChoice.choice.consequence.AddRange(actionTasks.Select((x) => x.Command));
                     }
                     else
                     {
                         if (currentChoice.actionAfter is CommandActionTask commandAction)
                         {
                             commandAction.Initialize();
-                            currentChoice.choice.consequence.Add(commandAction.command);
+                            currentChoice.choice.consequence.Add(commandAction.Command);
                         }
                     }
                 }
@@ -160,13 +162,11 @@ namespace Game.Systems.DialogueSystem.Nodes
             status = Status.Success;
 
             var choice = currentChoices[index];
-
             choice.actionAfter?.Execute(FinalActor.Transform, cashedBB);
-            DLGTree.Continue(index);
-
             choice.choice.isSelected = true;
-
             currentChoices.ForEach((x) => x.choice.Dispose());
+
+            DLGTree.Continue(index);
         }
 
 
@@ -182,7 +182,7 @@ namespace Game.Systems.DialogueSystem.Nodes
             {
                 return "NOT SET";
             }
-            var text = string.Format("'{0}'", availableChoices[i].GetStatement().Text);
+            var text = string.Format("'{0}{1}'", $"[{i + 1}] ", availableChoices[i].GetStatement().Text);
             if (availableChoices[i].conditionBefore == null)
             {
                 return text;
@@ -257,6 +257,8 @@ namespace Game.Systems.DialogueSystem.Nodes
                 var choice = availableChoices[i];
                 GUILayout.BeginHorizontal("box");
 
+                bool lastFoldout = choice.isShowFoldout;
+
                 var text = string.Format("{0} {1} {2}", choice.isShowFoldout ? "-" : "+", $"[{i + 1}]", choice.GetStatement().Text);
                 if (GUILayout.Button(text, (GUIStyle)"label", GUILayout.Width(0), GUILayout.ExpandWidth(true)))
                 {
@@ -277,7 +279,17 @@ namespace Game.Systems.DialogueSystem.Nodes
                 if (choice.isShowFoldout)
                 {
                     choice.OnGUI(graph);
-                }
+				}
+				else
+				{
+                    if(lastFoldout != choice.isShowFoldout)
+					{
+                        choice.choice.options.ForEach((x) =>
+                        {
+                            (x.Statement as Statement).isShowFoldout = false;
+                        });
+					}
+				}
             });
         }
 #endif

@@ -14,10 +14,11 @@ namespace Game.Systems.InventorySystem
 			{
 				if (localizations.Count > 0)
 				{
-					return GetLocalization().itemName;
+					string n = GetLocalization().itemName;
+					return string.IsNullOrEmpty(n) ? name : n;
 				}
 
-				return "";
+				return name;
 			}
 		}
 
@@ -53,6 +54,8 @@ namespace Game.Systems.InventorySystem
 		[Range(1, 9999)]
 		public int stackSize = 1;
 		[Space]
+		public bool isWeighty = true;
+		[ShowIf("isWeighty")]
 		[SuffixLabel("kg", true)]
 		[MinValue(0.01f), MaxValue(99.99f)]
 		public float weight = 0.01f;

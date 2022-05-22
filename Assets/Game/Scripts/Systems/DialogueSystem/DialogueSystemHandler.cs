@@ -89,13 +89,29 @@ namespace Game.Systems.DialogueSystem
 			#region Resize Spacer
 			Assert.AreNotEqual(dialogue.SubtitlesContent.childCount, 0, "dialogue.SubtitlesContent.childCount == 0");
 
+			int countSpaces = 1;
+
 			var currentSubtitle = dialogue.SubtitlesContent.GetChild(dialogue.SubtitlesContent.childCount - 1) as RectTransform;
 			float currentSubtitleHeight = LayoutUtility.GetPreferredHeight(currentSubtitle);
+
 			float choiceHeight = LayoutUtility.GetPreferredHeight(dialogue.ChoiceContent as RectTransform);
-			float contentSpaces = dialogue.ContentLayoutGroup.spacing * 2;
+			dialogue.ChoiceContent.gameObject.SetActive(choiceHeight != 0);
+			if (dialogue.ChoiceContent.gameObject.activeSelf)
+			{
+				countSpaces++;
+			}
+
+			float notificationsHeight = LayoutUtility.GetPreferredHeight(dialogue.NotificationContent as RectTransform);
+			dialogue.NotificationContent.gameObject.SetActive(notificationsHeight != 0);
+			if (dialogue.NotificationContent.gameObject.activeSelf)
+			{
+				countSpaces++;
+			}
+
+			float contentSpaces = dialogue.ContentLayoutGroup.spacing * countSpaces;
 			float subtitlesSpacing = dialogue.SubtitlesLayoutGroup.spacing;
 
-			float height = (dialogue.RectTransform.sizeDelta.y) - (currentSubtitleHeight + choiceHeight + (contentSpaces + subtitlesSpacing));//maxHeight - currentHeight
+			float height = (dialogue.RectTransform.sizeDelta.y) - (currentSubtitleHeight + choiceHeight + notificationsHeight + (contentSpaces + subtitlesSpacing));//maxHeight - currentHeight
 			dialogue.Spacer.preferredHeight = height <= 0 ? 0 : height;
 			#endregion
 
@@ -171,12 +187,17 @@ namespace Game.Systems.DialogueSystem
 				var notification = notificationFactory.Create();
 
 				notification.Text.text = x.text;
-				notification.Text.color = x.textColor;
+				notification.Text.color = x.basetColor;
 
 				notification.transform.SetParent(dialogue.NotificationContent);
 
 				notifications.Add(notification);
 			});
+
+			if (!dialogue.NotificationContent.gameObject.activeSelf && notifications.Count > 0)
+			{
+				dialogue.NotificationContent.gameObject.SetActive(true);
+			}
 		}
 		private void DispawnNotifications()
 		{
@@ -255,6 +276,11 @@ namespace Game.Systems.DialogueSystem
 				choiceUI.transform.SetParent(dialogue.ChoiceContent);
 			}
 
+			if (!dialogue.ChoiceContent.gameObject.activeSelf && choices.Count > 0)
+			{
+				dialogue.ChoiceContent.gameObject.SetActive(true);
+			}
+
 			asyncManager.StartCoroutine(CalculateHeight());
 		}
 
@@ -298,12 +324,15 @@ namespace Game.Systems.DialogueSystem
 				{
 					if (x is AlignmentRequirement alignmentRequirement)
 					{
-						requires += alignmentRequirement.alignmentRequired;
+						if (settings.showAlignmentRequirementsInDialogues)
+						{
+							requires += alignmentRequirement.alignmentRequired;
+						}
 						errors += "Specific alignment required";
 					}
 				});
 
-				return string.IsNullOrEmpty(requires) ? "" : $"[Requires {requires}] " + (includeLabel ? errors : "");
+				return string.IsNullOrEmpty(requires) ? (includeLabel ? errors : "") : $"[Requires {requires}] " + (includeLabel ? errors : "");
 			}
 			string GetConsequence()
 			{
@@ -313,13 +342,35 @@ namespace Game.Systems.DialogueSystem
 				{
 					if (x is CommandSetAlignment commandAlignment)
 					{
-						consequence += commandAlignment.Target;
-
-						wrapper.notifications.Add(new Notification() { text = $"You've performed a {commandAlignment.Target} action", textColor = AlignmentCharacteristic.GetAlignmentColor(commandAlignment.Target) });
-						if(commandAlignment.Current != commandAlignment.Forecast)
+						if (settings.showAlignmentShiftsInDialogues)
 						{
-							wrapper.notifications.Add(new Notification() { text = $"You new alignment is {commandAlignment.Forecast}", textColor = AlignmentCharacteristic.GetAlignmentColor(commandAlignment.Forecast) });
+							consequence += commandAlignment.Target;
 						}
+						if (settings.showAlignmentShiftsNotificationsInDialogues)
+						{
+							wrapper.notifications.Add(new Notification() { text = $"You've performed a <color={Alignment.GetAlignmentColor(commandAlignment.Target).ToHEX()}>{commandAlignment.Target}</color> action"});
+
+							if (commandAlignment.Current != commandAlignment.Forecast)
+							{
+								wrapper.notifications.Add(new Notification() { text = $"You new alignment is <color={Alignment.GetAlignmentColor(commandAlignment.Forecast).ToHEX()}>{commandAlignment.Forecast}</color>" });
+							}
+						}
+					}
+					else if(x is CommandAddItems commandItems)
+					{
+						string items = "";
+
+						for (int i = 0; i < commandItems.Items.Count; i++)
+						{
+							items += commandItems.Items[i];
+							
+							if(i != commandItems.Items.Count - 1)
+							{
+								items += ", ";
+							}
+						}
+
+						wrapper.notifications.Add(new Notification() { text = $"<color={new Color(0, 0.7f, 0).ToHEX()}>Items received:</color> {items}"});//light green
 					}
 				});
 				consequence = !string.IsNullOrEmpty(consequence) ? $"({consequence}) " : "";//spaces
@@ -366,6 +417,15 @@ namespace Game.Systems.DialogueSystem
 		public class Settings
 		{
 			public bool isSayChoice = true;
+			[Space]
+			public bool showAlignmentRequirementsInDialogues = true;
+			public bool showAlignmentShiftsNotificationsInDialogues = true;
+			public bool showAlignmentShiftsInDialogues = true;
+			[Space]
+			public bool showSkillCheckInDialogues = true;
+			public bool showSkillChecksResultInDialogues = true;
+			[Space]
+			public bool showExperiaencePointsGainedInDialogues = true;
 
 			[System.Serializable]
 			public class SubtitleDelays
@@ -381,6 +441,6 @@ namespace Game.Systems.DialogueSystem
 	public class Notification
 	{
 		public string text;
-		public Color textColor = Color.white;
+		public Color basetColor = new Color(0.7f, 0.7f, 0.7f);//light grey
 	}
 }

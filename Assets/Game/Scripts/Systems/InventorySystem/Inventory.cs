@@ -87,6 +87,11 @@ namespace Game.Systems.InventorySystem
             return true;
         }
 
+        public bool AddRange(IEnumerable<Item> items)
+        {
+            return true;
+        }
+
         public bool Remove(Item item)
         {
             Items.Remove(item);
@@ -115,7 +120,7 @@ namespace Game.Systems.InventorySystem
             };
 		}
 
-        public class Data
+		public class Data
 		{
             public List<Item> items;
         }

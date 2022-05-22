@@ -41,6 +41,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 			return false;
 		}
 
+#if UNITY_EDITOR
 		protected override void OnTaskInspectorGUI()
 		{
 			GUILayout.BeginHorizontal();
@@ -50,5 +51,6 @@ namespace Game.Systems.DialogueSystem.Nodes
 			GUILayout.EndVertical();
 			GUILayout.EndHorizontal();
 		}
+#endif
 	}
 }
