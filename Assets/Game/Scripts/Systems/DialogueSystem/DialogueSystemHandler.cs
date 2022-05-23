@@ -23,16 +23,14 @@ namespace Game.Systems.DialogueSystem
 {
 	public class DialogueSystemHandler : IInitializable, IDisposable
 	{
-		public bool IsDialogueProcess => dialogueCoroutine != null;
-		private Coroutine dialogueCoroutine = null;
-
-		private bool isWaitingChoice;
 		private MultipleChoiceRequestInfo cachedChoiceInfo;
 
 		private UIDialogue dialogue;
 		private List<UISubtitle> subtitles = new List<UISubtitle>();
 		private List<UINotification> notifications = new List<UINotification>();
 		private List<ChoiceWrapper> choices = new List<ChoiceWrapper>();
+		private bool isWaitInput = false;
+		private bool isWaitChoiceInput = false;
 
 		private Settings settings;
 		private SignalBus signalBus;
@@ -63,6 +61,8 @@ namespace Game.Systems.DialogueSystem
 			dialogue.NotificationContent.DestroyChildren();
 			dialogue.ChoiceContent.DestroyChildren();
 
+			dialogue.onClick += OnDialogueClicked;
+
 			DialogueTree.OnDialogueStarted += OnDialogueStarted;
 			DialogueTree.OnDialoguePaused += OnDialoguePaused;
 			DialogueTree.OnDialogueFinished += OnDialogueFinished;
@@ -72,6 +72,8 @@ namespace Game.Systems.DialogueSystem
 
 		public void Dispose()
 		{
+			dialogue.onClick -= OnDialogueClicked;
+
 			DialogueTree.OnDialogueStarted -= OnDialogueStarted;
 			DialogueTree.OnDialoguePaused -= OnDialoguePaused;
 			DialogueTree.OnDialogueFinished -= OnDialogueFinished;
@@ -128,58 +130,6 @@ namespace Game.Systems.DialogueSystem
 			#endregion
 		}
 
-
-		private void SpawnSubtitles(IActor actor, string text)
-		{
-			var sheet = actor.Sheet;
-			dialogue.ActorPortrait.gameObject.SetActive(sheet.Information.IsHasPortrait);
-			dialogue.ActorPortrait.sprite = sheet.Information.portrait;
-
-			var subtitle = subtitleFactory.Create();
-
-			subtitle.Text.text = $"{sheet.Information.Name} - {text}";
-
-			subtitle.transform.SetParent(dialogue.SubtitlesContent);
-
-			subtitles.Add(subtitle);
-
-			asyncManager.StartCoroutine(CalculateHeight());
-		}
-		private void DispawnSubtitles()
-		{
-			for (int i = subtitles.Count - 1; i >= 0; i--)
-			{
-				subtitles[i].DespawnIt();
-				subtitles.Remove(subtitles[i]);
-			}
-		}
-		private IEnumerator Subtitles(SubtitlesRequestInfo info)
-		{
-			var audio = info.statement.Audio;
-			var actor = info.actor as IActor;
-
-			Assert.IsNotNull(actor, "IActor == null");
-
-			SpawnSubtitles(actor, info.statement.Text);
-
-			//Wait For Input
-			if (info.waitForInput)
-			{
-				dialogue.WaitIndicator.SetActive(true);
-				while (!Input.anyKeyDown)
-				{
-					yield return null;
-				}
-				dialogue.WaitIndicator.SetActive(false);
-			} 
-
-			yield return null;
-
-			dialogueCoroutine = null;
-
-			info.Continue();
-		}
-
 		private void SpawnNotifications(ChoiceWrapper choiceWrapper)
 		{
 			choiceWrapper.notifications.ForEach((x) =>
@@ -208,82 +158,84 @@ namespace Game.Systems.DialogueSystem
 			}
 		}
 
-		private void DespawnChoices()
+
+		private IEnumerator WaitSubtitlesInput(SubtitlesRequestInfo info)
 		{
-			for (int i = choices.Count - 1; i >= 0; i--)
+			isWaitInput = info.waitForInput;
+			if (info.waitForInput)
 			{
-				choices[i].ui.DespawnIt();
-				choices[i].ui.onButtonClick -= OnChoiced;
-				choices.Remove(choices[i]);
-			}
-		}
-
-
-		private void OnDialogueStarted(DialogueTree tree)
-		{
-			dialogue.Enable(true);
-		}
-
-		private void OnDialoguePaused(DialogueTree tree) { }
-
-		private void OnDialogueFinished(DialogueTree tree)
-		{
-			dialogue.Enable(false);
-			DispawnSubtitles();
-			DispawnNotifications();
-			dialogue.Spacer.preferredHeight = 0;
-		}
-
-		private void OnSubtitlesRequest(SubtitlesRequestInfo info)
-		{
-			if (!IsDialogueProcess)
-			{
-				dialogueCoroutine = asyncManager.StartCoroutine(Subtitles(info));
-			}
-		}
-
-		private void OnMultipleChoiceRequest(MultipleChoiceRequestInfo info)
-		{
-			cachedChoiceInfo = info;
-
-			DespawnChoices();
-
-			int langIndex = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
-
-			//fill
-			for (int i = 0; i < info.choices.Count; i++)
-			{
-				Choice choice = info.choices[i];
-				
-				if (!(langIndex >= 0 && langIndex < choice.options.Count))
+				dialogue.WaitIndicator.SetActive(true);
+				while (isWaitInput)
 				{
-					throw new Exception("LocalizationManager index out of bounds!");
+					if (Input.GetKeyDown(KeyCode.Space))
+					{
+						isWaitInput = false;
+					}
+
+					yield return null;
 				}
-
-				UIChoice choiceUI = choiceFactory.Create();
-
-				ChoiceWrapper wrapper = new ChoiceWrapper()
-				{
-					choice = choice,
-					option = choice.options[langIndex],
-					ui = choiceUI
-				};
-
-				FillChoice(i + 1, wrapper);
-
-				choices.Add(wrapper);
-				choiceUI.onButtonClick += OnChoiced;
-				choiceUI.transform.SetParent(dialogue.ChoiceContent);
+				dialogue.WaitIndicator.SetActive(false);
 			}
 
-			if (!dialogue.ChoiceContent.gameObject.activeSelf && choices.Count > 0)
-			{
-				dialogue.ChoiceContent.gameObject.SetActive(true);
-			}
+			info.Continue();
+		}
+		private void SpawnSubtitles(IActor actor, string text)
+		{
+			var sheet = actor.Sheet;
+			dialogue.ActorPortrait.gameObject.SetActive(sheet.Information.IsHasPortrait);
+			dialogue.ActorPortrait.sprite = sheet.Information.portrait;
+
+			var subtitle = subtitleFactory.Create();
+
+			subtitle.Text.text = $"{sheet.Information.Name} - {text}";
+
+			subtitle.transform.SetParent(dialogue.SubtitlesContent);
+
+			subtitles.Add(subtitle);
 
 			asyncManager.StartCoroutine(CalculateHeight());
 		}
+		private void DispawnSubtitles()
+		{
+			for (int i = subtitles.Count - 1; i >= 0; i--)
+			{
+				subtitles[i].DespawnIt();
+				subtitles.Remove(subtitles[i]);
+			}
+		}
+		private void OnSubtitlesRequest(SubtitlesRequestInfo info)
+		{
+			var audio = info.statement.Audio;
+			var actor = info.actor as IActor;
 
+			Assert.IsNotNull(actor, "IActor == null");
+
+			SpawnSubtitles(actor, info.statement.Text);
+
+			asyncManager.StartCoroutine(WaitSubtitlesInput(info));
+		}
+
+
+		private IEnumerator WaitChoiceInput()
+		{
+			isWaitChoiceInput = true;
+
+			while (isWaitChoiceInput)
+			{
+				for (int i = 1; i < 10; i++)//Alpha1-9
+				{
+					if (Input.GetKeyDown((KeyCode)(48 + i)))
+					{
+						if(i <= choices.Count)
+						{
+							OnChoiced(choices[i - 1].ui);
+						}
+					}
+				}
+
+				yield return null;
+			}
+		}
 		private void FillChoice(int index, ChoiceWrapper wrapper)
 		{
 			switch (wrapper.choice.choiceConditionState)
@@ -356,6 +308,18 @@ namespace Game.Systems.DialogueSystem
 							}
 						}
 					}
+					else if(x is CommandAddExperience commandExperience)
+					{
+						if (settings.showExperiaencePointsGainedInDialogues)
+						{
+							wrapper.notifications.Add(new Notification() { text = $"Gained {commandExperience.exp} Experience", basetColor = new Color(0, 0.7f, 0) });//light green
+
+							if (commandExperience.IsLevelChanged())
+							{
+								wrapper.notifications.Add(new Notification() { text = $"Level Up!", basetColor = new Color(0, 0.7f, 0) });//light green
+							}
+						}
+					}
 					else if(x is CommandAddItems commandItems)
 					{
 						string items = "";
@@ -378,10 +342,64 @@ namespace Game.Systems.DialogueSystem
 				return consequence;
 			}
 		}
+		private void DespawnChoices()
+		{
+			for (int i = choices.Count - 1; i >= 0; i--)
+			{
+				choices[i].ui.DespawnIt();
+				choices[i].ui.onButtonClick -= OnChoiced;
+				choices.Remove(choices[i]);
+			}
+		}
+		private void OnMultipleChoiceRequest(MultipleChoiceRequestInfo info)
+		{
+			cachedChoiceInfo = info;
 
+			DespawnChoices();
 
+			int langIndex = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
+
+			//fill
+			for (int i = 0; i < info.choices.Count; i++)
+			{
+				Choice choice = info.choices[i];
+
+				if (!(langIndex >= 0 && langIndex < choice.options.Count))
+				{
+					throw new Exception("LocalizationManager index out of bounds!");
+				}
+
+				UIChoice choiceUI = choiceFactory.Create();
+
+				ChoiceWrapper wrapper = new ChoiceWrapper()
+				{
+					choice = choice,
+					option = choice.options[langIndex],
+					ui = choiceUI
+				};
+
+				FillChoice(i + 1, wrapper);
+
+				choices.Add(wrapper);
+				choiceUI.onButtonClick += OnChoiced;
+				choiceUI.transform.SetParent(dialogue.ChoiceContent);
+			}
+
+			if (!dialogue.ChoiceContent.gameObject.activeSelf && choices.Count > 0)
+			{
+				dialogue.ChoiceContent.gameObject.SetActive(true);
+			}
+
+			asyncManager.StartCoroutine(CalculateHeight());
+			if (settings.isCanUseKeyAlpha)
+			{
+				asyncManager.StartCoroutine(WaitChoiceInput());
+			}
+		}
 		private void OnChoiced(UIChoice choice)
 		{
+			isWaitChoiceInput = false;
+
 			var wrapper = choices.Find((x) => x.ui == choice);
 
 			if(wrapper.choice.choiceConditionState == ChoiceConditionState.Normal)
@@ -398,9 +416,26 @@ namespace Game.Systems.DialogueSystem
 				int index = choices.IndexOf(wrapper);
 				DespawnChoices();
 				cachedChoiceInfo.SelectOption(index);
-
-				isWaitingChoice = false;
 			}
+		}
+
+
+		private void OnDialogueStarted(DialogueTree tree)
+		{
+			dialogue.Enable(true);
+		}
+		private void OnDialoguePaused(DialogueTree tree) { }
+		private void OnDialogueFinished(DialogueTree tree)
+		{
+			dialogue.Enable(false);
+			DispawnSubtitles();
+			DispawnNotifications();
+			dialogue.Spacer.preferredHeight = 0;
+		}
+
+		private void OnDialogueClicked()
+		{
+			isWaitInput = false;
 		}
 
 		public class ChoiceWrapper
@@ -416,6 +451,8 @@ namespace Game.Systems.DialogueSystem
 		[System.Serializable]
 		public class Settings
 		{
+			public bool isCanUseKeyAlpha = true;
+			[Space]
 			public bool isSayChoice = true;
 			[Space]
 			public bool showAlignmentRequirementsInDialogues = true;
@@ -427,14 +464,14 @@ namespace Game.Systems.DialogueSystem
 			[Space]
 			public bool showExperiaencePointsGainedInDialogues = true;
 
-			[System.Serializable]
-			public class SubtitleDelays
-			{
-				public float characterDelay = 0.05f;
-				public float sentenceDelay = 0.5f;
-				public float commaDelay = 0.1f;
-				public float finalDelay = 1.2f;
-			}
+			//[System.Serializable]
+			//public class SubtitleDelays
+			//{
+			//	public float characterDelay = 0.05f;
+			//	public float sentenceDelay = 0.5f;
+			//	public float commaDelay = 0.1f;
+			//	public float finalDelay = 1.2f;
+			//}
 		}
 	}
 

@@ -18,6 +18,7 @@ namespace Game.Systems.InventorySystem
 		[SerializeField] private ItemData data;
 
 		public bool useRandom = false;
+		public bool IsCanBeRandom => IsStackable /*|| IsWeighty*/ || IsBreakable;
 
 		#region StackSize
 		[SerializeField] private int currentStackSize = 1;
@@ -41,6 +42,9 @@ namespace Game.Systems.InventorySystem
 
 		public bool IsStackable => data?.isStackable ?? false;
 		public bool IsInfinityStack => data?.isInfinityStack ?? false;
+
+		[SerializeField] private float minimumStackSizeRandom;
+		[SerializeField] private float maximumStackSizeRandom;
 		#endregion
 
 		#region Weight
@@ -133,6 +137,20 @@ namespace Game.Systems.InventorySystem
 
 		public T GetItemData<T>() where T : ItemData => data as T;
 
+		public void Randomize()
+		{
+			if (IsCanBeRandom && useRandom)
+			{
+				if (data != null)
+				{
+					if (data.isStackable)
+					{
+						CurrentStackSize = (int)Random.Range(minimumStackSizeRandom, maximumStackSizeRandom);
+					}
+				}
+			}
+		}
+
 		public Item GenerateItem()//rnd item
 		{
 			return null;
@@ -158,16 +176,20 @@ namespace Game.Systems.InventorySystem
 
 #if UNITY_EDITOR
 		public bool isShowFoldout = false;
-		public bool IsCanBeRandom => IsStackable /*|| IsWeighty*/ || IsBreakable;
 
 		public void OnGUI()
 		{
 			var oldData = data;
+			var oldRandom = useRandom;
 
 			data = (ItemData)EditorGUILayout.ObjectField("Data", data, typeof(ItemData), true);
 			if (IsCanBeRandom)
 			{
 				useRandom = EditorGUILayout.Toggle("Use Random?", useRandom);
+			}
+			else
+			{
+				useRandom = false;
 			}
 
 			if (!useRandom)
@@ -196,6 +218,27 @@ namespace Game.Systems.InventorySystem
 					if (data.isBreakable)
 					{
 						currentDurability = EditorGUILayout.Slider("Durability %", currentDurability, MinimumDurability, MaximumDurability);
+					}
+				}
+			}
+			else
+			{
+				if(oldRandom != useRandom)
+				{
+					minimumStackSizeRandom = Mathf.Clamp(MaximumStackSize / 2, MinimumStackSize, MaximumStackSize);
+					maximumStackSizeRandom = MaximumStackSize;
+				}
+
+				if(data != null)
+				{
+					if(data.isStackable)
+					{
+						GUILayout.Label($"StackSize: {MinimumStackSize} - {MaximumStackSize}");
+						GUILayout.BeginHorizontal();
+						minimumStackSizeRandom = EditorGUILayout.IntField("MinMax Stack Size", (int)minimumStackSizeRandom, GUILayout.MaxWidth(200));
+						EditorGUILayout.MinMaxSlider(ref minimumStackSizeRandom, ref maximumStackSizeRandom, MinimumStackSize, MaximumStackSize);
+						maximumStackSizeRandom = EditorGUILayout.IntField((int)maximumStackSizeRandom, GUILayout.MaxWidth(50));
+						GUILayout.EndHorizontal();
 					}
 				}
 			}

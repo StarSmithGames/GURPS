@@ -15,8 +15,6 @@ namespace Game.Systems.SheetSystem
 	{
 		public event UnityAction onAttributeChanged;
 
-		public override abstract string ToString();
-
 		protected virtual void ValueChanged()
 		{
 			onAttributeChanged?.Invoke();

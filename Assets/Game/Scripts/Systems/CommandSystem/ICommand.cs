@@ -199,6 +199,14 @@ namespace Game.Systems.ContextMenu
 		public CommandAddItems(ISheet sheet, List<Item> items) : base(sheet)
 		{
 			this.Items = items;
+
+			for (int i = 0; i < Items.Count; i++)
+			{
+				if (Items[i].useRandom)
+				{
+					Items[i].Randomize();
+				}
+			}
 		}
 
 		public override void Execute()
@@ -207,6 +215,31 @@ namespace Game.Systems.ContextMenu
 			{
 				sheet.Inventory.Add(Items[i]);
 			}
+		}
+	}
+
+	public class CommandAddExperience : SheetCommand
+	{
+		public int exp = 1;
+		public int level = 0;
+
+		public CommandAddExperience(ISheet sheet, int addExp, int addLevel = 0) : base(sheet)
+		{
+			exp = addExp;
+			level = addLevel;
+		}
+
+		public override void Execute()
+		{
+			sheet.Characteristics.Level.CurrentValue += level;
+			sheet.Characteristics.Experience.CurrentValue += exp;
+		}
+
+		public bool IsLevelChanged()
+		{
+			var lastLevel = sheet.Characteristics.Level.CurrentValue;
+
+			return lastLevel != (sheet.Characteristics.Level.CurrentValue + level);
 		}
 	}
 	#endregion

@@ -96,21 +96,24 @@ namespace Game.Systems.CameraSystem
 			}
 
 			#region Move
-			if (inputManager.GetKey(KeyAction.CameraForward))
+			if (!leader.IsInDialogue)
 			{
-				currentTransposer.FollowTarget.position += currentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
-			}
-			if (inputManager.GetKey(KeyAction.CameraBackward))
-			{
-				currentTransposer.FollowTarget.position += -currentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
-			}
-			if (inputManager.GetKey(KeyAction.CameraLeft))
-			{
-				currentTransposer.FollowTarget.position += -currentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
-			}
-			if (inputManager.GetKey(KeyAction.CameraRight))
-			{
-				currentTransposer.FollowTarget.position += currentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
+				if (inputManager.GetKey(KeyAction.CameraForward))
+				{
+					currentTransposer.FollowTarget.position += currentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
+				}
+				if (inputManager.GetKey(KeyAction.CameraBackward))
+				{
+					currentTransposer.FollowTarget.position += -currentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
+				}
+				if (inputManager.GetKey(KeyAction.CameraLeft))
+				{
+					currentTransposer.FollowTarget.position += -currentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
+				}
+				if (inputManager.GetKey(KeyAction.CameraRight))
+				{
+					currentTransposer.FollowTarget.position += currentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
+				}
 			}
 			#endregion
 
@@ -201,6 +204,16 @@ namespace Game.Systems.CameraSystem
 
 			currentTransposer.m_CameraDistance = currentZoom;
 		}
+		private void AnimateZoom(float zoom)
+		{
+			currentZoom = Mathf.Clamp(zoom, zoomMinMax.x, zoomMinMax.y);
+
+			DOTween.To(
+				() => currentTransposer.m_CameraDistance,//from
+				(x) => currentTransposer.m_CameraDistance = x,//step
+				currentZoom,//to
+				0.25f);//t
+		}
 
 		private IEnumerator WaitWhileCamerasBlendes()
 		{
@@ -221,7 +234,8 @@ namespace Game.Systems.CameraSystem
 
 		private void OnStartDialogue(StartDialogueSignal signal)
 		{
-			SetZoom(zoomStandart);
+			AnimateZoom(zoomStandart);
+			CameraToHome();
 		}
 	}
 }
