@@ -22,11 +22,11 @@ public class SceneInstaller : MonoInstaller
 		Container.BindInstance(brainCamera);
 		Container.BindInstance(characterCamers).WithId("CharacterCamers");
 
-		Container.BindInterfacesAndSelfTo<CameraVision>().AsSingle();
+		//Container.BindInterfacesAndSelfTo<CameraVision>().AsSingle();
 
-		Container.BindInterfacesAndSelfTo<CameraController>().AsSingle();
+		//Container.BindInterfacesAndSelfTo<CameraController>().AsSingle();
 
-		BindContexMenu();
+		//BindContexMenu();
 	}
 
 	private void BindContexMenu()

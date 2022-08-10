@@ -46,11 +46,7 @@ namespace Game.Managers.GameManager
     {
         Empty,
         Menu,
-        LevelLoading,
-        PreGameplay,
+        Loading,
         Gameplay,
-        GameOver,
     }
-
-
 }

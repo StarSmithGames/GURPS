@@ -51,7 +51,7 @@ namespace Game.Systems.DialogueSystem
 			this.notificationFactory = notificationFactory;
 			this.choiceFactory = choiceFactory;
 
-			dialogue = uiManager.Dialogue;
+			dialogue = uiManager?.Dialogue;
 		}
 
 		public void Initialize()

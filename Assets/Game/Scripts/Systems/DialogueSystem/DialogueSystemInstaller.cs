@@ -18,30 +18,30 @@ namespace Game.Systems.DialogueSystem
 
 		public override void InstallBindings()
 		{
-			Container.DeclareSignal<StartDialogueSignal>();
-			Container.DeclareSignal<EndDialogueSignal>();
+			//Container.DeclareSignal<StartDialogueSignal>();
+			//Container.DeclareSignal<EndDialogueSignal>();
 
-			Container.BindInstance(settings);
-			Container.BindInstance(barkSettings);
+			//Container.BindInstance(settings);
+			//Container.BindInstance(barkSettings);
 
-			Container.BindInterfacesAndSelfTo<DialogueSystem>().AsSingle();
-			Container.BindInterfacesAndSelfTo<DialogueSystemHandler>().AsSingle();
-			Container.Bind<DialogueTreeController>().FromNewComponentOnNewGameObject().WhenInjectedInto<DialogueSystem>();//>:/
+			//Container.BindInterfacesAndSelfTo<DialogueSystem>().AsSingle();
+			//Container.BindInterfacesAndSelfTo<DialogueSystemHandler>().AsSingle();
+			//Container.Bind<DialogueTreeController>().FromNewComponentOnNewGameObject().WhenInjectedInto<DialogueSystem>();//>:/
 
-			Container
-				.BindFactory<UISubtitle, UISubtitle.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(10)
-				.FromComponentInNewPrefab(subtitlePrefab));
+			//Container
+			//	.BindFactory<UISubtitle, UISubtitle.Factory>()
+			//	.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(10)
+			//	.FromComponentInNewPrefab(subtitlePrefab));
 
-			Container
-				.BindFactory<UINotification, UINotification.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
-				.FromComponentInNewPrefab(notificationPrefab));
+			//Container
+			//	.BindFactory<UINotification, UINotification.Factory>()
+			//	.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
+			//	.FromComponentInNewPrefab(notificationPrefab));
 
-			Container
-				.BindFactory<UIChoice, UIChoice.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
-				.FromComponentInNewPrefab(choicePrefab));
+			//Container
+			//	.BindFactory<UIChoice, UIChoice.Factory>()
+			//	.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
+			//	.FromComponentInNewPrefab(choicePrefab));
 		}
 	}
 }

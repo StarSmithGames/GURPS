@@ -22,20 +22,20 @@ public class UIInstaller : ScriptableObjectInstaller<UIInstaller>
 
 	public override void InstallBindings()
 	{
-		Container.BindInstance(GameObject.FindObjectOfType<UIManager>());//stub
-		Container.Bind<UIWindowsManager>().WhenInjectedInto<UIManager>();
+		//Container.BindInstance(GameObject.FindObjectOfType<UIManager>());//stub
+		//Container.Bind<UIWindowsManager>().WhenInjectedInto<UIManager>();
 
-		Container.BindFactory<UIAvatar, UIAvatar.Factory>()
-			.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
-			.FromComponentInNewPrefab(avatarPrefab));
+		//Container.BindFactory<UIAvatar, UIAvatar.Factory>()
+		//	.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
+		//	.FromComponentInNewPrefab(avatarPrefab));
 
-		BindContextMenu();
+		//BindContextMenu();
 
-		BindInventoryContainer();
+		//BindInventoryContainer();
 
-		BindBattleSystem();
+		//BindBattleSystem();
 
-		BindActionFactory();
+		//BindActionFactory();
 	}
 
 	private void BindContextMenu()
