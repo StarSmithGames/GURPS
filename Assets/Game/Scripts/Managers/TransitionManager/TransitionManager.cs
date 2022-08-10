@@ -1,15 +1,21 @@
 using System;
+
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
 namespace Game.Managers.TransitionManager
 {
-	public class TransitionManager : ITickable, IInitializable, IDisposable
+	public class TransitionManager : IInitializable, IDisposable
 	{
-		public TransitionManager(AsyncManager asyncManager)
-		{
+		private ITransition transition;
 
+		private UIFadeTransition.Factory fadeFactory;
+
+		public TransitionManager(AsyncManager asyncManager, UIFadeTransition.Factory fadeFactory)
+		{
+			this.fadeFactory = fadeFactory;
 		}
 
 		public void Initialize()
@@ -22,18 +28,32 @@ namespace Game.Managers.TransitionManager
 
 		}
 
-		public void Tick()
+		public void TransitionIn(Transitions type, UnityAction callback = null)
 		{
+			if(transition != null)
+			{
+				if (transition.IsInProgress)
+				{
+					transition.Terminate();
+				}
 
+				transition = null;
+			}
+
+			if(type == Transitions.Fade)
+			{
+				transition = fadeFactory.Create();
+			}
+			else
+			{
+				return;
+			}
+
+			transition.In(callback);
 		}
-
-		public void TransitionIn()
+		public void TransitionOut(Transitions type, UnityAction callback = null)
 		{
-
-		}
-		public void TransitionOut()
-		{
-
+			transition.Out(callback);
 		}
 	}
 }

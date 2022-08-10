@@ -1,5 +1,7 @@
 using CodeStage.AdvancedFPSCounter;
 
+using Game.UI.Windows;
+
 using UnityEngine;
 
 using Zenject;
@@ -10,6 +12,8 @@ namespace Game.UI.GlobalCanvas
     public class UIGlobalCanvasInstaller : ScriptableObjectInstaller<UIGlobalCanvasInstaller>
     {
         public GameObject GlobalCanvasPrefab;
+        [Space]
+        public UIInfinityLoadingWindow infinityLoadingWindow;
 
         public override void InstallBindings()
         {
@@ -24,6 +28,15 @@ namespace Game.UI.GlobalCanvas
 
             Container.BindInterfacesAndSelfTo<AFPSCounter>()
                 .FromMethod(ctx => ctx.Container.Resolve<UIGlobalCanvas>().GetComponentInChildren<AFPSCounter>(true))
+                .AsSingle()
+                .NonLazy();
+
+            //Windows
+            Container.Bind<WindowsManager>().WhenInjectedInto<UIGlobalCanvas>();//global window manager
+
+            Container.Bind<UIInfinityLoadingWindow>()
+                .FromComponentInNewPrefab(infinityLoadingWindow)
+                .UnderTransform(x => x.Container.Resolve<UIGlobalCanvas>().transform.Find("Windows"))
                 .AsSingle()
                 .NonLazy();
         }

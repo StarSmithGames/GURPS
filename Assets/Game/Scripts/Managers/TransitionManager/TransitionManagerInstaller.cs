@@ -1,4 +1,6 @@
 using Game.Managers.SceneManager;
+using Game.Systems.FloatingTextSystem;
+using Game.UI.GlobalCanvas;
 
 using UnityEngine;
 
@@ -6,12 +8,21 @@ using Zenject;
 
 namespace Game.Managers.TransitionManager
 {
-	[CreateAssetMenu(fileName = "SceneManagerInstaller", menuName = "Installers/SceneManagerInstaller")]
+	[CreateAssetMenu(fileName = "TransitionManagerInstaller", menuName = "Installers/TransitionManagerInstaller")]
 	public class TransitionManagerInstaller : ScriptableObjectInstaller<SceneManagerInstaller>
 	{
+		public UIFadeTransition fadePrefab;
+
 		public override void InstallBindings()
 		{
-			Container.BindInterfacesAndSelfTo<TransitionManager>().NonLazy();
+			Container
+				.BindFactory<UIFadeTransition, UIFadeTransition.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
+				.FromComponentInNewPrefab(fadePrefab)
+				.UnderTransform((x) => x.Container.Resolve<UIGlobalCanvas>().transform.Find("Transitions")))
+				.WhenInjectedInto<TransitionManager>();
+
+			Container.BindInterfacesAndSelfTo<TransitionManager>().AsSingle();
 		}
 	}
 

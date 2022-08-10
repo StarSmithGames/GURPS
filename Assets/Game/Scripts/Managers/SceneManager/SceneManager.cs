@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 
@@ -13,14 +15,15 @@ namespace Game.Managers.SceneManager
 {
 	public class SceneManager : ITickable, IInitializable, IDisposable
 	{
+		public IProgressHandle ProgressHandle { get; private set; }
+
 		private string currentScene;
-		private IProgressHandle progressHandle;
 
 		private Dictionary<Scenes, string> scenes = new Dictionary<Scenes, string>()
 		{
-			{ Scenes.Menu, "Menu" },
-			{ Scenes.Map, "MapRTS" },
-			{ Scenes.Polygon, "Polygon" }
+			{ Scenes.Menu,		"Menu" },
+			{ Scenes.Map,		"MapRTS" },
+			{ Scenes.Polygon,	"Polygon" }
 		};
 
 		private AsyncManager asyncManager;
@@ -47,21 +50,21 @@ namespace Game.Managers.SceneManager
 
 		}
 
-		public void SwitchScene(Scenes scene)
+		public void SwitchScene(Scenes scene, UnityAction callback = null)
 		{
 			scenes.TryGetValue(scene, out string name);
-			SwitchScene(name);
+			SwitchScene(name, callback);
 		}
 
-		public void SwitchScene(string sceneName)
+		public void SwitchScene(string sceneName, UnityAction callback = null)
 		{
-			SetCurrentSceneAsync(sceneName);
+			SetCurrentSceneAsync(sceneName, callback);
 		}
 
 		//LoadFromEditor
 		//LoadFromBuild
 		//LoadFromAddresables
-		public void SetCurrentSceneAsync(string sceneName)
+		public void SetCurrentSceneAsync(string sceneName, UnityAction callback = null)
 		{
 			//if (Application.isEditor)
 			//{
@@ -69,16 +72,16 @@ namespace Game.Managers.SceneManager
 			//}
 			//else
 			{
-				asyncManager.StartCoroutine(LoadFromBuild(sceneName));
+				asyncManager.StartCoroutine(LoadFromBuild(sceneName, callback));
 			}
 		}
 
-        private IEnumerator LoadFromEditor(string sceneName)
+        private IEnumerator LoadFromEditor(string sceneName, UnityAction callback = null)
         {
 #if UNITY_EDITOR
 
             BuildProgressHandle handle = new BuildProgressHandle();
-            progressHandle = handle;
+            ProgressHandle = handle;
             currentScene = sceneName;
 
             var path = $"Assets/Scenes/{sceneName}.unity";
@@ -98,6 +101,7 @@ namespace Game.Managers.SceneManager
             if (handle.AsyncOperation.isDone)
             {
 				Debug.LogError("Scene loaded");
+				callback?.Invoke();
 			}
             else
             {
@@ -108,19 +112,21 @@ namespace Game.Managers.SceneManager
 #endif
         }
 
-        private IEnumerator LoadFromBuild(string sceneName)
+        private IEnumerator LoadFromBuild(string sceneName, UnityAction callback = null)
 		{
 			currentScene = sceneName;
 			BuildProgressHandle handle = new BuildProgressHandle();
-			progressHandle = handle;
+			ProgressHandle = handle;
 
 			handle.AsyncOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(currentScene, LoadSceneMode.Single);
+			handle.AsyncOperation.allowSceneActivation = true;
 
 			yield return handle.AsyncOperation;
 
 			if (handle.AsyncOperation.isDone)
 			{
 				Debug.LogError("Scene loaded");
+				callback?.Invoke();
 			}
 			else
 			{

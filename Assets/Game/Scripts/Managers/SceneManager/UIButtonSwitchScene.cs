@@ -1,4 +1,9 @@
 using Game.Managers.SceneManager;
+using Game.Managers.TransitionManager;
+using Game.UI.GlobalCanvas;
+using Game.UI.Windows;
+
+using System.Transactions;
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,14 +13,17 @@ using Zenject;
 public class UIButtonSwitchScene : MonoBehaviour
 {
 	[field: SerializeField] public Scenes GoTo { get; private set; }
+	[field: SerializeField] public Transitions In { get; private set; }
+	[field: SerializeField] public Transitions Out { get; private set; }
+
 	[field: SerializeField] public Button Button { get; private set; }
 
-	private SceneManager sceneManager;
+	private UIGlobalCanvas globalCanvas;
 
 	[Inject]
-	private void Construct(SceneManager sceneManager)
+	private void Construct(UIGlobalCanvas globalCanvas)
 	{
-		this.sceneManager = sceneManager;
+		this.globalCanvas = globalCanvas;
 	}
 
 	private void Start()
@@ -30,6 +38,6 @@ public class UIButtonSwitchScene : MonoBehaviour
 
 	private void Click()
 	{
-		sceneManager.SwitchScene(GoTo);
+		globalCanvas.WindowsManager.GetAs<UIInfinityLoadingWindow>().Show(GoTo, In, Out);
 	}
 }

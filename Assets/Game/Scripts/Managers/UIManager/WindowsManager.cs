@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Zenject;
 
-public class UIWindowsManager
+public class WindowsManager
 {
     private List<IWindow> windows = new List<IWindow>();
 
