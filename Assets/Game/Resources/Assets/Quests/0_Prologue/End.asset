@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c9533687fe01daa458033e3d606044f3, type: 3}
-  m_Name: QuestMasterEnd
+  m_Name: End
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -80,7 +80,7 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  questName: FirstQuest
+  questName: EndQuest
   title: Gire
   description: A wary sage named Vandrocleo seeks a company of adventurers to recover
     and destroy an evil artifact from the Fortress of Zeiram the Lich.

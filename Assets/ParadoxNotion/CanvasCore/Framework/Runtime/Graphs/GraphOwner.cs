@@ -493,7 +493,7 @@ namespace NodeCanvas.Framework
         }
 
         ///<summary>Editor. Binds the target graph (null to delete current bound).</summary>
-        internal void SetBoundGraphReference(Graph target) {
+        public void SetBoundGraphReference(Graph target) {
 
             if ( UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode ) {
                 Debug.LogError("SetBoundGraphReference method is an Editor only method!");

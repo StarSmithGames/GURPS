@@ -36,9 +36,7 @@ namespace NodeCanvas.DialogueTrees
         sealed public override Alignment2x2 commentsAlignment { get { return Alignment2x2.Right; } }
         sealed public override Alignment2x2 iconAlignment { get { return Alignment2x2.Bottom; } }
 
-        protected DialogueTree DLGTree {
-            get { return (DialogueTree)graph; }
-        }
+        protected DialogueTree DLGTree => (DialogueTree)graph;
 
         ///<summary>The key name actor parameter to be used for this node</summary>
         public string actorName {

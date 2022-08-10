@@ -1,3 +1,5 @@
+using FlowCanvas.Nodes;
+
 using I2.Loc;
 
 using NodeCanvas.DialogueTrees;
@@ -24,24 +26,20 @@ namespace Game.Systems.DialogueSystem.Nodes
     [Color("b3ff7f")]
     public class I2MultipleChoiceNode : DTNode
     {
-        public override int maxOutConnections { get { return availableChoices.Count; } }
-        public override bool requireActorSelection { get { return true; } }
+        public override int maxOutConnections => availableChoices.Count;
+        public override bool requireActorSelection => true;
 
         [SliderField(0f, 10f)]
         public float availableTime;
-        [ShowIf("saySelection", 1)]
-        public bool waitForInput = false;
-
-        private bool saySelection;//don`t remove, internal errors
 
         [SerializeField, AutoSortWithChildrenConnections]
-        [HideInInspector] public List<ChoiceWrapper> availableChoices = new List<ChoiceWrapper>();
-        private List<ChoiceWrapper> currentChoices = new List<ChoiceWrapper>();
-        private IBlackboard cashedBB;
+        [HideInInspector] public List<Choice> availableChoices = new List<Choice>();
+        private List<Choice> currentChoices = new List<Choice>();
+        private IBlackboard cachedBB;
 
-        protected override Status OnExecute(Component agent, IBlackboard bb)
+		protected override Status OnExecute(Component agent, IBlackboard bb)
         {
-            cashedBB = bb;
+            cachedBB = bb;
             currentChoices.Clear();
 
             if (outConnections.Count == 0)
@@ -58,18 +56,18 @@ namespace Game.Systems.DialogueSystem.Nodes
                     {
                         if (actorSheetCondition.CheckOnce(FinalActor.Transform, bb))
                         {
-                            availableChoice.choice.choiceConditionState = ChoiceConditionState.Normal;
+                            availableChoice.choiceConditionState = ChoiceConditionState.Normal;
                             currentChoices.Add(availableChoice);
                         }
                         else if (actorSheetCondition.state != ChoiceConditionState.Ignore)//Если не прошёл условие то игнорируем чойс или делаем не доступным.
                         {
-                            availableChoice.choice.choiceConditionState = actorSheetCondition.state;
+                            availableChoice.choiceConditionState = actorSheetCondition.state;
                             currentChoices.Add(availableChoice);
                         }
                     }
                     else if (availableChoice.conditionBefore.CheckOnce(FinalActor.Transform, bb))
                     {
-                        availableChoice.choice.choiceConditionState = ChoiceConditionState.Normal;
+                        availableChoice.choiceConditionState = ChoiceConditionState.Normal;
                         currentChoices.Add(availableChoice);
                     }
                 }
@@ -84,12 +82,12 @@ namespace Game.Systems.DialogueSystem.Nodes
             var optionsInfo = new MultipleChoiceRequestInfo()
             {
                 actor = FinalActor,
-                choices = currentChoices.Select((x) => x.choice).ToList(),
-                availableTime = availableTime,
+				choices = currentChoices.Select((x) => x as IChoice).ToList(),
+				availableTime = availableTime,
                 SelectOption = OnOptionSelected,
             };
-            optionsInfo.showLastStatement = inConnections.Count > 0 && inConnections[0].sourceNode is StatementNode;
-            DialogueTree.RequestMultipleChoices(optionsInfo);
+
+			DialogueTree.RequestMultipleChoices(optionsInfo);
             return Status.Running;
         }
 
@@ -103,13 +101,13 @@ namespace Game.Systems.DialogueSystem.Nodes
                     if (actorSheetCondition.condition.Is<ConditionList>(out ConditionList list))
                     {
                         var conditionTasks = list.conditions.OfType<RequirementConditionTask>().ToList();
-                        currentChoice.choice.consequence.AddRange(conditionTasks.Select((x) => x.Requirement));
+                        currentChoice.consequence.AddRange(conditionTasks.Select((x) => x.Requirement));
                     }
                     else
                     {
                         if (actorSheetCondition.condition is RequirementConditionTask requirementCondition)
                         {
-                            currentChoice.choice.requirements.Add(requirementCondition.Requirement);
+                            currentChoice.requirements.Add(requirementCondition.Requirement);
                         }
                     }
                 }
@@ -121,15 +119,15 @@ namespace Game.Systems.DialogueSystem.Nodes
                     {
                         var actionTasks = list.actions.OfType<CommandActionTask>().ToList();
                         actionTasks.ForEach((x) => x.Initialize());
-                        currentChoice.choice.consequence.AddRange(actionTasks.Select((x) => x.Command));
-                    }
+						currentChoice.consequence.AddRange(actionTasks.Select((x) => x.Command));
+					}
                     else
                     {
                         if (currentChoice.actionAfter is CommandActionTask commandAction)
                         {
                             commandAction.Initialize();
-                            currentChoice.choice.consequence.Add(commandAction.Command);
-                        }
+							currentChoice.consequence.Add(commandAction.Command);
+						}
                     }
                 }
             });
@@ -162,13 +160,12 @@ namespace Game.Systems.DialogueSystem.Nodes
             status = Status.Success;
 
             var choice = currentChoices[index];
-            choice.actionAfter?.Execute(FinalActor.Transform, cashedBB);
-            choice.choice.isSelected = true;
-            currentChoices.ForEach((x) => x.choice.Dispose());
+            choice.actionAfter?.Execute(FinalActor.Transform, cachedBB);
+            choice.isSelected = true;
+            currentChoices.ForEach((x) => x.Dispose());
 
             DLGTree.Continue(index);
         }
-
 
 #if UNITY_EDITOR
         public override void OnConnectionInspectorGUI(int i)
@@ -178,17 +175,17 @@ namespace Game.Systems.DialogueSystem.Nodes
 
         public override string GetConnectionInfo(int i)
         {
-            if (i >= availableChoices.Count)
-            {
-                return "NOT SET";
-            }
-            var text = string.Format("'{0}{1}'", $"[{i + 1}] ", availableChoices[i].GetStatement().Text);
-            if (availableChoices[i].conditionBefore == null)
-            {
-                return text;
-            }
-            return string.Format("{0}\n{1}", text, availableChoices[i].conditionBefore.summaryInfo);
-        }
+			if (i >= availableChoices.Count)
+			{
+				return "NOT SET";
+			}
+			var text = string.Format("'{0}{1}'", $"[{i + 1}] ", availableChoices[i].statement.GetCurrent().Text);
+			if (availableChoices[i].conditionBefore == null)
+			{
+				return text;
+			}
+			return string.Format("{0}\n{1}", text, availableChoices[i].conditionBefore.summaryInfo);
+		}
 
         protected override void OnNodeGUI()
         {
@@ -204,8 +201,8 @@ namespace Game.Systems.DialogueSystem.Nodes
                 var choice = availableChoices[i];
                 var connection = i < outConnections.Count ? outConnections[i] : null;
                 GUILayout.BeginHorizontal(Styles.roundedBox);
-                GUILayout.Label(string.Format("{0} {1} {2}", connection != null ? "O" : "X", $"[{i + 1}]", choice.GetStatement().Text.CapLength(30)), Styles.leftLabel);
-                GUILayout.EndHorizontal();
+				GUILayout.Label(string.Format("{0} {1} {2}", connection != null ? "O" : "X", $"[{i + 1}]", choice.statement.GetCurrent().Text.CapLength(30)), Styles.leftLabel);
+				GUILayout.EndHorizontal();
             }
 
             GUILayout.BeginHorizontal();
@@ -218,48 +215,29 @@ namespace Game.Systems.DialogueSystem.Nodes
 
         protected override void OnNodeInspectorGUI()
         {
+            LocalizationManager.LanguagesGUI();
             base.OnNodeInspectorGUI();
 
-            LocalizationManager.UpdateSources();
-
-            var list = LocalizationManager.GetAllLanguages(true);
-            string languages = "Required: ";
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                languages += list[i] + (i < list.Count - 1 ? ", " : "");
-            }
-
-            EditorGUILayout.HelpBox(languages, MessageType.Warning);
-
-            //only choice
-
-            if (GUILayout.Button("Add Choice"))
-            {
-                ChoiceWrapper wrapper = new ChoiceWrapper();
-
-                for (int i = 0; i < list.Count; i++)
-                {
-                    wrapper.choice.options.Add(new ChoiceOption($"I am a choice..."));
-                }
-
-                availableChoices.Add(wrapper);
-            }
-
+			if (GUILayout.Button("Add Choice"))
+			{
+                var choice = new Choice();
+				choice.statement = new I2Texts<I2AudioText>();
+                availableChoices.Add(choice);
+			}
             if (availableChoices.Count == 0)
             {
                 return;
             }
 
             GUILayout.Label($"Choices Count {availableChoices.Count}");
+
             EditorUtils.ReorderableList(availableChoices, (i, picked) =>
             {
                 var choice = availableChoices[i];
-                GUILayout.BeginHorizontal("box");
-
                 bool lastFoldout = choice.isShowFoldout;
 
-                var text = string.Format("{0} {1} {2}", choice.isShowFoldout ? "-" : "+", $"[{i + 1}]", choice.GetStatement().Text);
+                GUILayout.BeginHorizontal("box");
+                var text = string.Format("{0} {1} {2}", choice.isShowFoldout ? "-" : "+", $"[{i + 1}]", choice.statement.GetCurrent().Text);
                 if (GUILayout.Button(text, (GUIStyle)"label", GUILayout.Width(0), GUILayout.ExpandWidth(true)))
                 {
                     choice.isShowFoldout = !choice.isShowFoldout;
@@ -273,52 +251,65 @@ namespace Game.Systems.DialogueSystem.Nodes
                         graph.RemoveConnection(outConnections[i]);
                     }
                 }
-
                 GUILayout.EndHorizontal();
 
                 if (choice.isShowFoldout)
                 {
                     choice.OnGUI(graph);
-				}
+                }
 				else
 				{
-                    if(lastFoldout != choice.isShowFoldout)
-					{
-                        choice.choice.options.ForEach((x) =>
-                        {
-                            (x.Statement as Statement).isShowFoldout = false;
-                        });
-					}
-				}
-            });
-        }
+                    choice.statement.isShowFoldout = false;
+                }
+			});
+
+		}
 #endif
     }
 
-    public class ChoiceWrapper
-    {
-        public Choice choice;
 
-        public bool isShowFoldout = false;
+    [System.Serializable]
+    public class Choice : IChoice// >:c
+    {
+        public string Text { get; }
+
+        public bool isSelected = false;
+
+        public List<object> requirements = new List<object>();
+        public List<object> consequence = new List<object>();
+        public List<object> actions = new List<object>();
+
+        public ChoiceConditionState choiceConditionState = ChoiceConditionState.Normal;
+
+        public I2Texts<I2AudioText> statement;
 
         public ConditionTask conditionBefore;
         public ActionTask actionAfter;
 
-        public ChoiceWrapper()
+        public Data GetData()
         {
-            choice = new Choice();
-        }
-
-        public Statement GetStatement()
-        {
-            int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
-            if (index >= 0 && index < choice.options.Count)
+            return new Data()
             {
-                return choice.options[index].Statement as Statement;
-            }
-            return null;
+                isSelected = isSelected,
+            };
         }
 
+
+        public void Dispose()
+        {
+            requirements.Clear();
+            consequence.Clear();
+            actions.Clear();
+        }
+
+        public class Data
+        {
+            public bool isSelected;
+        }
+
+
+#if UNITY_EDITOR
+        public bool isShowFoldout = false;
 
         public void OnGUI(Graph graph)
         {
@@ -327,14 +318,7 @@ namespace Game.Systems.DialogueSystem.Nodes
             GUILayout.BeginVertical("box");
 
             NodeCanvas.Editor.TaskEditor.TaskFieldMulti(conditionBefore, graph, (task) => { conditionBefore = task; }, postfix: " BEFORE");
-
-            var list = LocalizationManager.GetAllLanguages(true);
-            for (int i = 0; i < choice.options.Count; i++)
-            {
-                (choice.options[i].Statement as Statement).OnGUI(list[i]);
-                GUILayout.Space(10);
-            }
-
+            statement.OnGUI("Statement");
             NodeCanvas.Editor.TaskEditor.TaskFieldMulti(actionAfter, graph, (task) => { actionAfter = task; }, postfix: " AFTER");
 
             GUILayout.EndVertical();
@@ -342,5 +326,15 @@ namespace Game.Systems.DialogueSystem.Nodes
 
             GUILayout.Space(10);
         }
+#endif
+    }
+
+    public enum ChoiceConditionState
+    {
+        Normal,
+        Inactive,
+        Unavailable,
+        Reason,
+        Ignore,
     }
 }

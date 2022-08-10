@@ -332,4 +332,42 @@ namespace NodeCanvas.DialogueTrees
             public bool isFirstTime = true;
         }
     }
+
+
+
+
+    public class SubtitlesRequestInfo
+    {
+        ///<summary>The actor speaking</summary>
+        public IDialogueActor actor;
+        ///<summary>The statement said</summary>
+        public IStatement statement;
+
+        public bool waitForInput = true;
+
+        ///<summary>Call this to Continue the DialogueTree</summary>
+        public Action Continue;
+
+        public SubtitlesRequestInfo(IDialogueActor actor, IStatement statement, Action callback)
+        {
+            this.actor = actor;
+            this.statement = statement;
+            this.Continue = callback;
+        }
+    }
+
+    public class MultipleChoiceRequestInfo
+    {
+        ///<summary>Call this with to select the option to continue with in the DialogueTree</summary>
+        public Action<int> SelectOption;
+
+        ///<summary>The actor related. This is usually the actor that will also say the options</summary>
+        public IDialogueActor actor;
+
+        public bool saySelection;
+        ///<summary>The available choice option. Key: The statement, Value: the child index of the option</summary>
+        public List<IChoice> choices;
+        ///<summary>The available time for a choice</summary>
+        public float availableTime;
+    }
 }

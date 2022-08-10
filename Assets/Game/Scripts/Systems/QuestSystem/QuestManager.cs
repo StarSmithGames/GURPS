@@ -26,7 +26,7 @@ namespace Game.Systems.QuestSystem
 			{
 				CurrentQuests.Add(quest);
 
-				notificationSystem.PushJournal(quest.CurrentData.title);
+				notificationSystem.PushJournal(quest.CurrentData.Title);
 			}
 		}
 

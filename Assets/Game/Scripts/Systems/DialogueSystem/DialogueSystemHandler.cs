@@ -205,7 +205,6 @@ namespace Game.Systems.DialogueSystem
 		}
 		private void OnSubtitlesRequest(SubtitlesRequestInfo info)
 		{
-			var audio = info.statement.Audio;
 			var actor = info.actor as IActor;
 
 			Assert.IsNotNull(actor, "IActor == null");
@@ -243,13 +242,13 @@ namespace Game.Systems.DialogueSystem
 				case ChoiceConditionState.Normal:
 				{
 					wrapper.ui.Text.color = wrapper.choice.isSelected ? Color.gray : Color.white;
-					wrapper.ui.Text.text = $"{index}. {GetConsequence()}{GetRequirements()}{wrapper.option.Statement.Text}";//1. (Aligment or Lie-True) [Requirements or Action] Actor - Text.
+					wrapper.ui.Text.text = $"{index}. {GetConsequence()}{GetRequirements()}{wrapper.choice.statement.GetCurrent().Text}";//1. (Aligment or Lie-True) [Requirements or Action] Actor - Text.
 					break;
 				}
 				case ChoiceConditionState.Inactive:
 				{
 					wrapper.ui.Text.color = new Color(0.35f, 0.35f, 0.35f);//dark gray
-					wrapper.ui.Text.text = $"{index}. {GetConsequence()}[Conditions Not Met] {wrapper.option.Statement.Text}";
+					wrapper.ui.Text.text = $"{index}. {GetConsequence()}[Conditions Not Met] {wrapper.choice.statement.GetCurrent().Text}";
 					break;
 				}
 				case ChoiceConditionState.Unavailable:
@@ -357,24 +356,16 @@ namespace Game.Systems.DialogueSystem
 
 			DespawnChoices();
 
-			int langIndex = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
-
 			//fill
 			for (int i = 0; i < info.choices.Count; i++)
 			{
-				Choice choice = info.choices[i];
-
-				if (!(langIndex >= 0 && langIndex < choice.options.Count))
-				{
-					throw new Exception("LocalizationManager index out of bounds!");
-				}
+				Choice choice = info.choices[i] as Choice;
 
 				UIChoice choiceUI = choiceFactory.Create();
 
 				ChoiceWrapper wrapper = new ChoiceWrapper()
 				{
 					choice = choice,
-					option = choice.options[langIndex],
 					ui = choiceUI
 				};
 
@@ -408,7 +399,7 @@ namespace Game.Systems.DialogueSystem
 				{
 					var actor = cachedChoiceInfo.actor as IActor;
 					Assert.IsNotNull(actor, "MultipleChoiceRequestInfo IActor == null");
-					SpawnSubtitles(actor, wrapper.option.Statement.Text);
+					//SpawnSubtitles(actor, wrapper.option.Statement.Text);
 
 					SpawnNotifications(wrapper);
 				}
@@ -441,7 +432,6 @@ namespace Game.Systems.DialogueSystem
 		public class ChoiceWrapper
 		{
 			public Choice choice;
-			public ChoiceOption option;
 			public UIChoice ui;
 
 			public List<Notification> notifications = new List<Notification>();

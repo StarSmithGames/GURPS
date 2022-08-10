@@ -9,6 +9,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 {
     [Name("Is Choice Has Been Made")]
     [Description("Work only with Choices")]
+    [Category("\x2724 Dialogue")]
     public class IsChoiceHasBeenMadeCondition : ConditionTask
     {
         protected override string info => "Choice Has Been Made";
@@ -22,8 +23,8 @@ namespace Game.Systems.DialogueSystem.Nodes
                 var node = dt.LastNode as I2MultipleChoiceNode;
                 if (node != null)
                 {
-                    var choiceWrapper = node.availableChoices[dt.LastNodeConnectionIndex];
-                    return choiceWrapper.choice.isSelected;
+                    var choice = node.availableChoices[dt.LastNodeConnectionIndex];
+                    return choice.isSelected;
                 }
             }
 

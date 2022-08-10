@@ -1,6 +1,7 @@
 using Game.Entities;
 using Game.Systems.InventorySystem;
 
+using System;
 using System.Collections.Generic;
 
 namespace Game.Systems.QuestSystem
@@ -19,6 +20,28 @@ namespace Game.Systems.QuestSystem
 		public virtual void SetStatus(QuestGoalStatus status)
 		{
 			CurrentStatus = status;
+		}
+
+		public static IQuestGoal GetGoalType(Type type)
+		{
+			if (type == typeof(QuestGoalWait))
+			{
+				return new QuestGoalWait();
+			}
+			else if (type == typeof(QuestGoalKill))
+			{
+				return new QuestGoalKill();
+			}
+			else if (type == typeof(QuestGoalDelivery))
+			{
+				return new QuestGoalDelivery();
+			}
+			else if(type == typeof(QuestGoalGathering))
+			{
+				return new QuestGoalGathering();
+			}
+
+			return null;
 		}
 	}
 

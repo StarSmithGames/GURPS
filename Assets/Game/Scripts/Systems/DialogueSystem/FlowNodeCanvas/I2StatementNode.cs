@@ -19,42 +19,24 @@ namespace Game.Systems.DialogueSystem
     [Description("Make the selected Dialogue Actor talk. You can make the text more dynamic by using variable names in square brackets\ne.g. [myVarName] or [Global/myVarName]")]
     public class I2StatementNode : DTNode
     {
-        [SerializeField] private Statement[] statements;
+        [HideInInspector] public I2Texts<I2AudioText> statement;
+
         public bool waitForInput = true;
 
         public override bool requireActorSelection { get { return true; } }
 
         public override void OnCreate(Graph assignedGraph)
         {
-            var list = LocalizationManager.GetAllLanguages(true);
-            statements = new Statement[list.Count];
-
-            for (int i = 0; i < statements.Length; i++)
-            {
-                statements[i] = new Statement("This is a dialogue text");
-            }
-
-            base.OnCreate(assignedGraph);
+            ReCreate();
         }
 
         protected override Status OnExecute(Component agent, IBlackboard bb)
         {
-            var tempStatement = GetCurrentStatement()?.BlackboardReplace(bb);
-            if (tempStatement == null) return Status.Error;
+            var temp = statement.GetCurrent();
+            if (temp == null) return Status.Error;
 
-            DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(FinalActor, tempStatement, OnStatementFinish) { waitForInput = waitForInput });
+            DialogueTree.RequestSubtitles(new SubtitlesRequestInfo(FinalActor, temp, OnStatementFinish) { waitForInput = waitForInput });
             return Status.Running;
-        }
-
-        public Statement GetCurrentStatement()
-        {
-            LocalizationManager.UpdateSources();
-            int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
-            if (index >= 0 && index < statements.Length)
-            {
-                return statements[index];
-            }
-            return null;
         }
 
         void OnStatementFinish()
@@ -63,35 +45,28 @@ namespace Game.Systems.DialogueSystem
             DLGTree.Continue();
         }
 
-        ///----------------------------------------------------------------------------------------------
-        ///---------------------------------------UNITY EDITOR-------------------------------------------
+        private void ReCreate()
+        {
+            if (statement == null)
+            {
+                statement = new I2Texts<I2AudioText>();
+            }
+        }
+
 #if UNITY_EDITOR
         protected override void OnNodeInspectorGUI()
         {
+            LocalizationManager.LanguagesGUI();
             base.OnNodeInspectorGUI();
 
-            LocalizationManager.UpdateSources();
-            var list = LocalizationManager.GetAllLanguages(true);
-            string languages = "Required: ";
+            ReCreate();
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                languages += list[i] + (i < list.Count - 1 ? ", " : "");
-            }
-
-            EditorGUILayout.HelpBox(languages, MessageType.Warning);
-
-            for (int i = 0; i < statements.Length; i++)
-            {
-                statements[i].OnGUI(list[i]);
-            }
-
-            GUILayout.Space(5f);
+            statement.OnGUI("Statement");
         }
         protected override void OnNodeGUI()
         {
             GUILayout.BeginVertical(Styles.roundedBox);
-            GUILayout.Label("\"<i>" + (GetCurrentStatement()?.Text.CapLength(30) ?? "Empty") + "</i> \"");
+            GUILayout.Label("\"<i>" + (statement?.GetCurrent()?.value.CapLength(30) ?? "Empty") + "</i> \"");
             GUILayout.EndVertical();
         }
 #endif

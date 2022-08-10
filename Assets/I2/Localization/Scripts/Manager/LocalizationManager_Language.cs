@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Globalization;
 using System.Collections;
+using UnityEditor;
 
 namespace I2.Loc
 {
@@ -347,5 +348,21 @@ namespace I2.Loc
 			IsRight2Left = IsRTL(mLanguageCode);
             HasJoinedWords = GoogleLanguages.LanguageCode_HasJoinedWord(mLanguageCode);
         }
+
+#if UNITY_EDITOR
+        public static void LanguagesGUI()
+		{
+            UpdateSources();
+            var list = GetAllLanguages(true);
+            string languages = "Required: ";
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                languages += list[i] + (i < list.Count - 1 ? ", " : "");
+            }
+
+            EditorGUILayout.HelpBox(languages, MessageType.Warning);
+        }
+#endif
     }
 }

@@ -258,13 +258,10 @@ namespace Game.Entities
 				{
 					bark = ActorSettings.barks.allNodes.RandomItem();
 
-					Statement subtitles = null;
 					if (bark is I2StatementNode node)
 					{
-						subtitles = node.GetCurrentStatement();
+						ShowBarkSubtitles(node.statement.GetCurrent());
 					}
-
-					ShowBarkSubtitles(subtitles);
 
 					break;
 				}
@@ -290,7 +287,7 @@ namespace Game.Entities
 		}
 
 
-		protected void ShowBarkSubtitles(Statement subtitles)
+		protected void ShowBarkSubtitles(I2AudioText subtitles)
 		{
 			if (subtitles != null)
 			{

@@ -10,7 +10,8 @@ using UnityEngine;
 namespace Game.Systems.DialogueSystem.Nodes
 {
 	[Name("Check Actor Sheet")]
-	[Description("Work only with Choices.\nПри ложном условии choice будет:\nNone-Ничего не происходит. Inactive-Нельзя использовать(серый).\nUnavailable-Недоступный(красный). Ignore-Игнорируется.")]
+	[Description("Work only with Choices.\nПри ложном условии choice будет:\nNone-Ничего не происходит. Inactive-Нельзя использовать(серый).\nUnavailable-Недоступный(красный). Reason-Недоступный(красный) и указывает причину.\nIgnore-Игнорируется.")]
+	[Category("\x2724 Dialogue")]
 	public class ActorSheetCondition : ConditionTask
 	{
 		public ConditionTask condition;

@@ -31,7 +31,7 @@ namespace Game.Systems.QuestSystem
 			for (int i = 0; i < currentData.objectives.Count; i++)
 			{
 				var goals = currentData.objectives[i].goals.Select((x) => x.questGoal).ToList();
-				objectives.Add(new QuestObjective() { goals = goals });
+				//objectives.Add(new QuestObjective() { goals = goals });
 			}
 		}
 
