@@ -20,7 +20,7 @@ using Zenject;
 
 namespace Game.Systems.CameraSystem
 {
-	public class CameraVision : IInitializable, IDisposable, ITickable
+	public class CameraVisionLocation : IInitializable, IDisposable, ITickable, ICameraVision
 	{
 		public bool IsCanHoldMouse { get; private set; }
 		public bool IsMouseHit { get; private set; }
@@ -52,35 +52,29 @@ namespace Game.Systems.CameraSystem
 		private SignalBus signalBus;
 		private CinemachineBrain brain;
 		private InputManager inputManager;
-		private GameManager gameManager;
 		private CharacterManager characterManager;
 		private Settings settings;
 		private UIManager uiManager;
 		private InteractionSystem.InteractionSystem interactionHandler;
 		private ContextMenuHandler contextMenuHandler;
-		private DialogueSystem.DialogueSystem dialogueSystem;
 
-		public CameraVision(SignalBus signalBus,
+		public CameraVisionLocation(SignalBus signalBus,
 			CinemachineBrain brain,
 			InputManager inputManager,
-			GameManager gameManager,
 			CharacterManager characterManager,
 			GlobalSettings settings,
 			UIManager uiManager,
 			InteractionSystem.InteractionSystem interactionHandler,
-			ContextMenuHandler contextMenuHandler,
-			DialogueSystem.DialogueSystem dialogueSystem)
+			ContextMenuHandler contextMenuHandler)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
 			this.inputManager = inputManager;
-			this.gameManager = gameManager;
 			this.characterManager = characterManager;
-			this.settings = settings.cameraVision;
+			this.settings = settings.cameraVisionLocation;
 			this.uiManager = uiManager;
 			this.interactionHandler = interactionHandler;
 			this.contextMenuHandler = contextMenuHandler;
-			this.dialogueSystem = dialogueSystem;
 		}
 
 		public void Initialize()
@@ -129,7 +123,7 @@ namespace Game.Systems.CameraSystem
 					{
 						if (leader.IsWithRangedWeapon && CurrentObserve != leader)
 						{
-							leader.Controller.RotateTo(point);
+							//leader.Controller.RotateTo(point);
 							leader.Markers.SplineMarker.Path(leader.Outfit.LeftHandPivot.position, point);
 							leader.Markers.AdditionalSplineMarker.Path(leader.Outfit.LeftHandPivot.position, point);
 						}
@@ -192,7 +186,10 @@ namespace Game.Systems.CameraSystem
 							{
 								if (leader.InBattle)
 								{
-									if (leader.Navigation.IsCanReach || interactable.IsInRange(leader))
+									bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leader.Navigation.FullPathDistance) >= 0 &&
+										leader.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
+
+									if (isCanReach || interactable.IsInRange(leader))
 									{
 										interactionHandler.InteractInBattle(leader, interactable);
 									}
@@ -230,7 +227,7 @@ namespace Game.Systems.CameraSystem
 					}
 				}
 			}
-			else
+			else if(inputManager.IsRightMouseButtonPressed())
 			{
 				//ContextMenu
 				if (inputManager.IsRightMouseButtonDown())

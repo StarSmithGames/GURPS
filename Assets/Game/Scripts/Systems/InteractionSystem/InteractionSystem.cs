@@ -26,74 +26,74 @@ namespace Game.Systems.InteractionSystem
 
 		public void Interact(IEntity entity, IInteractable interactable)
 		{
-			if (entity is IActor initiator && interactable is IActor actor)
-			{
-				entity.TaskSequence
-					.Append(new GoToAction(entity, interactable));
+			//if (entity is IActor initiator && interactable is IActor actor)
+			//{
+			//	entity.TaskSequence
+			//		.Append(new GoToAction(entity, interactable));
 				
-				if(interactable is IEntity e)
-				{
-					entity.TaskSequence
-						.Append(new RotateToAction(e, entity.Transform));
-				}
+			//	if(interactable is IEntity e)
+			//	{
+			//		entity.TaskSequence
+			//			.Append(new RotateToAction(e, entity.Transform));
+			//	}
 				
-				if(actor.ActorSettings.dialogues == null && actor.ActorSettings.barks != null)
-				{
-					entity.TaskSequence
-						.Append(() => actor.Bark());
-				}
-				else
-				{
-					entity.TaskSequence
-						.Append(() => dialogueSystem.StartDialogue(initiator, actor));
-				}
+			//	if(actor.ActorSettings.dialogues == null && actor.ActorSettings.barks != null)
+			//	{
+			//		entity.TaskSequence
+			//			.Append(() => actor.Bark());
+			//	}
+			//	else
+			//	{
+			//		entity.TaskSequence
+			//			.Append(() => dialogueSystem.StartDialogue(initiator, actor));
+			//	}
 
-				entity.TaskSequence.Execute();
-			}
-			else if (interactable is IContainer container)
-			{
-				if (interactable.IsInRange(entity))//контейнер в области
-				{
-					entity.TaskSequence
-						.Execute(new ContainerInteraction(entity, container));
-				}
-				else
-				{
-					entity.TaskSequence
-						.Append(new GoToAction(entity, interactable))
-						.Append(new ContainerInteraction(entity, container))
-						.Execute();
-				}
-			}
+			//	entity.TaskSequence.Execute();
+			//}
+			//else if (interactable is IContainer container)
+			//{
+			//	if (interactable.IsInRange(entity))//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+			//	{
+			//		entity.TaskSequence
+			//			.Execute(new ContainerInteraction(entity, container));
+			//	}
+			//	else
+			//	{
+			//		entity.TaskSequence
+			//			.Append(new GoToAction(entity, interactable))
+			//			.Append(new ContainerInteraction(entity, container))
+			//			.Execute();
+			//	}
+			//}
 		}
 
 		public void InteractInBattle(IEntity entity, IInteractable interactable)
 		{
-			if (entity is IBattlable from && interactable is IBattlable to)
-			{
-				if (!from.InAction)
-				{
-					if (from.InBattle && to.InBattle)
-					{
-						if (from.Sheet.Stats.ActionPoints.CurrentValue > 0)
-						{
-							from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
-							if (entity is HumanoidEntity)
-							{
-								entity.TaskSequence.Execute(new HumanoidAttack(from, to));
-							}
-							else
-							{
-								entity.TaskSequence.Execute(new Attack(from, to));
-							}
-						}
-						else
-						{
-							Debug.LogError("Not Enough actions");
-						}
-					}
-				}
-			}
+			//if (entity is IBattlable from && interactable is IBattlable to)
+			//{
+			//	if (!from.InAction)
+			//	{
+			//		if (from.InBattle && to.InBattle)
+			//		{
+			//			if (from.Sheet.Stats.ActionPoints.CurrentValue > 0)
+			//			{
+			//				from.Sheet.Stats.ActionPoints.CurrentValue -= 1;
+			//				if (entity is HumanoidEntity)
+			//				{
+			//					entity.TaskSequence.Execute(new HumanoidAttack(from, to));
+			//				}
+			//				else
+			//				{
+			//					entity.TaskSequence.Execute(new Attack(from, to));
+			//				}
+			//			}
+			//			else
+			//			{
+			//				Debug.LogError("Not Enough actions");
+			//			}
+			//		}
+			//	}
+			//}
 		}
 	}
 
@@ -101,7 +101,7 @@ namespace Game.Systems.InteractionSystem
 
 	#region ITask
 	/// <summary>
-	/// Если currentTask.Status == TaskActionStatus.Cancelled тогда последовательность обрывается.
+	/// пїЅпїЅпїЅпїЅ currentTask.Status == TaskActionStatus.Cancelled пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 	/// </summary>
 	public class TaskSequence
 	{
@@ -292,8 +292,8 @@ namespace Game.Systems.InteractionSystem
 		{
 			status = TaskActionStatus.Running;
 
-			yield return entity.Controller.RotateAnimatedTo(point, duration);
-
+			//yield return entity.Controller.RotateAnimatedTo(point, duration);
+			yield return null;
 			status = TaskActionStatus.Done;
 		}
 	}
@@ -302,14 +302,14 @@ namespace Game.Systems.InteractionSystem
 	{
 		public Attack(IBattlable from, IInteractable to) : base(from, to)
 		{
-			entity.AnimatorControl.onAttackEvent += OnAttacked;
+			//entity.AnimatorControl.onAttackEvent += OnAttacked;
 		}
 
 		protected virtual void Dispose()
 		{
 			if (entity != null)
 			{
-				entity.AnimatorControl.onAttackEvent -= OnAttacked;
+				//entity.AnimatorControl.onAttackEvent -= OnAttacked;
 			}
 		}
 
@@ -322,9 +322,9 @@ namespace Game.Systems.InteractionSystem
 					//rotate & animation
 					Sequence sequence = DOTween.Sequence();
 
-					sequence
-						.Append(entity.Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
-						.AppendCallback(entity.AnimatorControl.Attack);
+					//sequence
+					//	.Append(entity.Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
+					//	.AppendCallback(entity.AnimatorControl.Attack);
 				}
 			}
 			//else if (to is IDamegeable)
@@ -333,9 +333,9 @@ namespace Game.Systems.InteractionSystem
 			//}
 
 			//wait start and then end attack
-			yield return new WaitWhile(() => !entity.AnimatorControl.IsAttackProccess);
-			yield return new WaitWhile(() => entity.AnimatorControl.IsAttackProccess);
-
+			//yield return new WaitWhile(() => !entity.AnimatorControl.IsAttackProccess);
+			//yield return new WaitWhile(() => entity.AnimatorControl.IsAttackProccess);
+			yield return null;
 			Dispose();
 		}
 		
@@ -348,8 +348,8 @@ namespace Game.Systems.InteractionSystem
 				{
 					if (entity.Sheet.Conditions.Add(new Death()))
 					{
-						entity.AnimatorControl.Death();
-						entity.Kill();
+						//entity.AnimatorControl.Death();
+						//entity.Kill();
 
 						Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {entity.MonoBehaviour.gameObject.name}");
 					}
@@ -365,10 +365,10 @@ namespace Game.Systems.InteractionSystem
 			if(interactable is IEntity entity)
 			{
 				//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
-				entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
-				entity.ApplyDamage(entity.GetDamage());
+				//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
+				//entity.ApplyDamage(entity.GetDamage());
 
-				CheckDeath(entity);
+				//CheckDeath(entity);
 			}
 		}
 
@@ -382,12 +382,12 @@ namespace Game.Systems.InteractionSystem
 
 		public HumanoidAttack(IBattlable from, IInteractable to) : base(from, to)
 		{
-			control = (from.AnimatorControl as HumanoidAnimatorControl);
-			equipment = (from.Sheet as CharacterSheet).Equipment;
+			//control = (from.AnimatorControl as HumanoidAnimatorControl);
+			//equipment = (from.Sheet as CharacterSheet).Equipment;
 
-			control.onAttackLeftHand += OnAttackedLeftHand;
-			control.onAttackRightHand += OnAttackRightHand;
-			control.onAttackKick += OnAttacked;
+			//control.onAttackLeftHand += OnAttackedLeftHand;
+			//control.onAttackRightHand += OnAttackRightHand;
+			//control.onAttackKick += OnAttacked;
 		}
 
 		protected override void Dispose()
@@ -408,10 +408,10 @@ namespace Game.Systems.InteractionSystem
 			{
 				if (interactable is IEntity entity)
 				{
-					entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
-					entity.ApplyDamage(equipment.WeaponCurrent.Spare.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
+					//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
+					//entity.ApplyDamage(equipment.WeaponCurrent.Spare.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
 
-					CheckDeath(entity);
+					//CheckDeath(entity);
 				}
 			}
 			else
@@ -425,10 +425,10 @@ namespace Game.Systems.InteractionSystem
 			{
 				if (interactable is IEntity entity)
 				{
-					entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
-					entity.ApplyDamage(equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
+					//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
+					//entity.ApplyDamage(equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
 
-					CheckDeath(entity);
+					//CheckDeath(entity);
 				}
 			}
 			else

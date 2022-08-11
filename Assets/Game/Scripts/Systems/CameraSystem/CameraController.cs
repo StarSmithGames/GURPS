@@ -31,28 +31,50 @@ namespace Game.Systems.CameraSystem
 		private Coroutine tacticCoroutine = null;
 		private bool isTactic = false;
 
+		private CinemachineFramingTransposer CurrentTransposer
+		{
+			set
+			{
+				currentTransposer = value;
+			}
+			get
+			{
+				if(currentTransposer == null)
+				{
+					if(brain.ActiveVirtualCamera == null)
+					{
+						currentTransposer = camers.FirstOrDefault()?.GetCinemachineComponent<CinemachineFramingTransposer>();
+					}
+					else
+					{
+						currentTransposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
+					}
+				}
+				return currentTransposer;
+			}
+		}
 		private CinemachineFramingTransposer currentTransposer;
 
 		private SignalBus signalBus;
 		private CinemachineBrain brain;
-		private List<CinemachineVirtualCamera> characterCamers;
+		private List<CinemachineVirtualCamera> camers;
 		private InputManager inputManager;
-		private CameraVision cameraVision;
+		private ICameraVision cameraVision;
 		private AsyncManager asyncManager;
 		private CharacterManager characterManager;
 		private Character leader;
 
 		public CameraController(SignalBus signalBus,
 			CinemachineBrain brain,
-			[Inject(Id = "CharacterCamers")] List<CinemachineVirtualCamera> characterCamers,
+			[Inject(Id = "Camers")] List<CinemachineVirtualCamera> camers,
 			InputManager inputManager,
-			CameraVision cameraVision,
+			ICameraVision cameraVision,
 			AsyncManager asyncManager,
 			CharacterManager characterManager)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
-			this.characterCamers = characterCamers;
+			this.camers = camers;
 			this.inputManager = inputManager;
 			this.cameraVision = cameraVision;
 			this.asyncManager = asyncManager;
@@ -61,16 +83,14 @@ namespace Game.Systems.CameraSystem
 
 		public void Initialize()
 		{
-			leader = characterManager.CurrentParty.LeaderParty;
-
-			currentTransposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
+			//leader = characterManager.CurrentParty.LeaderParty;
 
 			SetZoom(zoomStandart);
 
-			LookAt(characterManager.CurrentParty.LeaderParty);
+			//LookAt(characterManager.CurrentParty.LeaderParty);
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 
-			signalBus?.Subscribe<StartDialogueSignal>(OnStartDialogue);
+			//signalBus?.Subscribe<StartDialogueSignal>(OnStartDialogue);
 		}
 
 		public void Dispose()
@@ -90,29 +110,29 @@ namespace Game.Systems.CameraSystem
 				if (!IsInBlendTransition)
 				{
 					isTactic = !isTactic;
-					characterCamers.OrderByDescending((x) => x.Priority).First().gameObject.SetActive(!isTactic);
+					camers.OrderByDescending((x) => x.Priority).First().gameObject.SetActive(!isTactic);
 					tacticCoroutine = asyncManager.StartCoroutine(WaitWhileCamerasBlendes());
 				}
 			}
 
 			#region Move
-			if (!leader.IsInDialogue)
+			//if (!leader.IsInDialogue)
 			{
 				if (inputManager.GetKey(KeyAction.CameraForward))
 				{
-					currentTransposer.FollowTarget.position += currentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
+					CurrentTransposer.FollowTarget.position += CurrentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
 				}
 				if (inputManager.GetKey(KeyAction.CameraBackward))
 				{
-					currentTransposer.FollowTarget.position += -currentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
+					CurrentTransposer.FollowTarget.position += -CurrentTransposer.FollowTarget.forward * movementSpeed * Time.deltaTime;
 				}
 				if (inputManager.GetKey(KeyAction.CameraLeft))
 				{
-					currentTransposer.FollowTarget.position += -currentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
+					CurrentTransposer.FollowTarget.position += -CurrentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
 				}
 				if (inputManager.GetKey(KeyAction.CameraRight))
 				{
-					currentTransposer.FollowTarget.position += currentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
+					CurrentTransposer.FollowTarget.position += CurrentTransposer.FollowTarget.right * movementSpeed * Time.deltaTime;
 				}
 			}
 			#endregion
@@ -120,15 +140,15 @@ namespace Game.Systems.CameraSystem
 			#region Rotate
 			if (inputManager.GetKey(KeyAction.CameraRotate))
 			{
-				currentTransposer.FollowTarget.Rotate(Vector3.up * Input.GetAxis("Mouse X") * rotationSpeed * 2 * Time.deltaTime, Space.World);
+				CurrentTransposer.FollowTarget.Rotate(Vector3.up * Input.GetAxis("Mouse X") * rotationSpeed * 2 * Time.deltaTime, Space.World);
 			}
 			if (inputManager.GetKey(KeyAction.CameraRotateLeft))
 			{
-				currentTransposer.FollowTarget.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
+				CurrentTransposer.FollowTarget.Rotate(Vector3.up * rotationSpeed * Time.deltaTime, Space.World);
 			}
 			if (inputManager.GetKey(KeyAction.CameraRotateRight))
 			{
-				currentTransposer.FollowTarget.Rotate(Vector3.down * rotationSpeed * Time.deltaTime, Space.World);
+				CurrentTransposer.FollowTarget.Rotate(Vector3.down * rotationSpeed * Time.deltaTime, Space.World);
 			}
 			#endregion
 
@@ -167,19 +187,19 @@ namespace Game.Systems.CameraSystem
 		public void CameraToHome()
 		{
 			DOTween.To(
-				() => currentTransposer.FollowTarget.localPosition,//from
-				(x) => currentTransposer.FollowTarget.localPosition = x,//step
+				() => CurrentTransposer.FollowTarget.localPosition,//from
+				(x) => CurrentTransposer.FollowTarget.localPosition = x,//step
 				currentPivot.settings.startPosition,//to
 				0.5f);//t
 
-			currentTransposer.FollowTarget.DORotate(currentPivot.settings.startRotation.eulerAngles, 0.3f);
+			CurrentTransposer.FollowTarget.DORotate(currentPivot.settings.startRotation.eulerAngles, 0.3f);
 		}
 
 		public void SetFollowTarget(CameraPivot pivot)
 		{
 			currentPivot = pivot;
 
-			characterCamers.ForEach((x) =>
+			camers.ForEach((x) =>
 			{
 				x.Follow = currentPivot.transform;
 				x.LookAt = currentPivot.transform;
@@ -202,15 +222,15 @@ namespace Game.Systems.CameraSystem
 		{
 			currentZoom = Mathf.Clamp(zoom, zoomMinMax.x, zoomMinMax.y);
 
-			currentTransposer.m_CameraDistance = currentZoom;
+			CurrentTransposer.m_CameraDistance = currentZoom;
 		}
 		private void AnimateZoom(float zoom)
 		{
 			currentZoom = Mathf.Clamp(zoom, zoomMinMax.x, zoomMinMax.y);
 
 			DOTween.To(
-				() => currentTransposer.m_CameraDistance,//from
-				(x) => currentTransposer.m_CameraDistance = x,//step
+				() => CurrentTransposer.m_CameraDistance,//from
+				(x) => CurrentTransposer.m_CameraDistance = x,//step
 				currentZoom,//to
 				0.25f);//t
 		}
@@ -220,7 +240,7 @@ namespace Game.Systems.CameraSystem
 			yield return null;
 			yield return new WaitWhile(() => !brain.ActiveBlend?.IsComplete ?? false);
 
-			currentTransposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
+			CurrentTransposer = (brain.ActiveVirtualCamera as CinemachineVirtualCamera).GetCinemachineComponent<CinemachineFramingTransposer>();
 
 			tacticCoroutine = null;
 		}

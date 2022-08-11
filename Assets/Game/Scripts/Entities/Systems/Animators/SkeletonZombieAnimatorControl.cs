@@ -21,7 +21,7 @@ public class SkeletonZombieAnimatorControl : AnimatorControl
 
 		if (humanoid.InBattle)
 		{
-			humanoid.Controller.IsWaitAnimation = IsAnimationProcess;
+			//humanoid.Controller.IsWaitAnimation = IsAnimationProcess;
 		}
 	}
 }

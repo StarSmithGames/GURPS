@@ -13,20 +13,19 @@ using Zenject;
 public class SceneInstaller : MonoInstaller
 {
 	[SerializeField] private CinemachineBrain brainCamera;
-	[SerializeField] private List<CinemachineVirtualCamera> characterCamers= new List<CinemachineVirtualCamera>();
+	[SerializeField] private List<CinemachineVirtualCamera> characterCamers = new List<CinemachineVirtualCamera>();
 
 	public override void InstallBindings()
 	{
 		BattleSystemInstaller.Install(Container);
 
 		Container.BindInstance(brainCamera);
-		Container.BindInstance(characterCamers).WithId("CharacterCamers");
+		Container.BindInstance(characterCamers).WithId("Camers");
 
-		//Container.BindInterfacesAndSelfTo<CameraVision>().AsSingle();
+		Container.BindInterfacesAndSelfTo<CameraVisionLocation>().AsSingle().NonLazy();
+		Container.BindInterfacesAndSelfTo<CameraController>().AsSingle().NonLazy();
 
-		//Container.BindInterfacesAndSelfTo<CameraController>().AsSingle();
-
-		//BindContexMenu();
+		BindContexMenu();
 	}
 
 	private void BindContexMenu()

@@ -13,7 +13,7 @@ namespace Game.UI.GlobalCanvas
     {
         public GameObject GlobalCanvasPrefab;
         [Space]
-        public UIInfinityLoadingWindow infinityLoadingWindow;
+        public WindowInfinityLoading infinityLoadingWindow;
 
         public override void InstallBindings()
         {
@@ -34,7 +34,7 @@ namespace Game.UI.GlobalCanvas
             //Windows
             Container.Bind<WindowsManager>().WhenInjectedInto<UIGlobalCanvas>();//global window manager
 
-            Container.Bind<UIInfinityLoadingWindow>()
+            Container.Bind<WindowInfinityLoading>()
                 .FromComponentInNewPrefab(infinityLoadingWindow)
                 .UnderTransform(x => x.Container.Resolve<UIGlobalCanvas>().transform.Find("Windows"))
                 .AsSingle()

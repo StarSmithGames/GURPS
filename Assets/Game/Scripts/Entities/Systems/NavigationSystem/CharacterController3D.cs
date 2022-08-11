@@ -60,17 +60,12 @@ public class CharacterController3D : MonoBehaviour
 
 	private Transform model;
 
-	private NavMeshAgent navMeshAgent;
 	private CharacterController characterController;
 	private NavigationController navigationController;
 
 	[Inject]
-	private void Construct(
-		NavMeshAgent navMeshAgent,
-		CharacterController characterController,
-		NavigationController navigationController)
+	private void Construct(CharacterController characterController, NavigationController navigationController)
 	{
-		this.navMeshAgent = navMeshAgent;
 		this.characterController = characterController;
 		this.navigationController = navigationController;
 	}
@@ -85,7 +80,7 @@ public class CharacterController3D : MonoBehaviour
 	}
 
 
-	private void FixedUpdate()
+	private void Update()
 	{
 		Movement();
 
@@ -107,7 +102,7 @@ public class CharacterController3D : MonoBehaviour
 
 	public void Enable(bool trigger)
 	{
-		navMeshAgent.enabled = trigger;
+		navigationController.NavMeshAgent.enabled = trigger;
 		characterController.enabled = trigger;
 		navigationController.enabled = trigger;
 
@@ -217,7 +212,7 @@ public class CharacterController3D : MonoBehaviour
 		direction = VectorMath.RemoveDotVector(direction, transform.root.up);
 		Vector3 velocity = direction.normalized * settings.movementSpeed;
 
-		return settings.useNavMesh ? navMeshAgent.desiredVelocity.normalized : velocity.normalized;
+		return settings.useNavMesh ? navigationController.NavMeshAgent.desiredVelocity.normalized : velocity.normalized;
 	}
 
 	private void HandleTimeOut()
@@ -248,7 +243,7 @@ public class CharacterController3D : MonoBehaviour
 	//-180 to 180
 	public float CalculateAngleToDesination()
 	{
-		Vector3 desiredDiff = navMeshAgent.destination - model.position;
+		Vector3 desiredDiff = navigationController.NavMeshAgent.destination - model.position;
 		Vector3 direction = Quaternion.Inverse(model.rotation) * desiredDiff.normalized;
 		return Mathf.Atan2(direction.x, direction.z) * 180.0f / Mathf.PI;
 	}
@@ -256,17 +251,9 @@ public class CharacterController3D : MonoBehaviour
 
 	private void Validate()
 	{
-		if (navMeshAgent == null)
-		{
-			if (Application.isEditor)
-			{
-				navMeshAgent = GetComponentInParent<NavMeshAgent>();
-			}
-		}
-
-		navMeshAgent.updatePosition = false;
-		navMeshAgent.speed = settings.movementSpeed;
-		navMeshAgent.angularSpeed = 0;
+		navigationController.NavMeshAgent.updatePosition = false;
+		navigationController.NavMeshAgent.speed = settings.movementSpeed;
+		navigationController.NavMeshAgent.angularSpeed = 0;
 	}
 
 	private void OnDrawGizmos()

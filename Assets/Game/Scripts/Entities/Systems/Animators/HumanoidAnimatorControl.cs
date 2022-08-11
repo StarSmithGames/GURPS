@@ -58,7 +58,7 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 
 		if (humanoid.InBattle)
 		{
-			humanoid.Controller.IsWaitAnimation = IsAnimationProcess;
+			//humanoid.Controller.IsWaitAnimation = IsAnimationProcess;
 		}
 	}
 
@@ -232,7 +232,7 @@ partial class HumanoidAnimatorControl
 			this.owner = owner;
 			equipment = (owner.Sheet as CharacterSheet).Equipment;
 			outfit = (owner as Character).Outfit;
-			control = owner.AnimatorControl as HumanoidAnimatorControl;
+			control = (owner as StubEntity).AnimatorControl as HumanoidAnimatorControl;
 			animator = control.animator;
 
 			weaponTypeHash = Animator.StringToHash("WeaponType");

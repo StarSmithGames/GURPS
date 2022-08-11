@@ -13,10 +13,11 @@ namespace Game.Entities
 		Transform Transform { get; }
 
 		NavigationController Navigation { get; }
-		CharacterController3D Controller { get; }
+		IController Controller { get; }
 
 		void SetTarget(Vector3 point, float maxPathDistance = -1);
 		void SetDestination(Vector3 destination, float maxPathDistance = -1);
+		void Freeze(bool trigger);
 		void Stop();
 	}
 }

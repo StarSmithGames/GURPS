@@ -13,7 +13,7 @@ using Zenject;
 
 namespace Game.Managers.SceneManager
 {
-	public class SceneManager : ITickable, IInitializable, IDisposable
+	public class SceneManager : IInitializable, IDisposable
 	{
 		public IProgressHandle ProgressHandle { get; private set; }
 
@@ -45,26 +45,21 @@ namespace Game.Managers.SceneManager
 			UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
 		}
 
-		public void Tick()
-		{
-
-		}
-
-		public void SwitchScene(Scenes scene, UnityAction callback = null)
+		public void SwitchScene(Scenes scene, bool allow = true, UnityAction callback = null)
 		{
 			scenes.TryGetValue(scene, out string name);
-			SwitchScene(name, callback);
+			SwitchScene(name, allow, callback);
 		}
 
-		public void SwitchScene(string sceneName, UnityAction callback = null)
+		public void SwitchScene(string sceneName, bool allow = true, UnityAction callback = null)
 		{
-			SetCurrentSceneAsync(sceneName, callback);
+			SetCurrentSceneAsync(sceneName, allow, callback);
 		}
 
 		//LoadFromEditor
 		//LoadFromBuild
 		//LoadFromAddresables
-		public void SetCurrentSceneAsync(string sceneName, UnityAction callback = null)
+		private void SetCurrentSceneAsync(string sceneName, bool allow = true, UnityAction callback = null)
 		{
 			//if (Application.isEditor)
 			//{
@@ -72,7 +67,7 @@ namespace Game.Managers.SceneManager
 			//}
 			//else
 			{
-				asyncManager.StartCoroutine(LoadFromBuild(sceneName, callback));
+				asyncManager.StartCoroutine(LoadFromBuild(sceneName, allow, callback));
 			}
 		}
 
@@ -112,14 +107,14 @@ namespace Game.Managers.SceneManager
 #endif
         }
 
-        private IEnumerator LoadFromBuild(string sceneName, UnityAction callback = null)
+        private IEnumerator LoadFromBuild(string sceneName, bool allow = true, UnityAction callback = null)
 		{
 			currentScene = sceneName;
 			BuildProgressHandle handle = new BuildProgressHandle();
 			ProgressHandle = handle;
 
 			handle.AsyncOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(currentScene, LoadSceneMode.Single);
-			handle.AsyncOperation.allowSceneActivation = true;
+			handle.AsyncOperation.allowSceneActivation = allow;
 
 			yield return handle.AsyncOperation;
 
@@ -160,15 +155,25 @@ namespace Game.Managers.SceneManager
 
 	public interface IProgressHandle
 	{
+		bool IsAllowed { get; }
+
 		float GetProgressPercent();
+		void AllowSceneActivation();
 	}
 	public class BuildProgressHandle : IProgressHandle
 	{
 		public AsyncOperation AsyncOperation = null;
 
+		public bool IsAllowed => AsyncOperation?.allowSceneActivation ?? true;
+
 		public float GetProgressPercent()
 		{
 			return AsyncOperation?.progress ?? 0f;
+		}
+
+		public void AllowSceneActivation()
+		{
+			AsyncOperation.allowSceneActivation = true;
 		}
 	}
 }

@@ -14,22 +14,22 @@ namespace Game.Systems.InteractionSystem
 	{
 		[SerializeField] protected Settings interactableSettings;
 
-		public bool IsInteractable => outline.enabled;
+		public bool IsInteractable => true;//outline.enabled;
 
-		protected IEntity interactorInitiator = null;//тот кто взаимодействует с этим объектом
+		protected IEntity interactorInitiator = null;//пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
-		private Outlinable outline;
+		//private Outlinable outline;
 
-		[Inject]
-		private void Construct(Outlinable outline)
-		{
-			this.outline = outline;
-		}
+		//[Inject]
+		//private void Construct(Outlinable outline)
+		//{
+		//	this.outline = outline;
+		//}
 
-		private void Awake()
-		{
-			outline.enabled = false;
-		}
+		//private void Awake()
+		//{
+		//	outline.enabled = false;
+		//}
 
 		public Vector3 GetIteractionPosition(IEntity entity = null)
 		{
@@ -62,12 +62,12 @@ namespace Game.Systems.InteractionSystem
 		#region Observe
 		public virtual void StartObserve()
 		{
-			outline.enabled = true;
+			//outline.enabled = true;
 		}
 		public virtual void Observe() { }
 		public virtual void EndObserve()
 		{
-			outline.enabled = false;
+			//outline.enabled = false;
 		}
 		#endregion
 

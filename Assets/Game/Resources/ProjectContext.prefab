@@ -82,12 +82,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   globalSettings:
-    cameraVision:
+    cameraVisionMap:
       isCanHoldMouse: 1
       raycastLayerMask:
         serializedVersion: 2
-        m_Bits: 217
+        m_Bits: 1
+      raycastLength: 100
+    cameraVisionLocation:
+      isCanHoldMouse: 1
+      raycastLayerMask:
+        serializedVersion: 2
+        m_Bits: 255
       raycastLength: 100
     battleSettings:
       isInfinityMoveStat: 1
       isInfinityActionStat: 1
+    infinityLoadingSettings:
+      allowScene: 0
+      progressAnimationMultiplier: 1

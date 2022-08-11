@@ -29,43 +29,18 @@ namespace Game.Entities
 		public float NavMeshPercentRemainingDistance => NavMeshRemainingDistance / CurrentNavMeshPathDistance;
 		public float NavMeshInvertedPercentRemainingDistance => 1 - NavMeshPercentRemainingDistance;
 
-		public bool IsCanReach => (entity.Sheet.Stats.Move.CurrentValue - FullPathDistance) >= 0 && FullPathDistance != 0 && entity.Sheet.Stats.Move.CurrentValue != 0;
-
 		[SerializeField] private Settings settings;
 
-		private SignalBus signalBus;
-		private Markers markers;
-		private CharacterController3D characterController;
-		private IEntity entity;
-
 		[Inject]
-        private void Construct(
-			SignalBus signalBus,
-			NavMeshAgent navMeshAgent,
-			Markers markers,
-			CharacterController3D characterController,
-			IEntity entity)
+        private void Construct(NavMeshAgent navMeshAgent)
 		{
-			this.signalBus = signalBus;
-			this.NavMeshAgent = navMeshAgent;
-			this.markers = markers;
-			this.characterController = characterController;
-			this.entity = entity;
+			NavMeshAgent = navMeshAgent;
 		}
 
 		private void Start()
 		{
+			NavMeshAgent.stoppingDistance = settings.reachTargetThreshold;
 			CurrentNavMeshPath = NavMeshAgent.path;
-		}
-
-		private void Update()
-		{
-			markers.TargetMarker.transform.position = CurrentNavMeshDestination;
-			markers.TargetMarker.DrawCircle();
-
-			markers.FollowMarker.DrawCircle();
-
-			markers.LineMarker.DrawLine(NavMeshAgent.path.corners);
 		}
 
 		public bool SetTarget(Vector3 destination, float maxPathDistance = -1)
@@ -116,11 +91,6 @@ namespace Game.Entities
 			}
 
 			return result;
-		}
-
-		private void Validate()
-		{
-			NavMeshAgent.stoppingDistance = settings.reachTargetThreshold;
 		}
 		
 		private void OnDrawGizmos()

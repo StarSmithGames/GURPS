@@ -142,21 +142,21 @@ namespace Game.Systems.BattleSystem
 			{
 				if (!isEndBattle)
 				{
-					if (characterManager.CurrentParty.Characters.Contains(x))
-					{
-						if (x == initiator)
-						{
-							x.Markers.SetFollowMaterial(MaterialType.Leader);
-						}
-						else
-						{
-							x.Markers.SetFollowMaterial(MaterialType.Companion);
-						}
-					}
-					else
-					{
-						x.Markers.SetFollowMaterial(MaterialType.Enemy);
-					}
+					//if (characterManager.CurrentParty.Characters.Contains(x))
+					//{
+					//	if (x == initiator)
+					//	{
+					//		x.Markers.SetFollowMaterial(MaterialType.Leader);
+					//	}
+					//	else
+					//	{
+					//		x.Markers.SetFollowMaterial(MaterialType.Companion);
+					//	}
+					//}
+					//else
+					//{
+					//	x.Markers.SetFollowMaterial(MaterialType.Enemy);
+					//}
 				}
 
 				x.Freeze(!isEndBattle);

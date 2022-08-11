@@ -11,10 +11,11 @@ using DG.Tweening;
 using Zenject;
 using UnityEngine.Events;
 using Game.UI.GlobalCanvas;
+using UnityEditor.UIElements;
 
 namespace Game.UI.Windows
 {
-	public class UIInfinityLoadingWindow : MonoBehaviour, IWindow
+	public class WindowInfinityLoading : MonoBehaviour, IWindow
 	{
 		public bool IsShowing { get; private set; }
 
@@ -34,14 +35,17 @@ namespace Game.UI.Windows
 		private SceneManager sceneManager;
 		private TransitionManager transitionManager;
 		private AsyncManager asyncManager;
+		private Settings settings;
 
 		[Inject]
-		public void Construct(UIGlobalCanvas globalCanvas, SceneManager sceneManager, TransitionManager transitionManager, AsyncManager asyncManager)
+		public void Construct(UIGlobalCanvas globalCanvas, SceneManager sceneManager,
+			TransitionManager transitionManager, AsyncManager asyncManager, GlobalSettings settings)
 		{
 			this.globalCanvas = globalCanvas;
 			this.sceneManager = sceneManager;
 			this.transitionManager = transitionManager;
 			this.asyncManager = asyncManager;
+			this.settings = settings.infinityLoadingSettings;
 		}
 
 		private void Start()
@@ -68,7 +72,7 @@ namespace Game.UI.Windows
 			this.transitionsIn = transitionsIn;
 			this.transitionOut = transitionOut;
 
-			ShowAfterTransation();
+			ShowAfterTransition();
 		}
 
 		public void Show(UnityAction callback = null)
@@ -95,48 +99,56 @@ namespace Game.UI.Windows
 				});
 		}
 
-		private void ShowAfterTransation()
+		private void ShowAfterTransition()
 		{
 			transitionManager
 				.TransitionIn(transitionsIn,
 				() => {
 					Show();
 					//start progress
-
 					isProgressing = true;
 					asyncManager.StartCoroutine(ProgressTick());
+					sceneManager.SwitchScene(scene, settings.allowScene);
+				});
+		}
 
-					sceneManager.SwitchScene(scene,
-					() =>
+
+		private IEnumerator ProgressTick()
+		{
+			float targetValue;
+			float currentValue = 0f;
+
+			while (isProgressing)
+			{
+				if (sceneManager.ProgressHandle == null)
+				{
+					Progress.text = $"{Mathf.Round(currentValue * 100f)}%";
+					yield return null;
+				}
+				else
+				{
+					targetValue = sceneManager.ProgressHandle.GetProgressPercent() / 0.9f;
+
+					currentValue = Mathf.MoveTowards(currentValue, targetValue, settings.progressAnimationMultiplier * Time.deltaTime);
+					Progress.text = $"{Mathf.Round(currentValue * 100f)}%";
+
+					if (Mathf.Approximately(currentValue, 1))
 					{
+						//end progress
 						isProgressing = false;
-						
+
 						ContinueCanvasGroup.alpha = 0f;
 						Progress.enabled = false;
 						Continue.enabled = true;
 						Continue.gameObject.SetActive(true);
 						ContinueCanvasGroup.DOFade(1, 0.2f);
+					}
 
-						//end progress
-					});
-
-
-				});
-		}
-
-		private IEnumerator ProgressTick()
-		{
-			while (isProgressing)
-			{
-				if (sceneManager.ProgressHandle != null)
-				{
-					Progress.text = $"{sceneManager.ProgressHandle.GetProgressPercent()}%";
+					yield return null;
 				}
-
-				yield return null;
 			}
 
-			Progress.text = "100%";
+			yield return null;
 		}
 
 		private void Click()
@@ -145,7 +157,21 @@ namespace Game.UI.Windows
 
 			ContinueCanvasGroup.DOKill(true);
 
+			//allow scene
+			if (!sceneManager.ProgressHandle.IsAllowed)
+			{
+				sceneManager.ProgressHandle.AllowSceneActivation();
+			}
+
 			Hide(() => transitionManager.TransitionOut(transitionOut));
+		}
+
+		[System.Serializable]
+		public class Settings
+		{
+			public bool allowScene = false;
+			[Range(0, 1f)]
+			public float progressAnimationMultiplier = 0.25f;
 		}
 	}
 }

@@ -11,7 +11,7 @@ using Zenject;
 
 namespace Game.Entities
 {
-	public class NPC : HumanoidEntity
+	public class NPC : StubEntity
 	{
 		[SerializeField] private NPCData data;
 

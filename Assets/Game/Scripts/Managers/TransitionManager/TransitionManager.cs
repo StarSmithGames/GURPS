@@ -51,6 +51,7 @@ namespace Game.Managers.TransitionManager
 
 			transition.In(callback);
 		}
+
 		public void TransitionOut(Transitions type, UnityAction callback = null)
 		{
 			transition.Out(callback);

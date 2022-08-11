@@ -38,6 +38,6 @@ public class UIButtonSwitchScene : MonoBehaviour
 
 	private void Click()
 	{
-		globalCanvas.WindowsManager.GetAs<UIInfinityLoadingWindow>().Show(GoTo, In, Out);
+		globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(GoTo, In, Out);
 	}
 }

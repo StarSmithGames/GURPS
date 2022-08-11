@@ -42,6 +42,7 @@ namespace Game.Managers.InputManager
 		{
 			return Input.mousePosition;
 		}
+
 		public bool IsLeftMouseButtonDown()
 		{
 			return Input.GetMouseButtonDown(0);
@@ -50,9 +51,14 @@ namespace Game.Managers.InputManager
 		{
 			return Input.GetMouseButton(0);
 		}
+
 		public bool IsRightMouseButtonDown()
 		{
 			return Input.GetMouseButtonDown(1);
+		}
+		public bool IsRightMouseButtonPressed()
+		{
+			return Input.GetMouseButton(1);
 		}
 
 

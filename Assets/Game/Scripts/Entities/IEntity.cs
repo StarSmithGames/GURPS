@@ -5,10 +5,7 @@ using Game.Systems.DamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
-using System.Collections.Generic;
-
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Game.Entities
 {
@@ -20,14 +17,5 @@ namespace Game.Entities
 		MonoBehaviour MonoBehaviour { get; }
 
 		CameraPivot CameraPivot { get; }
-
-		AnimatorControl AnimatorControl { get; }
-
-		Markers Markers { get; }
-		Outlinable Outlines { get; }
-
-		TaskSequence TaskSequence { get; }
-
-		void Freeze(bool trigger);
 	}
 }

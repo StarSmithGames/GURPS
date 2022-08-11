@@ -59,7 +59,12 @@ namespace Game.Managers.CharacterManager
 
 		public bool SetLeader(int index)
 		{
-			return SetLeader(Characters[index]);
+			if (index < Characters.Count)
+			{
+				return SetLeader(Characters[index]);
+			}
+
+			return false;
 		}
 	}
 }

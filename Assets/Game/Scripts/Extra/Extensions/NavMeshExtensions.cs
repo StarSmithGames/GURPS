@@ -5,7 +5,7 @@ public static class NavMeshExtensions
 {
 	public static bool IsReachedDestination(this NavMeshAgent navMeshAgent)
 	{
-		return (navMeshAgent.remainingDistance < navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
+		return (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance) && !navMeshAgent.pathPending;
 	}
 	public static bool IsReachesDestination(this NavMeshAgent navMeshAgent)
 	{
