@@ -2,7 +2,6 @@ using Game.Managers.SceneManager;
 using Game.Managers.TransitionManager;
 
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,8 +9,6 @@ using DG.Tweening;
 
 using Zenject;
 using UnityEngine.Events;
-using Game.UI.GlobalCanvas;
-using UnityEditor.UIElements;
 
 namespace Game.UI.Windows
 {
@@ -64,6 +61,14 @@ namespace Game.UI.Windows
 			globalCanvas.WindowsManager.UnRegister(this);
 
 			Continue?.onClick.RemoveAllListeners();
+		}
+
+		public void Enable(bool trigger)
+		{
+			CanvasGroup.alpha = trigger ? 1f : 0f; 
+
+			CanvasGroup.blocksRaycasts = trigger;
+			CanvasGroup.interactable = trigger;
 		}
 
 		public void Show(Scenes scene, Transitions transitionsIn, Transitions transitionOut)
@@ -165,6 +170,7 @@ namespace Game.UI.Windows
 
 			Hide(() => transitionManager.TransitionOut(transitionOut));
 		}
+		
 
 		[System.Serializable]
 		public class Settings

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: InputManagerInstaller
   m_EditorClassIdentifier: 
   keyBindings:
+  - keyAction: 55
+    keyCode: 27
   - keyAction: 10
     keyCode: 323
   - keyAction: 25

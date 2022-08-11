@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8066c16568903dc48a41d96d2b60b354, type: 3}
+  m_Name: UISubCanvasInstaller
+  m_EditorClassIdentifier: 
+  SubCanvasPrefab: {fileID: 8354466320625428728, guid: f5bad759d733f3242afda18969e49ac9, type: 3}
+  mainMenuWindow: {fileID: 1390104159834341277, guid: b158e13da955e63458a07393ef4d9b1c, type: 3}

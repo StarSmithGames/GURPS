@@ -1,6 +1,5 @@
 using Game.Managers.SceneManager;
-using Game.Systems.FloatingTextSystem;
-using Game.UI.GlobalCanvas;
+using Game.UI;
 
 using UnityEngine;
 

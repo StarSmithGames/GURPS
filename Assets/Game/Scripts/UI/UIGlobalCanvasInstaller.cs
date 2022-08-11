@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Zenject;
 
-namespace Game.UI.GlobalCanvas
+namespace Game.UI
 {
     [CreateAssetMenu(fileName = "UIGlobalCanvasInstaller", menuName = "Installers/UIGlobalCanvasInstaller")]
     public class UIGlobalCanvasInstaller : ScriptableObjectInstaller<UIGlobalCanvasInstaller>

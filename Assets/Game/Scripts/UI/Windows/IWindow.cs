@@ -6,4 +6,6 @@ public interface IWindow
 
 	void Show(UnityAction callback = null);
 	void Hide(UnityAction callback = null);
+
+	void Enable(bool trigger);
 }

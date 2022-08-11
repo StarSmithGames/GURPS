@@ -21,6 +21,11 @@ public abstract class WindowBase : MonoBehaviour, IWindow
 
 		isShowing = false;
 	}
+
+	public void Enable(bool trigger)
+	{
+		throw new System.NotImplementedException();
+	}
 }
 
 public abstract class WindowBasePoolable : PoolableObject, IWindow
@@ -40,5 +45,10 @@ public abstract class WindowBasePoolable : PoolableObject, IWindow
 		gameObject.SetActive(false);
 
 		isShowing = false;
+	}
+
+	public void Enable(bool trigger)
+	{
+		throw new System.NotImplementedException();
 	}
 }
