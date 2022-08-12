@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : InteractableModel, IContainer, ISheetable/*, IDamegeable*/
+	public class ContainerModel : MonoBehaviour, IContainer, ISheetable/*, IDamegeable*/
 	{
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
 
@@ -29,6 +29,10 @@ namespace Game.Systems.InventorySystem
 
 		public bool IsOpened => containerWindow?.IsShowing ?? false;
 		public bool IsSearched => data.isSearched;
+
+		public bool IsInteractable { get; }
+		public IInteraction Interaction { get; }
+		public Transform Transform => transform;
 
 		private UIContainerWindow containerWindow = null;
 
@@ -52,20 +56,20 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-		#region Observe
-		public override void StartObserve()
-		{
-			base.StartObserve();
+		//#region Observe
+		//public override void StartObserve()
+		//{
+		//	base.StartObserve();
 
-			uiManager.Battle.SetSheet(Sheet);
-		}
-		public override void EndObserve()
-		{
-			base.EndObserve();
+		//	uiManager.Battle.SetSheet(Sheet);
+		//}
+		//public override void EndObserve()
+		//{
+		//	base.EndObserve();
 
-			uiManager.Battle.SetSheet(null);
-		}
-		#endregion
+		//	uiManager.Battle.SetSheet(null);
+		//}
+		//#endregion
 
 		#region OpenClose
 		public void Open()
@@ -92,6 +96,10 @@ namespace Game.Systems.InventorySystem
 			containerHandler.CharacterTakeAllFrom(Sheet.Inventory);
 		}
 
+		public bool InteractWith(IInteractable interactable)
+		{
+			throw new System.NotImplementedException();
+		}
 
 		public class Data
 		{

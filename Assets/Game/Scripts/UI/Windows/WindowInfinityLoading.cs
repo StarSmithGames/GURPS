@@ -9,6 +9,7 @@ using DG.Tweening;
 
 using Zenject;
 using UnityEngine.Events;
+using System.Collections.Generic;
 
 namespace Game.UI.Windows
 {
@@ -23,7 +24,6 @@ namespace Game.UI.Windows
 		[field: SerializeField] public CanvasGroup ContinueCanvasGroup { get; private set; }
 		[field: SerializeField] public Button Continue { get; private set; }
 
-		private Scenes scene;
 		private Transitions transitionsIn;
 		private Transitions transitionOut;
 		private bool isProgressing = false;
@@ -73,11 +73,18 @@ namespace Game.UI.Windows
 
 		public void Show(Scenes scene, Transitions transitionsIn, Transitions transitionOut)
 		{
-			this.scene = scene;
 			this.transitionsIn = transitionsIn;
 			this.transitionOut = transitionOut;
 
-			ShowAfterTransition();
+			ShowAfterTransition(SceneStorage.GetSceneName(scene));
+		}
+
+		public void Show(string sceneName, Transitions transitionsIn, Transitions transitionOut)
+		{
+			this.transitionsIn = transitionsIn;
+			this.transitionOut = transitionOut;
+
+			ShowAfterTransition(sceneName);
 		}
 
 		public void Show(UnityAction callback = null)
@@ -104,7 +111,7 @@ namespace Game.UI.Windows
 				});
 		}
 
-		private void ShowAfterTransition()
+		private void ShowAfterTransition(string scene)
 		{
 			transitionManager
 				.TransitionIn(transitionsIn,

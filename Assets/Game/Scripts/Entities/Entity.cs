@@ -23,10 +23,11 @@ using System.Collections.Generic;
 
 namespace Game.Entities
 {
-	public abstract partial class Entity : InteractableModel, IEntity
+	public abstract partial class Entity : MonoBehaviour, IEntity
 	{
 		public MonoBehaviour MonoBehaviour => this;
 		public Transform Transform => transform;
+		public TaskSequence TaskSequence { get; private set; }
 
 		public virtual ISheet Sheet { get; private set; }
 
@@ -47,6 +48,8 @@ namespace Game.Entities
 			Controller = controller;
 
 			CameraPivot = cameraPivot;
+
+			TaskSequence = new TaskSequence(this);
 
 			Validate();
 		}

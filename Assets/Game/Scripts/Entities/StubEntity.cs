@@ -6,6 +6,8 @@ using Game.Systems.DialogueSystem;
 using Game.Systems.FloatingTextSystem;
 using Game.Systems.InteractionSystem;
 
+using Sirenix.OdinInspector;
+
 using System.Collections;
 using System.Linq;
 
@@ -17,18 +19,11 @@ using Zenject;
 
 namespace Game.Entities
 {
-	public partial class StubEntity : Entity, IBattlable, IActor
+	public partial class StubEntity : Entity, IBattlable, IActor, IObservable, IInteractable
 	{
-		public event UnityAction onBattleChanged;
-
-		public bool InBattle => CurrentBattle != null;
 		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
 
-		public TaskSequence TaskSequence { get; private set; }
 		public AnimatorControl AnimatorControl { get; private set; }
-		public Markers Markers { get; private set; }
-		public Outlinable Outlines { get; private set; }
-		public Battle CurrentBattle { get; private set; }
 
 		[Inject]
 		private void Construct(AnimatorControl animatorControl,
@@ -42,17 +37,14 @@ namespace Game.Entities
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
 			Markers = markerController;
-			Outlines = outline;
-
-
-			TaskSequence = new TaskSequence(this);
+			Outline = outline;
 		}
 
 		protected override IEnumerator Start()
 		{
 			signalBus?.Subscribe<StartDialogueSignal>(OnDialogueStarted);
 
-			Outlines.enabled = false;
+			Outline.enabled = false;
 
 			ResetMarkers();
 
@@ -78,6 +70,32 @@ namespace Game.Entities
 
 			Markers.LineMarker.DrawLine(Navigation.NavMeshAgent.path.corners);
 		}
+	}
+
+	//Visual and (IInteractable, IObservable implementation)
+	partial class StubEntity
+	{
+		public Markers Markers { get; private set; }
+		public Outlinable Outline { get; private set; }
+		public IInteraction Interaction { get; }
+		public bool IsInteractable { get; }
+
+		#region Observe
+		public virtual void StartObserve()
+		{
+			Outline.enabled = true;
+		}
+		public virtual void Observe() { }
+		public virtual void EndObserve()
+		{
+			Outline.enabled = false;
+		}
+		#endregion
+
+		public bool InteractWith(IInteractable interactable)
+		{
+			return false;
+		}
 
 		protected virtual void ResetMarkers()
 		{
@@ -90,65 +108,6 @@ namespace Game.Entities
 
 			Markers.LineMarker.Enable(false);
 		}
-
-		public virtual bool JoinBattle(Battle battle)
-		{
-			if (CurrentBattle != null)
-			{
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
-			}
-			CurrentBattle = battle;
-			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
-			CurrentBattle.onBattleUpdated += OnBattleUpdated;
-
-			onBattleChanged?.Invoke();
-
-			return true;
-		}
-
-		public virtual bool LeaveBattle()
-		{
-			if (CurrentBattle != null)
-			{
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
-			}
-			CurrentBattle = null;
-
-			onBattleChanged?.Invoke();
-
-			return true;
-		}
-
-		public virtual void Attack() { }
-
-		protected virtual void OnBattleStateChanged()
-		{
-			if (InBattle)
-			{
-				switch (CurrentBattle.CurrentState)
-				{
-					case BattleState.PreBattle:
-					{
-						Markers.FollowMarker.Enable(true);
-						break;
-					}
-					case BattleState.EndBattle:
-					{
-						Markers.FollowMarker.Enable(false);
-
-						break;
-					}
-				}
-			}
-			else
-			{
-				ResetMarkers();
-			}
-		}
-
-		protected virtual void OnBattleUpdated() { }
 	}
 
 	//IActor implementation
@@ -287,5 +246,80 @@ namespace Game.Entities
 				}
 			}
 		}
+	}
+
+	//IBattlable implementation
+	partial class StubEntity
+	{
+		public event UnityAction onBattleChanged;
+
+		public bool InBattle => CurrentBattle != null;
+		public Battle CurrentBattle { get; private set; }
+
+		public virtual bool JoinBattle(Battle battle)
+		{
+			if (CurrentBattle != null)
+			{
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
+			}
+			CurrentBattle = battle;
+			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
+			CurrentBattle.onBattleUpdated += OnBattleUpdated;
+
+			onBattleChanged?.Invoke();
+
+			return true;
+		}
+
+		public virtual bool LeaveBattle()
+		{
+			if (CurrentBattle != null)
+			{
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
+			}
+			CurrentBattle = null;
+
+			onBattleChanged?.Invoke();
+
+			return true;
+		}
+
+		public virtual void Attack() { }
+
+		protected virtual void OnBattleStateChanged()
+		{
+			if (InBattle)
+			{
+				switch (CurrentBattle.CurrentState)
+				{
+					case BattleState.PreBattle:
+					{
+						Markers.FollowMarker.Enable(true);
+						break;
+					}
+					case BattleState.EndBattle:
+					{
+						Markers.FollowMarker.Enable(false);
+
+						break;
+					}
+				}
+			}
+			else
+			{
+				ResetMarkers();
+			}
+		}
+
+		protected virtual void OnBattleUpdated() { }
+	}
+
+
+	public enum InteractionType
+	{
+		DirectionPoint,
+		CustomPoint,
 	}
 }

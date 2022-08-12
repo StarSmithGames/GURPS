@@ -19,13 +19,6 @@ namespace Game.Managers.SceneManager
 
 		private string currentScene;
 
-		private Dictionary<Scenes, string> scenes = new Dictionary<Scenes, string>()
-		{
-			{ Scenes.Menu,		"Menu" },
-			{ Scenes.Map,		"MapRTS" },
-			{ Scenes.Polygon,	"Polygon" }
-		};
-
 		private AsyncManager asyncManager;
 
 		public SceneManager(AsyncManager asyncManager)
@@ -43,12 +36,6 @@ namespace Game.Managers.SceneManager
 		public void Dispose()
 		{
 			UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
-		}
-
-		public void SwitchScene(Scenes scene, bool allow = true, UnityAction callback = null)
-		{
-			scenes.TryGetValue(scene, out string name);
-			SwitchScene(name, allow, callback);
 		}
 
 		public void SwitchScene(string sceneName, bool allow = true, UnityAction callback = null)
@@ -150,6 +137,22 @@ namespace Game.Managers.SceneManager
 		{
 			var currentActiveScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
 			UnityEngine.SceneManagement.SceneManager.SetActiveScene(scene);
+		}
+	}
+
+	public static class SceneStorage
+	{
+		public static Dictionary<Scenes, string> scenes = new Dictionary<Scenes, string>()
+		{
+			{ Scenes.Menu,      "Menu" },
+			{ Scenes.Map,       "MapRTS" },
+			{ Scenes.Polygon,   "Polygon" }
+		};
+
+		public static string GetSceneName(Scenes scene)
+		{
+			scenes.TryGetValue(scene, out string name);
+			return name;
 		}
 	}
 

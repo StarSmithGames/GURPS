@@ -129,7 +129,7 @@ namespace Game.Systems.CameraSystem
 						}
 						else if (CurrentObserve is IInteractable interactable)
 						{
-							leader.SetTarget(interactable.GetIteractionPosition(leader));
+							//leader.SetTarget(interactable.GetIteractionPosition(leader));
 						}
 					}
 					else
@@ -189,7 +189,7 @@ namespace Game.Systems.CameraSystem
 									bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leader.Navigation.FullPathDistance) >= 0 &&
 										leader.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
 
-									if (isCanReach || interactable.IsInRange(leader))
+									//if (isCanReach || interactable.IsInRange(leader))
 									{
 										interactionHandler.InteractInBattle(leader, interactable);
 									}

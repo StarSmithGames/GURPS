@@ -15,6 +15,7 @@ public class CharacterRTSInstaller : MonoInstaller
 	[Space]
 	[SerializeField] private NavigationController navigation;
 	[SerializeField] private CharacterControllerRTS controller;
+	[SerializeField] private Outlinable outline;
 	[Space]
 	[SerializeField] private CameraPivot cameraPivot;
 
@@ -25,7 +26,8 @@ public class CharacterRTSInstaller : MonoInstaller
 
 		Container.BindInstance(navigation);
 		Container.Bind<IController>().FromMethod(() => controller);
-	
+		Container.BindInstance(outline);
+
 		Container.BindInstance(cameraPivot);
 	}
 }

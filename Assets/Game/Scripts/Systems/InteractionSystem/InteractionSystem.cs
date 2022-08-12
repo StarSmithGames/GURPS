@@ -100,9 +100,6 @@ namespace Game.Systems.InteractionSystem
 
 
 	#region ITask
-	/// <summary>
-	/// ���� currentTask.Status == TaskActionStatus.Cancelled ����� ������������������ ����������.
-	/// </summary>
 	public class TaskSequence
 	{
 		public bool IsCanBeBreaked => IsSequenceProcess && ProcessTimeInMilliSeconds >= 250;//1/4 sec
@@ -243,13 +240,9 @@ namespace Game.Systems.InteractionSystem
 			this.destination = destination;
 		}
 
-		public GoToAction(IEntity entity, IInteractable interactable) : base(entity)
-		{
-			this.destination = interactable.GetIteractionPosition(entity);
-		}
-
 		public override IEnumerator Implementation()
 		{
+			status = TaskActionStatus.Preparing;
 			entity.SetDestination(destination);
 
 			Vector3 lastDestination = entity.Navigation.CurrentNavMeshDestination;
@@ -454,10 +447,10 @@ namespace Game.Systems.InteractionSystem
 
 			while (container.IsOpened)
 			{
-				if (!interactable.IsInRange(entity))
-				{
-					container.Close();
-				}
+				//if (!interactable.IsInRange(entity))
+				//{
+				//	container.Close();
+				//}
 				yield return null;
 			}
 		}

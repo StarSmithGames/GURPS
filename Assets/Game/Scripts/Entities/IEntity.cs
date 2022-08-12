@@ -11,11 +11,10 @@ namespace Game.Entities
 {
 	public interface IEntity :
 		ISheetable, IPathfinderable,
-		IInteractable, IObservable,
 		IDamegeable, IKillable
 	{
 		MonoBehaviour MonoBehaviour { get; }
-
+		TaskSequence TaskSequence { get; }
 		CameraPivot CameraPivot { get; }
 	}
 }

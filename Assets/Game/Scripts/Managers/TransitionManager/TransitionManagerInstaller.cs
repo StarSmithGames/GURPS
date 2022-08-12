@@ -27,6 +27,6 @@ namespace Game.Managers.TransitionManager
 
 	public enum Transitions
 	{
-		Fade,
+		Fade = 0,
 	}
 }

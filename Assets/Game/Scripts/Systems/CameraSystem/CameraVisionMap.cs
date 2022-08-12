@@ -7,6 +7,7 @@ using Game.Systems.InteractionSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -14,11 +15,6 @@ using Zenject;
 
 namespace Game.Systems.CameraSystem
 {
-	public interface ICameraVision
-	{
-		bool IsUI { get; }
-	}
-
 	public class CameraVisionMap : IInitializable, IDisposable, ITickable, ICameraVision
 	{
 		public bool IsCanHoldMouse { get; private set; }
@@ -77,7 +73,7 @@ namespace Game.Systems.CameraSystem
 
 			RaycastHit hit;
 			Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
-			IsMouseHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask, QueryTriggerInteraction.Ignore);
+			IsMouseHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask);
 			IsUI = EventSystem.current.IsPointerOverGameObject();
 			Vector3 point = hit.point;
 
@@ -97,7 +93,10 @@ namespace Game.Systems.CameraSystem
 				{
 					if (inputManager.IsLeftMouseButtonDown())
 					{
-						//interactionHandler.Interact(leader, interactable);
+						if (CurrentObserve is IInteractable interactable)
+						{
+							Interactor.ABInteraction(player, interactable);
+						}
 					}
 				}
 				else//Targeting

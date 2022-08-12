@@ -6,6 +6,6 @@ public class InitInstaller : MonoInstaller
 {
 	public override void InstallBindings()
 	{
-		Container.Resolve<SceneManager>().SwitchScene(Scenes.Menu);
+		Container.Resolve<SceneManager>().SwitchScene(SceneStorage.GetSceneName(Scenes.Menu));
 	}
 }
