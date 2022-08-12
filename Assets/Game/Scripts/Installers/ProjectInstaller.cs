@@ -1,5 +1,6 @@
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
+using Game.Managers.StorageManager;
 using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 
@@ -9,7 +10,11 @@ using Zenject;
 
 public class ProjectInstaller : MonoInstaller
 {
-	[SerializeField] private GlobalSettings globalSettings;
+	public GlobalSettings globalSettings;
+
+	[Space]
+	public PlayerPrefsSaveLoad.Settings playerPrefsSettings;
+	public DefaultData defaultData;
 
 	public override void InstallBindings()
 	{
@@ -17,12 +22,25 @@ public class ProjectInstaller : MonoInstaller
 
 		Container.BindInstance(Container.InstantiateComponentOnNewGameObject<AsyncManager>());
 
+		BindSaveLoad();
+
 		GameManagerInstaller.Install(Container);
 
 		Container.BindInstance(globalSettings);
 
 		CharacterManagerInstaller.Install(Container);
+	}
 
-		InteractionInstaller.Install(Container);
+	private void BindSaveLoad()
+	{
+		Container.DeclareSignal<SignalSaveStorage>();
+		Container.DeclareSignal<SignalStorageSaved>();
+		Container.DeclareSignal<SignalStorageLoaded>();
+
+		Container.BindInstance(playerPrefsSettings).WhenInjectedInto<PlayerPrefsSaveLoad>();
+		Container.BindInstance(defaultData).WhenInjectedInto<PlayerPrefsSaveLoad>();
+
+		Container.BindInterfacesTo<PlayerPrefsSaveLoad>().AsSingle();
+		Container.BindInterfacesAndSelfTo<SaveLoadOverseer>().AsSingle().NonLazy();
 	}
 }

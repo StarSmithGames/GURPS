@@ -7,6 +7,7 @@ using DG.Tweening;
 using Zenject;
 using Game.Managers.InputManager;
 using System.Diagnostics;
+using Game.Managers.StorageManager;
 
 namespace Game.UI.Windows
 {
@@ -16,18 +17,24 @@ namespace Game.UI.Windows
 
 		[field: SerializeField] public CanvasGroup CanvasGroup { get; private set; } 
 		[field: SerializeField] public Button Continue { get; private set; }
+		[field: SerializeField] public Button QSave { get; private set; }
+		[field: SerializeField] public Button Save { get; private set; }
+		[field: SerializeField] public Button Load { get; private set; }
+		[field: SerializeField] public Button Preferences { get; private set; }
 		[field: SerializeField] public Button Exit { get; private set; }
 
 		private bool isProcess = false;
 
 		private UISubCanvas subCanvas;
 		private InputManager inputManager;
+		private ISaveLoad saveLoad;
 
 		[Inject]
-		private void Construct(UISubCanvas subCanvas, InputManager inputManager)
+		private void Construct(UISubCanvas subCanvas, InputManager inputManager, ISaveLoad saveLoad)
 		{
 			this.subCanvas = subCanvas;
 			this.inputManager = inputManager;
+			this.saveLoad = saveLoad;
 		}
 
 		private void Start()
@@ -36,6 +43,10 @@ namespace Game.UI.Windows
 			subCanvas.WindowsManager.Register(this);
 
 			Continue.onClick.AddListener(OnContinue);
+			QSave.onClick.AddListener(OnQSave);
+			Save.onClick.AddListener(OnSave);
+			Load.onClick.AddListener(OnLoad);
+			Preferences.onClick.AddListener(OnPreferences);
 			Exit.onClick.AddListener(OnExit);
 		}
 
@@ -44,6 +55,10 @@ namespace Game.UI.Windows
 			subCanvas?.WindowsManager.UnRegister(this);
 
 			Continue?.onClick.RemoveAllListeners();
+			QSave?.onClick.RemoveAllListeners();
+			Save?.onClick.RemoveAllListeners();
+			Load?.onClick.RemoveAllListeners();
+			Preferences?.onClick.RemoveAllListeners();
 			Exit?.onClick.RemoveAllListeners();
 		}
 
@@ -114,6 +129,26 @@ namespace Game.UI.Windows
 		private void OnContinue()
 		{
 			Hide();
+		}
+
+		private void OnQSave()
+		{
+			saveLoad.Save(CommitType.QuickSave);
+		}
+
+		private void OnSave()
+		{
+			saveLoad.Save(CommitType.ManualSave);
+		}
+
+		private void OnLoad()
+		{
+
+		}
+
+		private void OnPreferences()
+		{
+
 		}
 
 		private void OnExit()

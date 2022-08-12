@@ -6,7 +6,6 @@ namespace Game.Systems.InteractionSystem
 	{
 		public override void InstallBindings()
 		{
-			Container.BindInterfacesAndSelfTo<InteractionSystem>().AsSingle();
 		}
 	}
 }

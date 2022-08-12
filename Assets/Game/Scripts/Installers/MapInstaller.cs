@@ -1,6 +1,7 @@
 using Cinemachine;
 
 using Game.Entities;
+using Game.Managers.StorageManager;
 using Game.Systems.CameraSystem;
 
 using System.Collections.Generic;

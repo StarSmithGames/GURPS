@@ -79,12 +79,12 @@ namespace Game.UI.Windows
 			ShowAfterTransition(SceneStorage.GetSceneName(scene));
 		}
 
-		public void Show(string sceneName, Transitions transitionsIn, Transitions transitionOut)
+		public void Show(string sceneName, Transitions transitionsIn, Transitions transitionOut, UnityAction callback = null)
 		{
 			this.transitionsIn = transitionsIn;
 			this.transitionOut = transitionOut;
 
-			ShowAfterTransition(sceneName);
+			ShowAfterTransition(sceneName, callback);
 		}
 
 		public void Show(UnityAction callback = null)
@@ -111,7 +111,7 @@ namespace Game.UI.Windows
 				});
 		}
 
-		private void ShowAfterTransition(string scene)
+		private void ShowAfterTransition(string scene, UnityAction callback = null)
 		{
 			transitionManager
 				.TransitionIn(transitionsIn,
@@ -119,16 +119,17 @@ namespace Game.UI.Windows
 					Show();
 					//start progress
 					isProgressing = true;
-					asyncManager.StartCoroutine(ProgressTick());
-					sceneManager.SwitchScene(scene, settings.allowScene);
+					asyncManager.StartCoroutine(LoadScene(scene, callback));
 				});
 		}
 
 
-		private IEnumerator ProgressTick()
+		private IEnumerator LoadScene(string scene, UnityAction callback = null)
 		{
 			float targetValue;
 			float currentValue = 0f;
+
+			sceneManager.SwitchScene(scene, settings.allowScene);
 
 			while (isProgressing)
 			{
@@ -146,6 +147,9 @@ namespace Game.UI.Windows
 
 					if (Mathf.Approximately(currentValue, 1))
 					{
+						callback?.Invoke();
+						yield return null;
+
 						//end progress
 						isProgressing = false;
 

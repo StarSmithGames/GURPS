@@ -6,6 +6,19 @@ namespace Game.Systems
 {
 	public static class GlobalRules { }
 
+	public static class Dificalty
+	{
+
+	}
+
+	public enum DificaltyType
+	{
+		Easy,
+		Normal,
+		Hard,
+		VeryHard,
+	}
+
 	public static class Alignment
 	{
 

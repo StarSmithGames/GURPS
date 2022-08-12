@@ -1,7 +1,7 @@
+using Newtonsoft.Json.Linq;
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Game.Managers.StorageManager
 {
@@ -22,11 +22,11 @@ namespace Game.Managers.StorageManager
 				{
 					object data = Data[key];
 
-					//if (data is JObject jdata)// >:c
-					//{
-					//	data = jdata.ToObject<T>();
-					//	Data[key] = data;
-					//}
+					if (data is JObject jdata)// >:c
+					{
+						data = jdata.ToObject<T>();
+						Data[key] = data;
+					}
 
 					return (T)data;
 				}
@@ -47,11 +47,11 @@ namespace Game.Managers.StorageManager
 
 		public string GetJson()
 		{
-			//return SaveLoad.SerializeObjectToJson(Data);
+			return SaveLoad.SerializeObjectToJson(Data);
 		}
 		public void LoadJson(string json)
 		{
-			//Data = SaveLoad.DeserializeObjectFromJson(json);
+			Data = SaveLoad.DeserializeObjectFromJson(json);
 		}
 	}
 }

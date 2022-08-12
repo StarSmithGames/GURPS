@@ -1,6 +1,8 @@
 using EPOOutline;
 
+using Game.Entities;
 using Game.Managers.SceneManager;
+using Game.Managers.StorageManager;
 using Game.Managers.TransitionManager;
 using Game.Systems.InteractionSystem;
 using Game.UI;
@@ -44,11 +46,13 @@ namespace Game.Map
 		[field: SerializeField] public InteractionPoint InteractionPoint { get; private set; }
 
 		private UIGlobalCanvas globalCanvas;
+		private PlayerRTS player;
 
 		[Inject]
-		private void Construct(UIGlobalCanvas globalCanvas)
+		private void Construct(UIGlobalCanvas globalCanvas, PlayerRTS player)
 		{
 			this.globalCanvas = globalCanvas;
+			this.player = player;
 		}
 
 		private void Start()
@@ -88,6 +92,12 @@ namespace Game.Map
 
 			if (useCustom)
 			{
+				FastStorage.LastTransformOnMap = new DefaultTransform()
+				{
+					position = player.transform.position,
+					rotation = player.transform.rotation,
+					scale = player.transform.localScale,
+				};
 				globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(SceneName, In, Out);
 			}
 			else

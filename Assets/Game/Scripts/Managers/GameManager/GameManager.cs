@@ -6,10 +6,12 @@ using Zenject;
 
 namespace Game.Managers.GameManager
 {
-    public class GameManager : IInitializable
+    public class GameManager
     {
         public GameState CurrentGameState { get; private set; }
         public GameState PreviousGameState { get; private set; }
+
+        public GameLocation CurrentGameLocation { get; private set; }
 
         private SignalBus signalBus;
 
@@ -37,9 +39,9 @@ namespace Game.Managers.GameManager
             }
         }
 
-		public void Initialize()
+        public void ChangeLocation(GameLocation gameLocation)
 		{
-            ChangeState(GameState.Gameplay);
+            CurrentGameLocation = gameLocation;
         }
 	}
     public enum GameState
@@ -49,4 +51,16 @@ namespace Game.Managers.GameManager
         Loading,
         Gameplay,
     }
+
+    public enum GameLocation
+	{
+        None,
+        Map,
+        Location,
+	}
+
+    public enum GameplayType
+	{
+        //battle
+	}
 }

@@ -1,9 +1,12 @@
 using EPOOutline;
 
+using Game.Managers.StorageManager;
 using Game.Systems.InteractionSystem;
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 
 using Zenject;
@@ -12,22 +15,28 @@ namespace Game.Entities
 {
 	public class PlayerRTS : Entity, IObservable, IInteractable
 	{
-		private Outlinable outline;
-
 		public bool IsInteractable { get; }
 		public IInteraction Interaction { get; }
 
+		private SignalBus signalBus;
+		private Outlinable outline;
+		private ISaveLoad saveLoad;
+
 		[Inject]
-		private void Construct(Outlinable outline)
+		private void Construct(SignalBus signalBus, Outlinable outline, ISaveLoad saveLoad)
 		{
+			this.signalBus = signalBus;
 			this.outline = outline;
+			this.saveLoad = saveLoad;
 		}
 
 		protected override IEnumerator Start()
 		{
-			outline.enabled = false;
+			yield return null;
 
-			return base.Start();
+			LoadTransformOnMap();
+
+			outline.enabled = false;
 		}
 
 		#region IObservable
@@ -56,5 +65,19 @@ namespace Game.Entities
 
 			return false;
 		}
+
+		private void LoadTransformOnMap()
+		{
+			var map = FastStorage.LastTransformOnMap;
+
+			if (map != null)
+			{
+				transform.position = map.position;
+				transform.rotation = map.rotation;
+				transform.localScale = map.scale;
+			}
+		}
+
+		
 	}
 }

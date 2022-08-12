@@ -11,7 +11,10 @@ namespace Game.Managers.SceneManager
 	{
 		public override void InstallBindings()
 		{
+			Container.DeclareSignal<SignalSceneChanged>();
+
 			Container.BindInterfacesAndSelfTo<SceneManager>().AsSingle().NonLazy();
+			Container.BindInterfacesAndSelfTo<SceneHandler>().AsSingle().NonLazy();
 		}
 	}
 
