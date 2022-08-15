@@ -1,4 +1,5 @@
 using Game.Entities;
+using Game.Managers.GameManager;
 
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,15 @@ namespace Game.Managers.CharacterManager
 	{
 		public CharacterParty CurrentParty { get; private set; }
 
-		private SignalBus signalBus;
+		public PlayerRTS PlayerRTS { get; private set; }
 
-		public CharacterManager(SignalBus signalBus)
+		private SignalBus signalBus;
+		private GameManager.GameManager gameManager;
+
+		public CharacterManager(SignalBus signalBus, GameManager.GameManager gameManager)
 		{
 			this.signalBus = signalBus;
+			this.gameManager = gameManager;
 		}
 
 		public void Initialize()
@@ -25,7 +30,19 @@ namespace Game.Managers.CharacterManager
 			CurrentParty.SetLeader(0);
 		}
 
-		public void Dispose() { }
+		public void Dispose()
+		{
+		}
+
+		public void RegistratePlayer(PlayerRTS player)
+		{
+			this.PlayerRTS = player;
+		}
+
+		public void UnRegistratePlayer()
+		{
+			this.PlayerRTS = null;
+		}
 	}
 
 	public class CharacterParty

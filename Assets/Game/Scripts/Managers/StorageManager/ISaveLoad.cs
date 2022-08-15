@@ -8,6 +8,7 @@ namespace Game.Managers.StorageManager
 	public interface ISaveLoad
 	{
 		void Save(CommitType saveType);
+		void Save(CommitType saveType, string title);
 
 		// Get currently selected storage
 		Storage GetStorage();
@@ -40,7 +41,12 @@ namespace Game.Managers.StorageManager
 
 		public void Save(CommitType saveType)
 		{
-			signalBus?.Fire(new SignalSaveStorage() { storage = activeStorage, saveType = saveType });
+			Save(saveType, "");
+		}
+
+		public void Save(CommitType saveType, string title)
+		{
+			signalBus?.Fire(new SignalSaveStorage() { storage = activeStorage, title = title, saveType = saveType });
 
 			string preferenceName = settings.preferenceName;
 			PlayerPrefs.SetString(preferenceName, activeStorage.Database.GetJson());
@@ -74,6 +80,8 @@ namespace Game.Managers.StorageManager
 		}
 
 		public Storage GetStorage() => activeStorage;
+
+		
 
 		[System.Serializable]
 		public class Settings

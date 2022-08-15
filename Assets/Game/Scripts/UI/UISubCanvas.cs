@@ -1,19 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-using Zenject;
 
 namespace Game.UI
 {
 	public class UISubCanvas : MonoBehaviour
 	{
-		public WindowsManager WindowsManager { get; private set; }
-
-		[Inject]
-		private void Construct(WindowsManager windowsManager)
+		public WindowsManager WindowsManager
 		{
-			WindowsManager = windowsManager;
+			get
+			{
+				if(windowsManager == null)
+				{
+					windowsManager = new WindowsManager();
+				}
+
+				return windowsManager;
+			}
 		}
+		private WindowsManager windowsManager;
 	}
 }

@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using DG.Tweening;
 using Zenject;
 using Game.Managers.InputManager;
-using System.Diagnostics;
 using Game.Managers.StorageManager;
 
 namespace Game.UI.Windows
@@ -24,6 +21,7 @@ namespace Game.UI.Windows
 		[field: SerializeField] public Button Exit { get; private set; }
 
 		private bool isProcess = false;
+		private WindowLoadingCommit windowLoadingCommit = null;
 
 		private UISubCanvas subCanvas;
 		private InputManager inputManager;
@@ -40,6 +38,9 @@ namespace Game.UI.Windows
 		private void Start()
 		{
 			Enable(false);
+
+			Preferences.gameObject.SetActive(false);
+
 			subCanvas.WindowsManager.Register(this);
 
 			Continue.onClick.AddListener(OnContinue);
@@ -64,7 +65,7 @@ namespace Game.UI.Windows
 
 		private void Update()
 		{
-			if (!isProcess)
+			if (!isProcess && (windowLoadingCommit == null || !windowLoadingCommit.IsShowing))
 			{
 				if (inputManager.GetKeyDown(KeyAction.InGameMenu))
 				{
@@ -138,12 +139,16 @@ namespace Game.UI.Windows
 
 		private void OnSave()
 		{
-			saveLoad.Save(CommitType.ManualSave);
+			windowLoadingCommit = subCanvas.WindowsManager.GetAs<WindowLoadingCommit>();
+			windowLoadingCommit.IsLoading = false;
+			windowLoadingCommit.Show();
 		}
 
 		private void OnLoad()
 		{
-
+			windowLoadingCommit = subCanvas.WindowsManager.GetAs<WindowLoadingCommit>();
+			windowLoadingCommit.IsLoading = true;
+			windowLoadingCommit.Show();
 		}
 
 		private void OnPreferences()

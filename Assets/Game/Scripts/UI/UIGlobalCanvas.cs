@@ -8,17 +8,28 @@ namespace Game.UI
 {
 	public class UIGlobalCanvas : MonoBehaviour
 	{
-		public WindowsManager WindowsManager { get; private set; }
+		public WindowsManager WindowsManager
+		{
+			get
+			{
+				if (windowsManager == null)
+				{
+					windowsManager = new WindowsManager();
+				}
+
+				return windowsManager;
+			}
+		}
+		private WindowsManager windowsManager;
 
 		[field: SerializeField] public CanvasGroup GaveSaved { get; private set; }
 
 		private SignalBus signalBus;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, WindowsManager windowsManager)
+		private void Construct(SignalBus signalBus)
 		{
 			this.signalBus = signalBus;
-			WindowsManager = windowsManager;
 		}
 
 		private void Start()

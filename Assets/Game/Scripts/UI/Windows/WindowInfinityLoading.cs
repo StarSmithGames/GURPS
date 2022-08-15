@@ -47,9 +47,7 @@ namespace Game.UI.Windows
 
 		private void Start()
 		{
-			CanvasGroup.alpha = 0f;
-			CanvasGroup.blocksRaycasts = false;
-			CanvasGroup.interactable = false;
+			CanvasGroup.Enable(false);
 
 			globalCanvas.WindowsManager.Register(this);
 
@@ -89,6 +87,8 @@ namespace Game.UI.Windows
 
 		public void Show(UnityAction callback = null)
 		{
+			transform.SetAsLastSibling();
+
 			CanvasGroup.blocksRaycasts = true;
 			CanvasGroup.interactable = true;
 

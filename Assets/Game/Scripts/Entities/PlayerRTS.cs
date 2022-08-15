@@ -1,5 +1,6 @@
 using EPOOutline;
 
+using Game.Managers.CharacterManager;
 using Game.Managers.StorageManager;
 using Game.Systems.InteractionSystem;
 
@@ -19,15 +20,19 @@ namespace Game.Entities
 		public IInteraction Interaction { get; }
 
 		private SignalBus signalBus;
+		private CharacterManager characterManager;
 		private Outlinable outline;
 		private ISaveLoad saveLoad;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, Outlinable outline, ISaveLoad saveLoad)
+		private void Construct(SignalBus signalBus, CharacterManager characterManager, Outlinable outline, ISaveLoad saveLoad)
 		{
 			this.signalBus = signalBus;
+			this.characterManager = characterManager;
 			this.outline = outline;
 			this.saveLoad = saveLoad;
+
+			characterManager.RegistratePlayer(this);
 		}
 
 		protected override IEnumerator Start()
@@ -37,6 +42,13 @@ namespace Game.Entities
 			LoadTransformOnMap();
 
 			outline.enabled = false;
+		}
+
+		protected override void OnDestroy()
+		{
+			characterManager.UnRegistratePlayer();
+
+			base.OnDestroy();
 		}
 
 		#region IObservable
@@ -77,7 +89,5 @@ namespace Game.Entities
 				transform.localScale = map.scale;
 			}
 		}
-
-		
 	}
 }

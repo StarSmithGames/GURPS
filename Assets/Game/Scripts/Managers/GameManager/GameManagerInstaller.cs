@@ -7,6 +7,7 @@ namespace Game.Managers.GameManager
 		public override void InstallBindings()
 		{
 			Container.DeclareSignal<SignalGameStateChanged>();
+			Container.DeclareSignal<SignalGameLocationChanged>();
 
 			Container.BindInterfacesAndSelfTo<GameManager>().AsSingle();
 		}

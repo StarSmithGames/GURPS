@@ -13,6 +13,7 @@ using UnityEngine.Assertions;
 using Zenject;
 using Game.Managers.SceneManager;
 using Game.Managers.TransitionManager;
+using UnityEngine.Events;
 
 namespace Game.Managers.StorageManager
 {
@@ -27,16 +28,19 @@ namespace Game.Managers.StorageManager
 		private DiContainer container;
 		private ISaveLoad saveLoad;
 		private GameManager.GameManager gameManager;
+		private CharacterManager.CharacterManager characterManager;
 		private SceneManager.SceneManager sceneManager;
 		private UIGlobalCanvas globalCanvas;
 
-		public SaveLoadOverseer(SignalBus signalBus, DiContainer container, ISaveLoad saveLoad, GameManager.GameManager gameManager,
+		public SaveLoadOverseer(SignalBus signalBus, DiContainer container, ISaveLoad saveLoad,
+			GameManager.GameManager gameManager, CharacterManager.CharacterManager characterManager,
 			SceneManager.SceneManager sceneManager, UIGlobalCanvas globalCanvas)
 		{
 			this.signalBus = signalBus;
 			this.container = container;
 			this.saveLoad = saveLoad;
 			this.gameManager = gameManager;
+			this.characterManager = characterManager;
 			this.sceneManager = sceneManager;
 			this.globalCanvas = globalCanvas;
 		}
@@ -55,64 +59,60 @@ namespace Game.Managers.StorageManager
 
 		public void LoadLastGame()
 		{
-			var lastCommit = saveLoad.GetStorage().CurrentProfile.GetData().commits.Last();
-
-			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(lastCommit.data.lastScene, transitionIn, transitionOut, () =>
+			if (saveLoad.GetStorage().CurrentProfile.GetData().commits.Count > 0)
 			{
-				var playerRTS = container.Resolve<PlayerRTS>();
-
-				if (gameManager.CurrentGameLocation == GameManager.GameLocation.Map)
-				{
-					var map = lastCommit.data.lastTransformOnMap;
-
-					playerRTS.transform.position = map.position;
-					playerRTS.transform.rotation = map.rotation;
-					playerRTS.transform.localScale = map.scale;
-				}
-				else if (gameManager.CurrentGameLocation == GameManager.GameLocation.Location)
-				{
-					FastStorage.LastTransformOnMap = lastCommit.data.lastTransformOnMap;
-
-					var location = lastCommit.data.lastTransformInLocation;
-
-					playerRTS.transform.position = location.position;
-					playerRTS.transform.rotation = location.rotation;
-					playerRTS.transform.localScale = location.scale;
-				}
-			});
+				//last commit
+				LoadGame(saveLoad.GetStorage().CurrentProfile.GetData().commits.Last());
+			}
 		}
 
 		public void LoadNewGame()
 		{
-			var list = saveLoad.GetStorage().Profilers.GetData();
+			var profile = saveLoad.GetStorage().CurrentProfile.GetData();
 
-			if (list == null)
+			if (profile == null)
 			{
-				list = new List<Profile>();
+				profile = new Profile()
+				{
+					time = DateTime.Now,
+				};
+
+				saveLoad.GetStorage().CurrentProfile.SetData(profile);
 			}
 
-			var profile = new Profile()
-			{
-				time = DateTime.Now,
-			};
-
-			list.Add(profile);
-
-			saveLoad.GetStorage().CurrentProfile.SetData(profile);
-			saveLoad.GetStorage().Profilers.SetData(list);
+			FastStorage.Clear();
 
 			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(Scenes.Map, transitionIn, transitionOut);
 		}
 
+		/// <param name="callback">Вызывается до появления кнопки.</param>
+		public void LoadGame(Commit commit, UnityAction callback = null)
+		{
+			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(commit.data.lastScene, transitionIn, transitionOut, () =>
+			{
+				callback?.Invoke();
+
+				FastStorage.LastTransformOnMap = commit.data.lastTransformOnMap;
+
+				if (gameManager.CurrentGameLocation == GameManager.GameLocation.Location)
+				{
+					var location = commit.data.lastTransformInLocation;
+				}
+
+				callback?.Invoke();
+			});
+		}
+
+		//For Save
 		private void OnSaveStorage(SignalSaveStorage signal)
 		{
 			var storage = signal.storage;
 
-			storage.CurrentProfile.SetData(GetData(signal.saveType));
+			storage.CurrentProfile.SetData(GetData(signal.title, signal.saveType));
 			//storage.Profilers.SetData();//need update
 		}
 
-		public Profile GetData(CommitType saveType)
+		public Profile GetData(string title, CommitType saveType)
 		{
 			var profile = saveLoad.GetStorage().CurrentProfile.GetData();
 
@@ -121,7 +121,7 @@ namespace Game.Managers.StorageManager
 
 			if (gameManager.CurrentGameLocation == GameManager.GameLocation.Map)
 			{
-				var playerRTS = container.Resolve<PlayerRTS>();//>:C
+				var playerRTS = characterManager.PlayerRTS;
 				Assert.IsNotNull(playerRTS, "PlayerRTS == NULL");
 
 				transformOnMap = new DefaultTransform()
@@ -142,11 +142,32 @@ namespace Game.Managers.StorageManager
 				//};
 			}
 
+			if (string.IsNullOrEmpty(title) || string.IsNullOrWhiteSpace(title))
+			{
+				if(saveType == CommitType.QuickSave)
+				{
+					title = "quick_save";
+				}
+				else if(saveType == CommitType.AutoSave)
+				{
+					title = "auto_save";
+				}
+				else if (saveType == CommitType.Checkpoint)
+				{
+					title = "checkpoint";
+				}
+				else
+				{
+					title = "manual_save";
+				}
+			}
+
 			profile.commits.Add(new Commit()
 			{
 				guid = Guid.NewGuid().ToString(),
+				title = title,
 				type = saveType,
-				time = DateTime.Now,
+				date = DateTime.Now,
 				data = new Commit.Data()
 				{
 					lastScene = sceneManager.CurrentScene,
@@ -170,9 +191,10 @@ namespace Game.Managers.StorageManager
 	public class Commit
 	{
 		public string guid;
+		public string title;
 		public CommitType type = CommitType.ManualSave;
 		public DificaltyType dificalty = DificaltyType.Normal;
-		public DateTime time;
+		public DateTime date;
 		//public string sceenshotPath;
 
 		public Data data;

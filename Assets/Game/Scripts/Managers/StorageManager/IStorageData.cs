@@ -82,6 +82,11 @@ namespace Game.Managers.StorageManager
 	public static class FastStorage
 	{
 		public static DefaultTransform LastTransformOnMap;
+
+		public static void Clear()
+		{
+			LastTransformOnMap = null;
+		}
 	}
 
 	[System.Serializable]

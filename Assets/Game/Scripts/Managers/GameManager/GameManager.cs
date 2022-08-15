@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Zenject;
+using Zenject.Asteroids;
 
 namespace Game.Managers.GameManager
 {
@@ -27,7 +28,7 @@ namespace Game.Managers.GameManager
                 PreviousGameState = CurrentGameState;
                 CurrentGameState = gameState;
 
-                signalBus.Fire(new SignalGameStateChanged
+                signalBus?.Fire(new SignalGameStateChanged
                 {
                     newGameState = CurrentGameState,
                     oldGameState = PreviousGameState
@@ -40,8 +41,16 @@ namespace Game.Managers.GameManager
         }
 
         public void ChangeLocation(GameLocation gameLocation)
-		{
-            CurrentGameLocation = gameLocation;
+        {
+            if (CurrentGameLocation != gameLocation)
+            {
+                CurrentGameLocation = gameLocation;
+
+                signalBus.Fire(new SignalGameLocationChanged
+                {
+                    newGameLocation = CurrentGameLocation,
+                });
+            }
         }
 	}
     public enum GameState

@@ -14,7 +14,6 @@ using Game.Systems.NotificationSystem;
 public class UIManager : MonoBehaviour
 {
 	public UIVirtualSpace CurrentVirtualSpace { get; private set; }
-	public WindowsManager WindowsManager { get; private set; }
 
 	[field: SerializeField] public UIAvatars Avatars { get; private set; }
 	[field: SerializeField] public UICharacterSheetWindow CharacterSheet { get; private set; }
@@ -35,11 +34,10 @@ public class UIManager : MonoBehaviour
 	private CharacterManager characterManager;
 
 	[Inject]
-	private void Construct(SignalBus signalBus, WindowsManager windowsManager, CharacterManager characterManager)
+	private void Construct(SignalBus signalBus, CharacterManager characterManager)
 	{
 		this.signalBus = signalBus;
 		this.characterManager = characterManager;
-		WindowsManager = windowsManager;
 	}
 
 	private void OnDestroy()

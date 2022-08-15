@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SubCanvasPrefab: {fileID: 8354466320625428728, guid: f5bad759d733f3242afda18969e49ac9, type: 3}
   mainMenuWindow: {fileID: 1390104159834341277, guid: b158e13da955e63458a07393ef4d9b1c, type: 3}
+  loadingCommitWindow: {fileID: 2295661591900373995, guid: 94ca9cdf2020471498b71a5f92c8625b, type: 3}
+  commitPrefab: {fileID: 261519561213114810, guid: ac13fef8774b52a48a7b99c892a53525, type: 3}

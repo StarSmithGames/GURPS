@@ -1,12 +1,11 @@
 using Cinemachine;
 
 using Game.Entities;
+using Game.Managers.CharacterManager;
 using Game.Managers.InputManager;
 using Game.Systems.InteractionSystem;
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -42,19 +41,21 @@ namespace Game.Systems.CameraSystem
 		}
 		private IObservable currentEntity = null;
 
+		private PlayerRTS Player => characterManager.PlayerRTS;
+
 		private SignalBus signalBus;
 		private CinemachineBrain brain;
 		private InputManager inputManager;
 		private Settings settings;
-		private PlayerRTS player;
+		private CharacterManager characterManager;
 
-		public CameraVisionMap(SignalBus signalBus, CinemachineBrain brain, InputManager inputManager, GlobalSettings settings, PlayerRTS player)
+		public CameraVisionMap(SignalBus signalBus, CinemachineBrain brain, InputManager inputManager, GlobalSettings settings, CharacterManager characterManager)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
 			this.inputManager = inputManager;
 			this.settings = settings.cameraVisionMap;
-			this.player = player;
+			this.characterManager = characterManager;
 		}
 
 		public void Initialize()
@@ -95,7 +96,7 @@ namespace Game.Systems.CameraSystem
 					{
 						if (CurrentObserve is IInteractable interactable)
 						{
-							Interactor.ABInteraction(player, interactable);
+							Interactor.ABInteraction(Player, interactable);
 						}
 					}
 				}
@@ -105,7 +106,7 @@ namespace Game.Systems.CameraSystem
 					{
 						if (IsMouseHit && !IsUI)
 						{
-							player.SetDestination(point);
+							Player.SetDestination(point);
 						}
 					}
 				}

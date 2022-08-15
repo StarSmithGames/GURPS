@@ -11,6 +11,7 @@ using System;
 using Game.Managers.InputManager;
 using Game.Entities;
 using Game.Systems.DialogueSystem;
+using Game.Managers.GameManager;
 
 namespace Game.Systems.CameraSystem
 {
@@ -62,6 +63,8 @@ namespace Game.Systems.CameraSystem
 		private ICameraVision cameraVision;
 		private AsyncManager asyncManager;
 		private CharacterManager characterManager;
+		private GameManager gameManager;
+
 		private Character leader;
 
 		public CameraController(SignalBus signalBus,
@@ -70,7 +73,8 @@ namespace Game.Systems.CameraSystem
 			InputManager inputManager,
 			ICameraVision cameraVision,
 			AsyncManager asyncManager,
-			CharacterManager characterManager)
+			CharacterManager characterManager,
+			GameManager gameManager)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
@@ -79,6 +83,7 @@ namespace Game.Systems.CameraSystem
 			this.cameraVision = cameraVision;
 			this.asyncManager = asyncManager;
 			this.characterManager = characterManager;
+			this.gameManager = gameManager;
 		}
 
 		public void Initialize()
@@ -107,7 +112,7 @@ namespace Game.Systems.CameraSystem
 
 			if (inputManager.GetKeyDown(KeyAction.TacticalCamera))
 			{
-				if (!IsInBlendTransition)
+				if (!IsInBlendTransition && gameManager.CurrentGameLocation == GameLocation.Location)
 				{
 					isTactic = !isTactic;
 					camers.OrderByDescending((x) => x.Priority).First().gameObject.SetActive(!isTactic);

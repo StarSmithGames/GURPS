@@ -1,5 +1,7 @@
 using CodeStage.AdvancedFPSCounter;
 
+using Game.Managers.TransitionManager;
+using Game.UI.MainMenu;
 using Game.UI.Windows;
 
 using UnityEngine;
@@ -13,7 +15,10 @@ namespace Game.UI
     {
         public GameObject GlobalCanvasPrefab;
         [Space]
+        public WindowInputGenericDialogue inputGenericDialogue;
+        [Space]
         public WindowInfinityLoading infinityLoadingWindow;
+        public UICommit commitPrefab;
 
         public override void InstallBindings()
         {
@@ -32,13 +37,23 @@ namespace Game.UI
                 .NonLazy();
 
             //Windows
-            Container.Bind<WindowsManager>().WhenInjectedInto<UIGlobalCanvas>();//global window manager
-
             Container.Bind<WindowInfinityLoading>()
                 .FromComponentInNewPrefab(infinityLoadingWindow)
                 .UnderTransform(x => x.Container.Resolve<UIGlobalCanvas>().transform.Find("Windows"))
                 .AsSingle()
                 .NonLazy();
+
+            Container.Bind<WindowInputGenericDialogue>()
+                .FromComponentInNewPrefab(inputGenericDialogue)
+                .UnderTransform(x => x.Container.Resolve<UIGlobalCanvas>().transform.Find("Windows"))
+                .AsSingle()
+                .NonLazy();
+
+            //Factories
+            Container
+                 .BindFactory<UICommit, UICommit.Factory>()
+                 .FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
+                 .FromComponentInNewPrefab(commitPrefab));
         }
     }
 }

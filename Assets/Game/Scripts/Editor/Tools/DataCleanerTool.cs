@@ -129,8 +129,8 @@ namespace Game.Editor
 
 		private void OnGUI()
 		{
-            scroll = EditorGUILayout.BeginScrollView(scroll, true, true, GUILayout.ExpandHeight(true));
-            EditorGUILayout.TextField(text, GUILayout.ExpandHeight(true));
+            scroll = EditorGUILayout.BeginScrollView(scroll, true, true);
+            EditorGUILayout.TextArea(text);
             EditorGUILayout.EndScrollView();
         }
 	}

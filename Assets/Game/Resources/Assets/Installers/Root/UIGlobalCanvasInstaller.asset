@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: UIGlobalCanvasInstaller
   m_EditorClassIdentifier: 
   GlobalCanvasPrefab: {fileID: 1868011258050479512, guid: b7eba7361012a3f4aae55f3826e0d76e, type: 3}
+  inputGenericDialogue: {fileID: 7656847934484657723, guid: b7abaad3bbd865e40b4ad8407e269fc0, type: 3}
   infinityLoadingWindow: {fileID: 6082159614012749614, guid: 0122ea11019d7f14482d0fa90080d4e6, type: 3}
+  commitPrefab: {fileID: 261519561213114810, guid: ac13fef8774b52a48a7b99c892a53525, type: 3}

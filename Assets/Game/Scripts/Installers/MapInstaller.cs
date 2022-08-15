@@ -21,12 +21,5 @@ public class MapInstaller : MonoInstaller
 
 		Container.BindInterfacesTo<CameraVisionMap>().AsSingle().NonLazy();
 		Container.BindInterfacesAndSelfTo<CameraController>().AsSingle().NonLazy();
-
-		BindPlayer();
-	}
-
-	private void BindPlayer()
-	{
-		Container.BindInstance(GameObject.FindObjectOfType<PlayerRTS>());//stub
 	}
 }

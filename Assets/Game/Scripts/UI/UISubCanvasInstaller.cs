@@ -1,3 +1,4 @@
+using Game.UI.MainMenu;
 using Game.UI.Windows;
 
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace Game.UI
 		public GameObject SubCanvasPrefab;
 		[Space]
 		public WindowMainMenu mainMenuWindow;
+		public WindowLoadingCommit loadingCommitWindow;
 
 		public override void InstallBindings()
 		{
@@ -25,13 +27,19 @@ namespace Game.UI
 				.NonLazy();
 
 			//Windows
-			Container.Bind<WindowsManager>().WhenInjectedInto<UISubCanvas>();//sub window manager
-
 			Container.Bind<WindowMainMenu>()
 				.FromComponentInNewPrefab(mainMenuWindow)
 				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform.Find("Windows"))
 				.AsSingle()
 				.NonLazy();
+
+			Container.Bind<WindowLoadingCommit>()
+				.FromComponentInNewPrefab(loadingCommitWindow)
+				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform.Find("Windows"))
+				.AsSingle()
+				.NonLazy();
+
+			
 		}
 	}
 }
