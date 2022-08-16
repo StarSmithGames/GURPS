@@ -6,6 +6,8 @@ namespace Game.Managers.PartyManager
 	{
 		public override void InstallBindings()
 		{
+			Container.DeclareSignal<SignalLeaderPartyChanged>();
+			
 			Container.BindInterfacesAndSelfTo<PartyManager>().AsSingle();
 		}
 	}

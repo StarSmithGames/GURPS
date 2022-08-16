@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game.Entities
 {
-	public class EntityData : ScriptableObject
+	public abstract class EntityData : ScriptableObject
     {
         public SheetSettings sheet;
     }

@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class QuestTreeController : GraphOwner<QuestTree>, IDialogueActor
 {
-	public Transform Transform => transform;
+	public Transform DialogueTransform => transform;
 
     public void StartQuest(IDialogueActor instigator, Action<bool> callback)
     {

@@ -52,12 +52,6 @@ namespace Game.Systems.SheetSystem
         }
     }
 
-    public class NPCSheet : EntitySheet
-    {
-        public NPCSheet(NPCData data) : base(data.information, data.sheet) { }
-	}
-
-
 	public class ModelSheet : EntitySheet
 	{
 		public ModelSheet(ModelData data) : base(data.information, data.sheet) { }

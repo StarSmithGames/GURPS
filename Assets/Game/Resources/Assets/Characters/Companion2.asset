@@ -9,16 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d2829bb1971f20489187d34bfda2c07, type: 3}
-  m_Name: Character2
+  m_Script: {fileID: 11500000, guid: 6d76651da608eec4b9e313a7da6e5cfc, type: 3}
+  m_Name: Companion2
   m_EditorClassIdentifier: 
   sheet:
     identity: 0
     age: -1
     race: 0
     gender: 0
-    aligment: 4
-    isImmortal: 0
+    isImmortal: 1
     stats:
       level: 1
       strength: 10
@@ -31,6 +30,8 @@ MonoBehaviour:
       addSpeed: 0
       addWill: 0
       addPerception: 0
+    characteristics:
+      alignment: 4
     inventory:
       useRandomItems: 1
       shuffleList: 1
@@ -52,100 +53,145 @@ MonoBehaviour:
         ignoreList: []
     equipment:
       head:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       sholders:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       chest:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       forearms:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       legs:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       feet:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon00:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon01:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon10:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon11:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       cloak:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       jewelry:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       ring0:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       ring1:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       trinket:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
   information:
-    nameId: Actor
+    nameId: Actor2
     localizations:
     - language: 10
-      name: Monkey
+      name: Knight
     isHasPortrait: 1
-    portrait: {fileID: 21300000, guid: 79a6bf9b346654043986e14a258ad970, type: 3}
-    nameColor: {r: 0, g: 0.4811321, b: 0.3227848, a: 1}
+    portrait: {fileID: 21300000, guid: 42b888c2fdb84f043b9b2d62609a0209, type: 3}
+    nameColor: {r: 0.61, g: 0.61, b: 0.61, a: 1}

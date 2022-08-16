@@ -1,21 +1,27 @@
 using System.Collections;
 
+using Zenject;
+
 namespace Game.Entities.Models
 {
 	public class PlayerModel : CharacterModel
 	{
-		protected override IEnumerator Start()
+		private IPlayer player;
+
+		[Inject]
+		private void Construct(IPlayer player)
 		{
-			characterManager.Registrate(this);
-			return base.Start();
+			this.player = player;
+
+			player.Registrate(this);
 		}
 
 		protected override void OnDestroy()
 		{
-			characterManager.UnRegistrate(this);
+			player.UnRegistrate(this);
 			base.OnDestroy();
 		}
 
-		protected override void CheckReplicas() { }
+		//protected override void CheckReplicas() { }
 	}
 }

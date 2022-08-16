@@ -32,9 +32,6 @@ namespace Game.UI
 
 		public override void InstallBindings()
 		{
-			CharacterManagerInstaller.Install(Container);
-			PartyManagerInstaller.Install(Container);
-
 			Container.Bind<Canvas>()
 				.FromResolveGetter<UISubCanvas>(x => x.GetComponent<Canvas>())
 				.AsSingle()

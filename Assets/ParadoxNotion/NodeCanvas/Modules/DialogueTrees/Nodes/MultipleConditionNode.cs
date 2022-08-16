@@ -38,7 +38,7 @@ namespace NodeCanvas.DialogueTrees
             }
 
             for ( var i = 0; i < outConnections.Count; i++ ) {
-                if ( conditions[i] == null || conditions[i].CheckOnce(FinalActor.Transform, graphBlackboard) ) {
+                if ( conditions[i] == null || conditions[i].CheckOnce(FinalActor.DialogueTransform, graphBlackboard) ) {
                     DLGTree.Continue(i);
                     return Status.Success;
                 }

@@ -13,18 +13,16 @@ namespace Game.Systems.CameraSystem
 {
 	public class CameraVisionMap : CameraVision
 	{
-		private PlayerRTSModel Player => characterManager.PlayerRTS;
-
-		private CharacterManager characterManager;
+		private IPlayer player;
 
 		public CameraVisionMap(SignalBus signalBus,
 			GlobalSettings settings,
 			CinemachineBrain brain,
 			InputManager inputManager,
-			CharacterManager characterManager) : base(signalBus, brain, inputManager)
+			IPlayer player) : base(signalBus, brain, inputManager)
 		{
 			this.settings = settings.cameraVisionMap;
-			this.characterManager = characterManager;
+			this.player = player;
 		}
 
 		protected override void HandleMouseClick(Vector3 point)
@@ -37,7 +35,7 @@ namespace Game.Systems.CameraSystem
 					{
 						if (CurrentObserve is IInteractable interactable)
 						{
-							Interactor.ABInteraction(Player, interactable);
+							Interactor.ABInteraction(player.RTSModel, interactable);
 						}
 					}
 				}
@@ -47,7 +45,7 @@ namespace Game.Systems.CameraSystem
 					{
 						if (IsMouseHit && !IsUI)
 						{
-							Player.SetDestination(point);
+							player.RTSModel.SetDestination(point);
 						}
 					}
 				}

@@ -1,5 +1,7 @@
+using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
+using Game.Managers.PartyManager;
 using Game.Managers.StorageManager;
 
 using UnityEngine;
@@ -24,7 +26,10 @@ namespace Game
 
 			BindSaveLoad();
 
+			Container.BindInterfacesTo<Player>().AsSingle();
+
 			GameManagerInstaller.Install(Container);
+			PartyManagerInstaller.Install(Container);
 
 			Container.BindInstance(globalSettings);
 		}

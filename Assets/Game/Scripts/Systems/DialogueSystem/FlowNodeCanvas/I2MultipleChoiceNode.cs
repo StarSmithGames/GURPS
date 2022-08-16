@@ -54,18 +54,18 @@ namespace Game.Systems.DialogueSystem.Nodes
                     //conditionBefore check on ActorSheetCondition
                     if (IsActorSheetCondition(availableChoice.conditionBefore, out ActorSheetCondition actorSheetCondition))
                     {
-                        if (actorSheetCondition.CheckOnce(FinalActor.Transform, bb))
+                        if (actorSheetCondition.CheckOnce(FinalActor.DialogueTransform, bb))
                         {
                             availableChoice.choiceConditionState = ChoiceConditionState.Normal;
                             currentChoices.Add(availableChoice);
                         }
-                        else if (actorSheetCondition.state != ChoiceConditionState.Ignore)//Если не прошёл условие то игнорируем чойс или делаем не доступным.
+                        else if (actorSheetCondition.state != ChoiceConditionState.Ignore)//пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
                         {
                             availableChoice.choiceConditionState = actorSheetCondition.state;
                             currentChoices.Add(availableChoice);
                         }
                     }
-                    else if (availableChoice.conditionBefore.CheckOnce(FinalActor.Transform, bb))
+                    else if (availableChoice.conditionBefore.CheckOnce(FinalActor.DialogueTransform, bb))
                     {
                         availableChoice.choiceConditionState = ChoiceConditionState.Normal;
                         currentChoices.Add(availableChoice);
@@ -160,7 +160,7 @@ namespace Game.Systems.DialogueSystem.Nodes
             status = Status.Success;
 
             var choice = currentChoices[index];
-            choice.actionAfter?.Execute(FinalActor.Transform, cachedBB);
+            choice.actionAfter?.Execute(FinalActor.DialogueTransform, cachedBB);
             choice.isSelected = true;
             currentChoices.ForEach((x) => x.Dispose());
 

@@ -1,4 +1,8 @@
+using Game.Managers.PartyManager;
+
 using System.Collections;
+
+using Zenject;
 
 namespace Game.Entities.Models
 {
@@ -6,15 +10,28 @@ namespace Game.Entities.Models
 
     public class CompanionModel : CharacterModel, ICompanionModel
     {
+		public CompanionData data;
+
+		private ICompanion companion;
+
+		private PartyManager partyManager;
+
+		[Inject]
+		private void Constuct(PartyManager partyManager)
+		{
+			this.partyManager = partyManager;
+		}
+
 		protected override IEnumerator Start()
 		{
-			characterManager.Registrate(this);
+			companion = new Companion(this, data);
+			partyManager.PlayerParty.AddCharacter(companion);
 			return base.Start();
 		}
 
 		protected override void OnDestroy()
 		{
-			characterManager.UnRegistrate(this);
+			partyManager.PlayerParty.RemoveCharacter(companion);
 			base.OnDestroy();
 		}
 	}

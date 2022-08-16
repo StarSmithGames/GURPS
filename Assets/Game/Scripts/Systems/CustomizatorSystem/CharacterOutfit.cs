@@ -43,15 +43,15 @@ namespace Game.Entities
 			legs = CreateSlot();
 			feet = CreateSlot();
 
-			equipment.OnEquipmentChanged += OnEquipmentChanged;
+			//equipment.OnEquipmentChanged += OnEquipmentChanged;
 		}
 
 		private void OnDestroy()
 		{
-			if (equipment != null)
-			{
-				equipment.OnEquipmentChanged -= OnEquipmentChanged;
-			}
+			//if (equipment != null)
+			//{
+			//	equipment.OnEquipmentChanged -= OnEquipmentChanged;
+			//}
 		}
 
 		private Transform CreateSlot()

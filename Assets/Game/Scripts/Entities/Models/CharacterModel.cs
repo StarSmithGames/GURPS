@@ -7,19 +7,35 @@ using UnityEngine;
 using Zenject;
 using System.Collections;
 using Game.Managers.CharacterManager;
+using Game.Systems.DialogueSystem;
+using System.Linq;
+using UnityEngine.Events;
+using EPOOutline;
+using Game.Systems.InteractionSystem;
 
 namespace Game.Entities.Models
 {
-	public interface ICharacterModel
+	public interface ICharacterModel : IEntityModel, IBattlable, IObservable, IInteractable
 	{
+		bool IsWithRangedWeapon { get; }//rm
+		float CharacterRange { get; }//rm
+
+		AnimatorControl AnimatorControl { get; }
+		CharacterOutfit Outfit { get; }
+		Markers Markers { get; }
+		Outlinable Outline { get; }
+
 		CharacterModel.Data GetData();
 	}
 
-	public partial class CharacterModel : StubEntityModel, ICharacterModel
+	public partial class CharacterModel : EntityModel, ICharacterModel
 	{
-		public CharacterData data;
+		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
 
 		public CharacterOutfit Outfit { get; private set; }
+		public AnimatorControl AnimatorControl { get; private set; }
+
+		public Transform DialogueTransform => transform;
 
 		public float CharacterRange => equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>().weaponRange ?? 0f;
 
@@ -30,10 +46,23 @@ namespace Game.Entities.Models
 		protected CharacterManager characterManager;
 
 		[Inject]
-		private void Construct(CharacterOutfit outfit, CharacterManager characterManager)
+		private void Construct(
+			CharacterOutfit outfit,
+			AnimatorControl animatorControl,
+			Outlinable outline,
+			Markers markerController,
+			DialogueSystem dialogueSystem,
+			Barker barker,
+			CharacterManager characterManager)
 		{
 			Outfit = outfit;
+			AnimatorControl = animatorControl;
+			Outline = outline;
+			Markers = markerController;
+
 			this.characterManager = characterManager;
+			//this.dialogueSystem = dialogueSystem;
+			//this.barker = barker;
 
 			//equipment = (Sheet as CharacterSheet).Equipment;
 		}
@@ -43,35 +72,45 @@ namespace Game.Entities.Models
 			characterManager.Registrate(this);
 
 			Controller.onReachedDestination += OnReachedDestination;
-			equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
+			//equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
+
+			Outline.enabled = false;
+
+			ResetMarkers();
+
+			Markers.Exclamation.Enable(false);
+			Markers.Question.Enable(false);
+
+			//signalBus?.Subscribe<StartDialogueSignal>(OnDialogueStarted);
 
 			yield return base.Start();
+			//yield return new WaitForSeconds(2.5f);
+			//CheckReplicas();
 		}
 
 		protected override void OnDestroy()
 		{
 			characterManager.UnRegistrate(this);
 
+			//signalBus?.Unsubscribe<StartDialogueSignal>(OnDialogueStarted);
+
 			base.OnDestroy();
 
-			if (equipment != null)
-			{
-				equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
-			}
+			//if (equipment != null)
+			//{
+			//	equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
+			//}
 		}
 
-		#region Observe
-		public override void StartObserve()
+		protected virtual void Update()
 		{
-			base.StartObserve();
-			//uiManager.Battle.SetSheet(Sheet);
+			Markers.TargetMarker.transform.position = Navigation.CurrentNavMeshDestination;
+			Markers.TargetMarker.DrawCircle();
+
+			Markers.FollowMarker.DrawCircle();
+
+			Markers.LineMarker.DrawLine(Navigation.NavMeshAgent.path.corners);
 		}
-		public override void EndObserve()
-		{
-			base.EndObserve();
-			//uiManager.Battle.SetSheet(null);
-		}
-		#endregion
 
 		private void OnEquipWeaponChanged()
 		{
@@ -97,9 +136,177 @@ namespace Game.Entities.Models
 		}
 	}
 
-	/// <summary>
-	/// Override Battle & Animations implementation
-	/// </summary>
+
+	//Visual and (IInteractable, IObservable implementation)
+	partial class CharacterModel
+	{
+		public Markers Markers { get; protected set; }
+		public Outlinable Outline { get; protected set; }
+		public IInteraction Interaction { get; }
+		public bool IsInteractable { get; }
+
+		#region Observe
+		public virtual void StartObserve()
+		{
+			Outline.enabled = true;
+		}
+		public virtual void Observe() { }
+		public virtual void EndObserve()
+		{
+			Outline.enabled = false;
+		}
+		#endregion
+
+		public bool InteractWith(IInteractable interactable)
+		{
+			return false;
+		}
+
+		protected virtual void ResetMarkers()
+		{
+			Markers.FollowMarker.Enable(false);
+
+			Markers.TargetMarker.transform.parent = null;
+			Markers.TargetMarker.Enable(false);
+
+			Markers.AreaMarker.Enable(false);
+
+			Markers.LineMarker.Enable(false);
+		}
+	}
+
+	//IActor implementation
+	//partial class CharacterModel
+	//{
+	//	public virtual bool IsHaveSomethingToSay => (ActorSettings.barks != null && IsHasFreshAndImportantBarks()) || (ActorSettings.dialogues != null && IsHasFreshAndImportantDialogues());
+	//	public virtual bool IsInDialogue { get; set; }
+
+	//	public ActorSettings ActorSettings => actorSettings;
+	//	[SerializeField] protected ActorSettings actorSettings;
+
+	//	protected DialogueSystem dialogueSystem;
+	//	protected Barker barker;
+
+	//	public virtual void Bark()
+	//	{
+	//		if (barker == null || ActorSettings.barks == null)
+	//		{
+	//			Debug.LogError($"{gameObject.name} barker == null || ActorSettings.barks == null", gameObject);
+	//			return;
+	//		}
+	//		if (barker.IsShowing) return;
+
+	//		var bark = ActorSettings.barks.allNodes.FirstOrDefault();
+
+	//		switch (ActorSettings.barks.barkType)
+	//		{
+	//			case BarkType.First:
+	//			case BarkType.Random:
+	//			{
+	//				bark = ActorSettings.barks.allNodes.RandomItem();
+
+	//				if (bark is I2StatementNode node)
+	//				{
+	//					ShowBarkSubtitles(node.statement.GetCurrent());
+	//				}
+
+	//				break;
+	//			}
+	//			case BarkType.Sequence:
+	//			{
+	//				//TODO
+	//				break;
+	//			}
+	//		}
+
+	//		ActorSettings.barks.TreeData.isFirstTime = false;
+	//		//Markers.Exclamation.Hide();
+	//	}
+
+
+	//	private bool IsHasFreshAndImportantBarks()
+	//	{
+	//		return ActorSettings.barks.TreeData.isFirstTime && ActorSettings.isImportanatBark;
+	//	}
+	//	private bool IsHasFreshAndImportantDialogues()
+	//	{
+	//		return ActorSettings.dialogues.TreeData.isFirstTime;
+	//	}
+
+
+	//	protected void ShowBarkSubtitles(I2AudioText subtitles)
+	//	{
+	//		if (subtitles != null)
+	//		{
+	//			barker.Text.text = subtitles.Text;
+	//			barker.Show();
+	//		}
+	//	}
+
+	//	protected virtual void CheckReplicas()
+	//	{
+	//		if (IsHaveSomethingToSay)
+	//		{
+	//			Markers.Exclamation.Show();
+	//		}
+	//		else
+	//		{
+	//			if (Markers.Exclamation.IsSwowing && !Markers.Exclamation.IsHideProcess)
+	//			{
+	//				Markers.Exclamation.Hide();
+	//			}
+	//		}
+	//	}
+
+	//	private void OnDialogueStarted(StartDialogueSignal signal)
+	//	{
+	//		if (signal.dialogue == actorSettings.dialogues)
+	//		{
+	//			CheckReplicas();
+	//		}
+	//	}
+	//}
+
+	//IBattlable implementation
+	partial class CharacterModel
+	{
+		public event UnityAction onBattleChanged;
+
+		public bool InBattle => CurrentBattle != null;
+		public Battle CurrentBattle { get; private set; }
+
+		public virtual bool JoinBattle(Battle battle)
+		{
+			if (CurrentBattle != null)
+			{
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
+			}
+			CurrentBattle = battle;
+			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
+			CurrentBattle.onBattleUpdated += OnBattleUpdated;
+
+			onBattleChanged?.Invoke();
+
+			return true;
+		}
+
+		public virtual bool LeaveBattle()
+		{
+			if (CurrentBattle != null)
+			{
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
+			}
+			CurrentBattle = null;
+
+			onBattleChanged?.Invoke();
+
+			return true;
+		}
+	}
+
+	//Override Battle & Animations implementation
 	partial class CharacterModel
 	{
 		public override void SetTarget(Vector3 point, float maxPathDistance = -1)
@@ -109,7 +316,7 @@ namespace Game.Entities.Models
 
 		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
 		{
-			//base.SetDestination(destination, InBattle ? Sheet.Stats.Move.CurrentValue : maxPathDistance);
+			base.SetDestination(destination, /*InBattle ? Sheet.Stats.Move.CurrentValue :*/ maxPathDistance);
 
 			if (!InBattle)
 			{
@@ -123,6 +330,9 @@ namespace Game.Entities.Models
 				}
 			}
 		}
+
+		public virtual void Attack() { }
+
 
 		public override void Stop()
 		{
@@ -143,7 +353,7 @@ namespace Game.Entities.Models
 			}
 		}
 
-		protected override void OnBattleStateChanged()
+		protected virtual void OnBattleStateChanged()
 		{
 			if (InBattle)
 			{
@@ -189,7 +399,7 @@ namespace Game.Entities.Models
 				ResetMarkers();
 			}
 		}
-		protected override void OnBattleUpdated()
+		protected virtual void OnBattleUpdated()
 		{
 			bool isMineTurn = CurrentBattle.BattleFSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
 

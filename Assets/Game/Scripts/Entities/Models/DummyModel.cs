@@ -13,7 +13,7 @@ namespace Game.Entities
 		public bool IsHaveSomethingToSay => actorSettings != null;
 		public bool IsInDialogue { get; set; }
 
-		public Transform Transform => transform;
+		public Transform DialogueTransform => transform;
 
 		public ActorSettings ActorSettings => actorSettings;
 		[SerializeField] private ActorSettings actorSettings;

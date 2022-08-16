@@ -16,23 +16,24 @@ namespace Game.Entities
 		public IInteraction Interaction { get; }
 
 		private SignalBus signalBus;
-		private CharacterManager characterManager;
+		private IPlayer player;
 		private Outlinable outline;
 		private ISaveLoad saveLoad;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, CharacterManager characterManager, Outlinable outline, ISaveLoad saveLoad)
+		private void Construct(SignalBus signalBus, IPlayer player, Outlinable outline, ISaveLoad saveLoad)
 		{
 			this.signalBus = signalBus;
-			this.characterManager = characterManager;
+			this.player = player;
 			this.outline = outline;
 			this.saveLoad = saveLoad;
 
-			characterManager.Registrate(this);
 		}
 
 		protected override IEnumerator Start()
 		{
+			player.Registrate(this);
+
 			yield return null;
 
 			LoadTransformOnMap();
@@ -42,7 +43,7 @@ namespace Game.Entities
 
 		protected override void OnDestroy()
 		{
-			characterManager.UnRegistrate(this);
+			player.UnRegistrate(this);
 
 			base.OnDestroy();
 		}

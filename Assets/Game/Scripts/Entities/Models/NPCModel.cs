@@ -11,7 +11,7 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-	public class NPCModel : StubEntityModel
+	public class NPCModel : CharacterModel
 	{
 		[SerializeField] private NPCData data;
 

@@ -45,12 +45,14 @@ namespace Game.Map
 		[field: SerializeField] public InteractionPoint InteractionPoint { get; private set; }
 
 		private UIGlobalCanvas globalCanvas;
+		private IPlayer player;
 		private CharacterManager characterManager;
 
 		[Inject]
-		private void Construct(UIGlobalCanvas globalCanvas, CharacterManager characterManager)
+		private void Construct(UIGlobalCanvas globalCanvas, IPlayer player, CharacterManager characterManager)
 		{
 			this.globalCanvas = globalCanvas;
+			this.player = player;
 			this.characterManager = characterManager;
 		}
 
@@ -89,12 +91,12 @@ namespace Game.Map
 		{
 			IsInteractable = false;
 
-			var playerRTS = characterManager.PlayerRTS;
+			var playerRTS = player.RTSModel.transform;
 			FastStorage.LastTransformOnMap = new DefaultTransform()
 			{
-				position = playerRTS.transform.position,
-				rotation = playerRTS.transform.rotation,
-				scale = playerRTS.transform.localScale,
+				position = playerRTS.position,
+				rotation = playerRTS.rotation,
+				scale = playerRTS.localScale,
 			};
 
 			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);

@@ -26,6 +26,7 @@ namespace Game.Managers.StorageManager
 		private DiContainer container;
 		private ISaveLoad saveLoad;
 		private GameManager.GameManager gameManager;
+		private IPlayer player;
 		private CharacterManager.CharacterManager characterManager;
 		private PartyManager.PartyManager partyManager;
 		private SceneManager.SceneManager sceneManager;
@@ -33,14 +34,17 @@ namespace Game.Managers.StorageManager
 
 		public SaveLoadOverseer(SignalBus signalBus, DiContainer container, ISaveLoad saveLoad,
 			GameManager.GameManager gameManager,
+			IPlayer player,
 			CharacterManager.CharacterManager characterManager,
 			PartyManager.PartyManager partyManager,
-			SceneManager.SceneManager sceneManager, UIGlobalCanvas globalCanvas)
+			SceneManager.SceneManager sceneManager,
+			UIGlobalCanvas globalCanvas)
 		{
 			this.signalBus = signalBus;
 			this.container = container;
 			this.saveLoad = saveLoad;
 			this.gameManager = gameManager;
+			this.player = player;
 			this.characterManager = characterManager;
 			this.partyManager = partyManager;
 			this.sceneManager = sceneManager;
@@ -83,7 +87,6 @@ namespace Game.Managers.StorageManager
 			}
 
 			FastStorage.Clear();
-			FastStorage.Player = new Player();
 
 			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(Scenes.Map, transitionIn, transitionOut);
 		}
@@ -124,14 +127,12 @@ namespace Game.Managers.StorageManager
 
 			if (gameManager.CurrentGameLocation == GameManager.GameLocation.Map)
 			{
-				var playerRTS = characterManager.PlayerRTS;
-				Assert.IsNotNull(playerRTS, "PlayerRTS == NULL");
-
+				var playerRTS = player.RTSModel.transform;
 				transformOnMap = new DefaultTransform()
 				{
-					position = playerRTS.transform.position,
-					rotation = playerRTS.transform.rotation,
-					scale = playerRTS.transform.localScale,
+					position = playerRTS.position,
+					rotation = playerRTS.rotation,
+					scale = playerRTS.localScale,
 				};
 			}
 			else if (gameManager.CurrentGameLocation == GameManager.GameLocation.Location)

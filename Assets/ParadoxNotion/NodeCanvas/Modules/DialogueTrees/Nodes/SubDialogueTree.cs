@@ -36,7 +36,7 @@ namespace NodeCanvas.DialogueTrees
             currentInstance = (DialogueTree)this.CheckInstance();
             this.TryWriteAndBindMappedVariables();
             TryWriteMappedActorParameters();
-            currentInstance.StartGraph(FinalActor is Component ? (Component)FinalActor : FinalActor.Transform, bb.parent, Graph.UpdateMode.Manual, OnSubDialogueFinish);
+            currentInstance.StartGraph(FinalActor is Component ? (Component)FinalActor : FinalActor.DialogueTransform, bb.parent, Graph.UpdateMode.Manual, OnSubDialogueFinish);
             return Status.Running;
         }
 

@@ -232,7 +232,7 @@ partial class HumanoidAnimatorControl
 			this.owner = owner;
 			//equipment = (owner.Sheet as CharacterSheet).Equipment;
 			//outfit = (owner as CharacterModel).Outfit;
-			control = (owner as StubEntityModel).AnimatorControl as HumanoidAnimatorControl;
+			//control = owner.AnimatorControl as HumanoidAnimatorControl;
 			animator = control.animator;
 
 			weaponTypeHash = Animator.StringToHash("WeaponType");

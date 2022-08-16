@@ -13,6 +13,7 @@ using Game.Entities;
 using Game.Systems.DialogueSystem;
 using Game.Managers.GameManager;
 using Game.Entities.Models;
+using Game.Managers.PartyManager;
 
 namespace Game.Systems.CameraSystem
 {
@@ -254,7 +255,7 @@ namespace Game.Systems.CameraSystem
 
 		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 		{
-			leader = signal.leader;
+			leader = signal.leader.Model as CharacterModel;
 			LookAt(leader);
 		}
 

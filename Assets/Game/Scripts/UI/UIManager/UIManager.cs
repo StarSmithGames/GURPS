@@ -10,6 +10,7 @@ using UnityEngine;
 
 using Zenject;
 using Game.Systems.NotificationSystem;
+using Game.Managers.PartyManager;
 
 public class UIManager : MonoBehaviour
 {

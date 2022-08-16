@@ -1,10 +1,9 @@
 using Game.Entities;
 using Game.Managers.CharacterManager;
+using Game.Managers.PartyManager;
 using Game.Systems.SheetSystem;
 
 using System.Collections.Generic;
-
-using UnityEditor.Timeline.Actions;
 
 using UnityEngine;
 
@@ -99,6 +98,6 @@ public class UIBars : MonoBehaviour
 
 	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 	{
-		SetEntity(signal.leader);
+		//SetEntity(signal.leader);
 	}
 }

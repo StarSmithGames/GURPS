@@ -1,8 +1,11 @@
+using Game.Systems.DialogueSystem;
 using Game.Systems.SheetSystem;
+
+using UnityEngine;
 
 namespace Game.Entities
 {
-	public interface ICharacter : IEntity
+	public interface ICharacter : IEntity, IActor
 	{
 
 	}
@@ -21,6 +24,17 @@ namespace Game.Entities
 				return characterSheet;
 			}
 		}
+
+		public bool IsHaveSomethingToSay { get; }
+		public bool IsInDialogue { get; set; }
+		public ActorSettings ActorSettings { get; }
+		public Transform DialogueTransform { get; }
+
 		private CharacterSheet characterSheet;
+
+		public void Bark()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
