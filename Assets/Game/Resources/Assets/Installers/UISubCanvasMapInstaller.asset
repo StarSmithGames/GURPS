@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8066c16568903dc48a41d96d2b60b354, type: 3}
-  m_Name: UISubCanvasInstaller
+  m_Name: UISubCanvasMapInstaller
   m_EditorClassIdentifier: 
   SubCanvasPrefab: {fileID: 8354466320625428728, guid: f5bad759d733f3242afda18969e49ac9, type: 3}
   mainMenuWindow: {fileID: 1390104159834341277, guid: b158e13da955e63458a07393ef4d9b1c, type: 3}
   loadingCommitWindow: {fileID: 2295661591900373995, guid: 94ca9cdf2020471498b71a5f92c8625b, type: 3}
-  commitPrefab: {fileID: 261519561213114810, guid: ac13fef8774b52a48a7b99c892a53525, type: 3}
+  preferencesWindow: {fileID: 5142551386490433259, guid: e287b5b89df882c48bcf541f32d44f94, type: 3}

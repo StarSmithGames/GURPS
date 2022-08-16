@@ -31,7 +31,6 @@ namespace Game.Systems.InventorySystem
 		private InputManager inputManager;
 
 		public InventoryContainerHandler(
-			UIManager uiManager,
 			UIItemCursor itemCursor,
 			CharacterManager characterManager,
 			UIContainerWindow.Factory containerFactory,
@@ -47,15 +46,15 @@ namespace Game.Systems.InventorySystem
 
 		public void Initialize()
 		{
-			IsInventoryOpened = uiManager.CharacterSheet.gameObject.activeSelf;
+			//IsInventoryOpened = uiManager.CharacterSheet.gameObject.activeSelf;
 			CloseCharacterStatus();
 
-			uiManager.CharacterSheet.onClose += CloseCharacterStatus;
+			//uiManager.CharacterSheet.onClose += CloseCharacterStatus;
 		}
 
 		public void Dispose()
 		{
-			uiManager.CharacterSheet.onClose -= CloseCharacterStatus;
+			//uiManager.CharacterSheet.onClose -= CloseCharacterStatus;
 		}
 
 		public void Tick()

@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90fd87e8e7c6dbe48a054cf71636fece, type: 3}
-  m_Name: Map
+  m_Name: Polygon
   m_EditorClassIdentifier: 
   sceneName:
     useCustom: 1
-    name: Map
+    name: Polygon
     scenes: 0
-  gameLocation: 1
+  gameLocation: 2

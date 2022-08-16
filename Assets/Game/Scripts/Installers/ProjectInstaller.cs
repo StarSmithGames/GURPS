@@ -1,46 +1,48 @@
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Managers.StorageManager;
-using Game.Systems.InteractionSystem;
-using Game.Systems.InventorySystem;
 
 using UnityEngine;
 
 using Zenject;
 
-public class ProjectInstaller : MonoInstaller
+namespace Game
 {
-	public GlobalSettings globalSettings;
-
-	[Space]
-	public PlayerPrefsSaveLoad.Settings playerPrefsSettings;
-	public DefaultData defaultData;
-
-	public override void InstallBindings()
+	public class ProjectInstaller : MonoInstaller
 	{
-		SignalBusInstaller.Install(Container);
+		public GlobalSettings globalSettings;
 
-		Container.BindInstance(Container.InstantiateComponentOnNewGameObject<AsyncManager>());
+		[Space]
+		public PlayerPrefsSaveLoad.Settings playerPrefsSettings;
+		public DefaultData defaultData;
 
-		BindSaveLoad();
+		public override void InstallBindings()
+		{
+			SignalBusInstaller.Install(Container);
 
-		GameManagerInstaller.Install(Container);
+			Container.BindInstance(Container.InstantiateComponentOnNewGameObject<AsyncManager>());
 
-		Container.BindInstance(globalSettings);
+			BindSaveLoad();
 
-		CharacterManagerInstaller.Install(Container);
-	}
+			GameManagerInstaller.Install(Container);
 
-	private void BindSaveLoad()
-	{
-		Container.DeclareSignal<SignalSaveStorage>();
-		Container.DeclareSignal<SignalStorageSaved>();
-		Container.DeclareSignal<SignalStorageLoaded>();
+			Container.BindInstance(globalSettings);
 
-		Container.BindInstance(playerPrefsSettings).WhenInjectedInto<PlayerPrefsSaveLoad>();
-		Container.BindInstance(defaultData).WhenInjectedInto<PlayerPrefsSaveLoad>();
+			CharacterManagerInstaller.Install(Container);
+		}
 
-		Container.BindInterfacesTo<PlayerPrefsSaveLoad>().AsSingle();
-		Container.BindInterfacesAndSelfTo<SaveLoadOverseer>().AsSingle().NonLazy();
+		private void BindSaveLoad()
+		{
+			Container.DeclareSignal<SignalSaveStorage>();
+			Container.DeclareSignal<SignalStorageSaved>();
+			Container.DeclareSignal<SignalStorageCleared>();
+			Container.DeclareSignal<SignalStorageLoaded>();
+
+			Container.BindInstance(playerPrefsSettings).WhenInjectedInto<PlayerPrefsSaveLoad>();
+			Container.BindInstance(defaultData).WhenInjectedInto<PlayerPrefsSaveLoad>();
+
+			Container.BindInterfacesTo<PlayerPrefsSaveLoad>().AsSingle();
+			Container.BindInterfacesAndSelfTo<SaveLoadOverseer>().AsSingle().NonLazy();
+		}
 	}
 }

@@ -28,27 +28,19 @@ namespace Game.Systems.ContextMenu
 		private DialogueSystem.DialogueSystem dialogueSystem;
 
 		public ContextMenuHandler(
-			UIContextAction.Factory contextMenuFactory,
-			UIManager uiManager,
 			Cinemachine.CinemachineBrain brain,
 			InputManager inputManager,
-			CharacterManager characterManager,
-			InteractionSystem.InteractionSystem interactionHandler,
-			DialogueSystem.DialogueSystem dialogueSystem)
+			CharacterManager characterManager)
 		{
-			this.contextMenuFactory = contextMenuFactory;
-			this.contextMenu = uiManager.ContextMenu;
 			this.brain = brain;
 			this.inputManager = inputManager;
 			this.characterManager = characterManager;
-			this.interactionHandler = interactionHandler;
-			this.dialogueSystem = dialogueSystem;
 		}
 
 		public void Initialize()
 		{
 			Enable(false);
-			contextMenu.transform.DestroyChildren();
+			//contextMenu.transform.DestroyChildren();
 		}
 
 		public void Tick()
@@ -126,7 +118,7 @@ namespace Game.Systems.ContextMenu
 
 		private void Enable(bool trigger)
 		{
-			contextMenu.gameObject.SetActive(trigger);
+			//contextMenu.gameObject.SetActive(trigger);
 		}
 
 		private void AddCommand(ICommand command, ContextType type = ContextType.Normal)

@@ -1,7 +1,7 @@
 using CodeStage.AdvancedFPSCounter;
 
 using Game.Managers.TransitionManager;
-using Game.UI.MainMenu;
+using Game.Systems.InventorySystem;
 using Game.UI.Windows;
 
 using UnityEngine;
@@ -35,6 +35,8 @@ namespace Game.UI
                 .FromMethod(ctx => ctx.Container.Resolve<UIGlobalCanvas>().GetComponentInChildren<AFPSCounter>(true))
                 .AsSingle()
                 .NonLazy();
+
+
 
             //Windows
             Container.Bind<WindowInfinityLoading>()

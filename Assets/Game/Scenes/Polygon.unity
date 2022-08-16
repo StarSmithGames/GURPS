@@ -11593,6 +11593,7 @@ GameObject:
   - component: {fileID: 981890796}
   - component: {fileID: 981890795}
   - component: {fileID: 981890794}
+  - component: {fileID: 981890799}
   - component: {fileID: 981890798}
   m_Layer: 5
   m_Name: Canvas
@@ -11700,7 +11701,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 981890793}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8dade8d06bb81eb45a63b37ae4e8fef0, type: 3}
   m_Name: 
@@ -11714,6 +11715,18 @@ MonoBehaviour:
   <Dialogue>k__BackingField: {fileID: 2006939437}
   <JournalNotification>k__BackingField: {fileID: 796000818}
   originalVirtualSpace: {fileID: 25328458}
+--- !u!114 &981890799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 981890793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c54f5ec354f7c064db9853c326666f8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &995037227
 GameObject:
   m_ObjectHideFlags: 0
@@ -23897,7 +23910,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.4361913
+      value: -3.4361908
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.w
@@ -23905,15 +23918,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.4575816
+      value: 0.45758164
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00000001529935
+      value: -0.000000015299365
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.00000000787332
+      value: 0.000000007873329
       objectReference: {fileID: 0}
     - target: {fileID: 1316808353, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Follow
@@ -23933,7 +23946,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.4361913
+      value: -3.4361908
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.w
@@ -23941,15 +23954,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.4575816
+      value: 0.45758164
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00000001529935
+      value: -0.000000015299365
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.00000000787332
+      value: 0.000000007873329
       objectReference: {fileID: 0}
     - target: {fileID: 1643292430, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Follow
@@ -24017,8 +24030,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1129835330179371827, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Name
-      value: SceneContex
+      value: LocationSceneContex
       objectReference: {fileID: 0}
+    - target: {fileID: 9203395883120049922, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
+      propertyPath: subCanvas
+      value: 
+      objectReference: {fileID: 981890799}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
 --- !u!1001 &3487759788258195730

@@ -7,9 +7,9 @@ namespace Game.Systems.NotificationSystem
 	{
 		private JournalNotification journalNotification;
 
-		public NotificationSystem(UIManager uiManager)
+		public NotificationSystem()
 		{
-			journalNotification = new JournalNotification(uiManager.JournalNotification);
+			//journalNotification = new JournalNotification(uiManager.JournalNotification);
 		}
 
 		public void PushJournal(string title)

@@ -42,10 +42,10 @@ namespace Game.Systems.DialogueSystem
 		}
 
 		/// <summary>
-		/// Запуск диалогового окна между инициатором и с кем говорим.
+		/// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 		/// </summary>
-		/// <param name="initiator">Обычно игрок.</param>
-		/// <param name="actor">Актёр у которого есть диалоговое дерево.</param>
+		/// <param name="initiator">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.</param>
+		/// <param name="actor">пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.</param>
 		public void StartDialogue(IActor initiator, IActor actor)
 		{
 			if (!dialogueController.isRunning && !IsDialogueProcess)

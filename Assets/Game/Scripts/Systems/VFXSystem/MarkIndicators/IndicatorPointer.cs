@@ -43,11 +43,10 @@ namespace Game.Systems.VFX
 		private UIManager uiManager;
 
 		[Inject]
-		private void Construct(Cinemachine.CinemachineBrain brain, CharacterManager characterManager, UIManager uiManager)
+		private void Construct(Cinemachine.CinemachineBrain brain, CharacterManager characterManager)
 		{
 			this.brain = brain;
 			this.characterManager = characterManager;
-			this.uiManager = uiManager;
 		}
 
 		private void Update()

@@ -46,13 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers:
   - {fileID: 11400000, guid: a91ba24e9ef8a6e40b6911cf9b8c19de, type: 2}
-  - {fileID: 11400000, guid: c241d8168707ef94ea203b7e537948f9, type: 2}
   - {fileID: 11400000, guid: 9737597b31ac49843a585c939adbd3df, type: 2}
+  - {fileID: 11400000, guid: c241d8168707ef94ea203b7e537948f9, type: 2}
   - {fileID: 11400000, guid: 2a4bd727e72eba84390c22f56fc39abc, type: 2}
-  - {fileID: 11400000, guid: 472e6aba96ae77f4f8d6354d02ef6c57, type: 2}
-  - {fileID: 11400000, guid: 4a656e0d03b84af41876891dcea982ae, type: 2}
-  - {fileID: 11400000, guid: 046b85612395444418785cac52e7a297, type: 2}
-  - {fileID: 11400000, guid: 9baa0bb500d18614a81a6f3ee9f483ff, type: 2}
   _monoInstallers:
   - {fileID: -3076613229729817307}
   _installerPrefabs: []
@@ -100,3 +96,7 @@ MonoBehaviour:
     infinityLoadingSettings:
       allowScene: 0
       progressAnimationMultiplier: 1
+  playerPrefsSettings:
+    preferenceName: save_data
+    storageDisplayName: Profile
+    storageFileName: Profile.dat

@@ -2,6 +2,8 @@ using Game.Managers.SceneManager;
 using Game.Managers.TransitionManager;
 using Game.UI.Windows;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +13,9 @@ namespace Game.UI
 {
 	public class UIButtonSwitchScene : MonoBehaviour
 	{
-		[field: SerializeField] public Scenes GoTo { get; private set; }
+		[HideLabel]
+		public SceneName sceneName;
+
 		[field: SerializeField] public Transitions In { get; private set; }
 		[field: SerializeField] public Transitions Out { get; private set; }
 
@@ -37,7 +41,7 @@ namespace Game.UI
 
 		private void Click()
 		{
-			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(GoTo, In, Out);
+			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);
 		}
 	}
 }

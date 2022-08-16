@@ -115,7 +115,7 @@ namespace Game.Managers.SceneManager
 
 			if (handle.AsyncOperation.isDone)
 			{
-				signalBus?.Fire(new SignalSceneChanged() { data = scenes.FirstOrDefault((x) => x.sceneName == CurrentScene) });
+				signalBus?.Fire(new SignalSceneChanged() { data = scenes.FirstOrDefault((x) => x.sceneName.name == CurrentScene) });
 				callback?.Invoke();
 			}
 			else

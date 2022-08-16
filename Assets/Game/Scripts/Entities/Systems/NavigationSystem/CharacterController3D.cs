@@ -15,9 +15,9 @@ using UnityEngine.Events;
 
 using Zenject;
 
-public class CharacterController3D : MonoBehaviour
+public class CharacterController3D : MonoBehaviour, IController
 {
-	public UnityAction onReachedDestination;
+	public event UnityAction onReachedDestination;
 
 	public bool IsGrounded => characterController.isGrounded;
 	public bool IsHasTarget

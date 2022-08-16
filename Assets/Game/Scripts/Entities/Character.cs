@@ -34,13 +34,10 @@ namespace Game.Entities
 		public bool IsWithRangedWeapon { get; private set; }
 
 		private IEquipment equipment;
-		protected UIManager uiManager;
 
 		[Inject]
-		private void Construct(UIManager uiManager, CharacterOutfit outfit)
+		private void Construct(CharacterOutfit outfit)
 		{
-			this.uiManager = uiManager;
-
 			Outfit = outfit;
 
 			equipment = (Sheet as CharacterSheet).Equipment;
@@ -68,12 +65,12 @@ namespace Game.Entities
 		public override void StartObserve()
 		{
 			base.StartObserve();
-			uiManager.Battle.SetSheet(Sheet);
+			//uiManager.Battle.SetSheet(Sheet);
 		}
 		public override void EndObserve()
 		{
 			base.EndObserve();
-			uiManager.Battle.SetSheet(null);
+			//uiManager.Battle.SetSheet(null);
 		}
 		#endregion
 

@@ -31,9 +31,8 @@ public class UIAvatar : PoolableObject
 	private UIManager uiManager;
 
 	[Inject]
-	private void Construct(UIManager uiManager)
+	private void Construct()
 	{
-		this.uiManager = uiManager;
 	}
 
 	private void OnDestroy()

@@ -41,7 +41,6 @@ namespace Game.Systems.BattleSystem
 			SignalBus signalBus,
 			GlobalSettings settings,
 			BattleManager battleManager,
-			UIManager uiManager,
 			AsyncManager asyncManager,
 			CharacterManager characterManager,
 			CameraController cameraController)
@@ -49,7 +48,6 @@ namespace Game.Systems.BattleSystem
 			this.signalBus = signalBus;
 			this.settings = settings.battleSettings;
 			this.battleManager = battleManager;
-			this.uiManager = uiManager;
 			this.asyncManager = asyncManager;
 			this.characterManager = characterManager;
 			this.cameraController = cameraController;

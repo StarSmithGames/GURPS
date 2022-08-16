@@ -12,6 +12,8 @@ namespace Game.Managers.StorageManager
 
 		// Get currently selected storage
 		Storage GetStorage();
+
+		void Clear();
 	}
 
 	public class PlayerPrefsSaveLoad : ISaveLoad, IInitializable, IDisposable
@@ -79,8 +81,19 @@ namespace Game.Managers.StorageManager
 			Debug.Log($"[LOAD] Load storage from pref: {settings.preferenceName}");
 		}
 
-		public Storage GetStorage() => activeStorage;
+		public void Clear()
+		{
+			if (PlayerPrefs.HasKey(settings.preferenceName))
+			{
+				PlayerPrefs.DeleteKey(settings.preferenceName);
+			}
 
+			activeStorage.Clear();
+
+			signalBus?.Fire(new SignalStorageCleared());
+		}
+
+		public Storage GetStorage() => activeStorage;
 		
 
 		[System.Serializable]

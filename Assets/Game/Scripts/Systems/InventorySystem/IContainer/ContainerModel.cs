@@ -42,10 +42,8 @@ namespace Game.Systems.InventorySystem
 		private InventoryContainerHandler containerHandler;
 
 		[Inject]
-		private void Construct(UIManager uiManager, InventoryContainerHandler containerHandler)
+		private void Construct()
 		{
-			this.uiManager = uiManager;
-			this.containerHandler = containerHandler;
 		}
 
 		private void Start()

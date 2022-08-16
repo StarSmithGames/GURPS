@@ -13,13 +13,36 @@ namespace Game.Managers.SceneManager
 	[CreateAssetMenu(fileName = "Scene", menuName = "Scene")]
 	public class SceneData : ScriptableObject
 	{
-		[ValueDropdown("SelectScene", DropdownTitle = "Scene Selection")]
-		public string sceneName;
+		[HideLabel]
+		public SceneName sceneName;
 		public GameLocation gameLocation;
+	}
+
+	[System.Serializable]
+	public class SceneName
+	{
+		public bool useCustom = false;
+
+		[ShowIf("useCustom")]
+		[ValueDropdown("SelectScene", DropdownTitle = "Scene Selection")]
+		public string name;
+
+		[HideIf("useCustom")]
+		public Scenes scenes;
+
+		public string GetScene()
+		{
+			if (useCustom)
+			{
+				return name;
+			}
+
+			return scenes.ToString();
+		}
 
 		private static IEnumerable SelectScene()
 		{
-			var filesPath = Directory.GetFiles("Assets/Game/Scenes");
+			var filesPath = Directory.GetFiles("Assets/Game/Scenes", "*.unity", SearchOption.TopDirectoryOnly);
 			var fileNameList = filesPath
 			  .Select(Path.GetFileName)
 			  .Select(file => file.Split('.')[0])
@@ -28,5 +51,12 @@ namespace Game.Managers.SceneManager
 
 			return fileNameList;
 		}
+	}
+
+	public enum Scenes
+	{
+		Menu = 0,
+		Map = 1,
+		Polygon = 2,
 	}
 }

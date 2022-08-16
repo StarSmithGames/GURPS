@@ -201,9 +201,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23e28261d958e4f45898b7aa3799f630, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useCustom: 1
-  <GoTo>k__BackingField: 0
-  <SceneName>k__BackingField: Room
+  sceneName:
+    useCustom: 1
+    name: Room
+    scenes: 0
   <In>k__BackingField: 0
   <Out>k__BackingField: 0
   <Outline>k__BackingField: {fileID: 1156124145701943517}

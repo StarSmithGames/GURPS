@@ -35,9 +35,8 @@ namespace Game.Systems.BattleSystem
         private UIManager uiManager;
 
         [Inject]
-        private void Construct(UIManager uiManager)
+        private void Construct()
 		{
-            this.uiManager = uiManager;
         }
 
 		private void OnDestroy()

@@ -53,5 +53,10 @@ namespace Game.Managers.StorageManager
 		{
 			Data = SaveLoad.DeserializeObjectFromJson(json);
 		}
+
+		public void Drop()
+		{
+			Data = new Dictionary<string, object>();
+		}
 	}
 }

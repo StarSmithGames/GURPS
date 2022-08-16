@@ -35,11 +35,9 @@ namespace Game.Map
 		private IInteraction interaction = null;
 		public Transform Transform => transform;
 
-		[SerializeField] private bool useCustom = false;
-		[field: HideIf("useCustom")]
-		[field: SerializeField] public Scenes GoTo { get; private set; }
-		[field: ShowIf("useCustom")]
-		[field: SerializeField] public string SceneName { get; private set; }
+		[HideLabel]
+		public SceneName sceneName;
+
 		[field: SerializeField] public Transitions In { get; private set; }
 		[field: SerializeField] public Transitions Out { get; private set; }
 		[field: Space]
@@ -99,14 +97,7 @@ namespace Game.Map
 				scale = playerRTS.transform.localScale,
 			};
 
-			if (useCustom)
-			{
-				globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(SceneName, In, Out);
-			}
-			else
-			{
-				globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(GoTo, In, Out);
-			}
+			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);
 		}
 	}
 }

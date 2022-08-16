@@ -17,11 +17,4 @@ namespace Game.Managers.SceneManager
 			Container.BindInterfacesAndSelfTo<SceneHandler>().AsSingle().NonLazy();
 		}
 	}
-
-	public enum Scenes
-	{
-		Menu	= 0,
-		Map		= 1,
-		Polygon = 2,
-	}
 }

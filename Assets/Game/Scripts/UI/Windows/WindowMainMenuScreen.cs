@@ -2,7 +2,6 @@ using Game.Managers.GameManager;
 using Game.Managers.SceneManager;
 using Game.Managers.StorageManager;
 using Game.Managers.TransitionManager;
-using Game.UI.MainMenu;
 using Game.UI.Windows;
 
 using System;
@@ -14,7 +13,7 @@ using UnityEngine.UI;
 
 using Zenject;
 
-namespace Game.UI.MainMenu
+namespace Game.UI.Windows
 {
 	public class WindowMainMenuScreen : MonoBehaviour
 	{
@@ -24,13 +23,15 @@ namespace Game.UI.MainMenu
 		[field: SerializeField] public Button Preferences { get; private set; }
 		[field: SerializeField] public Button Exit { get; private set; }
 
+		private SignalBus signalBus;
 		private ISaveLoad saveLoad;
 		private SaveLoadOverseer saveLoadOverseer;
 		private UISubCanvas subCanvas;
 
 		[Inject]
-		private void Construct(ISaveLoad saveLoad, UISubCanvas subCanvas, SaveLoadOverseer saveLoadOverseer)
+		private void Construct(SignalBus signalBus, ISaveLoad saveLoad, UISubCanvas subCanvas, SaveLoadOverseer saveLoadOverseer)
 		{
+			this.signalBus = signalBus;
 			this.subCanvas = subCanvas;
 			this.saveLoad = saveLoad;
 			this.saveLoadOverseer = saveLoadOverseer;
@@ -38,24 +39,31 @@ namespace Game.UI.MainMenu
 
 		private void Start()
 		{
-			Preferences.gameObject.SetActive(false);
-
-			bool isAvailable = saveLoad.GetStorage().CurrentProfile.GetData() != null && saveLoad.GetStorage().CurrentProfile.GetData().commits.Count > 0;
-			Continue.gameObject.SetActive(isAvailable);
-			Load.interactable = isAvailable;
+			RefreshMenu();
 
 			Continue.onClick.AddListener(OnContinueClick);
 			NewGame.onClick.AddListener(OnNewGameClick);
 			Load.onClick.AddListener(OnLoadClick);
 			Preferences.onClick.AddListener(OnPreferencesClick);
+
+			signalBus?.Subscribe<SignalStorageCleared>(OnStorageCleared);
 		}
 
 		private void OnDestroy()
 		{
+			signalBus?.Unsubscribe<SignalStorageCleared>(OnStorageCleared);
+
 			Continue?.onClick.RemoveAllListeners();
 			NewGame?.onClick.RemoveAllListeners();
 			Load?.onClick.RemoveAllListeners();
 			Preferences?.onClick.RemoveAllListeners();
+		}
+
+		private void RefreshMenu()
+		{
+			bool isAvailable = saveLoad.GetStorage().CurrentProfile.GetData() != null && saveLoad.GetStorage().CurrentProfile.GetData().commits.Count > 0;
+			Continue.gameObject.SetActive(isAvailable);
+			Load.interactable = isAvailable;
 		}
 
 		private void OnContinueClick()
@@ -81,7 +89,12 @@ namespace Game.UI.MainMenu
 
 		private void OnPreferencesClick()
 		{
+			subCanvas.WindowsManager.Show<WindowPreferences>();
+		}
 
+		private void OnStorageCleared(SignalStorageCleared signal)
+		{
+			RefreshMenu();
 		}
 	}
 }

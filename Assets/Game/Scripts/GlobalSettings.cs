@@ -7,8 +7,8 @@ using UnityEngine;
 [System.Serializable]
 public class GlobalSettings
 {
-	public CameraVisionMap.Settings cameraVisionMap;
-	public CameraVisionLocation.Settings cameraVisionLocation;
+	public CameraVision.Settings cameraVisionMap;
+	public CameraVision.Settings cameraVisionLocation;
 	[Space]
 	public BattleSystem.Settings battleSettings;
 

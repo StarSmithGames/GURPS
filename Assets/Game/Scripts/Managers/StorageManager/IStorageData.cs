@@ -64,6 +64,12 @@ namespace Game.Managers.StorageManager
 			Initialization();
 		}
 
+		public void Clear()
+		{
+			Database.Drop();
+			Initialization();
+		}
+
 		private void Initialization()
 		{
 			IsFirstTime = new StorageData<bool>(database, "is_first_time", false);

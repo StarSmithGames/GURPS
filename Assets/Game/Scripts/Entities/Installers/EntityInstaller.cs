@@ -35,7 +35,7 @@ namespace Game.Entities
 			Container.BindInstance(model).WithId("Model");
 			Container.BindInstance(cameraPivot);
 			Container.BindInstance(animatorControl);
-			Container.BindInstance(controller);
+			Container.Bind<IController>().FromMethod(() => controller);
 			Container.BindInstance(navigationController);
 			Container.BindInstance(markers);
 			Container.BindInstance(outline);

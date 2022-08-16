@@ -2,10 +2,13 @@ using Game.Managers.SceneManager;
 
 using Zenject;
 
-public class InitInstaller : MonoInstaller
+namespace Game
 {
-	public override void InstallBindings()
+	public class InitInstaller : MonoInstaller
 	{
-		Container.Resolve<SceneManager>().SwitchScene(SceneStorage.GetSceneName(Scenes.Menu));
+		public override void InstallBindings()
+		{
+			Container.Resolve<SceneManager>().SwitchScene(SceneStorage.GetSceneName(Scenes.Menu));
+		}
 	}
 }

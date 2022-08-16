@@ -34,34 +34,32 @@ namespace Game.Systems.DialogueSystem
 
 		private Settings settings;
 		private SignalBus signalBus;
-		private UIManager uiManager;
 		private AsyncManager asyncManager;
 		private UISubtitle.Factory subtitleFactory;
 		private UINotification.Factory notificationFactory;
 		private UIChoice.Factory choiceFactory;
 
-		public DialogueSystemHandler(Settings settings, SignalBus signalBus, UIManager uiManager, AsyncManager asyncManager,
+		public DialogueSystemHandler(Settings settings, SignalBus signalBus, AsyncManager asyncManager,
 			UISubtitle.Factory subtitleFactory, UINotification.Factory notificationFactory, UIChoice.Factory choiceFactory)
 		{
 			this.settings = settings;
 			this.signalBus = signalBus;
-			this.uiManager = uiManager;
 			this.asyncManager = asyncManager;
 			this.subtitleFactory = subtitleFactory;
 			this.notificationFactory = notificationFactory;
 			this.choiceFactory = choiceFactory;
 
-			dialogue = uiManager?.Dialogue;
+			//dialogue = uiManager?.Dialogue;
 		}
 
 		public void Initialize()
 		{
-			dialogue.Enable(false);
-			dialogue.SubtitlesContent.DestroyChildren();
-			dialogue.NotificationContent.DestroyChildren();
-			dialogue.ChoiceContent.DestroyChildren();
+			//dialogue.Enable(false);
+			//dialogue.SubtitlesContent.DestroyChildren();
+			//dialogue.NotificationContent.DestroyChildren();
+			//dialogue.ChoiceContent.DestroyChildren();
 
-			dialogue.onClick += OnDialogueClicked;
+			//dialogue.onClick += OnDialogueClicked;
 
 			DialogueTree.OnDialogueStarted += OnDialogueStarted;
 			DialogueTree.OnDialoguePaused += OnDialoguePaused;
@@ -72,7 +70,7 @@ namespace Game.Systems.DialogueSystem
 
 		public void Dispose()
 		{
-			dialogue.onClick -= OnDialogueClicked;
+			//dialogue.onClick -= OnDialogueClicked;
 
 			DialogueTree.OnDialogueStarted -= OnDialogueStarted;
 			DialogueTree.OnDialoguePaused -= OnDialoguePaused;

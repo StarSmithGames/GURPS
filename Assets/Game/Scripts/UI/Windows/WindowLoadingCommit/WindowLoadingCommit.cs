@@ -1,5 +1,3 @@
-using Game.UI.MainMenu;
-
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -60,7 +58,7 @@ namespace Game.UI.Windows
 
 			Content.DestroyChildrenByType<UICommit>();
 
-			CanvasGroup.Enable(false);
+			Enable(false);
 			Info.SetActive(false);
 
 			NewCommit.onClick.AddListener(OnNewCommit);

@@ -1,17 +1,16 @@
 using Game.UI;
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 using Zenject;
 
-public class MenuInstaller : MonoInstaller<MenuInstaller>
+namespace Game
 {
-	public UISubCanvas subCanvas;
-
-	public override void InstallBindings()
+	public class MenuInstaller : MonoInstaller<MenuInstaller>
 	{
-		Container.BindInstance(subCanvas);
+		public UISubCanvas subCanvas;
+
+		public override void InstallBindings()
+		{
+			Container.BindInstance(subCanvas);
+		}
 	}
 }

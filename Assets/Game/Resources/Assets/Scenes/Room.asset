@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90fd87e8e7c6dbe48a054cf71636fece, type: 3}
   m_Name: Room
   m_EditorClassIdentifier: 
-  sceneName: Room
-  gameLocation: 1
+  sceneName:
+    useCustom: 1
+    name: Room
+    scenes: 0
+  gameLocation: 2

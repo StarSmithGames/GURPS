@@ -1,4 +1,3 @@
-using Game.UI.MainMenu;
 using Game.UI.Windows;
 
 using UnityEngine;
@@ -7,13 +6,14 @@ using Zenject;
 
 namespace Game.UI
 {
-    [CreateAssetMenu(fileName = "UISubCanvasInstaller", menuName = "Installers/UISubCanvasInstaller")]
-    public class UISubCanvasInstaller : ScriptableObjectInstaller<UISubCanvasInstaller>
+    [CreateAssetMenu(fileName = "UISubCanvasMapInstaller", menuName = "Installers/UISubCanvasMapInstaller")]
+    public class UISubCanvasMapInstaller : ScriptableObjectInstaller<UISubCanvasMapInstaller>
     {
 		public GameObject SubCanvasPrefab;
-		[Space]
+		[Header("Menu")]
 		public WindowMainMenu mainMenuWindow;
 		public WindowLoadingCommit loadingCommitWindow;
+		public WindowPreferences preferencesWindow;
 
 		public override void InstallBindings()
 		{
@@ -27,6 +27,12 @@ namespace Game.UI
 				.NonLazy();
 
 			//Windows
+			BindMenu();
+		}
+
+		private void BindMenu()
+		{
+			//Windows
 			Container.Bind<WindowMainMenu>()
 				.FromComponentInNewPrefab(mainMenuWindow)
 				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform.Find("Windows"))
@@ -39,7 +45,11 @@ namespace Game.UI
 				.AsSingle()
 				.NonLazy();
 
-			
+			Container.Bind<WindowPreferences>()
+				.FromComponentInNewPrefab(preferencesWindow)
+				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform.Find("Windows"))
+				.AsSingle()
+				.NonLazy();
 		}
 	}
 }
