@@ -24,7 +24,7 @@ namespace Game.Systems.CameraSystem
 		private ICharacterModel leaderModel;
 
 		private PartyManager partyManager;
-		private UIManager uiManager;
+		private TooltipSystem.TooltipSystem tooltipSystem;
 		private ContextMenuHandler contextMenuHandler;
 
 		public CameraVisionLocation(SignalBus signalBus,
@@ -32,10 +32,12 @@ namespace Game.Systems.CameraSystem
 			InputManager inputManager,
 			PartyManager partyManager,
 			GlobalSettings settings,
+			TooltipSystem.TooltipSystem tooltipSystem,
 			ContextMenuHandler contextMenuHandler) : base(signalBus, brain, inputManager)
 		{
 			this.partyManager = partyManager;
 			this.settings = settings.cameraVisionLocation;
+			this.tooltipSystem = tooltipSystem;
 			this.contextMenuHandler = contextMenuHandler;
 		}
 
@@ -181,24 +183,24 @@ namespace Game.Systems.CameraSystem
 				{
 					if (isInvalidTarget)
 					{
-						uiManager.Tooltip.SetMessage(TooltipMessageType.InvalidTarget);
+						tooltipSystem.SetMessage(TooltipMessageType.InvalidTarget);
 					}
 					else if (isOutOfRange)
 					{
-						uiManager.Tooltip.SetMessage(TooltipMessageType.OutOfRange);
+						tooltipSystem.SetMessage(TooltipMessageType.OutOfRange);
 					}
 					else if (isNotEnoughMovement)
 					{
-						uiManager.Tooltip.SetMessage(TooltipMessageType.NotEnoughMovement);
+						tooltipSystem.SetMessage(TooltipMessageType.NotEnoughMovement);
 					}
-					uiManager.Tooltip.EnableMessage(true);
+					tooltipSystem.EnableMessage(true);
 				}
 				else
 				{
-					//if (uiManager.Tooltip.IsMessageShowing)
-					//{
-					//	uiManager.Tooltip.EnableMessage(false);
-					//}
+					if (tooltipSystem.IsMessageShowing)
+					{
+						tooltipSystem.EnableMessage(false);
+					}
 				}
 			}
 		}
@@ -243,14 +245,14 @@ namespace Game.Systems.CameraSystem
 						SymbolCollector.METRE.ToString() + "-" +
 						Math.Round(leaderModel.Navigation.FullPathDistance, 2) +
 						SymbolCollector.METRE.ToString();
-					uiManager.Tooltip.SetRulerText(text);
-					uiManager.Tooltip.EnableRuler(true);
+					tooltipSystem.SetRulerText(text);
+					tooltipSystem.EnableRuler(true);
 				}
 				else
 				{
-					if (uiManager.Tooltip.IsRulerShowing)
+					if (tooltipSystem.IsRulerShowing)
 					{
-						uiManager.Tooltip.EnableRuler(false);
+						tooltipSystem.EnableRuler(false);
 					}
 				}
 			}

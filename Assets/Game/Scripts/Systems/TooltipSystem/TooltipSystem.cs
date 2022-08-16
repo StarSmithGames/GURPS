@@ -1,10 +1,4 @@
-using Cinemachine;
-
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-using Zenject;
 
 namespace Game.Systems.TooltipSystem
 {
@@ -16,16 +10,6 @@ namespace Game.Systems.TooltipSystem
 		[field: SerializeField] public RectTransform Tooltip { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Ruler { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Message { get; private set; }
-
-		private RectTransform ruler;
-
-		private CinemachineBrain brain;
-
-		[Inject]
-		private void Construct(CinemachineBrain brain)
-		{
-			this.brain = brain;
-		}
 
 		private void Start()
 		{
@@ -46,6 +30,7 @@ namespace Game.Systems.TooltipSystem
 
 		public void EnableRuler(bool trigger)
 		{
+			transform.SetAsLastSibling();
 			IsRulerShowing = trigger;
 			Ruler.gameObject.SetActive(trigger);
 		}
