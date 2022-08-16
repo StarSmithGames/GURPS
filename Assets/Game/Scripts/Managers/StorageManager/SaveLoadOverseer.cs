@@ -1,4 +1,3 @@
-using Game.Entities;
 using Game.Systems;
 using Game.UI.Windows;
 using Game.UI;
@@ -6,14 +5,13 @@ using Game.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using UnityEngine;
 using UnityEngine.Assertions;
 
 using Zenject;
 using Game.Managers.SceneManager;
 using Game.Managers.TransitionManager;
 using UnityEngine.Events;
+using Game.Entities;
 
 namespace Game.Managers.StorageManager
 {
@@ -29,11 +27,14 @@ namespace Game.Managers.StorageManager
 		private ISaveLoad saveLoad;
 		private GameManager.GameManager gameManager;
 		private CharacterManager.CharacterManager characterManager;
+		private PartyManager.PartyManager partyManager;
 		private SceneManager.SceneManager sceneManager;
 		private UIGlobalCanvas globalCanvas;
 
 		public SaveLoadOverseer(SignalBus signalBus, DiContainer container, ISaveLoad saveLoad,
-			GameManager.GameManager gameManager, CharacterManager.CharacterManager characterManager,
+			GameManager.GameManager gameManager,
+			CharacterManager.CharacterManager characterManager,
+			PartyManager.PartyManager partyManager,
 			SceneManager.SceneManager sceneManager, UIGlobalCanvas globalCanvas)
 		{
 			this.signalBus = signalBus;
@@ -41,6 +42,7 @@ namespace Game.Managers.StorageManager
 			this.saveLoad = saveLoad;
 			this.gameManager = gameManager;
 			this.characterManager = characterManager;
+			this.partyManager = partyManager;
 			this.sceneManager = sceneManager;
 			this.globalCanvas = globalCanvas;
 		}
@@ -81,6 +83,7 @@ namespace Game.Managers.StorageManager
 			}
 
 			FastStorage.Clear();
+			FastStorage.Player = new Player();
 
 			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(Scenes.Map, transitionIn, transitionOut);
 		}
@@ -96,7 +99,7 @@ namespace Game.Managers.StorageManager
 
 				if (gameManager.CurrentGameLocation == GameManager.GameLocation.Location)
 				{
-					var location = commit.data.lastTransformInLocation;
+					//var location = commit.data.lastTransformInLocation;
 				}
 
 				callback?.Invoke();
@@ -172,7 +175,7 @@ namespace Game.Managers.StorageManager
 				{
 					lastScene = sceneManager.CurrentScene,
 					lastTransformOnMap = transformOnMap,
-					lastTransformInLocation = transformInLocation,
+					//lastTransformInLocation = transformInLocation,
 				},
 			});
 
@@ -204,8 +207,16 @@ namespace Game.Managers.StorageManager
 			public string lastScene;
 
 			public DefaultTransform lastTransformOnMap;
-			public DefaultTransform lastTransformInLocation;
+			//public DefaultTransform lastTransformInLocation;
+
+			//public Party party;
+			public Statiscs statiscs;
 		}
+	}
+
+	public class Statiscs
+	{
+
 	}
 
 	public enum CommitType
@@ -214,12 +225,5 @@ namespace Game.Managers.StorageManager
 		QuickSave,
 		ManualSave,
 		Checkpoint,
-	}
-
-	public class DefaultTransform
-	{
-		public Vector3 position;
-		public Quaternion rotation;
-		public Vector3 scale;
 	}
 }

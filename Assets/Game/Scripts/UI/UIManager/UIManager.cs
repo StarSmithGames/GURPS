@@ -49,8 +49,8 @@ public class UIManager : MonoBehaviour
 	{
 		CreateVirtualSpaces();
 
-		SetVirtualSpace(characterManager.CurrentParty.LeaderPartyIndex);
-		CharacterSheet.SetSheet(characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet);
+		//SetVirtualSpace(characterManager.CurrentParty.LeaderPartyIndex);
+		//CharacterSheet.SetSheet(characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet);
 
 		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
@@ -65,21 +65,21 @@ public class UIManager : MonoBehaviour
 
 	private void CreateVirtualSpaces()
 	{
-		for (int i = 0; i < characterManager.CurrentParty.Characters.Count; i++)
-		{
-			var space = Instantiate(originalVirtualSpace, originalVirtualSpace.transform.parent);
-			virtualSpaces.Add(space);
-			space.gameObject.SetActive(false);
-		}
+		//for (int i = 0; i < characterManager.CurrentParty.Characters.Count; i++)
+		//{
+		//	var space = Instantiate(originalVirtualSpace, originalVirtualSpace.transform.parent);
+		//	virtualSpaces.Add(space);
+		//	space.gameObject.SetActive(false);
+		//}
 
 		originalVirtualSpace.gameObject.SetActive(false);
 	}
 
 	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 	{
-		int index = characterManager.CurrentParty.LeaderPartyIndex;
+		//int index = characterManager.CurrentParty.LeaderPartyIndex;
 
-		SetVirtualSpace(index);
-		CharacterSheet.SetSheet(signal.leader.Sheet as CharacterSheet);
+		//SetVirtualSpace(index);
+		//CharacterSheet.SetSheet(signal.leader.Sheet as CharacterSheet);
 	}
 }

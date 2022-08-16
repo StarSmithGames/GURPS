@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Zenject;
 
-namespace Game.UI
+namespace Game.UI.Windows
 {
     public class WindowsManager
     {

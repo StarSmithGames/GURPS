@@ -57,7 +57,7 @@ namespace Game.Systems.InteractionSystem
 			}
 			else
 			{
-				if(interactor is IEntity entity)
+				if(interactor is IEntityModel entity)
 				{
 					entity.TaskSequence
 						.Append(new GoToAction(entity, wayPoint.InteractionPoint.GetIteractionPosition(entity)))

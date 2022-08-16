@@ -1,35 +1,27 @@
-using EPOOutline;
 using Game.Systems.CameraSystem;
-using Game.Systems.DamageSystem;
-using Game.Systems.DialogueSystem;
-using Game.Systems.FloatingTextSystem;
 using Game.Systems.InteractionSystem;
-using Game.Systems.SheetSystem;
-
-using NodeCanvas.DialogueTrees;
-
-using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
-using DG.Tweening;
-
 using Zenject;
 using System.Collections;
-using Sirenix.OdinInspector;
-using System.Collections.Generic;
 
 namespace Game.Entities
 {
-	public abstract partial class Entity : MonoBehaviour, IEntity
+	public interface IEntityModel : IPathfinderable
+	{
+		MonoBehaviour MonoBehaviour { get; }
+		TaskSequence TaskSequence { get; }
+		CameraPivot CameraPivot { get; }
+	}
+
+	public abstract partial class EntityModel : MonoBehaviour, IEntityModel
 	{
 		public MonoBehaviour MonoBehaviour => this;
 		public Transform Transform => transform;
 		public TaskSequence TaskSequence { get; private set; }
-
-		public virtual ISheet Sheet { get; private set; }
 
 		public CameraPivot CameraPivot { get; private set; }
 
@@ -70,7 +62,7 @@ namespace Game.Entities
 	}
 
 	//IPathfinderable implementation
-	partial class Entity
+	partial class EntityModel
 	{
 		public event UnityAction onTargetChanged;
 		public event UnityAction onDestinationChanged;
@@ -103,30 +95,6 @@ namespace Game.Entities
 			{
 				Controller.Stop();
 			}
-		}
-	}
-
-	//IDamegeable, IKillable implementation
-	partial class Entity
-	{
-		public event UnityAction<IEntity> onDied;
-
-		public virtual void Kill()
-		{
-			Controller.Enable(false);
-			onDied?.Invoke(this);
-		}
-
-		public virtual Damage GetDamage()
-		{
-			return null;
-		}
-
-		public virtual void ApplyDamage<T>(T value) { }
-
-		protected Vector2 GetDamageFromTable()
-		{
-			return new Vector2(1, 7);
 		}
 	}
 }

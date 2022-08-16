@@ -113,7 +113,7 @@ namespace Game.Systems.InventorySystem
 		public void CharacterTakeAllFrom(IInventory inventory)
 		{
 			from = inventory;
-			to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
+			//to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
 
 			for (int i = 0; i < from.Items.Count; i++)
 			{
@@ -140,12 +140,12 @@ namespace Game.Systems.InventorySystem
 
 			item = slot.CurrentItem;
 
-			equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
+			//equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
 
 			if (slot is UISlotInventory inventorySlot)
 			{
 				from = inventorySlot.Owner.CurrentInventory;
-				to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
+				//to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
 
 				if (eventData.clickCount > 1)
 				{
@@ -175,7 +175,7 @@ namespace Game.Systems.InventorySystem
 			{
 				if (eventData.clickCount > 1)
 				{
-					to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
+					//to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
 
 					to.Add(item);
 					equipment.RemoveFrom(equipmentSlot.CurrentEquip);
@@ -195,7 +195,7 @@ namespace Game.Systems.InventorySystem
 
 			beginSlot = slot;
 
-			characterManager.CurrentParty.LeaderParty.Freeze(true);
+			//characterManager.CurrentParty.LeaderParty.Freeze(true);
 
 			item = slot.CurrentItem;
 
@@ -204,7 +204,7 @@ namespace Game.Systems.InventorySystem
 				from = inventorySlot.Owner.CurrentInventory;
 			}
 
-			equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
+			//equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
 
 			itemCursor.SetIcon(item.ItemData.itemSprite);
 			itemCursor.transform.parent = uiManager.transform.root;
@@ -223,7 +223,7 @@ namespace Game.Systems.InventorySystem
 		{
 			Clear();
 
-			characterManager.CurrentParty.LeaderParty.Freeze(false);
+			//characterManager.CurrentParty.LeaderParty.Freeze(false);
 
 			IsDraging = false;
 		}
@@ -267,7 +267,7 @@ namespace Game.Systems.InventorySystem
 
 			Clear();
 		
-			characterManager.CurrentParty.LeaderParty.Freeze(false);
+			//characterManager.CurrentParty.LeaderParty.Freeze(false);
 		}
 
 		private void Clear()

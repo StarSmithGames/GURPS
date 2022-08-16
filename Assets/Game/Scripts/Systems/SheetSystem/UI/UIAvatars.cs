@@ -52,45 +52,45 @@ public class UIAvatars : MonoBehaviour
 
 	private void UpdateAvatars()
 	{
-		characterManager.CurrentParty.Characters.ForEach((x) =>
-		{
-			CreateAvatar(x);
-		});
+		//characterManager.CurrentParty.Characters.ForEach((x) =>
+		//{
+		//	CreateAvatar(x);
+		//});
 
-		void CreateAvatar(Character character)
-		{
-			var avatar = avatarFactory.Create();
+		//void CreateAvatar(CharacterModel character)
+		//{
+		//	var avatar = avatarFactory.Create();
 
-			avatar.onClicked += OnAvatarClicked;
-			avatar.onDoubleClicked += OnAvatarDoubleClicked;
+		//	avatar.onClicked += OnAvatarClicked;
+		//	avatar.onDoubleClicked += OnAvatarDoubleClicked;
 
-			avatar.SetCharacter(character);
+		//	avatar.SetCharacter(character);
 
-			avatar.transform.parent = transform;
-			avatar.transform.localScale = Vector3.one;
+		//	avatar.transform.parent = transform;
+		//	avatar.transform.localScale = Vector3.one;
 
-			avatars.Add(avatar);
-		}
+		//	avatars.Add(avatar);
+		//}
 	}
 
 	private void UpdateLeader()
 	{
-		int index = characterManager.CurrentParty.LeaderPartyIndex;
+		//int index = characterManager.CurrentParty.LeaderPartyIndex;
 
-		avatars.ForEach((x) => x.SetFrame(false));
-		avatars[index].SetFrame(true);
+		//avatars.ForEach((x) => x.SetFrame(false));
+		//avatars[index].SetFrame(true);
 	}
 
 
 	private void OnAvatarClicked(UIAvatar avatar)
 	{
-		int index = avatars.IndexOf(avatar);
-		var character = characterManager.CurrentParty.Characters[index];
+		//int index = avatars.IndexOf(avatar);
+		//var character = characterManager.CurrentParty.Characters[index];
 
-		if (!character.InBattle)
-		{
-			characterManager.CurrentParty.SetLeader(index);
-		}
+		//if (!character.InBattle)
+		//{
+		//	characterManager.CurrentParty.SetLeader(index);
+		//}
 	}
 
 	private void OnAvatarDoubleClicked(UIAvatar avatar)

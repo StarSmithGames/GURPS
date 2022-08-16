@@ -1,4 +1,5 @@
 using Game.Entities;
+using Game.Entities.Models;
 using Game.Systems.SheetSystem;
 using Game.UI;
 
@@ -25,7 +26,7 @@ public class UIAvatar : PoolableObject
 	[field: Space]
 	[field: SerializeField] public UIBar HPBar { get; private set; }
 
-	public Character CurrentCharacter { get; private set; }
+	public CharacterModel CurrentCharacter { get; private set; }
 	private IStatBar stat;
 
 	private UIManager uiManager;
@@ -62,14 +63,14 @@ public class UIAvatar : PoolableObject
 		PointerHover.onPointerExit += OnPointerExit;
 	}
 
-	public void SetCharacter(Character character)
+	public void SetCharacter(CharacterModel character)
 	{
 		if(CurrentCharacter != null)
 		{
 			CurrentCharacter.onBattleChanged -= UpdateBattleUI;
 		}
 		CurrentCharacter = character;
-		HPBar.SetStat(CurrentCharacter?.Sheet.Stats.HitPoints, CurrentCharacter?.Sheet.Settings.isImmortal ?? false);
+		//HPBar.SetStat(CurrentCharacter?.Sheet.Stats.HitPoints, CurrentCharacter?.Sheet.Settings.isImmortal ?? false);
 		if (CurrentCharacter != null)
 		{
 			CurrentCharacter.onBattleChanged += UpdateBattleUI;
@@ -86,7 +87,7 @@ public class UIAvatar : PoolableObject
 
 	private void UpdateUI()
 	{
-		Avatar.sprite = (CurrentCharacter.Sheet.Information as HumanoidEntityInformation).portrait;
+		//Avatar.sprite = (CurrentCharacter.Sheet.Information as HumanoidEntityInformation).portrait;
 		UpdateBattleUI();
 	}
 
@@ -112,7 +113,7 @@ public class UIAvatar : PoolableObject
 
 	private void OnPointerEnter(PointerEventData eventData)
 	{
-		uiManager.Battle.SetSheet(CurrentCharacter.Sheet);
+		//uiManager.Battle.SetSheet(CurrentCharacter.Sheet);
 	}
 	private void OnPointerExit(PointerEventData eventData)
 	{

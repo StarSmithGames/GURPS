@@ -5,16 +5,12 @@ using Game.Managers.StorageManager;
 using Game.Systems.InteractionSystem;
 
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine;
 
 using Zenject;
 
 namespace Game.Entities
 {
-	public class PlayerRTS : Entity, IObservable, IInteractable
+	public class PlayerRTSModel : EntityModel, IObservable, IInteractable
 	{
 		public bool IsInteractable { get; }
 		public IInteraction Interaction { get; }
@@ -32,7 +28,7 @@ namespace Game.Entities
 			this.outline = outline;
 			this.saveLoad = saveLoad;
 
-			characterManager.RegistratePlayer(this);
+			characterManager.Registrate(this);
 		}
 
 		protected override IEnumerator Start()
@@ -46,7 +42,7 @@ namespace Game.Entities
 
 		protected override void OnDestroy()
 		{
-			characterManager.UnRegistratePlayer();
+			characterManager.UnRegistrate(this);
 
 			base.OnDestroy();
 		}

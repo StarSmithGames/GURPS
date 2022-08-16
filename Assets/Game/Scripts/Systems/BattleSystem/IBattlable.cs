@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 namespace Game.Systems.BattleSystem
 {
-	public interface IBattlable : IEntity
+	public interface IBattlable : IEntityModel
 	{
 		event UnityAction onBattleChanged;
 

@@ -1,19 +1,19 @@
 using Game.Entities;
-using Game.Managers.GameManager;
+using Game.Entities.Models;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using Zenject;
 
 namespace Game.Managers.CharacterManager
 {
 	public class CharacterManager : IInitializable, IDisposable
 	{
-		public CharacterParty CurrentParty { get; private set; }
+		public PlayerModel Player { get; private set; }
+		public PlayerRTSModel PlayerRTS { get; private set; }
 
-		public PlayerRTS PlayerRTS { get; private set; }
+		private List<ICharacterModel> characters = new List<ICharacterModel>();
+		private List<ICompanionModel> party = new List<ICompanionModel>();
 
 		private SignalBus signalBus;
 		private GameManager.GameManager gameManager;
@@ -26,62 +26,48 @@ namespace Game.Managers.CharacterManager
 
 		public void Initialize()
 		{
-			CurrentParty = new CharacterParty(signalBus, GameObject.FindObjectsOfType<Character>().ToList());//stub
-			CurrentParty.SetLeader(0);
+			//CurrentParty = new CharacterParty(signalBus, GameObject.FindObjectsOfType<Character>().ToList());//stub
+			//CurrentParty.SetLeader(0);
 		}
 
-		public void Dispose()
+		public void Dispose() { }
+
+		#region Registration
+		public void Registrate(PlayerModel player)
 		{
+			Player = player;
 		}
 
-		public void RegistratePlayer(PlayerRTS player)
+		public void UnRegistrate(PlayerModel player)
 		{
-			this.PlayerRTS = player;
+			Player = null;
 		}
 
-		public void UnRegistratePlayer()
+		public void Registrate(PlayerRTSModel player)
 		{
-			this.PlayerRTS = null;
-		}
-	}
-
-	public class CharacterParty
-	{
-		public Character LeaderParty { get; private set; }
-		public int LeaderPartyIndex => Characters.IndexOf(LeaderParty);
-
-		public List<Character> Characters { get; private set; }
-
-		private SignalBus signalBus;
-
-		public CharacterParty(SignalBus signalBus, List<Character> characters)
-		{
-			this.signalBus = signalBus;
-			Characters = characters;
-			Characters.Shuffle();
+			PlayerRTS = player;
 		}
 
-		public bool SetLeader(Character character)
+		public void UnRegistrate(PlayerRTSModel player)
 		{
-			if (LeaderParty != character)
+			PlayerRTS = null;
+		}
+
+		public void Registrate(ICharacterModel character)
+		{
+			if (!characters.Contains(character))
 			{
-				LeaderParty = character;
-				signalBus?.Fire(new SignalLeaderPartyChanged() { leader = LeaderParty });
-
-				return true;
+				characters.Add(character);
 			}
-
-			return false;
 		}
 
-		public bool SetLeader(int index)
+		public void UnRegistrate(ICharacterModel character)
 		{
-			if (index < Characters.Count)
+			if (characters.Contains(character))
 			{
-				return SetLeader(Characters[index]);
+				characters.Remove(character);
 			}
-
-			return false;
 		}
+		#endregion
 	}
 }

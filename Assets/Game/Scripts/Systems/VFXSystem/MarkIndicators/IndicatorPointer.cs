@@ -60,52 +60,52 @@ namespace Game.Systems.VFX
 				return;
 			}
 
-			Vector3 playerPosition = characterManager.CurrentParty.LeaderParty.transform.position;
-			Vector3 direction = transform.position - playerPosition;
+			//Vector3 playerPosition = characterManager.CurrentParty.LeaderParty.transform.position;
+			//Vector3 direction = transform.position - playerPosition;
 
-			Ray ray = new Ray(playerPosition, direction);
-			Debug.DrawRay(playerPosition, direction);
+			//Ray ray = new Ray(playerPosition, direction);
+			//Debug.DrawRay(playerPosition, direction);
 
-			//[0]-left [1]-right [2]-up [3]-down
-			var panels = GeometryUtility.CalculateFrustumPlanes(brain.OutputCamera);
-			int planeIndex = 0;
+			////[0]-left [1]-right [2]-up [3]-down
+			//var panels = GeometryUtility.CalculateFrustumPlanes(brain.OutputCamera);
+			//int planeIndex = 0;
 
-			float minDistance = Mathf.Infinity;
+			//float minDistance = Mathf.Infinity;
 
-			for (int i = 0; i < panels.Length; i++)
-			{
-				if (panels[i].Raycast(ray, out float distance))
-				{
-					if (distance < minDistance)
-					{
-						minDistance = distance;
-						planeIndex = i;
-					}
-				}
-			}
+			//for (int i = 0; i < panels.Length; i++)
+			//{
+			//	if (panels[i].Raycast(ray, out float distance))
+			//	{
+			//		if (distance < minDistance)
+			//		{
+			//			minDistance = distance;
+			//			planeIndex = i;
+			//		}
+			//	}
+			//}
 
-			if (direction.magnitude > minDistance)//show
-			{
-				if (!CurrentPointer.IsShowing)
-				{
-					CurrentPointer.Enable(true);
-				}
-				CurrentPointer.Transform.position = isPointer3d ?
-					ray.GetPoint(minDistance) :
-					brain.OutputCamera.WorldToScreenPoint(ray.GetPoint(minDistance));
+			//if (direction.magnitude > minDistance)//show
+			//{
+			//	if (!CurrentPointer.IsShowing)
+			//	{
+			//		CurrentPointer.Enable(true);
+			//	}
+			//	CurrentPointer.Transform.position = isPointer3d ?
+			//		ray.GetPoint(minDistance) :
+			//		brain.OutputCamera.WorldToScreenPoint(ray.GetPoint(minDistance));
 
-				if (!isPointer3d)
-				{
-					CurrentPointer.Transform.rotation = GetIconRotation(planeIndex);
-				}
-			}
-			else//hide
-			{
-				if (CurrentPointer.IsShowing)
-				{
-					CurrentPointer.Enable(false);
-				}
-			}
+			//	if (!isPointer3d)
+			//	{
+			//		CurrentPointer.Transform.rotation = GetIconRotation(planeIndex);
+			//	}
+			//}
+			//else//hide
+			//{
+			//	if (CurrentPointer.IsShowing)
+			//	{
+			//		CurrentPointer.Enable(false);
+			//	}
+			//}
 		}
 
 		private Quaternion GetIconRotation(int planeIndex)

@@ -48,20 +48,20 @@ public class UIBars : MonoBehaviour
 	{
 		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 
-		SetEntity(characterManager.CurrentParty.LeaderParty);
+		//SetEntity(characterManager.CurrentParty.LeaderParty);
 	}
 
-	private void SetEntity(IEntity entity)
+	private void SetEntity(IEntityModel entity)
 	{
 		if(actionStat != null)
 		{
 			actionStat.onStatChanged -= OnStatChanged;
 		}
 
-		HealthBar.SetStat(entity?.Sheet.Stats.HitPoints);
-		EnergyBar.SetStat(entity?.Sheet.Stats.Move);
+		//HealthBar.SetStat(entity?.Sheet.Stats.HitPoints);
+		//EnergyBar.SetStat(entity?.Sheet.Stats.Move);
 
-		actionStat = entity?.Sheet.Stats.ActionPoints;
+		//actionStat = entity?.Sheet.Stats.ActionPoints;
 
 		if(actionStat != null)
 		{

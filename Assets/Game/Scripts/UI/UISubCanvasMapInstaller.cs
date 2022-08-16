@@ -1,3 +1,5 @@
+using Game.Managers.CharacterManager;
+using Game.Managers.PartyManager;
 using Game.UI.Windows;
 
 using UnityEngine;
@@ -17,6 +19,9 @@ namespace Game.UI
 
 		public override void InstallBindings()
 		{
+			CharacterManagerInstaller.Install(Container);
+			PartyManagerInstaller.Install(Container);
+
 			Container.Bind<Canvas>()
 				.FromResolveGetter<UISubCanvas>(x => x.GetComponent<Canvas>())
 				.AsSingle()

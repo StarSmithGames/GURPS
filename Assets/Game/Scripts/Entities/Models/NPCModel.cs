@@ -9,25 +9,25 @@ using UnityEngine;
 
 using Zenject;
 
-namespace Game.Entities
+namespace Game.Entities.Models
 {
-	public class NPC : StubEntity
+	public class NPCModel : StubEntityModel
 	{
 		[SerializeField] private NPCData data;
 
-		public override ISheet Sheet
-		{
-			get
-			{
-				if (npcSheet == null)
-				{
-					npcSheet = new NPCSheet(data);
-				}
+		//public override ISheet Sheet
+		//{
+		//	get
+		//	{
+		//		if (npcSheet == null)
+		//		{
+		//			npcSheet = new NPCSheet(data);
+		//		}
 
-				return npcSheet;
-			}
-		}
-		private NPCSheet npcSheet;
+		//		return npcSheet;
+		//	}
+		//}
+		//private NPCSheet npcSheet;
 
 
 		protected FieldOfView fov;
@@ -62,10 +62,10 @@ namespace Game.Entities
 						fov.StopView();
 						List<IBattlable> entities = new List<IBattlable>();
 
-						for (int i = 0; i < characterManager.CurrentParty.Characters.Count; i++)
-						{
-							entities.Add(characterManager.CurrentParty.Characters[i]);
-						}
+						//for (int i = 0; i < characterManager.CurrentParty.Characters.Count; i++)
+						//{
+						//	entities.Add(characterManager.CurrentParty.Characters[i]);
+						//}
 						entities.Add(this);
 
 						battleSystem.StartBattle(entities);

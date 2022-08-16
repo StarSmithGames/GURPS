@@ -10,7 +10,7 @@ namespace Game.Systems.InteractionSystem
 	{
 		[SerializeField] private Settings settings;
 
-		public Vector3 GetIteractionPosition(IEntity entity = null)
+		public Vector3 GetIteractionPosition(IEntityModel entity = null)
 		{
 			if (settings.interaction == InteractionType.CustomPoint)
 			{
@@ -59,5 +59,11 @@ namespace Game.Systems.InteractionSystem
 			[ShowIf("interaction", InteractionType.CustomPoint)]
 			public Vector3 position;
 		}
+	}
+
+	public enum InteractionType
+	{
+		DirectionPoint,
+		CustomPoint,
 	}
 }

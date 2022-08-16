@@ -46,7 +46,7 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 		base.Start();
 
 		humanoid.onBattleChanged += OnBattleChanged;
-		(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
+		//(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 		OnEquipWeaponChanged();
 	}
 
@@ -121,50 +121,50 @@ partial class HumanoidAnimatorControl
 		if (humanoid != null)
 		{
 			humanoid.onBattleChanged -= OnBattleChanged;
-			(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
+			//(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
 		}
 	}
 
 	private void OnEquipWeaponChanged()
 	{
-		CharacterSheet sheet = humanoid.Sheet as CharacterSheet;
+		//CharacterSheet sheet = humanoid.Sheet as CharacterSheet;
 
-		Hands hands = sheet.Equipment.WeaponCurrent.Hands;
+		//Hands hands = sheet.Equipment.WeaponCurrent.Hands;
 
-		var weaponMain = sheet.Equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>();
+		//var weaponMain = sheet.Equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>();
 
-		var lastBehabior = currentWeaponBehavior;
+		//var lastBehabior = currentWeaponBehavior;
 
-		if (hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
-		{
-			currentWeaponBehavior = new OneHandedBehavior(humanoid);
-		}
-		else if (hands == Hands.Both)
-		{
-			if (weaponMain is MeleeItemData)
-			{
-				currentWeaponBehavior = new TwoHandedBehavior(humanoid);
-			}
-			else if (weaponMain is RangedItemData)
-			{
-				currentWeaponBehavior = new RangedBehavior(humanoid);
-			}
-		}
-		else
-		{
-			currentWeaponBehavior = new UnArmedBehavior(humanoid);
-		}
+		//if (hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
+		//{
+		//	currentWeaponBehavior = new OneHandedBehavior(humanoid);
+		//}
+		//else if (hands == Hands.Both)
+		//{
+		//	if (weaponMain is MeleeItemData)
+		//	{
+		//		currentWeaponBehavior = new TwoHandedBehavior(humanoid);
+		//	}
+		//	else if (weaponMain is RangedItemData)
+		//	{
+		//		currentWeaponBehavior = new RangedBehavior(humanoid);
+		//	}
+		//}
+		//else
+		//{
+		//	currentWeaponBehavior = new UnArmedBehavior(humanoid);
+		//}
 
 
-		if (lastBehabior != null && lastBehabior != currentWeaponBehavior)
-		{
-			lastBehabior.Dispose();
-		}
+		//if (lastBehabior != null && lastBehabior != currentWeaponBehavior)
+		//{
+		//	lastBehabior.Dispose();
+		//}
 
-		if (humanoid.InBattle)
-		{
-			currentWeaponBehavior.UpdatePose();
-		}
+		//if (humanoid.InBattle)
+		//{
+		//	currentWeaponBehavior.UpdatePose();
+		//}
 	}
 
 	private void OnBattleStateChanged()
@@ -230,9 +230,9 @@ partial class HumanoidAnimatorControl
 		public WeaponBehavior(IBattlable owner)
 		{
 			this.owner = owner;
-			equipment = (owner.Sheet as CharacterSheet).Equipment;
-			outfit = (owner as Character).Outfit;
-			control = (owner as StubEntity).AnimatorControl as HumanoidAnimatorControl;
+			//equipment = (owner.Sheet as CharacterSheet).Equipment;
+			//outfit = (owner as CharacterModel).Outfit;
+			control = (owner as StubEntityModel).AnimatorControl as HumanoidAnimatorControl;
 			animator = control.animator;
 
 			weaponTypeHash = Animator.StringToHash("WeaponType");

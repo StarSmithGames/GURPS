@@ -29,9 +29,9 @@ namespace Game.Entities
 		private IEquipment equipment;
 
 		[Inject]
-		private void Construct(IEntity entity)
+		private void Construct(IEntityModel entity)
 		{
-			equipment = (entity.Sheet as CharacterSheet).Equipment;
+			//equipment = (entity.Sheet as CharacterSheet).Equipment;
 		}
 
 		private void Start()

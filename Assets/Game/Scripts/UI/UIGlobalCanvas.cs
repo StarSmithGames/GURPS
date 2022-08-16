@@ -3,6 +3,7 @@ using Game.Managers.StorageManager;
 using UnityEngine;
 using DG.Tweening;
 using Zenject;
+using Game.UI.Windows;
 
 namespace Game.UI
 {

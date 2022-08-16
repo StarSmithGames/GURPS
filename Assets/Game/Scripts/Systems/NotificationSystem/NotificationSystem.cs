@@ -1,57 +1,25 @@
 using UnityEngine;
 using DG.Tweening;
+using Game.UI;
 
 namespace Game.Systems.NotificationSystem
 {
 	public class NotificationSystem
 	{
-		private JournalNotification journalNotification;
+		private UISubCanvas subCanvas;
+		private UIJournalNotification.Factory journalNotificationFactory;
 
-		public NotificationSystem()
+		public NotificationSystem(UISubCanvas subCanvas, UIJournalNotification.Factory journalNotificationFactory)
 		{
-			//journalNotification = new JournalNotification(uiManager.JournalNotification);
+			this.subCanvas = subCanvas;
+			this.journalNotificationFactory = journalNotificationFactory;
 		}
 
-		public void PushJournal(string title)
+		public void PushJournalNotification(string title)
 		{
-			journalNotification.Push(title);
-		}
-	}
-
-	public class JournalNotification
-	{
-		private UIJournalNotification notification;
-
-		public JournalNotification(UIJournalNotification ui)
-		{
-			notification = ui;
-
-			notification.Enable(false);
-		}
-
-		public void Push(string title)
-		{
-			if (notification.IsShowing) return;
-
-			Vector3 endPosition = notification.transform.position;
-			Vector2 startPosition = (notification.transform as RectTransform).anchoredPosition - new Vector2(0, 50);
-
-			notification.Title.text = title;
-			notification.CanvasGroup.alpha = 0f;
-			notification.Enable(true);
-			(notification.transform as RectTransform).anchoredPosition = startPosition;
-
-			Sequence sequence = DOTween.Sequence();
-
-			sequence
-				.Append(notification.transform.DOMove(endPosition, 0.25f))
-				.Join(notification.CanvasGroup.DOFade(1f, 0.15f))
-				.AppendInterval(3f)
-				.Append(notification.CanvasGroup.DOFade(0f, 0.3f))
-				.AppendCallback(() =>
-				{
-					notification.Enable(false);
-				});
+			var notification = journalNotificationFactory.Create();
+			notification.transform.SetParent(subCanvas.transform);
+			notification.Push(title);
 		}
 	}
 }

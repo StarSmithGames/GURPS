@@ -27,8 +27,6 @@ namespace Game
 			GameManagerInstaller.Install(Container);
 
 			Container.BindInstance(globalSettings);
-
-			CharacterManagerInstaller.Install(Container);
 		}
 
 		private void BindSaveLoad()

@@ -23,12 +23,12 @@ namespace Game.Systems.DialogueSystem.Nodes
 			{
 				var node = dt.CurrentNode;
 
-				var sheet = (node.FinalActor as IEntity)?.Sheet;
+				//var sheet = (node.FinalActor as IEntityModel)?.Sheet;
 
-				if (sheet != null)
-				{
-					Requirement = new AlignmentRequirement(sheet) { alignmentRequired = alignmentRequired };
-				}
+				//if (sheet != null)
+				//{
+				//	Requirement = new AlignmentRequirement(sheet) { alignmentRequired = alignmentRequired };
+				//}
 			}
 
 			Assert.IsNotNull(Requirement, "Alignment requirement == null");

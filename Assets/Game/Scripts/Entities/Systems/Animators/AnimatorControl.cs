@@ -37,12 +37,12 @@ public class AnimatorControl : MonoBehaviour
 	protected int deathTypeHash;
 
 	protected Animator animator;
-	protected IEntity entity;
+	protected IEntityModel entity;
 
 	[Inject]
 	private void Construct(
 		Animator animator,
-		IEntity entity)
+		IEntityModel entity)
 	{
 		this.animator = animator;
 		this.entity = entity;

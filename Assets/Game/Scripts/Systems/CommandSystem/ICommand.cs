@@ -1,4 +1,5 @@
 using Game.Entities;
+using Game.Entities.Models;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
@@ -46,10 +47,10 @@ namespace Game.Systems.ContextMenu
 	public class CommandTalk : ContextCommand
 	{
 		private DialogueSystem.DialogueSystem dialogueSystem;
-		private Character character;
+		private CharacterModel character;
 		private IActor actor;
 
-		public CommandTalk(DialogueSystem.DialogueSystem dialogueSystem, Character character, IActor actor)
+		public CommandTalk(DialogueSystem.DialogueSystem dialogueSystem, CharacterModel character, IActor actor)
 		{
 			this.dialogueSystem = dialogueSystem;
 			this.character = character;
@@ -58,7 +59,7 @@ namespace Game.Systems.ContextMenu
 
 		public override void Execute()
 		{
-			dialogueSystem.StartDialogue(character, actor);
+			//dialogueSystem.StartDialogue(character, actor);
 		}
 	}
 	public class CommandExamine : ContextCommand
@@ -77,9 +78,9 @@ namespace Game.Systems.ContextMenu
 	public class CommandOpenContainer : ContextCommand
 	{
 		private InteractionSystem.InteractionSystem interactionHandler;
-		private Character character;
+		private CharacterModel character;
 		private IContainer container;
-		public CommandOpenContainer(InteractionSystem.InteractionSystem interactionHandler, Character character, IContainer container)
+		public CommandOpenContainer(InteractionSystem.InteractionSystem interactionHandler, CharacterModel character, IContainer container)
 		{
 			this.interactionHandler = interactionHandler;
 			this.character = character;

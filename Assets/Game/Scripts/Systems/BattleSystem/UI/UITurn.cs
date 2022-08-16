@@ -30,7 +30,7 @@ namespace Game.Systems.BattleSystem
         [SerializeField] private Vector2 selectedSize = new Vector2(100, 100);
         [SerializeField] private Vector2 diselectedSize = new Vector2(60, 60);
 
-        public IEntity CurrentEntity { get; private set; }
+        public IEntityModel CurrentEntity { get; private set; }
 
         private UIManager uiManager;
 
@@ -60,17 +60,17 @@ namespace Game.Systems.BattleSystem
             PointerHover.onPointerExit += OnPointerExit;
         }
 
-        public void SetEntity(IEntity entity)
+        public void SetEntity(IEntityModel entity)
 		{
             CurrentEntity = entity;
-            HPBar.SetStat(CurrentEntity?.Sheet.Stats.HitPoints, CurrentEntity?.Sheet.Settings.isImmortal ?? false);
+            //HPBar.SetStat(CurrentEntity?.Sheet.Stats.HitPoints, CurrentEntity?.Sheet.Settings.isImmortal ?? false);
 
             UpdateUI();
         }
 
         public void Select()
 		{
-            Name.text = CurrentEntity.Sheet.Information.Name;
+            //Name.text = CurrentEntity.Sheet.Information.Name;
             Name.enabled = true;
             (transform as RectTransform).sizeDelta = selectedSize;
 		}
@@ -85,7 +85,7 @@ namespace Game.Systems.BattleSystem
 
         private void UpdateUI()
 		{
-            Avatar.sprite = (CurrentEntity.Sheet.Information as HumanoidEntityInformation).portrait;
+            //Avatar.sprite = (CurrentEntity.Sheet.Information as HumanoidEntityInformation).portrait;
         }
 
         private void OnClickChanged(int count)
@@ -98,7 +98,7 @@ namespace Game.Systems.BattleSystem
 
         private void OnPointerEnter(PointerEventData eventData)
         {
-            uiManager.Battle.SetSheet(CurrentEntity.Sheet);
+            //uiManager.Battle.SetSheet(CurrentEntity.Sheet);
         }
         private void OnPointerExit(PointerEventData eventData)
         {

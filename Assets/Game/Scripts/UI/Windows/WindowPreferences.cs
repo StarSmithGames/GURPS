@@ -9,9 +9,9 @@ using UnityEngine.UI;
 
 using Zenject;
 
-namespace Game.UI
+namespace Game.UI.Windows
 {
-	public class WindowPreferences : MonoBehaviour, IWindow
+	public class WindowPreferences : WindowBase
 	{
 		public bool IsShowing { get; private set; }
 
@@ -63,19 +63,19 @@ namespace Game.UI
 			}
 		}
 
-		public void Enable(bool trigger)
+		public override void Enable(bool trigger)
 		{
 			CanvasGroup.Enable(trigger);
 			IsShowing = trigger;
 		}
 
-		public void Show(UnityAction callback = null)
+		public override void Show(UnityAction callback = null)
 		{
 			Enable(true);
 			IsShowing = true;
 		}
 
-		public void Hide(UnityAction callback = null)
+		public override void Hide(UnityAction callback = null)
 		{
 			IsShowing = false;
 			Enable(false);

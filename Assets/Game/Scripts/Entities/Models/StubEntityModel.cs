@@ -19,7 +19,7 @@ using Zenject;
 
 namespace Game.Entities
 {
-	public partial class StubEntity : Entity, IBattlable, IActor, IObservable, IInteractable
+	public partial class StubEntityModel : EntityModel, IBattlable,/* IActor,*/ IObservable, IInteractable
 	{
 		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
 
@@ -27,13 +27,11 @@ namespace Game.Entities
 
 		[Inject]
 		private void Construct(AnimatorControl animatorControl,
-			FloatingSystem floatingTextSystem,
 			DialogueSystem dialogueSystem, Barker barker,
 			Markers markerController, Outlinable outline)
 		{
 			AnimatorControl = animatorControl;
 
-			this.floatingSystem = floatingTextSystem;
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
 			Markers = markerController;
@@ -73,7 +71,7 @@ namespace Game.Entities
 	}
 
 	//Visual and (IInteractable, IObservable implementation)
-	partial class StubEntity
+	partial class StubEntityModel
 	{
 		public Markers Markers { get; private set; }
 		public Outlinable Outline { get; private set; }
@@ -111,7 +109,7 @@ namespace Game.Entities
 	}
 
 	//IActor implementation
-	partial class StubEntity
+	partial class StubEntityModel
 	{
 		public virtual bool IsHaveSomethingToSay => (ActorSettings.barks != null && IsHasFreshAndImportantBarks()) || (ActorSettings.dialogues != null && IsHasFreshAndImportantDialogues());
 		public virtual bool IsInDialogue { get; set; }
@@ -203,53 +201,53 @@ namespace Game.Entities
 	}
 
 	//IDamegeable, IKillable implementation
-	partial class StubEntity
-	{
-		protected FloatingSystem floatingSystem;
+	//partial class StubEntityModel
+	//{
+	//	protected FloatingSystem floatingSystem;
 
-		public override Damage GetDamage()
-		{
-			return new Damage()
-			{
-				amount = GetDamageFromTable(),
-				damageType = DamageType.Crushing,
-			};
-		}
+	//	public override Damage GetDamage()
+	//	{
+	//		return new Damage()
+	//		{
+	//			amount = GetDamageFromTable(),
+	//			damageType = DamageType.Crushing,
+	//		};
+	//	}
 
-		public override void ApplyDamage<T>(T value)
-		{
-			if (value is Damage damage)
-			{
-				float dmg = (int)Mathf.Max(damage.DMG - 2, 0);
+	//	public override void ApplyDamage<T>(T value)
+	//	{
+	//		if (value is Damage damage)
+	//		{
+	//			float dmg = (int)Mathf.Max(damage.DMG - 2, 0);
 
-				if (dmg == 0)
-				{
-					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), "Miss!", type: AnimationType.BasicDamageType);
-				}
-				else
-				{
-					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.damageType.ToString(), type: AnimationType.BasicDamageType);
+	//			if (dmg == 0)
+	//			{
+	//				floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), "Miss!", type: AnimationType.BasicDamageType);
+	//			}
+	//			else
+	//			{
+	//				floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.damageType.ToString(), type: AnimationType.BasicDamageType);
 
-					if (damage.IsPhysicalDamage)
-					{
+	//				if (damage.IsPhysicalDamage)
+	//				{
 
-						floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), dmg.ToString(), type: AnimationType.AdvanceDamage);
-						if (!Sheet.Settings.isImmortal)
-						{
-							Sheet.Stats.HitPoints.CurrentValue -= dmg;
-						}
-					}
-					else if (damage.IsMagicalDamage)
-					{
+	//					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), dmg.ToString(), type: AnimationType.AdvanceDamage);
+	//					if (!Sheet.Settings.isImmortal)
+	//					{
+	//						Sheet.Stats.HitPoints.CurrentValue -= dmg;
+	//					}
+	//				}
+	//				else if (damage.IsMagicalDamage)
+	//				{
 
-					}
-				}
-			}
-		}
-	}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
 	//IBattlable implementation
-	partial class StubEntity
+	partial class StubEntityModel
 	{
 		public event UnityAction onBattleChanged;
 
@@ -314,12 +312,5 @@ namespace Game.Entities
 		}
 
 		protected virtual void OnBattleUpdated() { }
-	}
-
-
-	public enum InteractionType
-	{
-		DirectionPoint,
-		CustomPoint,
 	}
 }

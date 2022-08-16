@@ -41,7 +41,6 @@ namespace Game.Managers.StorageManager
 		public Database Database => database;
 		private Database database;
 
-		public IStorageData<bool> IsFirstTime { get; private set; }
 		public IStorageData<Profile> CurrentProfile { get; private set; }
 		public IStorageData<List<Profile>> Profilers { get; private set; }
 
@@ -72,7 +71,7 @@ namespace Game.Managers.StorageManager
 
 		private void Initialization()
 		{
-			IsFirstTime = new StorageData<bool>(database, "is_first_time", false);
+			//IsFirstTime = new StorageData<bool>(database, "is_first_time", false);
 			CurrentProfile = new StorageData<Profile>(database, "profile_current");
 			Profilers = new StorageData<List<Profile>>(database, "profilers");
 		}
@@ -87,6 +86,8 @@ namespace Game.Managers.StorageManager
 
 	public static class FastStorage
 	{
+		public static IPlayer Player;
+
 		public static DefaultTransform LastTransformOnMap;
 
 		public static void Clear()

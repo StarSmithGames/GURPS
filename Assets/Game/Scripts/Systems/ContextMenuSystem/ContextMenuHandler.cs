@@ -77,7 +77,7 @@ namespace Game.Systems.ContextMenu
 				}
 				else
 				{
-					AddCommand(new CommandOpenContainer(interactionHandler, characterManager.CurrentParty.LeaderParty, container) { name = "Open" });
+					//AddCommand(new CommandOpenContainer(interactionHandler, characterManager.CurrentParty.LeaderParty, container) { name = "Open" });
 				}
 
 				AddCommand(new CommandAttack() { name = "Attack" });
@@ -87,7 +87,7 @@ namespace Game.Systems.ContextMenu
 			{
 				if (actor.IsHaveSomethingToSay)
 				{
-					AddCommand(new CommandTalk(dialogueSystem, characterManager.CurrentParty.LeaderParty, actor) { name = "Talk" });
+					//AddCommand(new CommandTalk(dialogueSystem, characterManager.CurrentParty.LeaderParty, actor) { name = "Talk" });
 				}
 				AddCommand(new CommandAttack() { name = "Attack" }, ContextType.Negative);
 				AddCommand(new CommandExamine(observable) { name = "Examine" });

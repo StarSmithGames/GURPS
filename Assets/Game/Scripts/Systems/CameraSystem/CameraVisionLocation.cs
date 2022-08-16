@@ -1,6 +1,7 @@
 using Cinemachine;
 
 using Game.Entities;
+using Game.Entities.Models;
 using Game.Managers.CharacterManager;
 using Game.Managers.InputManager;
 using Game.Systems.ContextMenu;
@@ -18,7 +19,7 @@ namespace Game.Systems.CameraSystem
 {
 	public class CameraVisionLocation : CameraVision
 	{
-		private Character leader;
+		private CharacterModel leader;
 
 		private CharacterManager characterManager;
 		private UIManager uiManager;
@@ -40,7 +41,7 @@ namespace Game.Systems.CameraSystem
 		{
 			base.Initialize();
 
-			leader = characterManager.CurrentParty.LeaderParty;
+			//leader = characterManager.CurrentParty.LeaderParty;
 
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 		}
@@ -55,6 +56,7 @@ namespace Game.Systems.CameraSystem
 		{
 			base.Tick();
 
+			return;
 			if (!leader.IsInDialogue)
 			{
 				TooltipRuler();
@@ -63,6 +65,7 @@ namespace Game.Systems.CameraSystem
 
 		protected override void HandleHover(Vector3 point)
 		{
+			return;
 			if (!leader.IsInDialogue)
 			{
 
@@ -99,6 +102,8 @@ namespace Game.Systems.CameraSystem
 
 		protected override void HandleMouseClick(Vector3 point)
 		{
+			return;
+
 			if (!leader.IsInDialogue)
 			{
 				if (inputManager.IsLeftMouseButtonPressed())
@@ -114,8 +119,8 @@ namespace Game.Systems.CameraSystem
 								{
 									if (leader.InBattle)
 									{
-										bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leader.Navigation.FullPathDistance) >= 0 &&
-											leader.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
+										//bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leader.Navigation.FullPathDistance) >= 0 &&
+										//	leader.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
 
 										//if (isCanReach || interactable.IsInRange(leader))
 										{
@@ -145,10 +150,10 @@ namespace Game.Systems.CameraSystem
 									}
 									else
 									{
-										if (!leader.IsHasTarget && leader.Sheet.Stats.Move.CurrentValue >= 0.1f)
-										{
-											leader.SetDestination(point);
-										}
+										//if (!leader.IsHasTarget && leader.Sheet.Stats.Move.CurrentValue >= 0.1f)
+										//{
+										//	leader.SetDestination(point);
+										//}
 									}
 								}
 							}
@@ -177,39 +182,40 @@ namespace Game.Systems.CameraSystem
 
 		protected override void ValidatePath(Vector3 point)
 		{
+			return;
 			if (!leader.IsInDialogue)
 			{
 				float pathDistance = CurrentObserve != null ? leader.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leader.Navigation.FullPathDistance, 2);
 
 				bool isInvalidTarget = !IsMouseHit || !leader.Navigation.NavMeshAgent.IsPathValid(point);
 				bool isOutOfRange = IsMouseHit && !IsUI && leader.InBattle && leader.IsWithRangedWeapon && CurrentObserve != null && !IsPointInLeaderRange(point);
-				bool isNotEnoughMovement = IsMouseHit && !IsUI &&
-					leader.InBattle && !leader.IsHasTarget &&
-					(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
+				//bool isNotEnoughMovement = IsMouseHit && !IsUI &&
+				//	leader.InBattle && !leader.IsHasTarget &&
+				//	(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
 
-				if (isInvalidTarget || isNotEnoughMovement || isOutOfRange)
-				{
-					if (isInvalidTarget)
-					{
-						uiManager.Tooltip.SetMessage(TooltipMessageType.InvalidTarget);
-					}
-					else if (isOutOfRange)
-					{
-						uiManager.Tooltip.SetMessage(TooltipMessageType.OutOfRange);
-					}
-					else if (isNotEnoughMovement)
-					{
-						uiManager.Tooltip.SetMessage(TooltipMessageType.NotEnoughMovement);
-					}
-					uiManager.Tooltip.EnableMessage(true);
-				}
-				else
-				{
-					if (uiManager.Tooltip.IsMessageShowing)
-					{
-						uiManager.Tooltip.EnableMessage(false);
-					}
-				}
+				//if (isInvalidTarget || isNotEnoughMovement || isOutOfRange)
+				//{
+				//	if (isInvalidTarget)
+				//	{
+				//		uiManager.Tooltip.SetMessage(TooltipMessageType.InvalidTarget);
+				//	}
+				//	else if (isOutOfRange)
+				//	{
+				//		uiManager.Tooltip.SetMessage(TooltipMessageType.OutOfRange);
+				//	}
+				//	else if (isNotEnoughMovement)
+				//	{
+				//		uiManager.Tooltip.SetMessage(TooltipMessageType.NotEnoughMovement);
+				//	}
+				//	uiManager.Tooltip.EnableMessage(true);
+				//}
+				//else
+				//{
+				//	if (uiManager.Tooltip.IsMessageShowing)
+				//	{
+				//		uiManager.Tooltip.EnableMessage(false);
+				//	}
+				//}
 			}
 		}
 

@@ -24,7 +24,7 @@ namespace Game.Systems.InteractionSystem
 			this.dialogueSystem = dialogueSystem;
 		}
 
-		public void Interact(IEntity entity, IInteractable interactable)
+		public void Interact(IEntityModel entity, IInteractable interactable)
 		{
 			//if (entity is IActor initiator && interactable is IActor actor)
 			//{
@@ -67,7 +67,7 @@ namespace Game.Systems.InteractionSystem
 			//}
 		}
 
-		public void InteractInBattle(IEntity entity, IInteractable interactable)
+		public void InteractInBattle(IEntityModel entity, IInteractable interactable)
 		{
 			//if (entity is IBattlable from && interactable is IBattlable to)
 			//{
@@ -212,9 +212,9 @@ namespace Game.Systems.InteractionSystem
 		public TaskActionStatus Status => status;
 		protected TaskActionStatus status = TaskActionStatus.Preparing;
 
-		protected IEntity entity;
+		protected IEntityModel entity;
 
-		public TaskActionBase(IEntity entity)
+		public TaskActionBase(IEntityModel entity)
 		{
 			this.entity = entity;
 		}
@@ -225,7 +225,7 @@ namespace Game.Systems.InteractionSystem
 	{
 		protected IInteractable interactable;
 
-		protected TaskActionInteraction(IEntity entity, IInteractable interactable) : base(entity)
+		protected TaskActionInteraction(IEntityModel entity, IInteractable interactable) : base(entity)
 		{
 			this.interactable = interactable;
 		}
@@ -235,7 +235,7 @@ namespace Game.Systems.InteractionSystem
 	{
 		private Vector3 destination;
 
-		public GoToAction(IEntity entity, Vector3 destination) : base(entity)
+		public GoToAction(IEntityModel entity, Vector3 destination) : base(entity)
 		{
 			this.destination = destination;
 		}
@@ -270,12 +270,12 @@ namespace Game.Systems.InteractionSystem
 		private Vector3 point;
 		private float duration;
 
-		public RotateToAction(IEntity entity, Vector3 point, float duration = 0.25f) : base(entity)
+		public RotateToAction(IEntityModel entity, Vector3 point, float duration = 0.25f) : base(entity)
 		{
 			this.point = point;
 			this.duration = duration; 
 		}
-		public RotateToAction(IEntity entity, Transform lookAt, float duration = 0.25f) : base(entity)
+		public RotateToAction(IEntityModel entity, Transform lookAt, float duration = 0.25f) : base(entity)
 		{
 			point = lookAt.position;
 			this.duration = duration;
@@ -310,7 +310,7 @@ namespace Game.Systems.InteractionSystem
 		{
 			//if (to is IEntity entity)
 			{
-				if (!entity.Sheet.Conditions.IsContains<Death>())
+				//if (!entity.Sheet.Conditions.IsContains<Death>())
 				{
 					//rotate & animation
 					Sequence sequence = DOTween.Sequence();
@@ -333,21 +333,21 @@ namespace Game.Systems.InteractionSystem
 		}
 		
 
-		protected virtual void CheckDeath(IEntity entity)
+		protected virtual void CheckDeath(IEntityModel entity)
 		{
-			if (entity.Sheet.Stats.HitPoints.CurrentValue == 0)
-			{
-				if (!entity.Sheet.Conditions.IsContains<Death>())
-				{
-					if (entity.Sheet.Conditions.Add(new Death()))
-					{
-						//entity.AnimatorControl.Death();
-						//entity.Kill();
+			//if (entity.Sheet.Stats.HitPoints.CurrentValue == 0)
+			//{
+			//	if (!entity.Sheet.Conditions.IsContains<Death>())
+			//	{
+			//		if (entity.Sheet.Conditions.Add(new Death()))
+			//		{
+			//			//entity.AnimatorControl.Death();
+			//			//entity.Kill();
 
-						Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {entity.MonoBehaviour.gameObject.name}");
-					}
-				}
-			}
+			//			Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {entity.MonoBehaviour.gameObject.name}");
+			//		}
+			//	}
+			//}
 		}
 
 		/// <summary>
@@ -355,7 +355,7 @@ namespace Game.Systems.InteractionSystem
 		/// </summary>
 		protected void OnAttacked()
 		{
-			if(interactable is IEntity entity)
+			if(interactable is IEntityModel entity)
 			{
 				//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
 				//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
@@ -399,7 +399,7 @@ namespace Game.Systems.InteractionSystem
 		{
 			if (!equipment.WeaponCurrent.Spare.IsEmpty)
 			{
-				if (interactable is IEntity entity)
+				if (interactable is IEntityModel entity)
 				{
 					//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
 					//entity.ApplyDamage(equipment.WeaponCurrent.Spare.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
@@ -416,7 +416,7 @@ namespace Game.Systems.InteractionSystem
 		{
 			if (!equipment.WeaponCurrent.Main.IsEmpty)
 			{
-				if (interactable is IEntity entity)
+				if (interactable is IEntityModel entity)
 				{
 					//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
 					//entity.ApplyDamage(equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
@@ -434,7 +434,7 @@ namespace Game.Systems.InteractionSystem
 
 	public class ContainerInteraction : TaskActionInteraction
 	{
-		public ContainerInteraction(IEntity entity, IContainer container) : base(entity, container) { }
+		public ContainerInteraction(IEntityModel entity, IContainer container) : base(entity, container) { }
 
 		public override IEnumerator Implementation()
 		{

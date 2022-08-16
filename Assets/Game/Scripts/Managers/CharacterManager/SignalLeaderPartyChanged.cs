@@ -1,9 +1,10 @@
 using Game.Entities;
+using Game.Entities.Models;
 
 namespace Game.Managers.CharacterManager
 {
 	public struct SignalLeaderPartyChanged
 	{
-		public Character leader;
+		public CharacterModel leader;
 	}
 }

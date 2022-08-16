@@ -27,12 +27,12 @@ namespace Game.Systems.DialogueSystem.Nodes
 			{
 				var node = dt.CurrentNode;
 
-				var sheet = (node.FinalActor as IEntity)?.Sheet;
+				//var sheet = (node.FinalActor as IEntityModel)?.Sheet;
 
-				if (sheet != null)
-				{
-					Command = new CommandAddItems(sheet, items);
-				}
+				//if (sheet != null)
+				//{
+				//	Command = new CommandAddItems(sheet, items);
+				//}
 			}
 
 			Assert.IsNotNull(Command, "Add Items Command == null");

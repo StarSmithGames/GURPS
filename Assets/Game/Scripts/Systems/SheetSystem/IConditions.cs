@@ -76,7 +76,7 @@ namespace Game.Systems.SheetSystem
 
 	public class Unconscious : ICondition
 	{
-		public Unconscious(IEntity entity)
+		public Unconscious(IEntityModel entity)
 		{
 
 		}
@@ -86,7 +86,7 @@ namespace Game.Systems.SheetSystem
 	{
 		public int turns = 3;
 
-		public Stun(IEntity entity)
+		public Stun(IEntityModel entity)
 		{
 
 		}

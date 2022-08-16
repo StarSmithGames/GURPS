@@ -13,7 +13,7 @@ namespace Game.Systems.CameraSystem
 {
 	public class CameraVisionMap : CameraVision
 	{
-		private PlayerRTS Player => characterManager.PlayerRTS;
+		private PlayerRTSModel Player => characterManager.PlayerRTS;
 
 		private CharacterManager characterManager;
 

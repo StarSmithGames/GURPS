@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2c018d1ebc7c814386bb394b61295fa, type: 3}
   m_Name: NotificationInstaller
   m_EditorClassIdentifier: 
+  notificationPrefab: {fileID: 5267320427732500385, guid: 57dd632b11be03c48a351eb1d63f2bb7, type: 3}

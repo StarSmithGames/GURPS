@@ -23,7 +23,7 @@ namespace Game.Entities
 		[SerializeField] private NavigationController navigationController;
 		[SerializeField] private Markers markers;
 		[SerializeField] private Outlinable outline;
-		[SerializeField] private Entity entity;
+		[SerializeField] private EntityModel entity;
 		[Space]
 		[SerializeField] private Barker barker;
 
@@ -39,7 +39,7 @@ namespace Game.Entities
 			Container.BindInstance(navigationController);
 			Container.BindInstance(markers);
 			Container.BindInstance(outline);
-			Container.BindInstance<IEntity>(entity);
+			Container.BindInstance<IEntityModel>(entity);
 			Container.BindInstance(barker);
 		}
 	}

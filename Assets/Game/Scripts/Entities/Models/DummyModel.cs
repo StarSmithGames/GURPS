@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Game.Entities
 {
-	public class DummyModel : InteractableModel, ISheetable, IActor
+	public class DummyModel : MonoBehaviour, ISheetable, IActor
 	{
 		public bool IsHaveSomethingToSay => actorSettings != null;
 		public bool IsInDialogue { get; set; }

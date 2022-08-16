@@ -32,19 +32,19 @@ namespace Game.Systems.DialogueSystem.Nodes
 			if (dt != null)
 			{
 				var node = dt.CurrentNode;
-				var sheet = (node.FinalActor as IEntity)?.Sheet;
+				//var sheet = (node.FinalActor as IEntityModel)?.Sheet;
 
-				if (sheet != null)
-				{
-					if (usePercents)
-					{
-						Command = new CommandSetAlignment(sheet, type, percentAlignment);
-					}
-					else
-					{
-						Command = new CommandSetAlignment(sheet, addAlignment);
-					}
-				}
+				//if (sheet != null)
+				//{
+				//	if (usePercents)
+				//	{
+				//		Command = new CommandSetAlignment(sheet, type, percentAlignment);
+				//	}
+				//	else
+				//	{
+				//		Command = new CommandSetAlignment(sheet, addAlignment);
+				//	}
+				//}
 			}
 
 			Assert.IsNotNull(Command, "Add Alignment command == null");

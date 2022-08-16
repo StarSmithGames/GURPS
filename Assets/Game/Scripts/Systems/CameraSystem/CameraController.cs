@@ -12,6 +12,7 @@ using Game.Managers.InputManager;
 using Game.Entities;
 using Game.Systems.DialogueSystem;
 using Game.Managers.GameManager;
+using Game.Entities.Models;
 
 namespace Game.Systems.CameraSystem
 {
@@ -65,7 +66,7 @@ namespace Game.Systems.CameraSystem
 		private CharacterManager characterManager;
 		private GameManager gameManager;
 
-		private Character leader;
+		private CharacterModel leader;
 
 		public CameraController(SignalBus signalBus,
 			CinemachineBrain brain,
@@ -211,11 +212,11 @@ namespace Game.Systems.CameraSystem
 			});
 		}
 
-		public void LookAt(IEntity entity)
+		public void LookAt(IEntityModel entity)
 		{
-			if (entity is Character character)
+			if (entity is CharacterModel character)
 			{
-				characterManager.CurrentParty.SetLeader(character);
+				//characterManager.CurrentParty.SetLeader(character);
 			}
 
 			SetFollowTarget(entity.CameraPivot);
