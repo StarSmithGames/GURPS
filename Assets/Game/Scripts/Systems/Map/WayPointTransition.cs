@@ -2,6 +2,7 @@ using EPOOutline;
 
 using Game.Entities;
 using Game.Managers.CharacterManager;
+using Game.Managers.GameManager;
 using Game.Managers.SceneManager;
 using Game.Managers.StorageManager;
 using Game.Managers.TransitionManager;
@@ -46,14 +47,14 @@ namespace Game.Map
 
 		private UIGlobalCanvas globalCanvas;
 		private IPlayer player;
-		private CharacterManager characterManager;
+		private GameManager gameManager;
 
 		[Inject]
-		private void Construct(UIGlobalCanvas globalCanvas, IPlayer player, CharacterManager characterManager)
+		private void Construct(UIGlobalCanvas globalCanvas, IPlayer player, GameManager gameManager)
 		{
 			this.globalCanvas = globalCanvas;
 			this.player = player;
-			this.characterManager = characterManager;
+			this.gameManager = gameManager;
 		}
 
 		private void Start()
@@ -91,13 +92,17 @@ namespace Game.Map
 		{
 			IsInteractable = false;
 
-			var playerRTS = player.RTSModel.transform;
-			FastStorage.LastTransformOnMap = new DefaultTransform()
+			//save map location before load scene
+			if (gameManager.CurrentGameLocation == GameLocation.Map)
 			{
-				position = playerRTS.position,
-				rotation = playerRTS.rotation,
-				scale = playerRTS.localScale,
-			};
+				var playerTransform = player.Transform;
+				FastStorage.LastTransformOnMap = new DefaultTransform()
+				{
+					position = playerTransform.position,
+					rotation = playerTransform.rotation,
+					scale = playerTransform.localScale,
+				};
+			}
 
 			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);
 		}

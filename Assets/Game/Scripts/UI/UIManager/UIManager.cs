@@ -16,34 +16,14 @@ public class UIManager : MonoBehaviour
 {
 	public UIVirtualSpace CurrentVirtualSpace { get; private set; }
 
-	[field: SerializeField] public UIAvatars Avatars { get; private set; }
 	[field: SerializeField] public UICharacterSheetWindow CharacterSheet { get; private set; }
 	[field: SerializeField] public UIBattle Battle { get; private set; }
-	[field: SerializeField] public UIBars Bars { get; private set; }
-	[field: SerializeField] public TooltipSystem Tooltip { get; private set; }
-	[field: SerializeField] public UIContextMenu ContextMenu { get; private set; }
-	[field: Space]
-	[field: SerializeField] public UIDialogue Dialogue { get; private set; }
-	[field: Space]
-	[field: SerializeField] public UIJournalNotification JournalNotification { get; private set; }
-	[Space]
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
 
 	private List<UIVirtualSpace> virtualSpaces = new List<UIVirtualSpace>();
 
-	private SignalBus signalBus;
-	private CharacterManager characterManager;
-
-	[Inject]
-	private void Construct(SignalBus signalBus, CharacterManager characterManager)
-	{
-		this.signalBus = signalBus;
-		this.characterManager = characterManager;
-	}
-
 	private void OnDestroy()
 	{
-		signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
 
 	private void Start()
@@ -52,8 +32,6 @@ public class UIManager : MonoBehaviour
 
 		//SetVirtualSpace(characterManager.CurrentParty.LeaderPartyIndex);
 		//CharacterSheet.SetSheet(characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet);
-
-		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 	}
 
 	public void SetVirtualSpace(int index)

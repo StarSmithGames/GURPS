@@ -110,27 +110,24 @@ namespace Game.Systems.CameraSystem
 				{
 					if (CurrentObserve != null)
 					{
-						if (leaderModel != CurrentObserve)
+						//Interaction
+						if (inputManager.IsLeftMouseButtonDown())
 						{
-							//Interaction
-							if (inputManager.IsLeftMouseButtonDown())
+							if (CurrentObserve is IInteractable interactable)
 							{
-								if (CurrentObserve is IInteractable interactable)
+								if (leaderModel.InBattle)
 								{
-									if (leaderModel.InBattle)
-									{
-										bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leaderModel.Navigation.FullPathDistance) >= 0 &&
-											leaderModel.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
+									bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leaderModel.Navigation.FullPathDistance) >= 0 &&
+										leaderModel.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
 
-										//if (isCanReach || interactable.IsInRange(leader))
-										//{
-										//	interactionHandler.InteractInBattle(leader, interactable);
-										//}
-									}
-									else
-									{
-										//interactionHandler.Interact(leader, interactable);
-									}
+									//if (isCanReach || interactable.IsInRange(leader))
+									//{
+									//	interactionHandler.InteractInBattle(leader, interactable);
+									//}
+								}
+								else
+								{
+									Interactor.ABInteraction(leaderModel, interactable);
 								}
 							}
 						}

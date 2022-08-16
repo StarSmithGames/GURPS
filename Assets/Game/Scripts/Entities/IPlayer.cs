@@ -1,11 +1,16 @@
 using Game.Entities.Models;
 using Game.Managers.CharacterManager;
+using Game.Managers.GameManager;
 using Game.Systems.SheetSystem;
+
+using UnityEngine;
 
 namespace Game.Entities
 {
 	public interface IPlayer : ICharacter
 	{
+		public Transform Transform { get; }
+
 		public PlayerRTSModel RTSModel { get; }
 
 		void Registrate(PlayerRTSModel player);
@@ -17,14 +22,19 @@ namespace Game.Entities
 
 	public class Player : Character, IPlayer
 	{
+		public Transform Transform => gameManager.CurrentGameLocation == GameLocation.Map ? RTSModel.transform : Model.Transform; 
+
 		public override ISheet Sheet => characterSheet;
 		private CharacterSheet characterSheet;
 
 		public PlayerRTSModel RTSModel { get; protected set; }
 		public override IEntityModel Model { get; protected set; }
 
-		public Player(CharacterDatabase database)
+		private GameManager gameManager;
+
+		public Player(CharacterDatabase database, GameManager gameManager)
 		{
+			this.gameManager = gameManager;
 			characterSheet = new CharacterSheet(database.player);
 		}
 

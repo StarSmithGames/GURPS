@@ -159,6 +159,16 @@ namespace Game.Entities.Models
 
 		public bool InteractWith(IInteractable interactable)
 		{
+			if (interactable.IsInteractable)
+			{
+				if (interactable.Interaction != null)
+				{
+					interactable.Interaction.Execute(this);
+
+					return true;
+				}
+			}
+
 			return false;
 		}
 
