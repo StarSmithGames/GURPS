@@ -29,7 +29,7 @@ namespace Game.Entities
 		private IEquipment equipment;
 
 		[Inject]
-		private void Construct(IEntityModel entity)
+		private void Construct()
 		{
 			//equipment = (entity.Sheet as CharacterSheet).Equipment;
 		}

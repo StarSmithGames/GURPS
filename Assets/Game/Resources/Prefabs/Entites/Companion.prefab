@@ -111,7 +111,7 @@ MonoBehaviour:
   navigationController: {fileID: 5879010994844666634}
   markers: {fileID: 2416944364642038130}
   outline: {fileID: 7707879391142115215}
-  entity: {fileID: 0}
+  entity: {fileID: 5468961598750850960}
   barker: {fileID: 3344450178590481488}
   outfit: {fileID: 3955389302228173797}
 --- !u!114 &5468961598750850960
@@ -126,11 +126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 280456f466d5d74499c6b5fb084439c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actorSettings:
-    isImportanatBark: 0
-    indicator: 1
-    barks: {fileID: 0}
-    dialogues: {fileID: 0}
   data: {fileID: 11400000, guid: cfb8e78f85231eb4fab2bf87d164e5fb, type: 2}
 --- !u!143 &397710266938422186
 CharacterController:

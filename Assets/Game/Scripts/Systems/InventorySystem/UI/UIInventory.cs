@@ -11,11 +11,10 @@ namespace Game.Systems.InventorySystem
 {
 	public class UIInventory : MonoBehaviour
 	{
-		public Transform content;
-		public UISlotInventory[] slots;
+		[field: SerializeField] public Transform content;
+		[field: SerializeField] public UISlotInventory[] slots;
 
-		public IInventory CurrentInventory => currentInventory;
-		private IInventory currentInventory;
+		public IInventory CurrentInventory { get; private set; }
 
 		private InventoryContainerHandler containerHandler;
 
@@ -39,24 +38,24 @@ namespace Game.Systems.InventorySystem
 
 		public void SetInventory(IInventory inventory)
 		{
-			if(currentInventory != null)
+			if(CurrentInventory != null)
 			{
-				currentInventory.OnInventoryChanged -= OnInventoryChanged;
+				CurrentInventory.OnInventoryChanged -= OnInventoryChanged;
 			}
-			currentInventory = inventory;
+			CurrentInventory = inventory;
 
 			UpdateSlots();
 
-			currentInventory.OnInventoryChanged += OnInventoryChanged;
+			CurrentInventory.OnInventoryChanged += OnInventoryChanged;
 		}
 
 		private void UpdateSlots()
 		{
 			for (int i = 0; i < slots.Length; i++)
 			{
-				if (i < currentInventory.Items.Count)
+				if (i < CurrentInventory.Items.Count)
 				{
-					slots[i].SetItem(currentInventory.Items[i]);
+					slots[i].SetItem(CurrentInventory.Items[i]);
 				}
 				else
 				{

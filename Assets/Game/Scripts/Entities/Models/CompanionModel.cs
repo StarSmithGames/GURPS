@@ -6,33 +6,35 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-    public interface ICompanionModel : ICharacterModel { }
+    public interface ICompanionModel : ICharacterModel
+	{
+		ICompanion Companion { get; }
+	}
 
     public class CompanionModel : CharacterModel, ICompanionModel
     {
-		public CompanionData data;
+		public ICompanion Companion { get; private set; }
 
-		private ICompanion companion;
+		public CompanionData data;
 
 		private PartyManager partyManager;
 
 		[Inject]
-		private void Constuct(PartyManager partyManager)
+		private void Construct(PartyManager partyManager)
 		{
 			this.partyManager = partyManager;
 		}
 
-		protected override IEnumerator Start()
-		{
-			companion = new Companion(this, data);
-			partyManager.PlayerParty.AddCharacter(companion);
-			return base.Start();
-		}
-
 		protected override void OnDestroy()
 		{
-			partyManager.PlayerParty.RemoveCharacter(companion);
+			partyManager.PlayerParty.RemoveCharacter(Companion);
+
 			base.OnDestroy();
+		}
+		protected override void InitializePersonality()
+		{
+			Companion = new Companion(this, data);
+			partyManager.PlayerParty.AddCharacter(Companion);
 		}
 	}
 }

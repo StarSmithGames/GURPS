@@ -24,18 +24,14 @@ namespace Game.Entities
 	{
 		public Transform Transform => gameManager.CurrentGameLocation == GameLocation.Map ? RTSModel.transform : Model.Transform; 
 
-		public override ISheet Sheet => characterSheet;
-		private CharacterSheet characterSheet;
-
 		public PlayerRTSModel RTSModel { get; protected set; }
-		public override IEntityModel Model { get; protected set; }
 
 		private GameManager gameManager;
 
 		public Player(CharacterDatabase database, GameManager gameManager)
 		{
 			this.gameManager = gameManager;
-			characterSheet = new CharacterSheet(database.player);
+			Sheet = new CharacterSheet(database.player);
 		}
 
 		#region Registration

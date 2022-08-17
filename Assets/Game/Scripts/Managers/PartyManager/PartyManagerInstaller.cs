@@ -7,7 +7,8 @@ namespace Game.Managers.PartyManager
 		public override void InstallBindings()
 		{
 			Container.DeclareSignal<SignalLeaderPartyChanged>();
-			
+			Container.DeclareSignal<SignalPartyChanged>();
+
 			Container.BindInterfacesAndSelfTo<PartyManager>().AsSingle();
 		}
 	}

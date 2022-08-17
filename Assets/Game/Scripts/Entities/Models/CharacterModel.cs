@@ -69,7 +69,7 @@ namespace Game.Entities.Models
 
 		protected override IEnumerator Start()
 		{
-			characterManager.Registrate(this);
+			InitializePersonality();
 
 			Controller.onReachedDestination += OnReachedDestination;
 			//equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
@@ -90,8 +90,6 @@ namespace Game.Entities.Models
 
 		protected override void OnDestroy()
 		{
-			characterManager.UnRegistrate(this);
-
 			//signalBus?.Unsubscribe<StartDialogueSignal>(OnDialogueStarted);
 
 			base.OnDestroy();
@@ -111,6 +109,8 @@ namespace Game.Entities.Models
 
 			Markers.LineMarker.DrawLine(Navigation.NavMeshAgent.path.corners);
 		}
+
+		protected virtual void InitializePersonality(){ }
 
 		private void OnEquipWeaponChanged()
 		{

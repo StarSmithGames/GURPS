@@ -11,12 +11,10 @@ using FlowCanvas.Nodes;
 
 namespace Game.UI.Windows
 {
-	public class WindowLoadingCommit : MonoBehaviour, IWindow
+	public class WindowLoadingCommit : WindowBase
 	{
-		public bool IsShowing { get; private set; }
 		public bool IsLoading { get; set; }
 
-		[field: SerializeField] public CanvasGroup CanvasGroup { get; private set; }
 		[field: SerializeField] public Transform Content { get; private set; }
 		[field: SerializeField] public Button Back { get; private set; }
 		[field: SerializeField] public Button NewCommit { get; private set; }
@@ -91,34 +89,24 @@ namespace Game.UI.Windows
 			}
 		}
 
-		public void Show(UnityAction callback = null)
+		public override void Show(UnityAction callback = null)
 		{
 			NewCommit.gameObject.SetActive(!IsLoading);
 			LoadText.text = IsLoading? "LOAD" : "ReSAVE";
 
 			Fill();
 
-			IsShowing = true;
-
-			CanvasGroup.DoFadeIn();
+			base.Show(callback);
 		}
 
-		public void Hide(UnityAction callback = null)
+		public override void Hide(UnityAction callback = null)
 		{
-			CanvasGroup.DoFadeOut(() =>
+			base.Hide(() =>
 			{
 				Dispose();
-
-				IsShowing = false;
+				callback?.Invoke();
 			});
 		}
-
-		public void Enable(bool trigger)
-		{
-			CanvasGroup.Enable(trigger);
-			IsShowing = trigger;
-		}
-
 
 		private void CommitSelected()
 		{

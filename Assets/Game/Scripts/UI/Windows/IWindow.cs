@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.Events;
-
+using DG.Tweening;
 using Zenject;
+using Sirenix.OdinInspector;
 
 namespace Game.UI.Windows
 {
@@ -13,44 +14,60 @@ namespace Game.UI.Windows
 
 	public abstract class WindowBase : MonoBehaviour, IWindow
 	{
-		public virtual bool IsShowing
-		{
-			get => isShowing;
-			protected set => isShowing = value;
-		}
-		protected bool isShowing = false;
+		public virtual bool IsShowing { get; protected set; }
+
+		[field: SerializeField] public CanvasGroup CanvasGroup { get; protected set; }
 
 		public virtual void Show(UnityAction callback = null)
 		{
+			CanvasGroup.alpha = 0f;
+			CanvasGroup.Enable(true, false);
+
 			gameObject.SetActive(true);
-			isShowing = true;
+			IsShowing = true;
+
+			Sequence sequence = DOTween.Sequence();
+
+			sequence
+				.Append(CanvasGroup.DOFade(1f, 0.2f))
+				.AppendCallback(() => callback?.Invoke());
 		}
 
 		public virtual void Hide(UnityAction callback = null)
 		{
-			gameObject.SetActive(false);
-			isShowing = false;
+			Sequence sequence = DOTween.Sequence();
+
+			sequence
+				.Append(CanvasGroup.DOFade(0f, 0.15f))
+				.AppendCallback(() =>
+				{
+					CanvasGroup.Enable(false);
+					gameObject.SetActive(false);
+					IsShowing = false;
+					callback?.Invoke();
+				});
 		}
 
 		public virtual void Enable(bool trigger)
 		{
-			gameObject.SetActive(trigger);
+			CanvasGroup.Enable(trigger);
 			IsShowing = trigger;
+		}
+
+		[Button]
+		private void OpenClose()
+		{
+			Enable(CanvasGroup.alpha == 0f ? true : false);
 		}
 	}
 
 	public abstract class WindowBasePoolable : PoolableObject, IWindow
 	{
-		public virtual bool IsShowing
-		{
-			get => isShowing;
-			protected set => isShowing = value;
-		}
-		protected bool isShowing = false;
+		public virtual bool IsShowing { get; protected set; }
 
 		public virtual void Show(UnityAction callback = null)
 		{
-			isShowing = true;
+			IsShowing = true;
 			gameObject.SetActive(true);
 			callback?.Invoke();
 		}
@@ -58,7 +75,7 @@ namespace Game.UI.Windows
 		public virtual void Hide(UnityAction callback = null)
 		{
 			DespawnIt();
-			isShowing = false;
+			IsShowing = false;
 			callback?.Invoke();
 		}
 

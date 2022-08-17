@@ -25,7 +25,7 @@ namespace Game.Systems.CameraSystem
 
 		private PartyManager partyManager;
 		private TooltipSystem.TooltipSystem tooltipSystem;
-		private ContextMenuHandler contextMenuHandler;
+		private ContextMenuSystem contextMenuHandler;
 
 		public CameraVisionLocation(SignalBus signalBus,
 			CinemachineBrain brain,
@@ -33,7 +33,7 @@ namespace Game.Systems.CameraSystem
 			PartyManager partyManager,
 			GlobalSettings settings,
 			TooltipSystem.TooltipSystem tooltipSystem,
-			ContextMenuHandler contextMenuHandler) : base(signalBus, brain, inputManager)
+			ContextMenuSystem contextMenuHandler) : base(signalBus, brain, inputManager)
 		{
 			this.partyManager = partyManager;
 			this.settings = settings.cameraVisionLocation;
@@ -153,11 +153,7 @@ namespace Game.Systems.CameraSystem
 
 						if (CurrentObserve != null && leader != CurrentObserve)
 						{
-							contextMenuHandler.SetTarget(CurrentObserve).Show();
-						}
-						else
-						{
-							contextMenuHandler.Hide();
+							contextMenuHandler.SetTarget(CurrentObserve);
 						}
 					}
 				}

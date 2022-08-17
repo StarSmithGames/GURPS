@@ -16,7 +16,7 @@ public class UIManager : MonoBehaviour
 {
 	public UIVirtualSpace CurrentVirtualSpace { get; private set; }
 
-	[field: SerializeField] public UICharacterSheetWindow CharacterSheet { get; private set; }
+	[field: SerializeField] public WindowCharacterSheet CharacterSheet { get; private set; }
 	[field: SerializeField] public UIBattle Battle { get; private set; }
 	[SerializeField] private UIVirtualSpace originalVirtualSpace;
 

@@ -21,7 +21,6 @@ namespace Game.Systems.InventorySystem
 			UpdateUI();
 		}
 
-
 		private void UpdateUI()
 		{
 			Icon.enabled = CurrentItem != null;

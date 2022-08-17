@@ -40,9 +40,7 @@ public class AnimatorControl : MonoBehaviour
 	protected IEntityModel entity;
 
 	[Inject]
-	private void Construct(
-		Animator animator,
-		IEntityModel entity)
+	private void Construct(Animator animator, IEntityModel entity)
 	{
 		this.animator = animator;
 		this.entity = entity;

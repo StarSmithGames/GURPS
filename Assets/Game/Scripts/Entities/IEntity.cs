@@ -11,7 +11,7 @@ namespace Game.Entities
 		IEntityModel Model { get; }
 	}
 
-	public partial class Entity : IEntity
+	public abstract partial class Entity : IEntity
 	{
 		public virtual ISheet Sheet { get; protected set; }
 		public virtual IEntityModel Model { get; protected set; }

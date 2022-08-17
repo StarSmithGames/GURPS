@@ -8,14 +8,11 @@ using Zenject;
 
 namespace Game.UI.Windows
 {
-	public class WindowInputGenericDialogue : MonoBehaviour, IWindow
+	public class WindowInputGenericDialogue : WindowBase
 	{
 		public UnityAction onOk;
 		public UnityAction onReject;
 
-		public bool IsShowing { get; private set; }
-
-		[field: SerializeField] public CanvasGroup CanvasGroup { get; private set; }
 		[field: SerializeField] public TMPro.TMP_InputField InputField { get; private set; }
 		[field: SerializeField] public Button Ok { get; private set; }
 		[field: SerializeField] public Button Reject { get; private set; }
@@ -44,34 +41,24 @@ namespace Game.UI.Windows
 			Reject?.onClick.RemoveAllListeners();
 		}
 
-		public void Enable(bool trigger)
-		{
-			CanvasGroup.Enable(trigger);
-			IsShowing = trigger;
-		}
-
-		public void Show(UnityAction callback = null)
+		public override void Show(UnityAction callback = null)
 		{
 			InputField.text = "";
 
-
 			transform.SetAsLastSibling();
 
-			CanvasGroup.Enable(true);
-			
+			base.Show(callback);
+
 			InputField.ActivateInputField();
 			InputField.Select();
-
-			IsShowing = true;
 		}
 
-		public void Hide(UnityAction callback = null)
+		public override void Hide(UnityAction callback = null)
 		{
 			onOk = null;
 			onReject = null;
 
-			CanvasGroup.Enable(false);
-			IsShowing = false;
+			base.Hide(callback);
 		}
 
 		private void OnOk()

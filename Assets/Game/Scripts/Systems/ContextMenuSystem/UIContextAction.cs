@@ -18,7 +18,7 @@ namespace Game.Systems.ContextMenu
 		[Header("Negative button")]
 		[field: SerializeField] public ColorBlock negative;
 
-		public ICommand CurrentCommand { get; private set; }
+		public ContextCommand ContextCommand { get; private set; }
 
 		private void Start()
 		{
@@ -33,13 +33,13 @@ namespace Game.Systems.ContextMenu
 			}
 		}
 
-		public void SetCommand(ICommand command, ContextType type = ContextType.Normal)
+		public void SetCommand(ContextCommand command)
 		{
-			CurrentCommand = command;
+			ContextCommand = command;
 			Text.text = (command as ContextCommand).name;
 
-			Text.color = type == ContextType.Normal ? Color.white : Color.red;
-			Button.colors = type == ContextType.Normal ? normal : negative; 
+			Text.color = command.type == ContextType.Normal ? Color.white : Color.red;
+			Button.colors = command.type == ContextType.Normal ? normal : negative; 
 		}
 
 		private void OnClick()
@@ -48,11 +48,5 @@ namespace Game.Systems.ContextMenu
 		}
 
 		public class Factory : PlaceholderFactory<UIContextAction> { }
-	}
-
-	public enum ContextType
-	{
-		Normal,
-		Negative,
 	}
 }

@@ -40,6 +40,7 @@ namespace Game.Managers.PartyManager
 		public void Initialize()
 		{
 			playerParty = new PlayerParty(signalBus, player);
+			playerParty.AddCharacter(player);
 		}
 
 		//public void Registrate(ICompanion companion)
@@ -63,8 +64,12 @@ namespace Game.Managers.PartyManager
     {
 		public List<ICharacter> Characters { get; private set; }
 
-		public Party()
+		protected SignalBus signalBus;
+
+		public Party(SignalBus signalBus)
 		{
+			this.signalBus = signalBus;
+
 			Characters = new List<ICharacter>();
 		}
 
@@ -73,6 +78,7 @@ namespace Game.Managers.PartyManager
 			if (!Characters.Contains(character))
 			{
 				Characters.Add(character);
+				signalBus?.Fire(new SignalPartyChanged());
 			}
 		}
 
@@ -81,6 +87,7 @@ namespace Game.Managers.PartyManager
 			if (Characters.Contains(character))
 			{
 				Characters.Remove(character);
+				signalBus?.Fire(new SignalPartyChanged());
 			}
 		}
 	}
@@ -90,9 +97,7 @@ namespace Game.Managers.PartyManager
 		public ICharacter LeaderParty { get; private set; }
 		public int LeaderPartyIndex => Characters.IndexOf(LeaderParty);
 
-		private SignalBus signalBus;
-
-		public PlayerParty(SignalBus signalBus, IPlayer leader) : base()
+		public PlayerParty(SignalBus signalBus, IPlayer leader) : base(signalBus)
 		{
 			this.signalBus = signalBus;
 			SetLeader(leader);

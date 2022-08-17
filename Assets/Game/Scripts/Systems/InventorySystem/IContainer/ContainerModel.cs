@@ -31,7 +31,7 @@ namespace Game.Systems.InventorySystem
 				return containerSheet;
 			}
 		}
-		private ContainerSheet containerSheet;
+		private ISheet containerSheet;
 
 		public override IInteraction Interaction
 		{

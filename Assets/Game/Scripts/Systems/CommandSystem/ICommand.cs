@@ -1,6 +1,7 @@
 using Game.Entities;
 using Game.Entities.Models;
 using Game.Systems.DialogueSystem;
+using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 
@@ -18,6 +19,8 @@ namespace Game.Systems.ContextMenu
 	public abstract class ContextCommand : ICommand
 	{
 		public string name;
+
+		public ContextType type = ContextType.Normal;
 
 		public abstract void Execute();
 	}
@@ -77,19 +80,17 @@ namespace Game.Systems.ContextMenu
 
 	public class CommandOpenContainer : ContextCommand
 	{
-		private InteractionSystem.InteractionSystem interactionHandler;
-		private CharacterModel character;
+		private IInteractable initiator;
 		private IContainer container;
-		public CommandOpenContainer(InteractionSystem.InteractionSystem interactionHandler, CharacterModel character, IContainer container)
+		public CommandOpenContainer(IInteractable initiator, IContainer container)
 		{
-			this.interactionHandler = interactionHandler;
-			this.character = character;
+			this.initiator = initiator;
 			this.container = container;
 		}
 
 		public override void Execute()
 		{
-			interactionHandler.Interact(character, container);
+			Interactor.ABInteraction(initiator, container);
 		}
 	}
 	public class CommandCloseContainer : ContextCommand
@@ -244,4 +245,11 @@ namespace Game.Systems.ContextMenu
 		}
 	}
 	#endregion
+
+
+	public enum ContextType
+	{
+		Normal,
+		Negative,
+	}
 }

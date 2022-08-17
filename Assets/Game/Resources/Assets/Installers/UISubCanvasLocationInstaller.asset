@@ -15,10 +15,11 @@ MonoBehaviour:
   mainMenuWindow: {fileID: 1390104159834341277, guid: b158e13da955e63458a07393ef4d9b1c, type: 3}
   loadingCommitWindow: {fileID: 2295661591900373995, guid: 94ca9cdf2020471498b71a5f92c8625b, type: 3}
   preferencesWindow: {fileID: 5142551386490433259, guid: e287b5b89df882c48bcf541f32d44f94, type: 3}
+  contextMenuWindow: {fileID: 7589937774691759749, guid: e8729db0a5435024195748a67ebfc3b2, type: 3}
+  contextActionPrefab: {fileID: 7253884890090556598, guid: c8e6965f1e1f1e84cb8ca13fd34dbbf6, type: 3}
   avatarPrefab: {fileID: 8307824656283175849, guid: 4bbf109ff6e81c040ae28201167a72c2, type: 3}
   itemCursorPrefab: {fileID: 4875044641302866099, guid: 37cc0004ebb681a44b6b3c29e81b96d3, type: 3}
   chestPopupWindowPrefab: {fileID: 8388637833920730225, guid: de440f16446d4734b9acc39af6942dfb, type: 3}
   turnPrefab: {fileID: 5483355968189638841, guid: e7b6dd26e311b8e4cbe5edf7a9488794, type: 3}
   turnSeparatePrefab: {fileID: 522465427650173922, guid: 78aab5a83e252f3458ff3a9bdbff30ca, type: 3}
   actionPrefab: {fileID: 5209587169930084388, guid: 7d63075b03f63fa46934720002e80a54, type: 3}
-  contextActionPrefab: {fileID: 7253884890090556598, guid: c8e6965f1e1f1e84cb8ca13fd34dbbf6, type: 3}

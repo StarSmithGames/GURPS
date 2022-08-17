@@ -18,7 +18,10 @@ namespace Game.UI
 		public WindowMainMenu mainMenuWindow;
 		public WindowLoadingCommit loadingCommitWindow;
 		public WindowPreferences preferencesWindow;
-		[Space]
+		[Header("ContextMenu")]
+		public WindowContextMenu contextMenuWindow;
+		public UIContextAction contextActionPrefab;
+		[Header("Character")]
 		public UIAvatar avatarPrefab;
 		[Header("Inventory")]
 		public UIItemCursor itemCursorPrefab;
@@ -28,7 +31,7 @@ namespace Game.UI
 		public GameObject turnSeparatePrefab;
 		[Space]
 		public UIAction actionPrefab;
-		public UIContextAction contextActionPrefab;
+		
 
 		public override void InstallBindings()
 		{
@@ -40,15 +43,11 @@ namespace Game.UI
 			//Windows
 			BindMenu();
 
-			//Factories
-			Container.BindFactory<UIAvatar, UIAvatar.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
-				.FromComponentInNewPrefab(avatarPrefab));
-
-
-			BindContexMenu();
+			BindCharacterWindows();
 
 			BindInventory();
+
+			BindContexMenu();
 
 			BindBattleSystem();
 
@@ -76,6 +75,13 @@ namespace Game.UI
 				.NonLazy();
 		}
 
+		private void BindCharacterWindows()
+		{
+			Container.BindFactory<UIAvatar, UIAvatar.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
+				.FromComponentInNewPrefab(avatarPrefab));
+		}
+
 		private void BindInventory()
 		{
 			Container.BindFactory<UIContainerWindow, UIContainerWindow.Factory>()
@@ -92,9 +98,15 @@ namespace Game.UI
 			Container.BindFactory<UIContextAction, UIContextAction.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
 				.FromComponentInNewPrefab(contextActionPrefab))
-				.WhenInjectedInto<ContextMenuHandler>();
+				.WhenInjectedInto<WindowContextMenu>();
 
-			Container.BindInterfacesAndSelfTo<ContextMenuHandler>().AsSingle();
+			Container.Bind<WindowContextMenu>()
+				.FromComponentInNewPrefab(contextMenuWindow)
+				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform)
+				.AsSingle()
+				.NonLazy();
+
+			Container.BindInterfacesAndSelfTo<ContextMenuSystem>().AsSingle();
 		}
 
 		private void BindBattleSystem()
