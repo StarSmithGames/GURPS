@@ -7,6 +7,7 @@ using UnityEngine.Events;
 
 using Zenject;
 using System.Collections;
+using Game.Entities.Models;
 
 namespace Game.Entities
 {
@@ -17,10 +18,9 @@ namespace Game.Entities
 		CameraPivot CameraPivot { get; }
 	}
 
-	public abstract partial class EntityModel : MonoBehaviour, IEntityModel
+	public abstract partial class EntityModel : Model, IEntityModel
 	{
 		public MonoBehaviour MonoBehaviour => this;
-		public Transform Transform => transform;
 		public TaskSequence TaskSequence { get; private set; }
 
 		public CameraPivot CameraPivot { get; private set; }

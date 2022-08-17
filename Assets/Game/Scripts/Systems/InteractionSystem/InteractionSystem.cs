@@ -431,32 +431,6 @@ namespace Game.Systems.InteractionSystem
 		}
 	}
 
-
-	public class ContainerInteraction : TaskActionInteraction
-	{
-		public ContainerInteraction(IEntityModel entity, IContainer container) : base(entity, container) { }
-
-		public override IEnumerator Implementation()
-		{
-			IContainer container = interactable as IContainer;
-
-			if (!container.IsOpened)
-			{
-				container.Open();
-			}
-
-			while (container.IsOpened)
-			{
-				//if (!interactable.IsInRange(entity))
-				//{
-				//	container.Close();
-				//}
-				yield return null;
-			}
-		}
-	}
-
-
 	public enum TaskActionStatus
 	{
 		Preparing,

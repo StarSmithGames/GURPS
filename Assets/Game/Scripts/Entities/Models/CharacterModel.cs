@@ -137,40 +137,10 @@ namespace Game.Entities.Models
 	}
 
 
-	//Visual and (IInteractable, IObservable implementation)
+	//Visual
 	partial class CharacterModel
 	{
 		public Markers Markers { get; protected set; }
-		public Outlinable Outline { get; protected set; }
-		public IInteraction Interaction { get; }
-		public bool IsInteractable { get; }
-
-		#region Observe
-		public virtual void StartObserve()
-		{
-			Outline.enabled = true;
-		}
-		public virtual void Observe() { }
-		public virtual void EndObserve()
-		{
-			Outline.enabled = false;
-		}
-		#endregion
-
-		public bool InteractWith(IInteractable interactable)
-		{
-			if (interactable.IsInteractable)
-			{
-				if (interactable.Interaction != null)
-				{
-					interactable.Interaction.Execute(this);
-
-					return true;
-				}
-			}
-
-			return false;
-		}
 
 		protected virtual void ResetMarkers()
 		{

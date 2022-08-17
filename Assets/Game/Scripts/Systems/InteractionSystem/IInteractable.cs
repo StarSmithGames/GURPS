@@ -1,7 +1,9 @@
 using Game.Entities;
 using Game.Map;
+using Game.Systems.InventorySystem;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Systems.InteractionSystem
 {
@@ -40,28 +42,60 @@ namespace Game.Systems.InteractionSystem
 		}
 	}
 
-	public class WayPointInteraction : IInteraction
+	public class GoToPointInteraction : IInteraction
 	{
-		private IWayPoint wayPoint;
+		private InteractionPoint point;
+		private UnityAction action;
 
-		public WayPointInteraction(IWayPoint wayPoint)
+		public GoToPointInteraction(InteractionPoint point, UnityAction action)
 		{
-			this.wayPoint = wayPoint;
+			this.point = point;
+			this.action = action;
 		}
 
 		public void Execute(IInteractable interactor)
 		{
-			if (wayPoint.InteractionPoint.IsInRange(interactor.Transform.position))
+			if (point.IsInRange(interactor.Transform.position))
 			{
-				wayPoint.Action();
+				action?.Invoke();
 			}
 			else
 			{
-				if(interactor is IEntityModel entity)
+				if (interactor is IEntityModel entity)
 				{
 					entity.TaskSequence
-						.Append(new GoToAction(entity, wayPoint.InteractionPoint.GetIteractionPosition(entity)))
-						.Append(wayPoint.Action);
+						.Append(new GoToAction(entity, point.GetIteractionPosition(entity)))
+						.Append(() => action?.Invoke());
+					entity.TaskSequence.Execute();
+				}
+			}
+		}
+
+		public void Release() { }
+	}
+
+	public class ContainerInteraction : IInteraction
+	{
+		private IContainer container;
+
+		public ContainerInteraction(IContainer container)
+		{
+			this.container = container;
+		}
+
+		public void Execute(IInteractable interactor)
+		{
+			if (container.InteractionPoint.IsInRange(interactor.Transform.position))
+			{
+				container.Open(interactor);
+			}
+			else
+			{
+				if (interactor is IEntityModel entity)
+				{
+					entity.TaskSequence
+						.Append(new GoToAction(entity, container.InteractionPoint.GetIteractionPosition(entity)))
+						.Append(() => container.Open(interactor));
 					entity.TaskSequence.Execute();
 				}
 			}

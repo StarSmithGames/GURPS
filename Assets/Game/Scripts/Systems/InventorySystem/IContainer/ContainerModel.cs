@@ -1,17 +1,23 @@
-using Game.Entities;
+using Game.Entities.Models;
+using Game.Managers.InputManager;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
+using Game.UI;
 
-using System.Collections;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : MonoBehaviour, IContainer, ISheetable/*, IDamegeable*/
+	public class ContainerModel : Model, IContainer, ISheetable/*, IDamegeable*/
 	{
+		public bool IsOpened => window?.IsShowing ?? false;
+		public bool IsSearched => data.isSearched;
+
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
+		[field: SerializeField] public InteractionPoint InteractionPoint { get; private set; }
 
 		public ISheet Sheet
 		{
@@ -27,23 +33,34 @@ namespace Game.Systems.InventorySystem
 		}
 		private ContainerSheet containerSheet;
 
-		public bool IsOpened => containerWindow?.IsShowing ?? false;
-		public bool IsSearched => data.isSearched;
+		public override IInteraction Interaction
+		{
+			get
+			{
+				if(interaction == null)
+				{
+					interaction = new ContainerInteraction(this);
+				}
 
-		public bool IsInteractable { get; }
-		public IInteraction Interaction { get; }
-		public Transform Transform => transform;
-
-		private UIContainerWindow containerWindow = null;
+				return interaction;
+			}
+		}
+		private IInteraction interaction;
 
 		private Data data;
+		private IInteractable lastInteractor;
+		private UIContainerWindow window;
 
-		private UIManager uiManager;
-		private InventoryContainerHandler containerHandler;
+		private UISubCanvas subCanvas;
+		private UIContainerWindow.Factory containerWindowFactory;
+		private InputManager inputManager;
 
 		[Inject]
-		private void Construct()
+		private void Construct(UISubCanvas subCanvas, UIContainerWindow.Factory containerWindowFactory, InputManager inputManager)
 		{
+			this.subCanvas = subCanvas;
+			this.containerWindowFactory = containerWindowFactory;
+			this.inputManager = inputManager;
 		}
 
 		private void Start()
@@ -54,49 +71,82 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-		//#region Observe
-		//public override void StartObserve()
-		//{
-		//	base.StartObserve();
-
-		//	uiManager.Battle.SetSheet(Sheet);
-		//}
-		//public override void EndObserve()
-		//{
-		//	base.EndObserve();
-
-		//	uiManager.Battle.SetSheet(null);
-		//}
-		//#endregion
-
-		#region OpenClose
-		public void Open()
+		private void Update()
 		{
-			containerWindow?.Hide();
-
-			containerWindow = containerHandler.SpawnContainerWindow(Sheet.Inventory);
-			containerWindow.onTakeAll += OnTakeAll;
-			containerWindow.ShowPopup();
-		}
-		public void Close()
-		{
-			if(containerWindow != null)
+			if (IsOpened)
 			{
-				containerWindow.onTakeAll -= OnTakeAll;
-				containerWindow.HidePopup();
+				if (!window.IsInProcess)
+				{
+					if (inputManager.GetKeyDown(KeyAction.InGameMenu))
+					{
+						Close();
+					}
+
+					if (lastInteractor != null)
+					{
+						if (!InteractionPoint.IsInRange(lastInteractor.Transform.position))
+						{
+							Close();
+						}
+					}
+				}
 			}
-			containerWindow = null;
+		}
+
+		#region Observe
+		public override void StartObserve()
+		{
+			base.StartObserve();
+			//uiManager.Battle.SetSheet(Sheet);
+		}
+
+		public override void EndObserve()
+		{
+			base.EndObserve();
+			//uiManager.Battle.SetSheet(null);
 		}
 		#endregion
 
-		private void OnTakeAll()
+		#region OpenClose
+		public void Open(IInteractable interactor)
 		{
-			containerHandler.CharacterTakeAllFrom(Sheet.Inventory);
+			lastInteractor = interactor;
+
+			Assert.IsNull(window);
+
+			window = containerWindowFactory.Create();
+
+			window.transform.SetParent(subCanvas.Windows);
+			(window.transform as RectTransform).anchoredPosition = Vector2.zero;
+
+			window.Inventory.SetInventory(Sheet.Inventory);
+			window.onClose += Dispose;
+			window.onTakeAll += OnTakeAll;
+			window.ShowPopup();
 		}
 
-		public bool InteractWith(IInteractable interactable)
+		public void Close()
 		{
-			throw new System.NotImplementedException();
+			window?.HidePopup(Dispose);
+		}
+		#endregion
+
+		private void Dispose()
+		{
+			lastInteractor = null;
+
+			if (window != null)
+			{
+				window.onClose -= Dispose;
+				window.onTakeAll -= OnTakeAll;
+			}
+			window = null;
+		}
+
+		private void OnTakeAll()
+		{
+			Dispose();
+			//containerHandler.CharacterTakeAllFrom(Sheet.Inventory);
 		}
 
 		public class Data

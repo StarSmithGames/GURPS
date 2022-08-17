@@ -59,19 +59,19 @@ namespace Game.UI
 		{
 			Container.Bind<WindowMainMenu>()
 				.FromComponentInNewPrefab(mainMenuWindow)
-				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform.Find("Windows"))
+				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().Windows)
 				.AsSingle()
 				.NonLazy();
 
 			Container.Bind<WindowLoadingCommit>()
 				.FromComponentInNewPrefab(loadingCommitWindow)
-				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform.Find("Windows"))
+				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().Windows)
 				.AsSingle()
 				.NonLazy();
 
 			Container.Bind<WindowPreferences>()
 				.FromComponentInNewPrefab(preferencesWindow)
-				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform.Find("Windows"))
+				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().Windows)
 				.AsSingle()
 				.NonLazy();
 		}

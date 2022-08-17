@@ -18,6 +18,13 @@ using Zenject;
 
 namespace Game.Map
 {
+	public interface IWayPoint
+	{
+		InteractionPoint InteractionPoint { get; }
+
+		void Action();
+	}
+
 	public class WayPointTransition : MonoBehaviour, IWayPoint, IObservable, IInteractable
 	{
 		public bool IsInteractable { get; private set; }
@@ -27,7 +34,7 @@ namespace Game.Map
 			{
 				if(interaction == null)
 				{
-					interaction = new WayPointInteraction(this);
+					interaction = new GoToPointInteraction(InteractionPoint, Action);
 				}
 
 				return interaction;

@@ -24,7 +24,6 @@ namespace Game.Systems.InventorySystem
 		private IEquipment equipment;
 		private Equip slotEquip;
 
-		private UIManager uiManager;
 		private UIItemCursor itemCursor;
 		private CharacterManager characterManager;
 		private UIContainerWindow.Factory containerFactory;
@@ -36,7 +35,6 @@ namespace Game.Systems.InventorySystem
 			UIContainerWindow.Factory containerFactory,
 			InputManager inputManager)
 		{
-			this.uiManager = uiManager;
 			this.itemCursor = itemCursor;
 			this.characterManager = characterManager;
 			this.containerFactory = containerFactory;
@@ -103,7 +101,7 @@ namespace Game.Systems.InventorySystem
 			var containerWindow = containerFactory.Create();
 			containerWindow.Hide();
 			containerWindow.Inventory.SetInventory(inventory);
-			containerWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
+			//containerWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
 			(containerWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
 
 			return containerWindow;
@@ -207,7 +205,7 @@ namespace Game.Systems.InventorySystem
 			//equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
 
 			itemCursor.SetIcon(item.ItemData.itemSprite);
-			itemCursor.transform.parent = uiManager.transform.root;
+			//itemCursor.transform.parent = uiManager.transform.root;
 
 
 			IsDraging = true;
@@ -286,14 +284,14 @@ namespace Game.Systems.InventorySystem
 		private void CharacterStatusEnable()
 		{
 			IsInventoryOpened = !IsInventoryOpened;
-			uiManager.CharacterSheet.gameObject.SetActive(IsInventoryOpened);
+			//uiManager.CharacterSheet.gameObject.SetActive(IsInventoryOpened);
 		}
 		private void CloseCharacterStatus()
 		{
 			if (IsInventoryOpened)
 			{
 				IsInventoryOpened = false;
-				uiManager.CharacterSheet.gameObject.SetActive(false);
+				//uiManager.CharacterSheet.gameObject.SetActive(false);
 			}
 		}
 	}

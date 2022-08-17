@@ -3,13 +3,30 @@ using Game.Entities.Models;
 
 using System.Collections.Generic;
 
+using UnityEngine.Assertions;
+
 using Zenject;
 
 namespace Game.Managers.PartyManager
 {
     public class PartyManager : IInitializable
     {
-		public PlayerParty PlayerParty { get; private set; }
+		public PlayerParty PlayerParty
+		{
+			get
+			{
+				if(playerParty == null)
+				{
+					Assert.IsNotNull(signalBus, "PartyManager lost component");
+					Assert.IsNotNull(player, "PartyManager lost component");
+
+					playerParty = new PlayerParty(signalBus, player);
+				}
+
+				return playerParty;
+			}
+		}
+		private PlayerParty playerParty = null;
 
 		private SignalBus signalBus;
 		private IPlayer player;
@@ -22,7 +39,7 @@ namespace Game.Managers.PartyManager
 
 		public void Initialize()
 		{
-			PlayerParty = new PlayerParty(signalBus, player);
+			playerParty = new PlayerParty(signalBus, player);
 		}
 
 		//public void Registrate(ICompanion companion)

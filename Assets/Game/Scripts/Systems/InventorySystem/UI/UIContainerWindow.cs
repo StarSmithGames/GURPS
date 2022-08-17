@@ -13,42 +13,32 @@ namespace Game.Systems.InventorySystem
 		public UnityAction onTakeAll;
 		public UnityAction onClose;
 
-		public UIInventory Inventory => inventory;
-		[SerializeField] private UIInventory inventory;
+		[field: SerializeField] public UIInventory Inventory { get; private set; }
 
-		public Button close;
-		public Button takeAll;
+		[field: SerializeField] public Button Close { get; private set; }
+		[field: SerializeField] public Button TakeAll { get; private set; }
 
-		[Inject]
-		private void Construct()
+		private void Start()
 		{
-			close.onClick.AddListener(OnClosed);
-			takeAll.onClick.AddListener(OnTakeAll);
+			Close.onClick.AddListener(OnClosed);
+			TakeAll.onClick.AddListener(OnTakeAll);
 		}
 
 		private void OnDestroy()
 		{
-			close.onClick.RemoveAllListeners();
-			takeAll.onClick.RemoveAllListeners();
+			Close?.onClick.RemoveAllListeners();
+			TakeAll?.onClick.RemoveAllListeners();
 		}
 
 		private void OnClosed()
 		{
-			Popup.PopOut(onComplete: () =>
-			{
-				Hide();
-			});
-
+			HidePopup();
 			onClose?.Invoke();
 		} 
 
 		private void OnTakeAll()
 		{
-			Popup.PopOut(onComplete: () =>
-			{
-				Hide();
-			});
-
+			HidePopup();
 			onTakeAll?.Invoke();
 		}
 

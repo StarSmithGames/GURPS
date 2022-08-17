@@ -19,5 +19,19 @@ namespace Game.UI
 			}
 		}
 		private WindowsManager windowsManager;
+
+		public Transform Windows
+		{
+			get
+			{
+				if(windows == null)
+				{
+					windows = transform.Find("Windows");
+				}
+
+				return windows;
+			}
+		}
+		private Transform windows;
 	}
 }

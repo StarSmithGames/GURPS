@@ -734,9 +734,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 693b755b24d5fa74aaaaf987cc3942d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: {fileID: 3994318348759335134}
-  close: {fileID: 4739440493569509930}
-  takeAll: {fileID: 4739440494797279988}
+  <Inventory>k__BackingField: {fileID: 3994318348759335134}
+  <Close>k__BackingField: {fileID: 4739440493569509930}
+  <TakeAll>k__BackingField: {fileID: 4739440494797279988}
 --- !u!114 &3994318348759335134
 MonoBehaviour:
   m_ObjectHideFlags: 0
