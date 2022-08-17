@@ -60,8 +60,11 @@ namespace Game.Managers.PartyManager
 
 			avatars.ForEach((x) =>
 			{
-				x.onClicked -= OnAvatarClicked;
-				x.onDoubleClicked -= OnAvatarDoubleClicked;
+				if (x != null)
+				{
+					x.onClicked -= OnAvatarClicked;
+					x.onDoubleClicked -= OnAvatarDoubleClicked;
+				}
 			});
 		}
 
@@ -93,10 +96,8 @@ namespace Game.Managers.PartyManager
 
 					avatar.onClicked += OnAvatarClicked;
 					avatar.onDoubleClicked += OnAvatarDoubleClicked;
-
 					avatar.transform.SetParent(transform);
 					avatar.transform.localScale = Vector3.one;
-
 					avatars.Add(avatar);
 				}
 
@@ -106,10 +107,8 @@ namespace Game.Managers.PartyManager
 
 					avatar.onClicked -= OnAvatarClicked;
 					avatar.onDoubleClicked -= OnAvatarDoubleClicked;
-
+					avatar?.DespawnIt();
 					avatars.Remove(avatar);
-
-					avatar.DespawnIt();
 				}
 			}
 

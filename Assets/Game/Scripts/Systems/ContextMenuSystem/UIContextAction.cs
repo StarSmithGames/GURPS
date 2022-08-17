@@ -36,7 +36,7 @@ namespace Game.Systems.ContextMenu
 		public void SetCommand(ContextCommand command)
 		{
 			ContextCommand = command;
-			Text.text = (command as ContextCommand).name;
+			Text.text = command.name;
 
 			Text.color = command.type == ContextType.Normal ? Color.white : Color.red;
 			Button.colors = command.type == ContextType.Normal ? normal : negative; 

@@ -78,19 +78,20 @@ namespace Game.Systems.ContextMenu
 	}
 
 
-	public class CommandOpenContainer : ContextCommand
+	public class CommandInteract : ContextCommand
 	{
 		private IInteractable initiator;
-		private IContainer container;
-		public CommandOpenContainer(IInteractable initiator, IContainer container)
+		private IInteractable interactable;
+
+		public CommandInteract(IInteractable initiator, IInteractable interactable)
 		{
 			this.initiator = initiator;
-			this.container = container;
+			this.interactable = interactable;
 		}
 
 		public override void Execute()
 		{
-			Interactor.ABInteraction(initiator, container);
+			Interactor.ABInteraction(initiator, interactable);
 		}
 	}
 	public class CommandCloseContainer : ContextCommand

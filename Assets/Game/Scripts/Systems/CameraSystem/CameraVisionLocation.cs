@@ -151,7 +151,7 @@ namespace Game.Systems.CameraSystem
 					{
 						leaderModel.Stop();
 
-						if (CurrentObserve != null && leader != CurrentObserve)
+						if (CurrentObserve != null/* && leader != CurrentObserve*/)
 						{
 							contextMenuHandler.SetTarget(CurrentObserve);
 						}

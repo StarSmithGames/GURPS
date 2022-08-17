@@ -18,14 +18,14 @@ using Zenject;
 
 namespace Game.Map
 {
-	public interface IWayPoint
+	public interface IWayPoint : IObservable, IInteractable
 	{
 		InteractionPoint InteractionPoint { get; }
 
 		void Action();
 	}
 
-	public class WayPointTransition : MonoBehaviour, IWayPoint, IObservable, IInteractable
+	public class WayPointTransition : MonoBehaviour, IWayPoint
 	{
 		public bool IsInteractable { get; private set; }
 		public IInteraction Interaction

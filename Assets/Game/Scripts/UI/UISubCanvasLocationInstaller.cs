@@ -18,9 +18,6 @@ namespace Game.UI
 		public WindowMainMenu mainMenuWindow;
 		public WindowLoadingCommit loadingCommitWindow;
 		public WindowPreferences preferencesWindow;
-		[Header("ContextMenu")]
-		public WindowContextMenu contextMenuWindow;
-		public UIContextAction contextActionPrefab;
 		[Header("Character")]
 		public UIAvatar avatarPrefab;
 		[Header("Inventory")]
@@ -46,8 +43,6 @@ namespace Game.UI
 			BindCharacterWindows();
 
 			BindInventory();
-
-			BindContexMenu();
 
 			BindBattleSystem();
 
@@ -91,22 +86,6 @@ namespace Game.UI
 			Container.BindInstance(Container.InstantiatePrefabForComponent<UIItemCursor>(itemCursorPrefab));
 
 			Container.BindInterfacesAndSelfTo<InventoryContainerHandler>().AsSingle();
-		}
-
-		private void BindContexMenu()
-		{
-			Container.BindFactory<UIContextAction, UIContextAction.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
-				.FromComponentInNewPrefab(contextActionPrefab))
-				.WhenInjectedInto<WindowContextMenu>();
-
-			Container.Bind<WindowContextMenu>()
-				.FromComponentInNewPrefab(contextMenuWindow)
-				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform)
-				.AsSingle()
-				.NonLazy();
-
-			Container.BindInterfacesAndSelfTo<ContextMenuSystem>().AsSingle();
 		}
 
 		private void BindBattleSystem()
