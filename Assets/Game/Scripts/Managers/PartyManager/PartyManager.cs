@@ -1,5 +1,4 @@
 using Game.Entities;
-using Game.Entities.Models;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +31,7 @@ namespace Game.Managers.PartyManager
 		private SignalBus signalBus;
 		private IPlayer player;
 
-		public PartyManager(DiContainer container, SignalBus signalBus, IPlayer player)
+		public PartyManager(SignalBus signalBus, IPlayer player)
 		{
 			this.signalBus = signalBus;
 			this.player = player;
@@ -43,22 +42,6 @@ namespace Game.Managers.PartyManager
 			playerParty = new PlayerParty(signalBus, player);
 			playerParty.AddCharacter(player);
 		}
-
-		//public void Registrate(ICompanion companion)
-		//{
-		//	if (!PlayerParty.Contains(companion))
-		//	{
-		//		PlayerParty.Add(companion);
-		//	}
-		//}
-
-		//public void UnRegistrate(ICompanion companion)
-		//{
-		//if (party.Contains(companion))
-		//{
-		//	party.Remove(companion);
-		//}
-		//}
 	}
 
 	public class Party

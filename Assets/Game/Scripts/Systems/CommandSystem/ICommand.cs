@@ -38,11 +38,6 @@ namespace Game.Systems.CommandCenter
 		public abstract void Execute();
 	}
 
-	public interface IPartyManagerCommand : ICommand
-	{
-		void Execute(Party party);
-	}
-
 	#region ContextCommands
 	public class CommandUse : ContextCommand//eat, drink, use spells
 	{
@@ -143,7 +138,6 @@ namespace Game.Systems.CommandCenter
 		}
 	}
 	#endregion
-
 
 	#region SheetCommnads
 	public class CommandSetAlignment : SheetCommand
@@ -251,6 +245,12 @@ namespace Game.Systems.CommandCenter
 	}
 	#endregion
 
+	#region PartyManagerCommands
+	public interface IPartyManagerCommand : ICommand
+	{
+		void Execute(Party party);
+	}
+
 	public class CommandAddCompanionInPlayerParty : IPartyManagerCommand
 	{
 		private ICompanion companion;
@@ -260,16 +260,14 @@ namespace Game.Systems.CommandCenter
 			this.companion = companion;
 		}
 
-		public void Execute()
-		{
-			//(companion.Model as ICompanionModel).Hire();
-		}
+		public void Execute() { }
 
 		public void Execute(Party party)
 		{
 			party.AddCharacter(companion);
 		}
 	}
+	#endregion
 
 	public enum ContextType
 	{
