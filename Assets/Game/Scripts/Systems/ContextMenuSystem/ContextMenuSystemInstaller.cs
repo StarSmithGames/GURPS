@@ -25,7 +25,7 @@ namespace Game.Systems.ContextMenu
 				.AsSingle()
 				.NonLazy();
 
-			Container.BindInterfacesAndSelfTo<ContextMenuSystem>().AsSingle();
+			Container.BindInterfacesAndSelfTo<ContextMenuSystem>().AsSingle().NonLazy();
 		}
 	}
 }

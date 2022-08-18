@@ -36,12 +36,12 @@ namespace Game.UI.Windows
 			RemoveSaves.onClick.AddListener(OnRemoveSaves);
 			Back.onClick.AddListener(OnBack);
 
-			subCanvas.WindowsManager.Register(this);
+			subCanvas.WindowsRegistrator.Registrate(this);
 		}
 
 		private void OnDestroy()
 		{
-			subCanvas.WindowsManager.UnRegister(this);
+			subCanvas.WindowsRegistrator.UnRegistrate(this);
 
 			RemoveSaves?.onClick.RemoveAllListeners();
 			Back?.onClick.RemoveAllListeners();

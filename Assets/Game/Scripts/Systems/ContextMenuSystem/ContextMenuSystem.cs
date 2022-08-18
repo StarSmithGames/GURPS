@@ -35,7 +35,7 @@ namespace Game.Systems.ContextMenu
 		{
 			if (contextMenu == null)
 			{
-				contextMenu = subCanvas.WindowsManager.GetAs<WindowContextMenu>();
+				contextMenu = subCanvas.WindowsRegistrator.GetAs<WindowContextMenu>();
 			}
 
 			List<ContextCommand> commands = new List<ContextCommand>();

@@ -22,7 +22,6 @@ namespace Game.Systems.ContextMenu
 		private Cinemachine.CinemachineBrain brain;
 		private InputManager inputManager;
 
-
 		[Inject]
         private void Construct(UISubCanvas subCanvas,
 			UIContextAction.Factory contextMenuFactory,
@@ -37,15 +36,15 @@ namespace Game.Systems.ContextMenu
 
 		private void Start()
 		{
+			subCanvas.WindowsRegistrator.Registrate(this);
+
 			transform.DestroyChildren();
 			Enable(false);
-			
-			subCanvas.WindowsManager.Register(this);
 		}
 
 		private void OnDestroy()
 		{
-			subCanvas?.WindowsManager.UnRegister(this);
+			subCanvas.WindowsRegistrator.UnRegistrate(this);
 		}
 
 		private void Update()

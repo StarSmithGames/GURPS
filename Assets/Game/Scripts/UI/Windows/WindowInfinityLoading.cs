@@ -49,14 +49,14 @@ namespace Game.UI.Windows
 		{
 			CanvasGroup.Enable(false);
 
-			globalCanvas.WindowsManager.Register(this);
+			globalCanvas.WindowsManager.Registrate(this);
 
 			Continue.onClick.AddListener(Click);
 		}
 
 		private void OnDestroy()
 		{
-			globalCanvas.WindowsManager.UnRegister(this);
+			globalCanvas.WindowsManager.UnRegistrate(this);
 
 			Continue?.onClick.RemoveAllListeners();
 		}

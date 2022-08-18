@@ -82,14 +82,14 @@ namespace Game.UI.Windows
 
 		private void OnLoadClick()
 		{
-			var window = subCanvas.WindowsManager.GetAs<WindowLoadingCommit>();
+			var window = subCanvas.WindowsRegistrator.GetAs<WindowLoadingCommit>();
 			window.IsLoading = true;
 			window.Show();
 		}
 
 		private void OnPreferencesClick()
 		{
-			subCanvas.WindowsManager.Show<WindowPreferences>();
+			subCanvas.WindowsRegistrator.Show<WindowPreferences>();
 		}
 
 		private void OnStorageCleared(SignalStorageCleared signal)

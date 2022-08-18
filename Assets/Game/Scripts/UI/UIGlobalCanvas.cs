@@ -9,19 +9,19 @@ namespace Game.UI
 {
 	public class UIGlobalCanvas : MonoBehaviour
 	{
-		public WindowsManager WindowsManager
+		public WindowsRegistrator WindowsManager
 		{
 			get
 			{
 				if (windowsManager == null)
 				{
-					windowsManager = new WindowsManager();
+					windowsManager = new WindowsRegistrator();
 				}
 
 				return windowsManager;
 			}
 		}
-		private WindowsManager windowsManager;
+		private WindowsRegistrator windowsManager;
 
 		[field: SerializeField] public CanvasGroup GaveSaved { get; private set; }
 

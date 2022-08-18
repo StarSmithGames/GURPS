@@ -42,7 +42,7 @@ namespace Game.Managers.PartyManager
 		{
 			transform.DestroyChildren();
 
-			subCanvas.WindowsManager.Register(this);
+			subCanvas.WindowsRegistrator.Registrate(this);
 
 			UpdateAvatars();
 
@@ -54,7 +54,7 @@ namespace Game.Managers.PartyManager
 
 		private void OnDestroy()
 		{
-			subCanvas.WindowsManager.UnRegister(this);
+			subCanvas.WindowsRegistrator.UnRegistrate(this);
 
 			signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 

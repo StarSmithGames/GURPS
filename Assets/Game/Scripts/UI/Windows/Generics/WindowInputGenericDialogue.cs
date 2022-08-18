@@ -22,7 +22,7 @@ namespace Game.UI.Windows
 		[Inject]
 		private void Construct(UIGlobalCanvas globalCanvas)
 		{
-			globalCanvas.WindowsManager.Register(this);
+			globalCanvas.WindowsManager.Registrate(this);
 		}
 
 		private void Start()
@@ -35,7 +35,7 @@ namespace Game.UI.Windows
 
 		private void OnDestroy()
 		{
-			globalCanvas?.WindowsManager.UnRegister(this);
+			globalCanvas?.WindowsManager.UnRegistrate(this);
 
 			Ok?.onClick.RemoveAllListeners();
 			Reject?.onClick.RemoveAllListeners();

@@ -41,7 +41,7 @@ namespace Game.UI.Windows
 
 			Preferences.gameObject.SetActive(false);
 
-			subCanvas.WindowsManager.Register(this);
+			subCanvas.WindowsRegistrator.Registrate(this);
 
 			Continue.onClick.AddListener(OnContinue);
 			QSave.onClick.AddListener(OnQSave);
@@ -53,7 +53,7 @@ namespace Game.UI.Windows
 
 		private void OnDestroy()
 		{
-			subCanvas?.WindowsManager.UnRegister(this);
+			subCanvas?.WindowsRegistrator.UnRegistrate(this);
 
 			Continue?.onClick.RemoveAllListeners();
 			QSave?.onClick.RemoveAllListeners();
@@ -139,14 +139,14 @@ namespace Game.UI.Windows
 
 		private void OnSave()
 		{
-			windowLoadingCommit = subCanvas.WindowsManager.GetAs<WindowLoadingCommit>();
+			windowLoadingCommit = subCanvas.WindowsRegistrator.GetAs<WindowLoadingCommit>();
 			windowLoadingCommit.IsLoading = false;
 			windowLoadingCommit.Show();
 		}
 
 		private void OnLoad()
 		{
-			windowLoadingCommit = subCanvas.WindowsManager.GetAs<WindowLoadingCommit>();
+			windowLoadingCommit = subCanvas.WindowsRegistrator.GetAs<WindowLoadingCommit>();
 			windowLoadingCommit.IsLoading = true;
 			windowLoadingCommit.Show();
 		}

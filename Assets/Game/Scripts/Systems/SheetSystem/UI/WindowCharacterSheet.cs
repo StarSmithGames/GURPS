@@ -34,14 +34,14 @@ namespace Game.Systems.SheetSystem
 		{
 			Enable(false);
 
-			subCanvas.WindowsManager.Register(this);
+			subCanvas.WindowsRegistrator.Registrate(this);
 
 			Close.onClick.AddListener(OnClose);
 		}
 
 		private void OnDestroy()
 		{
-			subCanvas.WindowsManager.UnRegister(this);
+			subCanvas.WindowsRegistrator.UnRegistrate(this);
 			Close?.onClick.RemoveAllListeners();
 		}
 

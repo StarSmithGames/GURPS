@@ -6,19 +6,19 @@ namespace Game.UI
 {
 	public class UISubCanvas : MonoBehaviour
 	{
-		public WindowsManager WindowsManager
+		public WindowsRegistrator WindowsRegistrator
 		{
 			get
 			{
 				if(windowsManager == null)
 				{
-					windowsManager = new WindowsManager();
+					windowsManager = new WindowsRegistrator();
 				}
 
 				return windowsManager;
 			}
 		}
-		private WindowsManager windowsManager;
+		private WindowsRegistrator windowsManager;
 
 		public Transform Windows
 		{

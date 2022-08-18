@@ -74,7 +74,7 @@ namespace Game.Systems.DialogueSystem
 			this.notificationFactory = notificationFactory;
 			this.choiceFactory = choiceFactory;
 
-			subCanvas.WindowsManager.Register(this);
+			subCanvas.WindowsRegistrator.Registrate(this);
 		}
 
 		private void Start()
@@ -95,7 +95,7 @@ namespace Game.Systems.DialogueSystem
 
 		private void OnDestroy()
 		{
-			subCanvas.WindowsManager.UnRegister(this);
+			subCanvas.WindowsRegistrator.UnRegistrate(this);
 
 			DialogueTree.OnDialogueStarted -= OnDialogueStarted;
 			DialogueTree.OnDialoguePaused -= OnDialoguePaused;

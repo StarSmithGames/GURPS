@@ -64,12 +64,12 @@ namespace Game.UI.Windows
 			Load.onClick.AddListener(OnSaveLoad);
 			Background.onPointerDown += OnBackgroundDown;
 		
-			subCanvas.WindowsManager.Register(this);
+			subCanvas.WindowsRegistrator.Registrate(this);
 		}
 
 		private void OnDestroy()
 		{
-			subCanvas.WindowsManager.UnRegister(this);
+			subCanvas.WindowsRegistrator.UnRegistrate(this);
 
 			Dispose();
 			NewCommit?.onClick.RemoveAllListeners();
