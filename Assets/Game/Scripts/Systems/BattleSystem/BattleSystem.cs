@@ -99,7 +99,7 @@ namespace Game.Systems.BattleSystem
 
 			if (CurrentInitiator != null)
 			{
-				CurrentInitiator.onDestinationChanged -= OnInitiatorDestinationChanged;
+				//CurrentInitiator.onDestinationChanged -= OnInitiatorDestinationChanged;
 				//CurrentInitiator.Sheet.Stats.ActionPoints.onStatChanged -= OnInitiatorActionPointsChanged;
 			}
 
@@ -134,45 +134,45 @@ namespace Game.Systems.BattleSystem
 
 		private void UpdateStates()
 		{
-			IEntityModel initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
-			bool isEndBattle = localBattleTest.CurrentState == BattleState.EndBattle;
+			//IEntityModel initiator;// = localBattleTest.BattleFSM.CurrentTurn.Initiator;
+			//bool isEndBattle = localBattleTest.CurrentState == BattleState.EndBattle;
 
-			localBattleTest.Entities.ForEach((x) =>
-			{
-				if (!isEndBattle)
-				{
-					//if (characterManager.CurrentParty.Characters.Contains(x))
-					//{
-					//	if (x == initiator)
-					//	{
-					//		x.Markers.SetFollowMaterial(MaterialType.Leader);
-					//	}
-					//	else
-					//	{
-					//		x.Markers.SetFollowMaterial(MaterialType.Companion);
-					//	}
-					//}
-					//else
-					//{
-					//	x.Markers.SetFollowMaterial(MaterialType.Enemy);
-					//}
-				}
+			//localBattleTest.Entities.ForEach((x) =>
+			//{
+			//	if (!isEndBattle)
+			//	{
+			//		//if (characterManager.CurrentParty.Characters.Contains(x))
+			//		//{
+			//		//	if (x == initiator)
+			//		//	{
+			//		//		x.Markers.SetFollowMaterial(MaterialType.Leader);
+			//		//	}
+			//		//	else
+			//		//	{
+			//		//		x.Markers.SetFollowMaterial(MaterialType.Companion);
+			//		//	}
+			//		//}
+			//		//else
+			//		//{
+			//		//	x.Markers.SetFollowMaterial(MaterialType.Enemy);
+			//		//}
+			//	}
 
-				x.Freeze(!isEndBattle);
-			});
+			//	x.Freeze(!isEndBattle);
+			//});
 
-			if(localBattleTest.CurrentState == BattleState.Battle)
-			{
-				initiator.Freeze(false);
-			}
+			//if(localBattleTest.CurrentState == BattleState.Battle)
+			//{
+			//	initiator.Freeze(false);
+			//}
 		}
 
 		private void UpdateInitiatorTurn()
 		{
-			IEntityModel initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
+			//IEntityModel initiator = localBattleTest.BattleFSM.CurrentTurn.Initiator;
 			//bool isMineTurn = characterManager.CurrentParty.Characters.Contains(initiator);
 
-			cameraController.LookAt(initiator);
+			//cameraController.LookAt(initiator);
 
 			//uiManager.Battle.Messages.ShowTurnInforamtion(isMineTurn ? "YOU TURN" : "ENEMY TURN");
 
@@ -280,30 +280,30 @@ namespace Game.Systems.BattleSystem
 
 		private void OnTurnChanged()
 		{
-			if(CurrentInitiator != null)
-			{
-				CurrentInitiator.onDestinationChanged -= OnInitiatorDestinationChanged;
-				//CurrentInitiator.Sheet.Stats.ActionPoints.onStatChanged -= OnInitiatorActionPointsChanged;
-			}
-			CurrentTurn = localBattleTest.BattleFSM.CurrentTurn;
-			CurrentInitiator = CurrentTurn.Initiator;
+			//if(CurrentInitiator != null)
+			//{
+			//	CurrentInitiator.onDestinationChanged -= OnInitiatorDestinationChanged;
+			//	//CurrentInitiator.Sheet.Stats.ActionPoints.onStatChanged -= OnInitiatorActionPointsChanged;
+			//}
+			//CurrentTurn = localBattleTest.BattleFSM.CurrentTurn;
+			//CurrentInitiator = CurrentTurn.Initiator;
 
-			InitiatorRecoveActionsPoints();
-			InitiatorRecoveMove();
+			//InitiatorRecoveActionsPoints();
+			//InitiatorRecoveMove();
 
-			CurrentInitiator.onDestinationChanged += OnInitiatorDestinationChanged;
+			//CurrentInitiator.onDestinationChanged += OnInitiatorDestinationChanged;
 			//CurrentInitiator.Sheet.Stats.ActionPoints.onStatChanged += OnInitiatorActionPointsChanged;
 		}
 
 		private void OnInitiatorDestinationChanged()
 		{
-			if (CurrentInitiator.IsHasTarget)
-			{
-				if (!settings.isInfinityMoveStat)
-				{
-					asyncManager.StartCoroutine(InitiatorSpendMove());
-				}
-			}
+			//if (CurrentInitiator.IsHasTarget)
+			//{
+			//	if (!settings.isInfinityMoveStat)
+			//	{
+			//		asyncManager.StartCoroutine(InitiatorSpendMove());
+			//	}
+			//}
 		}
 
 		private void OnInitiatorActionPointsChanged()
@@ -438,32 +438,32 @@ namespace Game.Systems.BattleSystem
 
 		private void OnDied(IEntityModel entity)
 		{
-			if (Entities.Contains(entity))
-			{
-				foreach (var round in BattleFSM.Rounds)
-				{
-					for (int i = round.Turns.Count - 1; i >= 0; i--)
-					{
-						var turn = round.Turns[i];
+			//if (Entities.Contains(entity))
+			//{
+			//	foreach (var round in BattleFSM.Rounds)
+			//	{
+			//		for (int i = round.Turns.Count - 1; i >= 0; i--)
+			//		{
+			//			var turn = round.Turns[i];
 
-						if (turn.Initiator == entity)
-						{
-							if (BattleFSM.CurrentTurn == turn)
-							{
-								NextTurn();
-							}
+			//			if (turn.Initiator == entity)
+			//			{
+			//				if (BattleFSM.CurrentTurn == turn)
+			//				{
+			//					NextTurn();
+			//				}
 
-							if (round.Remove(turn))
-							{
-								onBattleUpdated?.Invoke();
-							}
-						}
-					}
-				}
+			//				if (round.Remove(turn))
+			//				{
+			//					onBattleUpdated?.Invoke();
+			//				}
+			//			}
+			//		}
+			//	}
 				
-				Entities.Remove(entity as IBattlable);
-				onEntitiesChanged?.Invoke();
-			}
+			//	Entities.Remove(entity as IBattlable);
+			//	onEntitiesChanged?.Invoke();
+			//}
 		}
 	}
 

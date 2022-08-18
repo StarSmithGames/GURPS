@@ -9,7 +9,7 @@ using Zenject;
 using System.Collections;
 using Game.Entities.Models;
 
-namespace Game.Entities
+namespace Game.Entities.Models
 {
 	public interface IEntityModel : IPathfinderable
 	{

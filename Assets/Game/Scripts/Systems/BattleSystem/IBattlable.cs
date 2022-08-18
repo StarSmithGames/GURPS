@@ -1,10 +1,8 @@
-using Game.Entities;
-
 using UnityEngine.Events;
 
 namespace Game.Systems.BattleSystem
 {
-	public interface IBattlable : IEntityModel
+	public interface IBattlable
 	{
 		event UnityAction onBattleChanged;
 

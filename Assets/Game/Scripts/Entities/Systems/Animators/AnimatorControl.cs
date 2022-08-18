@@ -1,6 +1,7 @@
 using CMF;
 
 using Game.Entities;
+using Game.Entities.Models;
 using Game.Systems.BattleSystem;
 
 using System.Collections;

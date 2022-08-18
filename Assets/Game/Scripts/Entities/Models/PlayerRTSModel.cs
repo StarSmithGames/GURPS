@@ -1,6 +1,5 @@
 using EPOOutline;
 
-using Game.Managers.CharacterManager;
 using Game.Managers.StorageManager;
 using Game.Systems.InteractionSystem;
 
@@ -8,7 +7,7 @@ using System.Collections;
 
 using Zenject;
 
-namespace Game.Entities
+namespace Game.Entities.Models
 {
 	public class PlayerRTSModel : EntityModel, IObservable, IInteractable
 	{

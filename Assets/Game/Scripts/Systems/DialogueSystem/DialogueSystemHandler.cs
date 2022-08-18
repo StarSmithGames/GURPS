@@ -16,7 +16,8 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 using Zenject;
-using UnityEngine.UIElements;
+using Game.Entities.Models;
+using Game.Entities;
 using Game.Systems.SheetSystem;
 
 namespace Game.Systems.DialogueSystem
@@ -177,9 +178,8 @@ namespace Game.Systems.DialogueSystem
 
 			info.Continue();
 		}
-		private void SpawnSubtitles(IActor actor, string text)
+		private void SpawnSubtitles(ISheet sheet, string text)
 		{
-			var sheet = actor.Sheet;
 			dialogue.ActorPortrait.gameObject.SetActive(sheet.Information.IsHasPortrait);
 			dialogue.ActorPortrait.sprite = sheet.Information.portrait;
 
@@ -207,7 +207,15 @@ namespace Game.Systems.DialogueSystem
 
 			Assert.IsNotNull(actor, "IActor == null");
 
-			SpawnSubtitles(actor, info.statement.Text);
+			if(actor is ICharacterModel model)
+			{
+				SpawnSubtitles(model.Character.Sheet, info.statement.Text);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+
 
 			asyncManager.StartCoroutine(WaitSubtitlesInput(info));
 		}

@@ -1,4 +1,5 @@
 using Game.Entities;
+using Game.Entities.Models;
 
 using Sirenix.OdinInspector;
 

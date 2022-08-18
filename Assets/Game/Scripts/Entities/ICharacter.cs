@@ -1,23 +1,89 @@
 using Game.Entities.Models;
-using Game.Systems.DialogueSystem;
+using Game.Systems.DamageSystem;
 using Game.Systems.SheetSystem;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Entities
 {
-	public interface ICharacter : IEntity, IActor { }
-
-	public abstract class Character : Entity, ICharacter
+	public interface ICharacter : IEntity, ISheetable, IDamegeable, IKillable
 	{
-		public bool IsHaveSomethingToSay { get; }
-		public bool IsInDialogue { get; set; }
-		public ActorSettings ActorSettings { get; }
-		public Transform DialogueTransform { get; }
+	
+	}
 
-		public void Bark()
+	public abstract partial class Character : Entity, ICharacter
+	{
+		public virtual ISheet Sheet { get; protected set; }
+	}
+
+	//IDamegeable, IKillable implementation
+	public partial class Character
+	{
+		public event UnityAction<IEntity> onDied;
+
+		public virtual void Kill()
 		{
-			throw new System.NotImplementedException();
+			//Controller.Enable(false);
+			onDied?.Invoke(this);
+		}
+
+		public virtual Damage GetDamage()
+		{
+			return null;
+		}
+
+		public virtual void ApplyDamage<T>(T value) { }
+
+		protected Vector2 GetDamageFromTable()
+		{
+			return new Vector2(1, 7);
 		}
 	}
+
+	//IDamegeable, IKillable implementation
+	//partial class StubEntityModel
+	//{
+	//	protected FloatingSystem floatingSystem;
+
+	//	public override Damage GetDamage()
+	//	{
+	//		return new Damage()
+	//		{
+	//			amount = GetDamageFromTable(),
+	//			damageType = DamageType.Crushing,
+	//		};
+	//	}
+
+	//	public override void ApplyDamage<T>(T value)
+	//	{
+	//		if (value is Damage damage)
+	//		{
+	//			float dmg = (int)Mathf.Max(damage.DMG - 2, 0);
+
+	//			if (dmg == 0)
+	//			{
+	//				floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), "Miss!", type: AnimationType.BasicDamageType);
+	//			}
+	//			else
+	//			{
+	//				floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.damageType.ToString(), type: AnimationType.BasicDamageType);
+
+	//				if (damage.IsPhysicalDamage)
+	//				{
+
+	//					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), dmg.ToString(), type: AnimationType.AdvanceDamage);
+	//					if (!Sheet.Settings.isImmortal)
+	//					{
+	//						Sheet.Stats.HitPoints.CurrentValue -= dmg;
+	//					}
+	//				}
+	//				else if (damage.IsMagicalDamage)
+	//				{
+
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 }

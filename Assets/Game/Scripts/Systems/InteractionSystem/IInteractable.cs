@@ -1,5 +1,4 @@
-using Game.Entities;
-using Game.Map;
+using Game.Entities.Models;
 using Game.Systems.InventorySystem;
 
 using UnityEngine;

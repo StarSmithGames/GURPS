@@ -61,7 +61,7 @@ namespace Game.Systems.CameraSystem
 		{
 			base.Tick();
 
-			if (!leader.IsInDialogue)
+			if (!leaderModel.IsInDialogue)
 			{
 				TooltipRuler();
 			}
@@ -69,7 +69,7 @@ namespace Game.Systems.CameraSystem
 
 		protected override void HandleHover(Vector3 point)
 		{
-			if (!leader.IsInDialogue)
+			if (!leaderModel.IsInDialogue)
 			{
 				if (leaderModel.InBattle)
 				{
@@ -104,7 +104,7 @@ namespace Game.Systems.CameraSystem
 
 		protected override void HandleMouseClick(Vector3 point)
 		{
-			if (!leader.IsInDialogue)
+			if (!leaderModel.IsInDialogue)
 			{
 				if (inputManager.IsLeftMouseButtonPressed())
 				{
@@ -162,7 +162,7 @@ namespace Game.Systems.CameraSystem
 
 		protected override void ValidatePath(Vector3 point)
 		{
-			if (!leader.IsInDialogue)
+			if (!leaderModel.IsInDialogue)
 			{
 				float pathDistance = CurrentObserve != null ? leaderModel.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leaderModel.Navigation.FullPathDistance, 2);
 
@@ -200,7 +200,7 @@ namespace Game.Systems.CameraSystem
 
 		protected override void OnHoverObserveChanged()
 		{
-			if (!leader.IsInDialogue)
+			if (!leaderModel.IsInDialogue)
 			{
 				if (leaderModel.InBattle)
 				{

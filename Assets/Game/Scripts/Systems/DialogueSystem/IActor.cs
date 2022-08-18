@@ -1,4 +1,3 @@
-using Game.Systems.SheetSystem;
 using Game.Systems.VFX;
 
 using NodeCanvas.DialogueTrees;
@@ -7,12 +6,10 @@ using Sirenix.OdinInspector;
 
 namespace Game.Systems.DialogueSystem
 {
-    public interface IActor : ISheetable, IDialogueActor//>:c
+    public interface IActor : IDialogueActor//>:c
     {
         bool IsHaveSomethingToSay { get; }
         bool IsInDialogue { get; set; }
-
-        ActorSettings ActorSettings { get; }
 
         void Bark();
     }

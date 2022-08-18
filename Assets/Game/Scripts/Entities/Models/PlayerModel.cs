@@ -22,6 +22,6 @@ namespace Game.Entities.Models
 			base.OnDestroy();
 		}
 
-		//protected override void CheckReplicas() { }
+		protected override void CheckReplicas() { }
 	}
 }

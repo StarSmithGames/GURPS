@@ -1,4 +1,5 @@
 using Game.Entities;
+using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
 using Sirenix.OdinInspector;
 
@@ -29,6 +30,7 @@ namespace Game.Systems.SheetSystem
         public virtual IInventory Inventory { get; private set; }
 
 		public SheetSettings Settings { get; private set; }
+		public ActorSettings ActorSettings { get; }
 
 		public EntitySheet(EntityInformation information, SheetSettings sheetSettings)
         {
@@ -83,7 +85,7 @@ namespace Game.Systems.SheetSystem
         public InventorySettings inventory;
         [ShowIf("@IsHumanoid && !IsLifeless")]
         public EquipmentSettings equipment;
-
+        public ActorSettings actor;        
 
         private bool IsHumanoid => identity == Identity.Humanoid;
         private bool IsLifeless => identity == Identity.Lifeless;

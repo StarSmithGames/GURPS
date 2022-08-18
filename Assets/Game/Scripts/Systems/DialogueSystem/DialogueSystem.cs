@@ -50,7 +50,7 @@ namespace Game.Systems.DialogueSystem
 		{
 			if (!dialogueController.isRunning && !IsDialogueProcess)
 			{
-				dialogueController.graph = CurrentDialogue = actor.ActorSettings.dialogues;
+				//dialogueController.graph = CurrentDialogue = actor.ActorSettings.dialogues;
 				JoinToDialogue(initiator);
 				JoinToDialogue(actor);
 

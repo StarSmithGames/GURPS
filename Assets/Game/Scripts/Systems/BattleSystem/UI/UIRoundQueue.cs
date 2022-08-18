@@ -48,7 +48,7 @@ namespace Game.Systems.BattleSystem
 			{
 				for (int j = 0; j < rounds[i].Turns.Count; j++)
 				{
-					turns[count].SetEntity(rounds[i].Turns[j].Initiator);
+					//turns[count].SetEntity(rounds[i].Turns[j].Initiator);
 
 					if (count == 0)
 					{

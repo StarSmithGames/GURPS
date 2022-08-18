@@ -1,5 +1,6 @@
 using EPOOutline;
 
+using Game.Entities.Models;
 using Game.Systems.CameraSystem;
 using Game.Systems.DialogueSystem;
 

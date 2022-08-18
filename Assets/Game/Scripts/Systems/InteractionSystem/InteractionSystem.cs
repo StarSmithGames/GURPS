@@ -1,6 +1,7 @@
 using DG.Tweening;
 
 using Game.Entities;
+using Game.Entities.Models;
 using Game.Systems.BattleSystem;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
@@ -291,145 +292,140 @@ namespace Game.Systems.InteractionSystem
 		}
 	}
 
-	public class Attack : TaskActionInteraction
-	{
-		public Attack(IBattlable from, IInteractable to) : base(from, to)
-		{
-			//entity.AnimatorControl.onAttackEvent += OnAttacked;
-		}
+	//public class Attack : TaskActionInteraction
+	//{
+	//	protected virtual void Dispose()
+	//	{
+	//		if (entity != null)
+	//		{
+	//			//entity.AnimatorControl.onAttackEvent -= OnAttacked;
+	//		}
+	//	}
 
-		protected virtual void Dispose()
-		{
-			if (entity != null)
-			{
-				//entity.AnimatorControl.onAttackEvent -= OnAttacked;
-			}
-		}
+	//	public override IEnumerator Implementation()
+	//	{
+	//		//if (to is IEntity entity)
+	//		{
+	//			//if (!entity.Sheet.Conditions.IsContains<Death>())
+	//			{
+	//				//rotate & animation
+	//				Sequence sequence = DOTween.Sequence();
 
-		public override IEnumerator Implementation()
-		{
-			//if (to is IEntity entity)
-			{
-				//if (!entity.Sheet.Conditions.IsContains<Death>())
-				{
-					//rotate & animation
-					Sequence sequence = DOTween.Sequence();
+	//				//sequence
+	//				//	.Append(entity.Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
+	//				//	.AppendCallback(entity.AnimatorControl.Attack);
+	//			}
+	//		}
+	//		//else if (to is IDamegeable)
+	//		//{
 
-					//sequence
-					//	.Append(entity.Controller.RotateAnimatedTo(entity.Transform.position, 0.25f))
-					//	.AppendCallback(entity.AnimatorControl.Attack);
-				}
-			}
-			//else if (to is IDamegeable)
-			//{
+	//		//}
 
-			//}
-
-			//wait start and then end attack
-			//yield return new WaitWhile(() => !entity.AnimatorControl.IsAttackProccess);
-			//yield return new WaitWhile(() => entity.AnimatorControl.IsAttackProccess);
-			yield return null;
-			Dispose();
-		}
+	//		//wait start and then end attack
+	//		//yield return new WaitWhile(() => !entity.AnimatorControl.IsAttackProccess);
+	//		//yield return new WaitWhile(() => entity.AnimatorControl.IsAttackProccess);
+	//		yield return null;
+	//		Dispose();
+	//	}
 		
 
-		protected virtual void CheckDeath(IEntityModel entity)
-		{
-			//if (entity.Sheet.Stats.HitPoints.CurrentValue == 0)
-			//{
-			//	if (!entity.Sheet.Conditions.IsContains<Death>())
-			//	{
-			//		if (entity.Sheet.Conditions.Add(new Death()))
-			//		{
-			//			//entity.AnimatorControl.Death();
-			//			//entity.Kill();
+	//	protected virtual void CheckDeath(IEntityModel entity)
+	//	{
+	//		//if (entity.Sheet.Stats.HitPoints.CurrentValue == 0)
+	//		//{
+	//		//	if (!entity.Sheet.Conditions.IsContains<Death>())
+	//		//	{
+	//		//		if (entity.Sheet.Conditions.Add(new Death()))
+	//		//		{
+	//		//			//entity.AnimatorControl.Death();
+	//		//			//entity.Kill();
 
-			//			Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {entity.MonoBehaviour.gameObject.name}");
-			//		}
-			//	}
-			//}
-		}
+	//		//			Debug.LogError($"{entity.MonoBehaviour.gameObject.name} died from {entity.MonoBehaviour.gameObject.name}");
+	//		//		}
+	//		//	}
+	//		//}
+	//	}
 
-		/// <summary>
-		/// from attacked to
-		/// </summary>
-		protected void OnAttacked()
-		{
-			if(interactable is IEntityModel entity)
-			{
-				//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
-				//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
-				//entity.ApplyDamage(entity.GetDamage());
+	//	/// <summary>
+	//	/// from attacked to
+	//	/// </summary>
+	//	protected void OnAttacked()
+	//	{
+	//		if(interactable is IEntityModel entity)
+	//		{
+	//			//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
+	//			//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
+	//			//entity.ApplyDamage(entity.GetDamage());
 
-				//CheckDeath(entity);
-			}
-		}
+	//			//CheckDeath(entity);
+	//		}
+	//	}
 
 		
-	}
+	//}
 
-	public class HumanoidAttack : Attack
-	{
-		private HumanoidAnimatorControl control;
-		private IEquipment equipment;
+	//public class HumanoidAttack : Attack
+	//{
+	//	private HumanoidAnimatorControl control;
+	//	private IEquipment equipment;
 
-		public HumanoidAttack(IBattlable from, IInteractable to) : base(from, to)
-		{
-			//control = (from.AnimatorControl as HumanoidAnimatorControl);
-			//equipment = (from.Sheet as CharacterSheet).Equipment;
+	//	public HumanoidAttack(IBattlable from, IInteractable to) : base(from, to)
+	//	{
+	//		//control = (from.AnimatorControl as HumanoidAnimatorControl);
+	//		//equipment = (from.Sheet as CharacterSheet).Equipment;
 
-			//control.onAttackLeftHand += OnAttackedLeftHand;
-			//control.onAttackRightHand += OnAttackRightHand;
-			//control.onAttackKick += OnAttacked;
-		}
+	//		//control.onAttackLeftHand += OnAttackedLeftHand;
+	//		//control.onAttackRightHand += OnAttackRightHand;
+	//		//control.onAttackKick += OnAttacked;
+	//	}
 
-		protected override void Dispose()
-		{
-			base.Dispose();
+	//	protected override void Dispose()
+	//	{
+	//		base.Dispose();
 
-			if(control != null)
-			{
-				control.onAttackLeftHand -= OnAttackedLeftHand;
-				control.onAttackRightHand -= OnAttackRightHand;
-				control.onAttackKick -= OnAttacked;
-			}
-		}
+	//		if(control != null)
+	//		{
+	//			control.onAttackLeftHand -= OnAttackedLeftHand;
+	//			control.onAttackRightHand -= OnAttackRightHand;
+	//			control.onAttackKick -= OnAttacked;
+	//		}
+	//	}
 
-		private void OnAttackedLeftHand()
-		{
-			if (!equipment.WeaponCurrent.Spare.IsEmpty)
-			{
-				if (interactable is IEntityModel entity)
-				{
-					//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
-					//entity.ApplyDamage(equipment.WeaponCurrent.Spare.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
+	//	private void OnAttackedLeftHand()
+	//	{
+	//		if (!equipment.WeaponCurrent.Spare.IsEmpty)
+	//		{
+	//			if (interactable is IEntityModel entity)
+	//			{
+	//				//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
+	//				//entity.ApplyDamage(equipment.WeaponCurrent.Spare.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
 
-					//CheckDeath(entity);
-				}
-			}
-			else
-			{
-				OnAttacked();
-			}
-		}
-		private void OnAttackRightHand()
-		{
-			if (!equipment.WeaponCurrent.Main.IsEmpty)
-			{
-				if (interactable is IEntityModel entity)
-				{
-					//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
-					//entity.ApplyDamage(equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
+	//				//CheckDeath(entity);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			OnAttacked();
+	//		}
+	//	}
+	//	private void OnAttackRightHand()
+	//	{
+	//		if (!equipment.WeaponCurrent.Main.IsEmpty)
+	//		{
+	//			if (interactable is IEntityModel entity)
+	//			{
+	//				//entity.AnimatorControl.Hit(Random.Range(0, 2));//animation
+	//				//entity.ApplyDamage(equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
 
-					//CheckDeath(entity);
-				}
-			}
-			else
-			{
-				OnAttacked();
-			}
-		}
-	}
+	//				//CheckDeath(entity);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			OnAttacked();
+	//		}
+	//	}
+	//}
 
 	public enum TaskActionStatus
 	{

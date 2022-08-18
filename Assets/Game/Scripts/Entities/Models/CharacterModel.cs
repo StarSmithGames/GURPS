@@ -15,10 +15,12 @@ using Game.Systems.InteractionSystem;
 
 namespace Game.Entities.Models
 {
-	public interface ICharacterModel : IEntityModel, IBattlable, IObservable, IInteractable
+	public interface ICharacterModel : IEntityModel, IObservable, IInteractable, IBattlable, IActor
 	{
 		bool IsWithRangedWeapon { get; }//rm
 		float CharacterRange { get; }//rm
+
+		ICharacter Character { get; }
 
 		AnimatorControl AnimatorControl { get; }
 		CharacterOutfit Outfit { get; }
@@ -31,6 +33,9 @@ namespace Game.Entities.Models
 	public partial class CharacterModel : EntityModel, ICharacterModel
 	{
 		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
+
+		public ICharacter Character { get; protected set; }
+		public CharacterData data;
 
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorControl AnimatorControl { get; private set; }
@@ -61,8 +66,8 @@ namespace Game.Entities.Models
 			Markers = markerController;
 
 			this.characterManager = characterManager;
-			//this.dialogueSystem = dialogueSystem;
-			//this.barker = barker;
+			this.dialogueSystem = dialogueSystem;
+			this.barker = barker;
 
 			//equipment = (Sheet as CharacterSheet).Equipment;
 		}
@@ -81,11 +86,11 @@ namespace Game.Entities.Models
 			Markers.Exclamation.Enable(false);
 			Markers.Question.Enable(false);
 
-			//signalBus?.Subscribe<StartDialogueSignal>(OnDialogueStarted);
+			signalBus?.Subscribe<StartDialogueSignal>(OnDialogueStarted);
 
 			yield return base.Start();
-			//yield return new WaitForSeconds(2.5f);
-			//CheckReplicas();
+			yield return new WaitForSeconds(2.5f);
+			CheckReplicas();
 		}
 
 		protected override void OnDestroy()
@@ -110,7 +115,10 @@ namespace Game.Entities.Models
 			Markers.LineMarker.DrawLine(Navigation.NavMeshAgent.path.corners);
 		}
 
-		protected virtual void InitializePersonality(){ }
+		protected virtual void InitializePersonality()
+		{
+			//Character = new Character(this, data);
+		}
 
 		private void OnEquipWeaponChanged()
 		{
@@ -156,96 +164,104 @@ namespace Game.Entities.Models
 	}
 
 	//IActor implementation
-	//partial class CharacterModel
-	//{
-	//	public virtual bool IsHaveSomethingToSay => (ActorSettings.barks != null && IsHasFreshAndImportantBarks()) || (ActorSettings.dialogues != null && IsHasFreshAndImportantDialogues());
-	//	public virtual bool IsInDialogue { get; set; }
+	partial class CharacterModel
+	{
+		public ActorSettings Actor
+		{
+			get
+			{
+				if(actor == null)
+				{
+					actor = Character.Sheet.Settings.actor;
+				}
+				return actor;
+			}
+		}
+		private ActorSettings actor;
 
-	//	public ActorSettings ActorSettings => actorSettings;
-	//	[SerializeField] protected ActorSettings actorSettings;
+		public virtual bool IsHaveSomethingToSay => (Actor.barks != null && IsHasFreshAndImportantBarks()) || (Actor.dialogues != null && IsHasFreshAndImportantDialogues());
+		public virtual bool IsInDialogue { get; set; }
 
-	//	protected DialogueSystem dialogueSystem;
-	//	protected Barker barker;
+		protected DialogueSystem dialogueSystem;
+		protected Barker barker;
 
-	//	public virtual void Bark()
-	//	{
-	//		if (barker == null || ActorSettings.barks == null)
-	//		{
-	//			Debug.LogError($"{gameObject.name} barker == null || ActorSettings.barks == null", gameObject);
-	//			return;
-	//		}
-	//		if (barker.IsShowing) return;
+		public virtual void Bark()
+		{
+			if (barker == null || Actor.barks == null)
+			{
+				Debug.LogError($"{gameObject.name} barker == null || ActorSettings.barks == null", gameObject);
+				return;
+			}
+			if (barker.IsShowing) return;
 
-	//		var bark = ActorSettings.barks.allNodes.FirstOrDefault();
+			var bark = Actor.barks.allNodes.FirstOrDefault();
 
-	//		switch (ActorSettings.barks.barkType)
-	//		{
-	//			case BarkType.First:
-	//			case BarkType.Random:
-	//			{
-	//				bark = ActorSettings.barks.allNodes.RandomItem();
+			switch (Actor.barks.barkType)
+			{
+				case BarkType.First:
+				case BarkType.Random:
+				{
+					bark = Actor.barks.allNodes.RandomItem();
 
-	//				if (bark is I2StatementNode node)
-	//				{
-	//					ShowBarkSubtitles(node.statement.GetCurrent());
-	//				}
+					if (bark is I2StatementNode node)
+					{
+						ShowBarkSubtitles(node.statement.GetCurrent());
+					}
 
-	//				break;
-	//			}
-	//			case BarkType.Sequence:
-	//			{
-	//				//TODO
-	//				break;
-	//			}
-	//		}
+					break;
+				}
+				case BarkType.Sequence:
+				{
+					//TODO
+					break;
+				}
+			}
 
-	//		ActorSettings.barks.TreeData.isFirstTime = false;
-	//		//Markers.Exclamation.Hide();
-	//	}
+			Actor.barks.TreeData.isFirstTime = false;
+			Markers.Exclamation.Hide();
+		}
 
+		private bool IsHasFreshAndImportantBarks()
+		{
+			return Actor.barks.TreeData.isFirstTime && Actor.isImportanatBark;
+		}
+		private bool IsHasFreshAndImportantDialogues()
+		{
+			return Actor.dialogues.TreeData.isFirstTime;
+		}
 
-	//	private bool IsHasFreshAndImportantBarks()
-	//	{
-	//		return ActorSettings.barks.TreeData.isFirstTime && ActorSettings.isImportanatBark;
-	//	}
-	//	private bool IsHasFreshAndImportantDialogues()
-	//	{
-	//		return ActorSettings.dialogues.TreeData.isFirstTime;
-	//	}
+		protected void ShowBarkSubtitles(I2AudioText subtitles)
+		{
+			if (subtitles != null)
+			{
+				barker.Text.text = subtitles.Text;
+				barker.Show();
+			}
+		}
 
+		protected virtual void CheckReplicas()
+		{
+			if (IsHaveSomethingToSay)
+			{
+				Markers.Exclamation.Show();
+			}
+			else
+			{
+				if (Markers.Exclamation.IsSwowing && !Markers.Exclamation.IsHideProcess)
+				{
+					Markers.Exclamation.Hide();
+				}
+			}
+		}
 
-	//	protected void ShowBarkSubtitles(I2AudioText subtitles)
-	//	{
-	//		if (subtitles != null)
-	//		{
-	//			barker.Text.text = subtitles.Text;
-	//			barker.Show();
-	//		}
-	//	}
-
-	//	protected virtual void CheckReplicas()
-	//	{
-	//		if (IsHaveSomethingToSay)
-	//		{
-	//			Markers.Exclamation.Show();
-	//		}
-	//		else
-	//		{
-	//			if (Markers.Exclamation.IsSwowing && !Markers.Exclamation.IsHideProcess)
-	//			{
-	//				Markers.Exclamation.Hide();
-	//			}
-	//		}
-	//	}
-
-	//	private void OnDialogueStarted(StartDialogueSignal signal)
-	//	{
-	//		if (signal.dialogue == actorSettings.dialogues)
-	//		{
-	//			CheckReplicas();
-	//		}
-	//	}
-	//}
+		private void OnDialogueStarted(StartDialogueSignal signal)
+		{
+			if (signal.dialogue == Actor.dialogues)
+			{
+				CheckReplicas();
+			}
+		}
+	}
 
 	//IBattlable implementation
 	partial class CharacterModel
