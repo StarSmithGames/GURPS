@@ -1,4 +1,5 @@
 using Game.Managers.PartyManager;
+using Game.Managers.SceneManager;
 
 using Zenject;
 
@@ -18,16 +19,19 @@ namespace Game.Entities.Models
 			this.partyManager = partyManager;
 		}
 
-		protected override void OnDestroy()
-		{
-			partyManager.PlayerParty.RemoveCharacter(Character);
-
-			base.OnDestroy();
-		}
 		protected override void InitializePersonality()
 		{
 			Character = new Companion(this, data);
-			partyManager.PlayerParty.AddCharacter(Character);
+
+			if (partyManager.PlayerParty.ContainsByData(data))
+			{
+				DestroyImmediate(gameObject);
+			}
+		}
+
+		private void OnSceneChanged(SignalSceneChanged signal)
+		{
+			//partyManager.PlayerParty.RemoveCharacter(Character);
 		}
 	}
 }

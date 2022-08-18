@@ -85,7 +85,7 @@ namespace Game.Systems.SheetSystem
         public InventorySettings inventory;
         [ShowIf("@IsHumanoid && !IsLifeless")]
         public EquipmentSettings equipment;
-        public ActorSettings actor;        
+        public ActorSettings actor;
 
         private bool IsHumanoid => identity == Identity.Humanoid;
         private bool IsLifeless => identity == Identity.Lifeless;

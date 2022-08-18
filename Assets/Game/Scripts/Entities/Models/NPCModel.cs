@@ -1,78 +1,63 @@
-using Game.Managers.CharacterManager;
 using Game.Systems.BattleSystem;
-using Game.Systems.SheetSystem;
 
 using System.Collections;
-using System.Collections.Generic;
-
-using UnityEngine;
 
 using Zenject;
 
 namespace Game.Entities.Models
 {
-	public class NPCModel : CharacterModel
+	public interface INPCModel : ICharacterModel { }
+
+	public class NPCModel : CharacterModel, INPCModel
 	{
-		[SerializeField] private NPCData data;
-
-		//public override ISheet Sheet
-		//{
-		//	get
-		//	{
-		//		if (npcSheet == null)
-		//		{
-		//			npcSheet = new NPCSheet(data);
-		//		}
-
-		//		return npcSheet;
-		//	}
-		//}
-		//private NPCSheet npcSheet;
-
+		public NPCData data;
 
 		protected FieldOfView fov;
-		protected CharacterManager characterManager;
 		protected BattleSystem battleSystem;
 
 		[Inject]
-		private void Construct(FieldOfView fov,
-			CharacterManager characterManager,
-			BattleSystem battleSystem)
+		private void Construct(/*FieldOfView fov, */BattleSystem battleSystem)
 		{
-			this.fov = fov;
-			this.characterManager = characterManager;
+			//this.fov = fov;
 			this.battleSystem = battleSystem;
 		}
 
 		protected override IEnumerator Start()
 		{
-			fov.StartView();
+			//fov.StartView();
 
 			yield return base.Start();
 		}
 
-		private void Update()
+		//private void Update()
+		//{
+			//if (fov.IsViewProccess)
+			//{
+			//	if (!InBattle)
+			//	{
+			//		if (fov.visibleTargets.Count > 0)
+			//		{
+			//			fov.StopView();
+			//			List<IBattlable> entities = new List<IBattlable>();
+
+			//			//for (int i = 0; i < characterManager.CurrentParty.Characters.Count; i++)
+			//			//{
+			//			//	entities.Add(characterManager.CurrentParty.Characters[i]);
+			//			//}
+			//			entities.Add(this);
+
+			//			battleSystem.StartBattle(entities);
+			//		}
+			//	}
+			//}
+		//}
+
+		protected override void InitializePersonality()
 		{
-			if (fov.IsViewProccess)
-			{
-				if (!InBattle)
-				{
-					if (fov.visibleTargets.Count > 0)
-					{
-						fov.StopView();
-						List<IBattlable> entities = new List<IBattlable>();
-
-						//for (int i = 0; i < characterManager.CurrentParty.Characters.Count; i++)
-						//{
-						//	entities.Add(characterManager.CurrentParty.Characters[i]);
-						//}
-						entities.Add(this);
-
-						battleSystem.StartBattle(entities);
-					}
-				}
-			}
+			Character = new NPC(this, data);
 		}
+
+
 
 		protected override void ResetMarkers()
 		{

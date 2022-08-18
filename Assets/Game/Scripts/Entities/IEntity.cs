@@ -1,5 +1,7 @@
 using Game.Entities.Models;
 
+using Zenject;
+
 namespace Game.Entities
 {
 	public interface IEntity

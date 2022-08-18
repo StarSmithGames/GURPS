@@ -60,11 +60,8 @@ namespace Game.Managers.PartyManager
 
 			avatars.ForEach((x) =>
 			{
-				if (x != null)
-				{
-					x.onClicked -= OnAvatarClicked;
-					x.onDoubleClicked -= OnAvatarDoubleClicked;
-				}
+				x.onClicked -= OnAvatarClicked;
+				x.onDoubleClicked -= OnAvatarDoubleClicked;
 			});
 		}
 
@@ -107,8 +104,8 @@ namespace Game.Managers.PartyManager
 
 					avatar.onClicked -= OnAvatarClicked;
 					avatar.onDoubleClicked -= OnAvatarDoubleClicked;
-					avatar?.DespawnIt();
 					avatars.Remove(avatar);
+					avatar.DespawnIt();
 				}
 			}
 

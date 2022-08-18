@@ -5,6 +5,8 @@ using Game.Systems.SheetSystem;
 using UnityEngine;
 using UnityEngine.Events;
 
+using Zenject;
+
 namespace Game.Entities
 {
 	public interface ICharacter : IEntity, ISheetable, IDamegeable, IKillable

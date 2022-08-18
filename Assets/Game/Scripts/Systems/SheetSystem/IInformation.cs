@@ -54,7 +54,7 @@ namespace Game.Systems.SheetSystem
     }
 
 	[System.Serializable]
-    public class HumanoidEntityInformation : EntityInformation
+    public class HumanoidInformation : EntityInformation
     {
 		public override string Name
 		{
@@ -67,13 +67,6 @@ namespace Game.Systems.SheetSystem
 
 		public Color nameColor = Color.white;
     }
-
-    [System.Serializable]
-    public class CharacterInformation : HumanoidEntityInformation { }
-
-    [System.Serializable]
-    public class NPCInformation : HumanoidEntityInformation { }
-
 
     [System.Serializable]
     public class ModelInformation : EntityInformation

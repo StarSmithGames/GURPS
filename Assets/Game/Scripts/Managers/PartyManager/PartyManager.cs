@@ -2,6 +2,7 @@ using Game.Entities;
 using Game.Entities.Models;
 
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine.Assertions;
 
@@ -90,6 +91,8 @@ namespace Game.Managers.PartyManager
 				signalBus?.Fire(new SignalPartyChanged());
 			}
 		}
+
+		
 	}
 
 	public class PlayerParty : Party
@@ -124,6 +127,12 @@ namespace Game.Managers.PartyManager
 			}
 
 			return false;
+		}
+
+
+		public bool ContainsByData(CompanionData data)
+		{
+			return Characters.Any((x) => (x is ICompanion) ? (x as ICompanion).Data == data : false);
 		}
 	}
 }

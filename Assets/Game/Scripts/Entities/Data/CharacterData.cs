@@ -8,7 +8,6 @@ namespace Game.Entities
 	[CreateAssetMenu(fileName = "Character", menuName = "Game/Characters/Character")]
 	public class CharacterData : EntityData
 	{
-        public CharacterInformation information;
-		public ActorSettings actorSettings;
+        public HumanoidInformation information;
 	}
 }

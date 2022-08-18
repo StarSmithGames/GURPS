@@ -30,12 +30,11 @@ namespace Game.Entities.Models
 		CharacterModel.Data GetData();
 	}
 
-	public partial class CharacterModel : EntityModel, ICharacterModel
+	public abstract partial class CharacterModel : EntityModel, ICharacterModel
 	{
 		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
 
 		public ICharacter Character { get; protected set; }
-		public CharacterData data;
 
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorControl AnimatorControl { get; private set; }

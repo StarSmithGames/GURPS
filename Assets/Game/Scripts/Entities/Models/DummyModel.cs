@@ -1,3 +1,4 @@
+using Game.Entities.Models;
 using Game.Systems.DialogueSystem;
 using Game.Systems.SheetSystem;
 
@@ -5,7 +6,7 @@ using UnityEngine;
 
 namespace Game.Entities
 {
-	public class DummyModel : MonoBehaviour, ISheetable, IActor
+	public class DummyModel : Model, ISheetable, IActor
 	{
 		public bool IsHaveSomethingToSay => actorSettings != null;
 		public bool IsInDialogue { get; set; }
