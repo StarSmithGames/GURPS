@@ -7,7 +7,7 @@ using Zenject.Asteroids;
 
 namespace Game.Managers.GameManager
 {
-    public class GameManager
+    public class GameManager : IInitializable
     {
         public GameState CurrentGameState { get; private set; }
         public GameState PreviousGameState { get; private set; }
@@ -15,10 +15,17 @@ namespace Game.Managers.GameManager
         public GameLocation CurrentGameLocation { get; private set; }
 
         private SignalBus signalBus;
+        private SceneManager.SceneManager sceneManager;
 
-        public GameManager(SignalBus signalBus)
+        public GameManager(SignalBus signalBus, SceneManager.SceneManager sceneManager)
 		{
             this.signalBus = signalBus;
+            this.sceneManager = sceneManager;
+        }
+
+        public void Initialize()
+        {
+            ChangeLocation(sceneManager.GetSceneLocation());
         }
 
         public void ChangeState(GameState gameState)

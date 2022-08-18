@@ -719,9 +719,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2918518144747270437, guid: 2f8ed1eac933eb74583f350147f832f8, type: 3}
-      propertyPath: sceneName.name
-      value: Map
+    - target: {fileID: 1156124145701943517, guid: 2f8ed1eac933eb74583f350147f832f8, type: 3}
+      propertyPath: outlineTargets.Array.data[0].IsVisible
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4782882782683009421, guid: 2f8ed1eac933eb74583f350147f832f8, type: 3}
       propertyPath: m_RootOrder
@@ -8955,7 +8955,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dade8d06bb81eb45a63b37ae4e8fef0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CharacterSheet>k__BackingField: {fileID: 1728509629}
   <Battle>k__BackingField: {fileID: 90369389}
   originalVirtualSpace: {fileID: 25328458}
 --- !u!114 &981890799
@@ -15353,17 +15352,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4407661369917871528, guid: c0bdbb0eba8ce0e4caa2dccf7498027a, type: 3}
   m_PrefabInstance: {fileID: 4407661369364341524}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1728509629 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4407661369917871529, guid: c0bdbb0eba8ce0e4caa2dccf7498027a, type: 3}
-  m_PrefabInstance: {fileID: 4407661369364341524}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 596ce54dd8f56e34ea23c362a0a97e6e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1738469285
 GameObject:
   m_ObjectHideFlags: 0
@@ -18621,7 +18609,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.4361913
+      value: -3.4361908
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.w
@@ -18629,15 +18617,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.4575816
+      value: 0.45758164
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00000001529935
+      value: -0.000000015299365
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.00000000787332
+      value: 0.000000007873328
       objectReference: {fileID: 0}
     - target: {fileID: 1316808353, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Follow
@@ -18657,7 +18645,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.4361913
+      value: -3.4361908
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.w
@@ -18665,15 +18653,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.4575816
+      value: 0.45758164
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.00000001529935
+      value: -0.000000015299365
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.00000000787332
+      value: 0.000000007873328
       objectReference: {fileID: 0}
     - target: {fileID: 1643292430, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Follow

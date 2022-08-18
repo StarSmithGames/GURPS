@@ -16,7 +16,7 @@ using Game.Systems.SheetSystem;
 
 namespace Game.Entities.Models
 {
-	public interface ICharacterModel : IEntityModel, IObservable, IInteractable, IBattlable, IActor, IDamegeable, IKillable
+	public interface ICharacterModel : IEntityModel, IBattlable, IActor, IDamegeable, IKillable
 	{
 		bool IsWithRangedWeapon { get; }//rm
 		float CharacterRange { get; }//rm
@@ -91,7 +91,7 @@ namespace Game.Entities.Models
 
 		protected override void OnDestroy()
 		{
-			//signalBus?.Unsubscribe<StartDialogueSignal>(OnDialogueStarted);
+			signalBus?.Unsubscribe<SignalStartDialogue>(OnDialogueStarted);
 
 			base.OnDestroy();
 
@@ -174,7 +174,8 @@ namespace Game.Entities.Models
 		}
 		private ActorSettings actor;
 
-		public virtual bool IsHaveSomethingToSay => (Actor.barks != null && IsHasFreshAndImportantBarks()) || (Actor.dialogues != null && IsHasFreshAndImportantDialogues());
+		public virtual bool IsHasSomethingToSay => Actor.barks != null || Actor.dialogues != null;
+		public virtual bool IsHasImportantToSay => (Actor.barks != null && IsHasFreshAndImportantBarks()) || (Actor.dialogues != null && IsHasFreshAndImportantDialogues());
 		public virtual bool IsInDialogue { get; set; }
 
 		protected DialogueSystem dialogueSystem;
@@ -182,9 +183,24 @@ namespace Game.Entities.Models
 
 		public virtual bool TalkWith(IActor actor)
 		{
-			if (actor.IsHaveSomethingToSay)
+			if (actor.IsHasSomethingToSay)
 			{
-				dialogueSystem.StartDialogue(this, actor);
+				if(actor is IInteractable interactable)
+				{
+					if (interactable.InteractionPoint.IsInRange(Transform.position))
+					{
+						dialogueSystem.StartDialogue(this, actor);
+					}
+					else
+					{
+						new GoToPointInteraction(interactable.InteractionPoint, () => dialogueSystem.StartDialogue(this, actor)).Execute(this);
+					}
+				}
+				else
+				{
+					dialogueSystem.StartDialogue(this, actor);
+				}
+
 				return true;
 			}
 
@@ -252,7 +268,7 @@ namespace Game.Entities.Models
 
 		protected virtual void CheckReplicas()
 		{
-			if (IsHaveSomethingToSay)
+			if (IsHasImportantToSay)
 			{
 				Markers.Exclamation.Show();
 			}

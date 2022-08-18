@@ -1,6 +1,7 @@
 using EPOOutline;
 
 using Game.Entities;
+using Game.Entities.Models;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Managers.SceneManager;
@@ -20,15 +21,12 @@ namespace Game.Map
 {
 	public interface IWayPoint : IObservable, IInteractable
 	{
-		InteractionPoint InteractionPoint { get; }
-
 		void Action();
 	}
 
-	public class WayPointTransition : MonoBehaviour, IWayPoint
+	public class WayPointTransition : Model, IWayPoint
 	{
-		public bool IsInteractable { get; private set; }
-		public IInteraction Interaction
+		public override IInteraction Interaction
 		{
 			get
 			{
@@ -41,16 +39,12 @@ namespace Game.Map
 			}
 		}
 		private IInteraction interaction = null;
-		public Transform Transform => transform;
 
 		[HideLabel]
 		public SceneName sceneName;
 
 		[field: SerializeField] public Transitions In { get; private set; }
 		[field: SerializeField] public Transitions Out { get; private set; }
-		[field: Space]
-		[field: SerializeField] public Outlinable Outline { get; private set; }
-		[field: SerializeField] public InteractionPoint InteractionPoint { get; private set; }
 
 		private UIGlobalCanvas globalCanvas;
 		private IPlayer player;
@@ -67,30 +61,9 @@ namespace Game.Map
 		private void Start()
 		{
 			IsInteractable = true;
-			Outline.enabled = false;
 		}
 
-		#region IObservable
-		public void StartObserve()
-		{
-			if (IsInteractable)
-			{
-				Outline.enabled = true;
-			}
-		}
-
-		public void Observe() { }
-
-		public void EndObserve()
-		{
-			if (IsInteractable)
-			{
-				Outline.enabled = false;
-			}
-		}
-		#endregion
-
-		public bool InteractWith(IInteractable interactable)
+		public override bool InteractWith(IInteractable interactable)
 		{
 			return false;//не может не с кем взаимодествовать
 		}

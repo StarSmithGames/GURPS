@@ -21,11 +21,11 @@ MonoBehaviour:
     OnMissingTranslation: 1
     mTerm_AppName: 
     mLanguages:
-    - Name: English
-      Code: en
-      Flags: 0
     - Name: Russian
       Code: ru
+      Flags: 0
+    - Name: English
+      Code: en
       Flags: 0
     IgnoreDeviceLanguage: 1
     _AllowUnloadingLanguages: 0

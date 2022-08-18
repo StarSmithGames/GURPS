@@ -3,14 +3,12 @@ using UnityEngine.Events;
 
 namespace Game.Entities
 {
-	public interface IPathfinderable
+	public interface IPathfinderable : ITransform
 	{
 		event UnityAction onTargetChanged;
 		event UnityAction onDestinationChanged;
 
 		bool IsHasTarget { get; }
-
-		Transform Transform { get; }
 
 		NavigationController Navigation { get; }
 		IController Controller { get; }

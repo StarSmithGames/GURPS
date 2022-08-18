@@ -2139,6 +2139,7 @@ GameObject:
   - component: {fileID: 3494019076663411059}
   - component: {fileID: 3494019076663411057}
   - component: {fileID: 7237211956187298259}
+  - component: {fileID: 4987443689890451680}
   m_Layer: 6
   m_Name: NPC
   m_TagString: Untagged
@@ -2219,6 +2220,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a3dc8fc42247924190893e338005cc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <InteractionPoint>k__BackingField: {fileID: 4987443689890451680}
   data: {fileID: 11400000, guid: 3d0965b4c2f5ded48a4313efa89b19ea, type: 2}
 --- !u!143 &3494019076663411059
 CharacterController:
@@ -2275,6 +2277,22 @@ MonoBehaviour:
   settings:
     reachTargetThreshold: 0.01
     minPathDistance: 0.5
+--- !u!114 &4987443689890451680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3494019076663411069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50c6480447325f34ba90fbec7be835da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings:
+    maxRange: 3
+    interaction: 0
+    position: {x: 0, y: 0, z: 0}
 --- !u!1 &3673791157506758747
 GameObject:
   m_ObjectHideFlags: 0

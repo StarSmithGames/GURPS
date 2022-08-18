@@ -49,7 +49,7 @@ namespace Game.Systems.ContextMenu
 
 			if (observable is IActor actor && !isSelf)
 			{
-				if (actor.IsHaveSomethingToSay)
+				if (actor.IsHasSomethingToSay)
 				{
 					commands.Add(new CommandTalk(self as IActor, actor) { name = "Talk" });
 				}
@@ -80,7 +80,7 @@ namespace Game.Systems.ContextMenu
 			}
 			else
 			{
-				IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model as ICharacterModel : player.RTSModel as IInteractable;
+				IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model : player.RTSModel as IInteractable;
 				commands.Add(new CommandInteract(interactable, container) { name = "Open" });
 			}
 
@@ -91,7 +91,7 @@ namespace Game.Systems.ContextMenu
 		{
 			List<ContextCommand> commands = new List<ContextCommand>();
 
-			IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model as ICharacterModel : player.RTSModel as IInteractable;
+			IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model : player.RTSModel as IInteractable;
 			commands.Add(new CommandInteract(interactable, wayPoint) { name = "GoTo" });
 
 			return commands;

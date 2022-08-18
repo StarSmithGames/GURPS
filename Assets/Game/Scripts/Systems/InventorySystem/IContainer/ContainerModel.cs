@@ -17,7 +17,6 @@ namespace Game.Systems.InventorySystem
 		public bool IsSearched => data.isSearched;
 
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
-		[field: SerializeField] public InteractionPoint InteractionPoint { get; private set; }
 
 		public ISheet Sheet
 		{

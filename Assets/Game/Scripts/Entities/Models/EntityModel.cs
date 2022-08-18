@@ -7,11 +7,10 @@ using UnityEngine.Events;
 
 using Zenject;
 using System.Collections;
-using Game.Entities.Models;
 
 namespace Game.Entities.Models
 {
-	public interface IEntityModel : IPathfinderable
+	public interface IEntityModel : IPathfinderable, IObservable, IInteractable
 	{
 		MonoBehaviour MonoBehaviour { get; }
 		TaskSequence TaskSequence { get; }

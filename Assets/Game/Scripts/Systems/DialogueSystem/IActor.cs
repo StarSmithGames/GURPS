@@ -9,7 +9,8 @@ namespace Game.Systems.DialogueSystem
 {
     public interface IActor : IDialogueActor//>:c
     {
-        bool IsHaveSomethingToSay { get; }
+        bool IsHasSomethingToSay { get; }
+        bool IsHasImportantToSay { get; }
         bool IsInDialogue { get; set; }
 
         bool TalkWith(IActor actor);

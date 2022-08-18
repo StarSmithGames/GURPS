@@ -22,8 +22,6 @@ namespace Game.UI.Windows
 		{
 			CanvasGroup.alpha = 0f;
 			CanvasGroup.Enable(true, false);
-
-			gameObject.SetActive(true);
 			IsShowing = true;
 
 			Sequence sequence = DOTween.Sequence();
@@ -42,7 +40,6 @@ namespace Game.UI.Windows
 				.AppendCallback(() =>
 				{
 					CanvasGroup.Enable(false);
-					gameObject.SetActive(false);
 					IsShowing = false;
 					callback?.Invoke();
 				});

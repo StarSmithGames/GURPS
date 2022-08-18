@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 83227379555027216}
   - component: {fileID: 83227379555027218}
   - component: {fileID: 6139863028306293168}
+  - component: {fileID: 5982039227168079646}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -126,16 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45512195f9d9a054180c07e21251c60a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableSettings:
-    maxRange: 1.5
-    interaction: 0
-    position: {x: 0, y: 0, z: 0}
-  actorSettings:
-    isImportanatBark: 0
-    indicator: 1
-    barks: {fileID: 0}
-    dialogues: {fileID: 0}
-  data: {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
+  <InteractionPoint>k__BackingField: {fileID: 5982039227168079646}
 --- !u!143 &83227379555027216
 CharacterController:
   m_ObjectHideFlags: 0
@@ -191,6 +183,22 @@ MonoBehaviour:
   settings:
     reachTargetThreshold: 0.01
     minPathDistance: 0.5
+--- !u!114 &5982039227168079646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 83227379555027230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50c6480447325f34ba90fbec7be835da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings:
+    maxRange: 3
+    interaction: 0
+    position: {x: 0, y: 0, z: 0}
 --- !u!1 &171205609406783695
 GameObject:
   m_ObjectHideFlags: 0

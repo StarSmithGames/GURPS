@@ -6,11 +6,12 @@ using UnityEngine.Events;
 
 namespace Game.Systems.InteractionSystem
 {
-	public interface IInteractable
+	public interface IInteractable : ITransform
 	{
 		bool IsInteractable { get; }
 		IInteraction Interaction { get; }
-		Transform Transform { get; }
+
+		InteractionPoint InteractionPoint { get; }
 
 		bool InteractWith(IInteractable interactable);
 	}

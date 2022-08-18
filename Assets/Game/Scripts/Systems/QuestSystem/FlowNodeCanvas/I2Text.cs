@@ -88,23 +88,15 @@ public class I2Texts<T> where T : I2Text, new()
 	public T GetCurrent()
 	{
 		LocalizationManager.UpdateSources();
-		int index = LocalizationManager.GetAllLanguages(true).IndexOf(LocalizationManager.CurrentLanguage);
-		if (index >= 0 && index < texts.Count)
-		{
-			if(texts[index] == null)
-			{
-				ResizeTexts();
-			}
+		var langs = LocalizationManager.GetAllLanguages(true);
 
-			return texts[index];
-		}
-		
-		ResizeTexts();
+		ResizeTexts(langs);
 
-		if (index >= 0 && index < texts.Count)
+		if (texts.Count > 0)
 		{
-			return texts[index];
+			return texts[0];
 		}
+
 		return null;
 	}
 
@@ -112,11 +104,8 @@ public class I2Texts<T> where T : I2Text, new()
 
 	public bool isShowFoldout = false;
 
-	public void ResizeTexts()
+	public void ResizeTexts(List<string> langs)
 	{
-		LocalizationManager.UpdateSources();
-		var langs = LocalizationManager.GetAllLanguages(true);
-
 		//try resize and save data
 		if (langs.Count != texts.Count)
 		{
@@ -160,7 +149,7 @@ public class I2Texts<T> where T : I2Text, new()
 							break;
 						}
 					}
-					
+
 					if (text != null)//swap
 					{
 						int index = texts.IndexOf(text);

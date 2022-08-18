@@ -2068,6 +2068,7 @@ GameObject:
   - component: {fileID: 8730467907109418137}
   - component: {fileID: 7455693168681938446}
   - component: {fileID: 9203988378682204711}
+  - component: {fileID: 3349359636595461234}
   m_Layer: 0
   m_Name: Dummy
   m_TagString: Untagged
@@ -2136,15 +2137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dfa4c39f69fdac46858a73ee44d4bfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableSettings:
-    maxRange: 3
-    interaction: 0
-    position: {x: 0, y: 0, z: 0}
-  actorSettings:
-    isImportanatBark: 0
-    indicator: 1
-    barks: {fileID: 0}
-    dialogues: {fileID: 11400000, guid: 5ce15fcc6796c7c4cbfdcae0ff2998aa, type: 2}
+  <InteractionPoint>k__BackingField: {fileID: 3349359636595461234}
   data: {fileID: 11400000, guid: 28e573d452c69444b9e739843eefe3ad, type: 2}
 --- !u!136 &7455693168681938446
 CapsuleCollider:
@@ -2176,6 +2169,22 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0.6, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &3349359636595461234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7784406252879700731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50c6480447325f34ba90fbec7be835da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settings:
+    maxRange: 3
+    interaction: 0
+    position: {x: 0, y: 0, z: 0}
 --- !u!1 &8052654307870948506
 GameObject:
   m_ObjectHideFlags: 0

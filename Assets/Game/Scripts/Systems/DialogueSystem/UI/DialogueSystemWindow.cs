@@ -107,7 +107,6 @@ namespace Game.Systems.DialogueSystem
 
 		private void OnDialogueStarted(DialogueTree tree)
 		{
-			Debug.LogError("OnDialogueStarted");
 			Enable(true);
 		}
 		private void OnDialoguePaused(DialogueTree tree) { }

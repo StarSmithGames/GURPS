@@ -404,7 +404,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -673,6 +673,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49300ac791cac8545aff5b13752ca483, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <InteractionPoint>k__BackingField: {fileID: 0}
 --- !u!114 &1694487979
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -777,7 +778,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270261821296, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.670224
+      value: -3.6702244
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270261821296, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_LocalRotation.w
@@ -789,11 +790,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270261821296, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000014920376
+      value: 0.00000001492038
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270261821296, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000008569821
+      value: -0.000000008569823
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270261821297, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_Follow
@@ -813,7 +814,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270536508745, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.670224
+      value: -3.6702244
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270536508745, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_LocalRotation.w
@@ -825,11 +826,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270536508745, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000014920376
+      value: 0.00000001492038
       objectReference: {fileID: 0}
     - target: {fileID: 1274836270536508745, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000008569821
+      value: -0.000000008569823
       objectReference: {fileID: 0}
     - target: {fileID: 2169850919029107532, guid: 97a7d5c324dd81746a841fcb4ca8c777, type: 3}
       propertyPath: m_Name
@@ -888,6 +889,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2918518144747270437, guid: 2f8ed1eac933eb74583f350147f832f8, type: 3}
+      propertyPath: sceneName.name
+      value: Room
+      objectReference: {fileID: 0}
     - target: {fileID: 3761650196454289646, guid: 2f8ed1eac933eb74583f350147f832f8, type: 3}
       propertyPath: outlineTargets.Array.data[0].IsVisible
       value: 0

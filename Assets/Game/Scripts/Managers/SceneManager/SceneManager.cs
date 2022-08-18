@@ -1,3 +1,5 @@
+using Game.Managers.GameManager;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,6 +46,11 @@ namespace Game.Managers.SceneManager
 		public void Dispose()
 		{
 			UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
+		}
+
+		public GameLocation GetSceneLocation()
+		{
+			return scenes.FirstOrDefault((x) => x.sceneName.name == CurrentScene)?.gameLocation ?? GameLocation.None;
 		}
 
 		public void SwitchScene(string sceneName, bool allow = true, UnityAction callback = null)

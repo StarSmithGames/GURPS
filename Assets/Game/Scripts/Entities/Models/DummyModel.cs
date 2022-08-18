@@ -12,7 +12,8 @@ namespace Game.Entities.Models
 	{
 		public ActorSettings Actor => Sheet.Settings.actor;
 
-		public bool IsHaveSomethingToSay => (Actor.barks != null && IsHasFreshAndImportantBarks()) || (Actor.dialogues != null && IsHasFreshAndImportantDialogues());
+		public bool IsHasSomethingToSay => Actor.barks != null || Actor.dialogues != null;
+		public bool IsHasImportantToSay => (Actor.barks != null && IsHasFreshAndImportantBarks()) || (Actor.dialogues != null && IsHasFreshAndImportantDialogues());
 		public bool IsInDialogue { get; set; }
 
 		public Transform DialogueTransform => transform;
@@ -31,6 +32,8 @@ namespace Game.Entities.Models
 				return sheet;
 			}
 		}
+
+
 		private ISheet sheet;
 
 		private DialogueSystem dialogueSystem;

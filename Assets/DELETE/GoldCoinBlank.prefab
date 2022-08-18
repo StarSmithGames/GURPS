@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1818208569842007697}
   - component: {fileID: 4530450003966036571}
   - component: {fileID: 1156124145701943517}
+  - component: {fileID: 7386980903673006755}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -142,6 +143,18 @@ MonoBehaviour:
     cutoutTextureName: 
     DilateRenderingMode: 0
     cutoutTextureIndex: 0
+--- !u!114 &7386980903673006755
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2729067258008546190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 034bc47afcbf5e141a58d5c20b7808e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5272560815132068663
 GameObject:
   m_ObjectHideFlags: 0
@@ -151,6 +164,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4782882782683009421}
+  - component: {fileID: 207633638888267663}
+  - component: {fileID: 3286120712596513271}
   - component: {fileID: 2863160275546947672}
   - component: {fileID: 2918518144747270437}
   - component: {fileID: 1696273997275826972}
@@ -176,6 +191,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &207633638888267663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5272560815132068663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08eca9f7688a0a24685b89133b020c8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _scriptableObjectInstallers: []
+  _monoInstallers:
+  - {fileID: 3286120712596513271}
+  _installerPrefabs: []
+  _autoRun: 1
+  _kernel: {fileID: 0}
+--- !u!114 &3286120712596513271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5272560815132068663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6803bcbd31d29e241bdfda10c96f73fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outline: {fileID: 1156124145701943517}
 --- !u!135 &2863160275546947672
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -201,14 +247,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23e28261d958e4f45898b7aa3799f630, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <InteractionPoint>k__BackingField: {fileID: 1696273997275826972}
   sceneName:
     useCustom: 1
-    name: Room
+    name: Map
     scenes: 0
   <In>k__BackingField: 0
   <Out>k__BackingField: 0
-  <Outline>k__BackingField: {fileID: 1156124145701943517}
-  <InteractionPoint>k__BackingField: {fileID: 1696273997275826972}
 --- !u!114 &1696273997275826972
 MonoBehaviour:
   m_ObjectHideFlags: 0
