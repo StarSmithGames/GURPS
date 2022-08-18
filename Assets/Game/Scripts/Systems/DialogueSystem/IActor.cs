@@ -11,6 +11,8 @@ namespace Game.Systems.DialogueSystem
         bool IsHaveSomethingToSay { get; }
         bool IsInDialogue { get; set; }
 
+        bool TalkWith(IActor actor);
+
         void Bark();
     }
 

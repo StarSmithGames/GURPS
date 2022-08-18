@@ -9,6 +9,7 @@ using Game.Map;
 using Game.Managers.GameManager;
 using Game.Systems.InteractionSystem;
 using Game.Entities;
+using Game.Systems.DamageSystem;
 
 namespace Game.Systems.ContextMenu
 {
@@ -38,37 +39,62 @@ namespace Game.Systems.ContextMenu
 
 			List<ContextCommand> commands = new List<ContextCommand>();
 
+			var self = partyManager.PlayerParty.LeaderParty.Model;
+			bool isSelf = observable == self;
+
+			if (observable is IDamegeable && !isSelf)
+			{
+				commands.Add(new CommandAttack() { name = "Attack", type = ContextType.Negative });
+			}
+
+			if (observable is IActor actor && !isSelf)
+			{
+				if (actor.IsHaveSomethingToSay)
+				{
+					commands.Add(new CommandTalk(self as IActor, actor) { name = "Talk" });
+				}
+			}
+			
 			if (observable is IContainer container)
 			{
-				if (container.IsOpened)
-				{
-					commands.Add(new CommandCloseContainer(container) { name = "Close" });
-				}
-				else
-				{
-					IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model as ICharacterModel : player.RTSModel as IInteractable;
-					commands.Add(new CommandInteract(interactable, container) { name = "Open" });
-				}
+				commands.AddRange(GetContainerCommands(container));
+			}
+			
+			if(observable is IWayPoint wayPoint)
+			{
+				commands.AddRange(GetWayPointCommands(wayPoint));
+			}
 
-				commands.Add(new CommandAttack() { name = "Attack" });
-				commands.Add(new CommandExamine(observable) { name = "Examine" });
-			}
-			else if (observable is ICharacterModel)
-			{
-				//if (actor.IsHaveSomethingToSay)
-				//{
-				//	//AddCommand(new CommandTalk(dialogueSystem, characterManager.CurrentParty.LeaderParty, actor) { name = "Talk" });
-				//}
-				commands.Add(new CommandAttack() { name = "Attack", type = ContextType.Negative });
-				commands.Add(new CommandExamine(observable) { name = "Examine" });
-			}
-			else if(observable is IWayPoint wayPoint)
-			{
-				IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model as ICharacterModel : player.RTSModel as IInteractable;
-				commands.Add(new CommandInteract(interactable, wayPoint) { name = "GoTo"});
-			}
+			commands.Add(new CommandExamine(observable) { name = "Examine" });
 
 			contextMenu.SetCommands(commands);
+		}
+
+		private List<ContextCommand> GetContainerCommands(IContainer container)
+		{
+			List<ContextCommand> commands = new List<ContextCommand>();
+
+			if (container.IsOpened)
+			{
+				commands.Add(new CommandCloseContainer(container) { name = "Close" });
+			}
+			else
+			{
+				IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model as ICharacterModel : player.RTSModel as IInteractable;
+				commands.Add(new CommandInteract(interactable, container) { name = "Open" });
+			}
+
+			return commands;
+		}
+
+		private List<ContextCommand> GetWayPointCommands(IWayPoint wayPoint)
+		{
+			List<ContextCommand> commands = new List<ContextCommand>();
+
+			IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model as ICharacterModel : player.RTSModel as IInteractable;
+			commands.Add(new CommandInteract(interactable, wayPoint) { name = "GoTo" });
+
+			return commands;
 		}
 	}
 }

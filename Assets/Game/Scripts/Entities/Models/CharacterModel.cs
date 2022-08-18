@@ -1,21 +1,21 @@
 using Game.Systems.BattleSystem;
 using Game.Systems.InventorySystem;
-using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
 using Zenject;
 using System.Collections;
-using Game.Managers.CharacterManager;
 using Game.Systems.DialogueSystem;
 using System.Linq;
 using UnityEngine.Events;
 using EPOOutline;
 using Game.Systems.InteractionSystem;
+using Game.Systems.DamageSystem;
+using Game.Systems.FloatingTextSystem;
 
 namespace Game.Entities.Models
 {
-	public interface ICharacterModel : IEntityModel, IObservable, IInteractable, IBattlable, IActor
+	public interface ICharacterModel : IEntityModel, IObservable, IInteractable, IBattlable, IActor, IDamegeable, IKillable
 	{
 		bool IsWithRangedWeapon { get; }//rm
 		float CharacterRange { get; }//rm
@@ -34,20 +34,17 @@ namespace Game.Entities.Models
 	{
 		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
 
+		public float CharacterRange => equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>().weaponRange ?? 0f;
+		public bool IsWithRangedWeapon { get; private set; }
+
 		public ICharacter Character { get; protected set; }
 
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorControl AnimatorControl { get; private set; }
 
-		public Transform DialogueTransform => transform;
-
-		public float CharacterRange => equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>().weaponRange ?? 0f;
-
-		public bool IsWithRangedWeapon { get; private set; }
+		public Transform DialogueTransform => Transform;
 
 		private IEquipment equipment;
-
-		protected CharacterManager characterManager;
 
 		[Inject]
 		private void Construct(
@@ -57,17 +54,16 @@ namespace Game.Entities.Models
 			Markers markerController,
 			DialogueSystem dialogueSystem,
 			Barker barker,
-			CharacterManager characterManager)
+			FloatingSystem floatingSystem)
 		{
 			Outfit = outfit;
 			AnimatorControl = animatorControl;
 			Outline = outline;
 			Markers = markerController;
 
-			this.characterManager = characterManager;
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
-
+			this.floatingSystem = floatingSystem;
 			//equipment = (Sheet as CharacterSheet).Equipment;
 		}
 
@@ -143,7 +139,6 @@ namespace Game.Entities.Models
 		}
 	}
 
-
 	//Visual
 	partial class CharacterModel
 	{
@@ -183,6 +178,17 @@ namespace Game.Entities.Models
 
 		protected DialogueSystem dialogueSystem;
 		protected Barker barker;
+
+		public virtual bool TalkWith(IActor actor)
+		{
+			if (IsHaveSomethingToSay)
+			{
+				dialogueSystem.StartDialogue(this, actor);
+				return true;
+			}
+
+			return false;
+		}
 
 		public virtual void Bark()
 		{
@@ -400,6 +406,65 @@ namespace Game.Entities.Models
 
 			Markers.LineMarker.Enable(InBattle && isMineTurn);
 			Markers.TargetMarker.Enable(InBattle && isMineTurn);
+		}
+	}
+
+	//IDamegeable, IKillable implementation
+	partial class CharacterModel
+	{
+		public event UnityAction<IEntity> onDied;
+
+		protected FloatingSystem floatingSystem;
+
+		public virtual Damage GetDamage()
+		{
+			return new Damage()
+			{
+				amount = GetDamageFromTable(),
+				damageType = DamageType.Crushing,
+			};
+		}
+
+		public virtual void ApplyDamage<T>(T value)
+		{
+			if (value is Damage damage)
+			{
+				float dmg = (int)Mathf.Max(damage.DMG - 2, 0);
+
+				if (dmg == 0)
+				{
+					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), "Miss!", type: AnimationType.BasicDamageType);
+				}
+				else
+				{
+					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.damageType.ToString(), type: AnimationType.BasicDamageType);
+
+					if (damage.IsPhysicalDamage)
+					{
+
+						floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), dmg.ToString(), type: AnimationType.AdvanceDamage);
+						if (!Character.Sheet.Settings.isImmortal)
+						{
+							Character.Sheet.Stats.HitPoints.CurrentValue -= dmg;
+						}
+					}
+					else if (damage.IsMagicalDamage)
+					{
+
+					}
+				}
+			}
+		}
+
+		public virtual void Kill()
+		{
+			Controller.Enable(false);
+			onDied?.Invoke(Character);
+		}
+
+		protected Vector2 GetDamageFromTable()
+		{
+			return new Vector2(1, 7);
 		}
 	}
 }

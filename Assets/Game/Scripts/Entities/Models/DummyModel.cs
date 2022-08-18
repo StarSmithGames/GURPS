@@ -4,17 +4,20 @@ using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
-namespace Game.Entities
+using Zenject;
+
+namespace Game.Entities.Models
 {
 	public class DummyModel : Model, ISheetable, IActor
 	{
-		public bool IsHaveSomethingToSay => actorSettings != null;
+		public ActorSettings Actor => Sheet.Settings.actor;
+
+		public bool IsHaveSomethingToSay => (Actor.barks != null && IsHasFreshAndImportantBarks()) || (Actor.dialogues != null && IsHasFreshAndImportantDialogues());
 		public bool IsInDialogue { get; set; }
 
 		public Transform DialogueTransform => transform;
 
-		public ActorSettings ActorSettings => actorSettings;
-		[SerializeField] private ActorSettings actorSettings;
+		public ModelData data;
 
 		public ISheet Sheet
 		{
@@ -28,13 +31,39 @@ namespace Game.Entities
 				return sheet;
 			}
 		}
+		private ISheet sheet;
 
-		private ModelSheet sheet;
-		[SerializeField] private ModelData data;
+		private DialogueSystem dialogueSystem;
+		
+		[Inject]
+		private void Construct(DialogueSystem dialogueSystem)
+		{
+			this.dialogueSystem = dialogueSystem;
+		}
+
+		public bool TalkWith(IActor actor)
+		{
+			if (IsHaveSomethingToSay)
+			{
+				dialogueSystem.StartDialogue(this, actor);
+				return true;
+			}
+
+			return false;
+		}
 
 		public void Bark()
 		{
 
+		}
+
+		private bool IsHasFreshAndImportantBarks()
+		{
+			return Actor.barks.TreeData.isFirstTime && Actor.isImportanatBark;
+		}
+		private bool IsHasFreshAndImportantDialogues()
+		{
+			return Actor.dialogues.TreeData.isFirstTime;
 		}
 	}
 }

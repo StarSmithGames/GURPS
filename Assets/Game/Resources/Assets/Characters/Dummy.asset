@@ -53,95 +53,145 @@ MonoBehaviour:
         ignoreList: []
     equipment:
       head:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       sholders:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       chest:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       forearms:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       legs:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       feet:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon00:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon01:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon10:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon11:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       cloak:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       jewelry:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       ring0:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       ring1:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       trinket:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
+    actor:
+      isImportanatBark: 0
+      indicator: 1
+      barks: {fileID: 0}
+      dialogues: {fileID: 11400000, guid: 5ce15fcc6796c7c4cbfdcae0ff2998aa, type: 2}
   information:
     nameId: Dummy
     localizations:

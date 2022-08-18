@@ -49,20 +49,18 @@ namespace Game.Systems.ContextMenu
 
 	public class CommandTalk : ContextCommand
 	{
-		private DialogueSystem.DialogueSystem dialogueSystem;
-		private CharacterModel character;
+		private IActor initiator;
 		private IActor actor;
 
-		public CommandTalk(DialogueSystem.DialogueSystem dialogueSystem, CharacterModel character, IActor actor)
+		public CommandTalk(IActor initiator, IActor actor)
 		{
-			this.dialogueSystem = dialogueSystem;
-			this.character = character;
+			this.initiator = initiator;
 			this.actor = actor;
 		}
 
 		public override void Execute()
 		{
-			//dialogueSystem.StartDialogue(character, actor);
+			Talker.ABTalk(initiator, actor);
 		}
 	}
 	public class CommandExamine : ContextCommand
@@ -94,6 +92,7 @@ namespace Game.Systems.ContextMenu
 			Interactor.ABInteraction(initiator, interactable);
 		}
 	}
+
 	public class CommandCloseContainer : ContextCommand
 	{
 		private IContainer container;

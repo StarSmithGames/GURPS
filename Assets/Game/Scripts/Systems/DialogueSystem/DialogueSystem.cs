@@ -41,11 +41,6 @@ namespace Game.Systems.DialogueSystem
 			actor.Bark();
 		}
 
-		/// <summary>
-		/// ������ ����������� ���� ����� ����������� � � ��� �������.
-		/// </summary>
-		/// <param name="initiator">������ �����.</param>
-		/// <param name="actor">���� � �������� ���� ���������� ������.</param>
 		public void StartDialogue(IActor initiator, IActor actor)
 		{
 			if (!dialogueController.isRunning && !IsDialogueProcess)
