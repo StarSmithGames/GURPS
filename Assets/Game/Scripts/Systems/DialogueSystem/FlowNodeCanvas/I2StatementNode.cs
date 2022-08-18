@@ -27,11 +27,12 @@ namespace Game.Systems.DialogueSystem
 
         public override void OnCreate(Graph assignedGraph)
         {
-            ReCreate();
+            CheckStatement();
         }
 
         protected override Status OnExecute(Component agent, IBlackboard bb)
         {
+            CheckStatement();
             var temp = statement.GetCurrent();
             if (temp == null) return Status.Error;
 
@@ -45,7 +46,7 @@ namespace Game.Systems.DialogueSystem
             DLGTree.Continue();
         }
 
-        private void ReCreate()
+        private void CheckStatement()
         {
             if (statement == null)
             {
@@ -59,7 +60,7 @@ namespace Game.Systems.DialogueSystem
             LocalizationManager.LanguagesGUI();
             base.OnNodeInspectorGUI();
 
-            ReCreate();
+            CheckStatement();
 
             statement.OnGUI("Statement");
         }
