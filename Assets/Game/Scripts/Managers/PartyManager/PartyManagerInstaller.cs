@@ -1,3 +1,5 @@
+using Game.Systems.CommandCenter;
+
 using Zenject;
 
 namespace Game.Managers.PartyManager
@@ -10,6 +12,9 @@ namespace Game.Managers.PartyManager
 			Container.DeclareSignal<SignalPartyChanged>();
 
 			Container.BindInterfacesAndSelfTo<PartyManager>().AsSingle();
+
+			//command exectutor
+			Container.BindInterfacesTo<PartyManagerCommandExecutor>().AsSingle().NonLazy();
 		}
 	}
 }

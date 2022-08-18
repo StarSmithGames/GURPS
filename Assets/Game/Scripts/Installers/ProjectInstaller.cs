@@ -3,6 +3,7 @@ using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Managers.PartyManager;
 using Game.Managers.StorageManager;
+using Game.Systems.CommandCenter;
 
 using UnityEngine;
 
@@ -23,6 +24,7 @@ namespace Game
 			SignalBusInstaller.Install(Container);
 
 			Container.BindInstance(Container.InstantiateComponentOnNewGameObject<AsyncManager>());
+			Container.BindInstance(Container.InstantiateComponentOnNewGameObject<CommandCenter>());
 
 			BindSaveLoad();
 

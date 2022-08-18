@@ -1,5 +1,6 @@
 using Game.Entities;
 using Game.Entities.Models;
+using Game.Managers.PartyManager;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
@@ -9,7 +10,7 @@ using System.Collections.Generic;
 
 using UnityEngine;
 
-namespace Game.Systems.ContextMenu
+namespace Game.Systems.CommandCenter
 {
 	public interface ICommand
 	{
@@ -37,6 +38,10 @@ namespace Game.Systems.ContextMenu
 		public abstract void Execute();
 	}
 
+	public interface IPartyManagerCommand : ICommand
+	{
+		void Execute(Party party);
+	}
 
 	#region ContextCommands
 	public class CommandUse : ContextCommand//eat, drink, use spells
@@ -246,6 +251,25 @@ namespace Game.Systems.ContextMenu
 	}
 	#endregion
 
+	public class CommandAddCompanionInPlayerParty : IPartyManagerCommand
+	{
+		private ICompanion companion;
+
+		public CommandAddCompanionInPlayerParty(ICompanion companion)
+		{
+			this.companion = companion;
+		}
+
+		public void Execute()
+		{
+			//(companion.Model as ICompanionModel).Hire();
+		}
+
+		public void Execute(Party party)
+		{
+			party.AddCharacter(companion);
+		}
+	}
 
 	public enum ContextType
 	{

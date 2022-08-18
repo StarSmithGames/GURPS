@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NodeCanvas.Framework;
 using ParadoxNotion;
+using Zenject;
 
 namespace NodeCanvas.DialogueTrees
 {
@@ -10,7 +11,6 @@ namespace NodeCanvas.DialogueTrees
     public class DialogueTreeController : GraphOwner<DialogueTree>, IDialogueActor
     {
         public Transform DialogueTransform => transform;
-
 
         ///<summary>Start the DialogueTree without an Instigator</summary>
         public void StartDialogue() {

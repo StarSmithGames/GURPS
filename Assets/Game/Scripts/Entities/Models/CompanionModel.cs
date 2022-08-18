@@ -5,7 +5,10 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-    public interface ICompanionModel : ICharacterModel { }
+    public interface ICompanionModel : ICharacterModel
+	{
+		
+	}
 
     public class CompanionModel : CharacterModel, ICompanionModel
     {

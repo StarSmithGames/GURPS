@@ -32,7 +32,7 @@ namespace Game.Managers.PartyManager
 		private SignalBus signalBus;
 		private IPlayer player;
 
-		public PartyManager(SignalBus signalBus, IPlayer player)
+		public PartyManager(DiContainer container, SignalBus signalBus, IPlayer player)
 		{
 			this.signalBus = signalBus;
 			this.player = player;
@@ -54,10 +54,10 @@ namespace Game.Managers.PartyManager
 
 		//public void UnRegistrate(ICompanion companion)
 		//{
-			//if (party.Contains(companion))
-			//{
-			//	party.Remove(companion);
-			//}
+		//if (party.Contains(companion))
+		//{
+		//	party.Remove(companion);
+		//}
 		//}
 	}
 
@@ -91,8 +91,6 @@ namespace Game.Managers.PartyManager
 				signalBus?.Fire(new SignalPartyChanged());
 			}
 		}
-
-		
 	}
 
 	public class PlayerParty : Party
