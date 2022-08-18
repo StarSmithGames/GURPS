@@ -1,3 +1,5 @@
+using Game.UI;
+
 using NodeCanvas.DialogueTrees;
 
 using UnityEngine;
@@ -9,23 +11,29 @@ namespace Game.Systems.DialogueSystem
 	[CreateAssetMenu(fileName = "DialogueSystemInstaller", menuName = "Installers/DialogueSystemInstaller")]
 	public class DialogueSystemInstaller : ScriptableObjectInstaller<DialogueSystemInstaller>
 	{
-		public DialogueSystemHandler.Settings settings;
+		public DialogueSystemWindow.Settings settings;
 		public Barker.Settings barkSettings;
 		[Space]
+		public DialogueSystemWindow dialogueSystemWindowPrefab;
 		public UISubtitle subtitlePrefab;
 		public UINotification notificationPrefab;
 		public UIChoice choicePrefab;
 
 		public override void InstallBindings()
 		{
-			Container.DeclareSignal<StartDialogueSignal>();
-			Container.DeclareSignal<EndDialogueSignal>();
+			Container.DeclareSignal<SignalStartDialogue>();
+			Container.DeclareSignal<SignalEndDialogue>();
 
-			Container.BindInstance(settings);
+			Container.BindInstance(settings).WhenInjectedInto<DialogueSystemWindow>();
 			Container.BindInstance(barkSettings);
 
+			Container.Bind<DialogueSystemWindow>()
+				.FromComponentInNewPrefab(dialogueSystemWindowPrefab)
+				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().Windows)
+				.AsSingle()
+				.NonLazy();
+
 			Container.BindInterfacesAndSelfTo<DialogueSystem>().AsSingle();
-			Container.BindInterfacesAndSelfTo<DialogueSystemHandler>().AsSingle();
 			Container.Bind<DialogueTreeController>().FromNewComponentOnNewGameObject().WhenInjectedInto<DialogueSystem>();//>:/
 
 			//Factories

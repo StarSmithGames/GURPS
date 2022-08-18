@@ -13,9 +13,17 @@ MonoBehaviour:
   m_Name: DialogueSystemInstaller
   m_EditorClassIdentifier: 
   settings:
+    isCanUseKeyAlpha: 1
     isSayChoice: 1
+    showAlignmentRequirementsInDialogues: 1
+    showAlignmentShiftsNotificationsInDialogues: 1
+    showAlignmentShiftsInDialogues: 1
+    showSkillCheckInDialogues: 1
+    showSkillChecksResultInDialogues: 1
+    showExperiaencePointsGainedInDialogues: 1
   barkSettings:
     waitTime: 2
+  dialogueSystemWindowPrefab: {fileID: 5219812789695860598, guid: 6b056ac551a2b8b4b8892c845812f4ee, type: 3}
   subtitlePrefab: {fileID: 2050203861053860432, guid: 9a33bde89302bff45ae13469be5aaf9e, type: 3}
   notificationPrefab: {fileID: 9069833195844291702, guid: f79c3b264b0263846b2da1681cd59825, type: 3}
   choicePrefab: {fileID: 1092970522015848505, guid: 795c135bc3b87114cad19a22be832e79, type: 3}

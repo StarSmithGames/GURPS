@@ -1,9 +1,6 @@
-using Game.Entities;
 using Game.Systems.ContextMenu;
-using Game.Systems.SheetSystem;
 
 using NodeCanvas.DialogueTrees;
-using NodeCanvas.Framework;
 
 using ParadoxNotion.Design;
 
@@ -32,19 +29,19 @@ namespace Game.Systems.DialogueSystem.Nodes
 			if (dt != null)
 			{
 				var node = dt.CurrentNode;
-				//var sheet = (node.FinalActor as IEntityModel)?.Sheet;
+				var sheet = (node.FinalActor as IActor)?.GetSheet();
 
-				//if (sheet != null)
-				//{
-				//	if (usePercents)
-				//	{
-				//		Command = new CommandSetAlignment(sheet, type, percentAlignment);
-				//	}
-				//	else
-				//	{
-				//		Command = new CommandSetAlignment(sheet, addAlignment);
-				//	}
-				//}
+				if (sheet != null)
+				{
+					if (usePercents)
+					{
+						Command = new CommandSetAlignment(sheet, type, percentAlignment);
+					}
+					else
+					{
+						Command = new CommandSetAlignment(sheet, addAlignment);
+					}
+				}
 			}
 
 			Assert.IsNotNull(Command, "Add Alignment command == null");

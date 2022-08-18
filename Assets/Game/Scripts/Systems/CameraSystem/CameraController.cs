@@ -259,7 +259,7 @@ namespace Game.Systems.CameraSystem
 			LookAt(leader);
 		}
 
-		private void OnStartDialogue(StartDialogueSignal signal)
+		private void OnStartDialogue(SignalStartDialogue signal)
 		{
 			AnimateZoom(zoomStandart);
 			CameraToHome();

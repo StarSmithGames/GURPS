@@ -1,7 +1,11 @@
+using DG.Tweening;
+
+using Game.Entities.Models;
 using Game.Systems.ContextMenu;
 using Game.Systems.DialogueSystem.Nodes;
-
-using I2.Loc;
+using Game.Systems.SheetSystem;
+using Game.UI;
+using Game.UI.Windows;
 
 using NodeCanvas.DialogueTrees;
 
@@ -11,75 +15,109 @@ using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-using DG.Tweening;
-
 using Zenject;
-using Game.Entities.Models;
-using Game.Entities;
-using Game.Systems.SheetSystem;
 
 namespace Game.Systems.DialogueSystem
 {
-	public class DialogueSystemHandler : IInitializable, IDisposable
+	public class DialogueSystemWindow : WindowBase
 	{
-		private MultipleChoiceRequestInfo cachedChoiceInfo;
+		public RectTransform RectTransform => transform as RectTransform;
 
-		private UIDialogue dialogue;
-		private List<UISubtitle> subtitles = new List<UISubtitle>();
-		private List<UINotification> notifications = new List<UINotification>();
-		private List<ChoiceWrapper> choices = new List<ChoiceWrapper>();
+		[field: SerializeField] public LayoutElement Spacer { get; private set; }
+		[field: SerializeField] public Button Button { get; private set; }
+		[field: Space]
+		[field: SerializeField] public Image ActorPortrait { get; private set; }
+		[field: SerializeField] public GameObject WaitIndicator { get; private set; }
+		[field: Space]
+		[field: SerializeField] public RectTransform Content { get; private set; }
+		[field: SerializeField] public Transform SubtitlesContent { get; private set; }
+		[field: SerializeField] public Transform NotificationContent { get; private set; }
+		[field: SerializeField] public Transform ChoiceContent { get; private set; }
+		[field: Space]
+		[field: SerializeField] public VerticalLayoutGroup ContentLayoutGroup { get; private set; }
+		[field: SerializeField] public VerticalLayoutGroup SubtitlesLayoutGroup { get; private set; }
+
 		private bool isWaitInput = false;
 		private bool isWaitChoiceInput = false;
 
+		private List<UISubtitle> subtitles = new List<UISubtitle>();
+		private List<UINotification> notifications = new List<UINotification>();
+		private List<ChoiceWrapper> choices = new List<ChoiceWrapper>();
+
+		private MultipleChoiceRequestInfo cachedChoiceInfo;
+
+
 		private Settings settings;
-		private SignalBus signalBus;
+		private UISubCanvas subCanvas;
 		private AsyncManager asyncManager;
 		private UISubtitle.Factory subtitleFactory;
 		private UINotification.Factory notificationFactory;
 		private UIChoice.Factory choiceFactory;
 
-		public DialogueSystemHandler(Settings settings, SignalBus signalBus, AsyncManager asyncManager,
-			UISubtitle.Factory subtitleFactory, UINotification.Factory notificationFactory, UIChoice.Factory choiceFactory)
+		[Inject]
+		private void Construct(
+			Settings settings,
+			UISubCanvas subCanvas,
+			AsyncManager asyncManager,
+			UISubtitle.Factory subtitleFactory,
+			UINotification.Factory notificationFactory,
+			UIChoice.Factory choiceFactory)
 		{
 			this.settings = settings;
-			this.signalBus = signalBus;
+			this.subCanvas = subCanvas;
 			this.asyncManager = asyncManager;
 			this.subtitleFactory = subtitleFactory;
 			this.notificationFactory = notificationFactory;
 			this.choiceFactory = choiceFactory;
 
-			//dialogue = uiManager?.Dialogue;
+			subCanvas.WindowsManager.Register(this);
 		}
 
-		public void Initialize()
+		private void Start()
 		{
-			//dialogue.Enable(false);
-			//dialogue.SubtitlesContent.DestroyChildren();
-			//dialogue.NotificationContent.DestroyChildren();
-			//dialogue.ChoiceContent.DestroyChildren();
-
-			//dialogue.onClick += OnDialogueClicked;
+			Enable(false);
+			SubtitlesContent.DestroyChildren();
+			NotificationContent.DestroyChildren();
+			ChoiceContent.DestroyChildren();
 
 			DialogueTree.OnDialogueStarted += OnDialogueStarted;
 			DialogueTree.OnDialoguePaused += OnDialoguePaused;
 			DialogueTree.OnDialogueFinished += OnDialogueFinished;
 			DialogueTree.OnSubtitlesRequest += OnSubtitlesRequest;
 			DialogueTree.OnMultipleChoiceRequest += OnMultipleChoiceRequest;
+
+			Button.onClick.AddListener(OnClick);
 		}
 
-		public void Dispose()
+		private void OnDestroy()
 		{
-			//dialogue.onClick -= OnDialogueClicked;
+			subCanvas.WindowsManager.UnRegister(this);
 
 			DialogueTree.OnDialogueStarted -= OnDialogueStarted;
 			DialogueTree.OnDialoguePaused -= OnDialoguePaused;
 			DialogueTree.OnDialogueFinished -= OnDialogueFinished;
 			DialogueTree.OnSubtitlesRequest -= OnSubtitlesRequest;
 			DialogueTree.OnMultipleChoiceRequest -= OnMultipleChoiceRequest;
+
+			Button?.onClick.RemoveListener(OnClick);
 		}
 
+		private void OnDialogueStarted(DialogueTree tree)
+		{
+			Debug.LogError("OnDialogueStarted");
+			Enable(true);
+		}
+		private void OnDialoguePaused(DialogueTree tree) { }
+		private void OnDialogueFinished(DialogueTree tree)
+		{
+			Enable(false);
+			DispawnSubtitles();
+			DispawnNotifications();
+			Spacer.preferredHeight = 0;
+		}
 
 		private IEnumerator CalculateHeight()
 		{
@@ -88,32 +126,32 @@ namespace Game.Systems.DialogueSystem
 			yield return null;
 
 			#region Resize Spacer
-			Assert.AreNotEqual(dialogue.SubtitlesContent.childCount, 0, "dialogue.SubtitlesContent.childCount == 0");
+			Assert.AreNotEqual(SubtitlesContent.childCount, 0, "dialogue.SubtitlesContent.childCount == 0");
 
 			int countSpaces = 1;
 
-			var currentSubtitle = dialogue.SubtitlesContent.GetChild(dialogue.SubtitlesContent.childCount - 1) as RectTransform;
+			var currentSubtitle = SubtitlesContent.GetChild(SubtitlesContent.childCount - 1) as RectTransform;
 			float currentSubtitleHeight = LayoutUtility.GetPreferredHeight(currentSubtitle);
 
-			float choiceHeight = LayoutUtility.GetPreferredHeight(dialogue.ChoiceContent as RectTransform);
-			dialogue.ChoiceContent.gameObject.SetActive(choiceHeight != 0);
-			if (dialogue.ChoiceContent.gameObject.activeSelf)
+			float choiceHeight = LayoutUtility.GetPreferredHeight(ChoiceContent as RectTransform);
+			ChoiceContent.gameObject.SetActive(choiceHeight != 0);
+			if (ChoiceContent.gameObject.activeSelf)
 			{
 				countSpaces++;
 			}
 
-			float notificationsHeight = LayoutUtility.GetPreferredHeight(dialogue.NotificationContent as RectTransform);
-			dialogue.NotificationContent.gameObject.SetActive(notificationsHeight != 0);
-			if (dialogue.NotificationContent.gameObject.activeSelf)
+			float notificationsHeight = LayoutUtility.GetPreferredHeight(NotificationContent as RectTransform);
+			NotificationContent.gameObject.SetActive(notificationsHeight != 0);
+			if (NotificationContent.gameObject.activeSelf)
 			{
 				countSpaces++;
 			}
 
-			float contentSpaces = dialogue.ContentLayoutGroup.spacing * countSpaces;
-			float subtitlesSpacing = dialogue.SubtitlesLayoutGroup.spacing;
+			float contentSpaces = ContentLayoutGroup.spacing * countSpaces;
+			float subtitlesSpacing = SubtitlesLayoutGroup.spacing;
 
-			float height = (dialogue.RectTransform.sizeDelta.y) - (currentSubtitleHeight + choiceHeight + notificationsHeight + (contentSpaces + subtitlesSpacing));//maxHeight - currentHeight
-			dialogue.Spacer.preferredHeight = height <= 0 ? 0 : height;
+			float height = (RectTransform.sizeDelta.y) - (currentSubtitleHeight + choiceHeight + notificationsHeight + (contentSpaces + subtitlesSpacing));//maxHeight - currentHeight
+			Spacer.preferredHeight = height <= 0 ? 0 : height;
 			#endregion
 
 			yield return null;
@@ -122,13 +160,14 @@ namespace Game.Systems.DialogueSystem
 			var topPosition = currentSubtitle.position;
 			topPosition.y += (currentSubtitle.sizeDelta.y / 2) + subtitlesSpacing;
 
-			var destination = (Vector2)dialogue.Content.transform.InverseTransformPoint(dialogue.Content.position) - (Vector2)dialogue.Content.transform.InverseTransformPoint(topPosition);
+			var destination = (Vector2)Content.transform.InverseTransformPoint(Content.position) - (Vector2)Content.transform.InverseTransformPoint(topPosition);
 			destination.x = 0;
 
-			DOTween.To(() => dialogue.Content.anchoredPosition, x => dialogue.Content.anchoredPosition = x, destination, 0.25f);
+			DOTween.To(() => Content.anchoredPosition, x => Content.anchoredPosition = x, destination, 0.25f);
 			#endregion
 		}
 
+		#region Notifications
 		private void SpawnNotifications(ChoiceWrapper choiceWrapper)
 		{
 			choiceWrapper.notifications.ForEach((x) =>
@@ -138,14 +177,14 @@ namespace Game.Systems.DialogueSystem
 				notification.Text.text = x.text;
 				notification.Text.color = x.basetColor;
 
-				notification.transform.SetParent(dialogue.NotificationContent);
+				notification.transform.SetParent(NotificationContent);
 
 				notifications.Add(notification);
 			});
 
-			if (!dialogue.NotificationContent.gameObject.activeSelf && notifications.Count > 0)
+			if (!NotificationContent.gameObject.activeSelf && notifications.Count > 0)
 			{
-				dialogue.NotificationContent.gameObject.SetActive(true);
+				NotificationContent.gameObject.SetActive(true);
 			}
 		}
 		private void DispawnNotifications()
@@ -156,14 +195,15 @@ namespace Game.Systems.DialogueSystem
 				notifications.Remove(notifications[i]);
 			}
 		}
+		#endregion
 
-
+		#region Subtitles
 		private IEnumerator WaitSubtitlesInput(SubtitlesRequestInfo info)
 		{
 			isWaitInput = info.waitForInput;
 			if (info.waitForInput)
 			{
-				dialogue.WaitIndicator.SetActive(true);
+				WaitIndicator.SetActive(true);
 				while (isWaitInput)
 				{
 					if (Input.GetKeyDown(KeyCode.Space))
@@ -173,21 +213,21 @@ namespace Game.Systems.DialogueSystem
 
 					yield return null;
 				}
-				dialogue.WaitIndicator.SetActive(false);
+				WaitIndicator.SetActive(false);
 			}
 
 			info.Continue();
 		}
 		private void SpawnSubtitles(ISheet sheet, string text)
 		{
-			dialogue.ActorPortrait.gameObject.SetActive(sheet.Information.IsHasPortrait);
-			dialogue.ActorPortrait.sprite = sheet.Information.portrait;
+			ActorPortrait.gameObject.SetActive(sheet.Information.IsHasPortrait);
+			ActorPortrait.sprite = sheet.Information.portrait;
 
 			var subtitle = subtitleFactory.Create();
 
 			subtitle.Text.text = $"{sheet.Information.Name} - {text}";
 
-			subtitle.transform.SetParent(dialogue.SubtitlesContent);
+			subtitle.transform.SetParent(SubtitlesContent);
 
 			subtitles.Add(subtitle);
 
@@ -207,20 +247,13 @@ namespace Game.Systems.DialogueSystem
 
 			Assert.IsNotNull(actor, "IActor == null");
 
-			if(actor is ICharacterModel model)
-			{
-				SpawnSubtitles(model.Character.Sheet, info.statement.Text);
-			}
-			else
-			{
-				throw new NotImplementedException();
-			}
-
+			SpawnSubtitles(actor.GetSheet(), info.statement.Text);
 
 			asyncManager.StartCoroutine(WaitSubtitlesInput(info));
 		}
+		#endregion
 
-
+		#region Choice
 		private IEnumerator WaitChoiceInput()
 		{
 			isWaitChoiceInput = true;
@@ -231,7 +264,7 @@ namespace Game.Systems.DialogueSystem
 				{
 					if (Input.GetKeyDown((KeyCode)(48 + i)))
 					{
-						if(i <= choices.Count)
+						if (i <= choices.Count)
 						{
 							OnChoiced(choices[i - 1].ui);
 						}
@@ -305,7 +338,7 @@ namespace Game.Systems.DialogueSystem
 						}
 						if (settings.showAlignmentShiftsNotificationsInDialogues)
 						{
-							wrapper.notifications.Add(new Notification() { text = $"You've performed a <color={Alignment.GetAlignmentColor(commandAlignment.Target).ToHEX()}>{commandAlignment.Target}</color> action"});
+							wrapper.notifications.Add(new Notification() { text = $"You've performed a <color={Alignment.GetAlignmentColor(commandAlignment.Target).ToHEX()}>{commandAlignment.Target}</color> action" });
 
 							if (commandAlignment.Current != commandAlignment.Forecast)
 							{
@@ -313,7 +346,7 @@ namespace Game.Systems.DialogueSystem
 							}
 						}
 					}
-					else if(x is CommandAddExperience commandExperience)
+					else if (x is CommandAddExperience commandExperience)
 					{
 						if (settings.showExperiaencePointsGainedInDialogues)
 						{
@@ -325,21 +358,21 @@ namespace Game.Systems.DialogueSystem
 							}
 						}
 					}
-					else if(x is CommandAddItems commandItems)
+					else if (x is CommandAddItems commandItems)
 					{
 						string items = "";
 
 						for (int i = 0; i < commandItems.Items.Count; i++)
 						{
 							items += commandItems.Items[i];
-							
-							if(i != commandItems.Items.Count - 1)
+
+							if (i != commandItems.Items.Count - 1)
 							{
 								items += ", ";
 							}
 						}
 
-						wrapper.notifications.Add(new Notification() { text = $"<color={new Color(0, 0.7f, 0).ToHEX()}>Items received:</color> {items}"});//light green
+						wrapper.notifications.Add(new Notification() { text = $"<color={new Color(0, 0.7f, 0).ToHEX()}>Items received:</color> {items}" });//light green
 					}
 				});
 				consequence = !string.IsNullOrEmpty(consequence) ? $"({consequence}) " : "";//spaces
@@ -379,12 +412,12 @@ namespace Game.Systems.DialogueSystem
 
 				choices.Add(wrapper);
 				choiceUI.onButtonClick += OnChoiced;
-				choiceUI.transform.SetParent(dialogue.ChoiceContent);
+				choiceUI.transform.SetParent(ChoiceContent);
 			}
 
-			if (!dialogue.ChoiceContent.gameObject.activeSelf && choices.Count > 0)
+			if (!ChoiceContent.gameObject.activeSelf && choices.Count > 0)
 			{
-				dialogue.ChoiceContent.gameObject.SetActive(true);
+				ChoiceContent.gameObject.SetActive(true);
 			}
 
 			asyncManager.StartCoroutine(CalculateHeight());
@@ -399,7 +432,7 @@ namespace Game.Systems.DialogueSystem
 
 			var wrapper = choices.Find((x) => x.ui == choice);
 
-			if(wrapper.choice.choiceConditionState == ChoiceConditionState.Normal)
+			if (wrapper.choice.choiceConditionState == ChoiceConditionState.Normal)
 			{
 				if (settings.isSayChoice)
 				{
@@ -415,32 +448,11 @@ namespace Game.Systems.DialogueSystem
 				cachedChoiceInfo.SelectOption(index);
 			}
 		}
+		#endregion
 
-
-		private void OnDialogueStarted(DialogueTree tree)
-		{
-			dialogue.Enable(true);
-		}
-		private void OnDialoguePaused(DialogueTree tree) { }
-		private void OnDialogueFinished(DialogueTree tree)
-		{
-			dialogue.Enable(false);
-			DispawnSubtitles();
-			DispawnNotifications();
-			dialogue.Spacer.preferredHeight = 0;
-		}
-
-		private void OnDialogueClicked()
+		private void OnClick()
 		{
 			isWaitInput = false;
-		}
-
-		public class ChoiceWrapper
-		{
-			public Choice choice;
-			public UIChoice ui;
-
-			public List<Notification> notifications = new List<Notification>();
 		}
 
 
@@ -469,6 +481,14 @@ namespace Game.Systems.DialogueSystem
 			//	public float finalDelay = 1.2f;
 			//}
 		}
+	}
+
+	public class ChoiceWrapper
+	{
+		public Choice choice;
+		public UIChoice ui;
+
+		public List<Notification> notifications = new List<Notification>();
 	}
 
 	public class Notification

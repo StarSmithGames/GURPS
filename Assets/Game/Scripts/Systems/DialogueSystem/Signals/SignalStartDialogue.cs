@@ -2,7 +2,7 @@ using NodeCanvas.DialogueTrees;
 
 namespace Game.Systems.DialogueSystem
 {
-	public struct StartDialogueSignal
+	public struct SignalStartDialogue
 	{
 		public DialogueTree dialogue;
 	}

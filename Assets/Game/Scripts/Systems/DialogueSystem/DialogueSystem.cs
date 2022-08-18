@@ -1,9 +1,11 @@
 using Game.Entities;
+using Game.Entities.Models;
 using Game.Managers.CharacterManager;
 using Game.Systems.SheetSystem;
 
 using NodeCanvas.DialogueTrees;
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -45,7 +47,8 @@ namespace Game.Systems.DialogueSystem
 		{
 			if (!dialogueController.isRunning && !IsDialogueProcess)
 			{
-				//dialogueController.graph = CurrentDialogue = actor.ActorSettings.dialogues;
+				dialogueController.graph = CurrentDialogue = actor.GetSheet().Settings.actor.dialogues;
+
 				JoinToDialogue(initiator);
 				JoinToDialogue(actor);
 
@@ -54,7 +57,7 @@ namespace Game.Systems.DialogueSystem
 				CurrentDialogue.SetActorReferences(actorsDictionary);
 				CurrentDialogue.TreeData.isFirstTime = false;
 
-				signalBus?.Fire(new StartDialogueSignal() { dialogue = CurrentDialogue });
+				signalBus?.Fire(new SignalStartDialogue() { dialogue = CurrentDialogue });
 
 				dialogueCoroutine = asyncManager.StartCoroutine(Dialogue());
 			}
@@ -63,7 +66,7 @@ namespace Game.Systems.DialogueSystem
 		public void JoinToDialogue(IActor actor)
 		{
 			actor.IsInDialogue = true;
-			//actorsDictionary.Add(actor.Sheet.Information.nameId, actor);
+			actorsDictionary.Add(actor.GetSheet().Information.nameId, actor);
 		}
 
 		private IEnumerator Dialogue()
@@ -82,7 +85,7 @@ namespace Game.Systems.DialogueSystem
 			actorsDictionary.Clear();
 			dialogueCoroutine = null;
 
-			signalBus?.Fire(new EndDialogueSignal() { dialogue = CurrentDialogue });
+			signalBus?.Fire(new SignalEndDialogue() { dialogue = CurrentDialogue });
 		}
 	}
 }

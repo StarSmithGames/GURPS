@@ -28,13 +28,13 @@ namespace Game.Systems.DialogueSystem.Nodes
 			var dt = ownerSystem as DialogueTree;
 			if (dt != null)
 			{
-				//var node = dt.CurrentNode;
-				//var sheet = (node.FinalActor as IEntityModel)?.Sheet;
+				var node = dt.CurrentNode;
+				var sheet = (node.FinalActor as IActor)?.GetSheet();
 
-				//if (sheet != null)
-				//{
-				//	Command = new CommandAddExperience(sheet, useRandom ? (int)Random.Range(minimumExperienceRandom, maximumExperienceRandom) : addExperience, addLevel);
-				//}
+				if (sheet != null)
+				{
+					Command = new CommandAddExperience(sheet, useRandom ? (int)Random.Range(minimumExperienceRandom, maximumExperienceRandom) : addExperience, addLevel);
+				}
 			}
 
 			Assert.IsNotNull(Command, "Add Experience command == null");

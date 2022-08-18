@@ -12,6 +12,7 @@ using EPOOutline;
 using Game.Systems.InteractionSystem;
 using Game.Systems.DamageSystem;
 using Game.Systems.FloatingTextSystem;
+using Game.Systems.SheetSystem;
 
 namespace Game.Entities.Models
 {
@@ -81,7 +82,7 @@ namespace Game.Entities.Models
 			Markers.Exclamation.Enable(false);
 			Markers.Question.Enable(false);
 
-			signalBus?.Subscribe<StartDialogueSignal>(OnDialogueStarted);
+			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
 
 			yield return base.Start();
 			yield return new WaitForSeconds(2.5f);
@@ -181,7 +182,7 @@ namespace Game.Entities.Models
 
 		public virtual bool TalkWith(IActor actor)
 		{
-			if (IsHaveSomethingToSay)
+			if (actor.IsHaveSomethingToSay)
 			{
 				dialogueSystem.StartDialogue(this, actor);
 				return true;
@@ -226,6 +227,11 @@ namespace Game.Entities.Models
 			Markers.Exclamation.Hide();
 		}
 
+		public ISheet GetSheet()
+		{
+			return Character.Sheet;
+		}
+
 		private bool IsHasFreshAndImportantBarks()
 		{
 			return Actor.barks.TreeData.isFirstTime && Actor.isImportanatBark;
@@ -259,7 +265,7 @@ namespace Game.Entities.Models
 			}
 		}
 
-		private void OnDialogueStarted(StartDialogueSignal signal)
+		private void OnDialogueStarted(SignalStartDialogue signal)
 		{
 			if (signal.dialogue == Actor.dialogues)
 			{

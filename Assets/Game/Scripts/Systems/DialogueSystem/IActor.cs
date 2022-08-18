@@ -1,3 +1,4 @@
+using Game.Systems.SheetSystem;
 using Game.Systems.VFX;
 
 using NodeCanvas.DialogueTrees;
@@ -14,6 +15,8 @@ namespace Game.Systems.DialogueSystem
         bool TalkWith(IActor actor);
 
         void Bark();
+
+        ISheet GetSheet();
     }
 
     [System.Serializable]

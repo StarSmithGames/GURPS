@@ -1,5 +1,3 @@
-using Game.Entities;
-
 using NodeCanvas.DialogueTrees;
 using NodeCanvas.Framework;
 
@@ -25,18 +23,18 @@ namespace Game.Systems.DialogueSystem.Nodes
 			var dt = ownerSystem as DialogueTree;
 			if (dt != null)
 			{
-				//var node = dt.CurrentNode;
-				//var sheet = (node.FinalActor as IEntityModel)?.Sheet;
+				var node = dt.CurrentNode;
+				var sheet = (node.FinalActor as IActor)?.GetSheet();
 
-				//if (sheet != null)
-				//{
-				//	//Debug.LogError(sheet.Information.Name + " " + (sheet.Characteristics.Alignment as AlignmentCharacteristic).Aligment);
+				if (sheet != null)
+				{
+					//Debug.LogError(sheet.Information.Name + " " + (sheet.Characteristics.Alignment as AlignmentCharacteristic).Aligment);
 
-				//	if(condition == null || condition.CheckOnce(node.FinalActor.Transform, blackboard))
-				//	{
-				//		return true;
-				//	}
-				//}
+					if (condition == null || condition.CheckOnce(node.FinalActor.DialogueTransform, blackboard))
+					{
+						return true;
+					}
+				}
 			}
 
 			return false;

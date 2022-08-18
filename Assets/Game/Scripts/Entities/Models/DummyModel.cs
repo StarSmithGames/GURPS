@@ -41,20 +41,20 @@ namespace Game.Entities.Models
 			this.dialogueSystem = dialogueSystem;
 		}
 
+		//Dummy can't start dialogue
 		public bool TalkWith(IActor actor)
 		{
-			if (IsHaveSomethingToSay)
-			{
-				dialogueSystem.StartDialogue(this, actor);
-				return true;
-			}
-
 			return false;
 		}
 
 		public void Bark()
 		{
 
+		}
+
+		public ISheet GetSheet()
+		{
+			return Sheet;
 		}
 
 		private bool IsHasFreshAndImportantBarks()
