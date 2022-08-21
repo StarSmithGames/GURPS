@@ -2140,7 +2140,7 @@ GameObject:
   - component: {fileID: 3494019076663411057}
   - component: {fileID: 7237211956187298259}
   - component: {fileID: 4987443689890451680}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: NPC
   m_TagString: Untagged
   m_Icon: {fileID: 0}

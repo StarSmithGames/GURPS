@@ -15,7 +15,7 @@ namespace Game.Systems.DialogueSystem
 
         bool TalkWith(IActor actor);
 
-        void Bark();
+        void Bark(BarkTree barkTree);
 
         ISheet GetSheet();
     }
@@ -23,6 +23,14 @@ namespace Game.Systems.DialogueSystem
     [System.Serializable]
 	public class ActorSettings
     {
+        public bool useBarks = false;
+        [ShowIf("@useBarks")]
+        public bool useBarksInWorld = false;
+        [ShowIf("@useBarks && useBarksInWorld")]
+        public BarkTree barksInWorld;
+
+
+
         public bool isImportanatBark = false;
         [ShowIf("isImportanatBark")]
         public MarkIndicator indicator = MarkIndicator.Exclamation;

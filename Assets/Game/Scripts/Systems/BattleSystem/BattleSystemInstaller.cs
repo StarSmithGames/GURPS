@@ -1,14 +1,16 @@
+using UnityEngine;
+
 using Zenject;
 
 namespace Game.Systems.BattleSystem
 {
-	public class BattleSystemInstaller : Installer<BattleSystemInstaller>
+	[CreateAssetMenu(fileName = "BattleSystemInstaller", menuName = "Installers/BattleSystemInstaller")]
+	public class BattleSystemInstaller : ScriptableObjectInstaller<BattleSystemInstaller>
 	{
 		public override void InstallBindings()
 		{
 			Container.DeclareSignal<SignalCurrentBattleChanged>();
 
-			Container.BindInterfacesAndSelfTo<BattleManager>().AsSingle();
 			Container.BindInterfacesAndSelfTo<BattleSystem>().AsSingle();
 		}
 	}

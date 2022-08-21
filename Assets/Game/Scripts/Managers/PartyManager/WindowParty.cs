@@ -16,6 +16,8 @@ namespace Game.Managers.PartyManager
 {
 	public class WindowParty : WindowBase
 	{
+		[field: SerializeField] public Transform Content { get; private set; }
+
 		private List<UIAvatar> avatars = new List<UIAvatar>();
 
 		private SignalBus signalBus;
@@ -40,7 +42,7 @@ namespace Game.Managers.PartyManager
 
 		private void Start()
 		{
-			transform.DestroyChildren();
+			Content.DestroyChildren();
 
 			subCanvas.WindowsRegistrator.Registrate(this);
 
@@ -93,7 +95,7 @@ namespace Game.Managers.PartyManager
 
 					avatar.onClicked += OnAvatarClicked;
 					avatar.onDoubleClicked += OnAvatarDoubleClicked;
-					avatar.transform.SetParent(transform);
+					avatar.transform.SetParent(Content);
 					avatar.transform.localScale = Vector3.one;
 					avatars.Add(avatar);
 				}

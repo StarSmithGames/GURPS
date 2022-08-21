@@ -1,9 +1,17 @@
+using Game.Managers.FactionManager;
+
+using Sirenix.OdinInspector;
+
+using UnityEngine;
 using Zenject;
 
 namespace Game.Entities.Models
 {
-	public class PlayerModel : CharacterModel
+	public class PlayerModel : CharacterModel, IFactionable
 	{
+		[field: InlineProperty]
+		[field: SerializeField] public Faction Faction { get; private set; }
+
 		[Inject]
 		private void Construct(IPlayer player)
 		{

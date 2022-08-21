@@ -39,8 +39,8 @@ namespace Game.Systems.DialogueSystem
 
 		public void StartBarkConversation(IActor initiator, IActor actor)
 		{
-			initiator.Bark();
-			actor.Bark();
+			//initiator.Bark();
+			//actor.Bark();
 		}
 
 		public void StartDialogue(IActor initiator, IActor actor)

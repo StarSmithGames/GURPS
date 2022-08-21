@@ -18,8 +18,23 @@ using Game.Entities.Models;
 
 namespace Game.Systems.BattleSystem
 {
+	//Turn Based BattleSystem
 	public partial class BattleSystem
 	{
+		public BattleManager BattleManager
+		{
+			get
+			{
+				if(battleManager == null)
+				{
+					battleManager = new BattleManager();
+				}
+
+				return battleManager;
+			}
+		}
+		private BattleManager battleManager;
+
 		public Turn CurrentTurn { get; private set; }
 		public IBattlable CurrentInitiator { get; private set; }
 		public CharacterModel CachedLeader { get; private set; }
@@ -32,7 +47,6 @@ namespace Game.Systems.BattleSystem
 
 		private SignalBus signalBus;
 		private Settings settings;
-		private BattleManager battleManager;
 		private UIManager uiManager;
 		private AsyncManager asyncManager;
 		private CharacterManager characterManager;
@@ -41,14 +55,12 @@ namespace Game.Systems.BattleSystem
 		public BattleSystem(
 			SignalBus signalBus,
 			GlobalSettings settings,
-			BattleManager battleManager,
 			AsyncManager asyncManager,
 			CharacterManager characterManager,
 			CameraController cameraController)
 		{
 			this.signalBus = signalBus;
 			this.settings = settings.battleSettings;
-			this.battleManager = battleManager;
 			this.asyncManager = asyncManager;
 			this.characterManager = characterManager;
 			this.cameraController = cameraController;
@@ -58,29 +70,29 @@ namespace Game.Systems.BattleSystem
 
 		public void StartBattle(List<IBattlable> entities)
 		{
-			isSkipTurn = false;
-			terminateBattle = false;
+			//isSkipTurn = false;
+			//terminateBattle = false;
 
-			//CachedLeader = characterManager.CurrentParty.LeaderParty;
+			////CachedLeader = characterManager.CurrentParty.LeaderParty;
 
-			uiManager.Battle.Messages.ShowCommenceBattle();
-			uiManager.Battle.SkipTurn.ButtonPointer.onClick.AddListener(StartSkipTurn);
-			uiManager.Battle.RunAway.ButtonPointer.onClick.AddListener(StopBattle);
+			//uiManager.Battle.Messages.ShowCommenceBattle();
+			//uiManager.Battle.SkipTurn.ButtonPointer.onClick.AddListener(StartSkipTurn);
+			//uiManager.Battle.RunAway.ButtonPointer.onClick.AddListener(StopBattle);
 
-			localBattleTest = new Battle(entities);
-			localBattleTest.onNextTurn += OnTurnChanged;
-			localBattleTest.onNextRound += uiManager.Battle.Messages.ShowNewRound;
-			localBattleTest.onEntitiesChanged += OnEntitiesChanged;
+			//localBattleTest = new Battle(entities);
+			//localBattleTest.onNextTurn += OnTurnChanged;
+			//localBattleTest.onNextRound += uiManager.Battle.Messages.ShowNewRound;
+			//localBattleTest.onEntitiesChanged += OnEntitiesChanged;
 
-			battleManager.AddBattle(localBattleTest);
-			localBattleTest.Initialization();
+			////battleManager.AddBattle(localBattleTest);
+			//localBattleTest.Initialization();
 
-			UpdateStates();
+			//UpdateStates();
 
-			if (!IsBattleProcess)
-			{
-				battleCoroutine = asyncManager.StartCoroutine(BattleProcess());
-			}
+			//if (!IsBattleProcess)
+			//{
+			//	battleCoroutine = asyncManager.StartCoroutine(BattleProcess());
+			//}
 		}
 
 		public void StopBattle()
@@ -92,7 +104,7 @@ namespace Game.Systems.BattleSystem
 			}
 
 			localBattleTest.Dispose();
-			battleManager.RemoveBattle(localBattleTest);
+			//battleManager.RemoveBattle(localBattleTest);
 			localBattleTest.onNextTurn -= OnTurnChanged;
 			localBattleTest.onNextRound -= uiManager.Battle.Messages.ShowNewRound;
 			localBattleTest.onEntitiesChanged -= OnEntitiesChanged;

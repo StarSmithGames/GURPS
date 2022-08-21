@@ -25,8 +25,6 @@ namespace Game
 		{
 			Container.BindInstance(subCanvas);
 
-			BattleSystemInstaller.Install(Container);
-
 			BindCameras();
 		}
 

@@ -9,13 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1d9e179683654af4890d0d2f186dfae7, type: 3}
-  m_Name: NPC
+  m_Script: {fileID: 11500000, guid: d12ddcda80a29274a8797e9716ef3857, type: 3}
+  m_Name: Dummy
   m_EditorClassIdentifier: 
   sheet:
     identity: 0
     age: -1
-    race: 106
+    race: 0
     gender: 0
     isImmortal: 0
     stats:
@@ -188,18 +188,18 @@ MonoBehaviour:
         currentDurability: 100
         isShowFoldout: 0
     actor:
-      useBarks: 1
-      useBarksInWorld: 1
-      barksInWorld: {fileID: 11400000, guid: 18a4b6281c6b314439fc9770393e5c3c, type: 2}
+      useBarks: 0
+      useBarksInWorld: 0
+      barksInWorld: {fileID: 0}
       isImportanatBark: 0
       indicator: 1
-      barks: {fileID: 11400000, guid: baf191f27f173a54981dc2a8122708d8, type: 2}
+      barks: {fileID: 0}
       dialogues: {fileID: 0}
   information:
-    nameId: 
+    nameId: Dummy
     localizations:
     - language: 10
-      name: Zombie
-    isHasPortrait: 0
-    portrait: {fileID: 0}
-    nameColor: {r: 1, g: 1, b: 1, a: 1}
+      name: Dummy
+    isHasPortrait: 1
+    portrait: {fileID: 21300000, guid: 9cb7cd077a78e584aa08243418f19af5, type: 3}
+    nameColor: {r: 0.974854, g: 1, b: 0.3066038, a: 1}

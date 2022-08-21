@@ -12,9 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e041519adf50fd4c9ddea3646afc87a, type: 3}
   m_Name: Barks
   m_EditorClassIdentifier: 
-  _serializedGraph: '{"type":"Game.Systems.DialogueSystem.BarkTree","nodes":[{"statements":[{"text":"Do
-    not talk to me.","isShowFoldout":true},{}],"_position":{"x":300.0,"y":270.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"},{"statements":[{"text":"What?","isShowFoldout":true},{}],"_position":{"x":240.0,"y":390.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"},{"statements":[{"text":"You
-    stink! Stop talk to me.","isShowFoldout":true},{}],"_position":{"x":465.0,"y":330.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"}],"connections":[],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
+  _serializedGraph: '{"type":"Game.Systems.DialogueSystem.BarkTree","nodes":[{"statement":{"texts":[{"language":"Russian","value":"\u041d\u0435
+    \u0440\u0430\u0437\u0433\u043e\u0432\u0430\u0440\u0438\u0432\u0430\u0439 \u0441\u043e
+    \u043c\u043d\u043e\u0439.","isShowFoldout":true},{"language":"English","value":"This
+    is a text!"}],"isShowFoldout":true},"_position":{"x":225.0,"y":240.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"},{"statement":{"texts":[{"language":"Russian","value":"\u041e\u0442
+    \u0442\u0435\u0431\u044f \u0432\u043e\u043d\u044f\u0435\u0442.","isShowFoldout":true},{"language":"English","value":"This
+    is a text!"}],"isShowFoldout":true},"_position":{"x":180.0,"y":360.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"},{"statement":{"texts":[{"language":"Russian","value":"\u0427\u0442\u043e
+    \u0442\u0435\u0431\u0435 \u043d\u0443\u0436\u043d\u043e?","isShowFoldout":true},{"language":"English","value":"This
+    is a text!"}],"isShowFoldout":true},"_position":{"x":465.0,"y":330.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"}],"connections":[],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
   _objectReferences: []
   _graphSource:
     _version: 3.22

@@ -6,12 +6,11 @@ using System.Security.Cryptography;
 
 public static class CollectionExtensions
 {
-    public static T RandomItem<T>(this IList<T> list)
+    public static T RandomItem<T>(this IList<T> list, int from = 0, int to = -1)
 	{
         if (list.Count == 0) return default;
-        return list[UnityEngine.Random.Range(0, list.Count)];
+        return list[UnityEngine.Random.Range(from, to == -1 ? list.Count : to)];
 	}
-
 
     /// <summary>
     /// https://stackoverflow.com/questions/273313/randomize-a-listt

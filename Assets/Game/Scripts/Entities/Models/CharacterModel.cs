@@ -83,6 +83,7 @@ namespace Game.Entities.Models
 			Markers.Question.Enable(false);
 
 			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
+			signalBus?.Subscribe<SignalEndDialogue>(OnDialogueEnded);
 
 			yield return base.Start();
 			yield return new WaitForSeconds(2.5f);
@@ -178,9 +179,13 @@ namespace Game.Entities.Models
 		public virtual bool IsHasImportantToSay => (Actor.barks != null && IsHasFreshAndImportantBarks()) || (Actor.dialogues != null && IsHasFreshAndImportantDialogues());
 		public virtual bool IsInDialogue { get; set; }
 
+		public bool IsBarksInWorld => barksInWorld != null;
+		private Coroutine barksInWorld = null;
+
+
 		protected DialogueSystem dialogueSystem;
 		protected Barker barker;
-
+	
 		public virtual bool TalkWith(IActor actor)
 		{
 			if (actor.IsHasSomethingToSay)
@@ -207,23 +212,18 @@ namespace Game.Entities.Models
 			return false;
 		}
 
-		public virtual void Bark()
+		public virtual void Bark(BarkTree barkTree)
 		{
-			if (barker == null || Actor.barks == null)
-			{
-				Debug.LogError($"{gameObject.name} barker == null || ActorSettings.barks == null", gameObject);
-				return;
-			}
-			if (barker.IsShowing) return;
-
-			var bark = Actor.barks.allNodes.FirstOrDefault();
-
-			switch (Actor.barks.barkType)
+			switch (barkTree.barkType)
 			{
 				case BarkType.First:
+				{
+					//TODO
+					break;
+				}
 				case BarkType.Random:
 				{
-					bark = Actor.barks.allNodes.RandomItem();
+					var bark = barkTree.allNodes.RandomItem();
 
 					if (bark is I2StatementNode node)
 					{
@@ -239,8 +239,8 @@ namespace Game.Entities.Models
 				}
 			}
 
-			Actor.barks.TreeData.isFirstTime = false;
-			Markers.Exclamation.Hide();
+			barkTree.TreeData.isFirstTime = false;
+			//Markers.Exclamation.Hide();
 		}
 
 		public ISheet GetSheet()
@@ -268,6 +268,46 @@ namespace Game.Entities.Models
 
 		protected virtual void CheckReplicas()
 		{
+			RefreshMarkers();
+
+			if (Actor.useBarks)
+			{
+				if (Actor.useBarksInWorld && Actor.barksInWorld != null)
+				{
+					if (IsBarksInWorld)
+					{
+						StopCoroutine(barksInWorld);
+						barksInWorld = null;
+					}
+					barksInWorld = StartCoroutine(BarksInWorld());
+				}
+			}
+		}
+
+		private IEnumerator BarksInWorld()
+		{
+			while (true)
+			{
+				while (IsInDialogue)
+				{
+					yield return null;
+				}
+
+				yield return new WaitWhile(() => barker.IsShowing);
+
+				while (IsInDialogue)
+				{
+					yield return null;
+				}
+
+				yield return new WaitForSeconds(1f);
+				Bark(Actor.barksInWorld);
+				yield return null;
+			}
+		}
+
+		private void RefreshMarkers()
+		{
 			if (IsHasImportantToSay)
 			{
 				Markers.Exclamation.Show();
@@ -281,11 +321,19 @@ namespace Game.Entities.Models
 			}
 		}
 
+
 		private void OnDialogueStarted(SignalStartDialogue signal)
 		{
 			if (signal.dialogue == Actor.dialogues)
 			{
-				CheckReplicas();
+				IsInDialogue = true;
+			}
+		}
+		private void OnDialogueEnded(SignalEndDialogue signal)
+		{
+			if (signal.dialogue == Actor.dialogues)
+			{
+				IsInDialogue = false;
 			}
 		}
 	}
