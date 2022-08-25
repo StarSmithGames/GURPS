@@ -244,7 +244,7 @@ namespace Game.Systems.InteractionSystem
 		public override IEnumerator Implementation()
 		{
 			status = TaskActionStatus.Preparing;
-			entity.SetDestination(destination);
+			//entity.SetDestination(destination);
 
 			Vector3 lastDestination = entity.Navigation.CurrentNavMeshDestination;
 

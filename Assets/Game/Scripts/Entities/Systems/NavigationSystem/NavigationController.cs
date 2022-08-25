@@ -14,7 +14,6 @@ namespace Game.Entities
     {
 		public NavMeshAgent NavMeshAgent { get; private set; }
 
-
 		public NavigationPath FullPath = new NavigationPath();
 		public float FullPathDistance => FullPath.Distance;
 		public Vector3 PathDestination => FullPath.EndPoint;

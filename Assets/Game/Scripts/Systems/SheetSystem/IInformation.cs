@@ -21,11 +21,22 @@ namespace Game.Systems.SheetSystem
             }
         }
 
+        public string NameColored
+		{
+			get
+			{
+                string name = string.IsNullOrEmpty(Name) ? "EMPTY" : Name;
+                return $"<color=#{ColorUtility.ToHtmlStringRGBA(nameColor)}>{name}</color>";
+            }
+		}
+
         public string nameId;
 
         [ListDrawerSettings(ListElementLabelName = "Tittle")]
         [InfoBox("@LocalizationInfo", InfoMessageType.Warning)]
         public List<Localization> localizations = new List<Localization>();
+
+        public Color nameColor = Color.white;
 
         public bool isHasPortrait = false;
         [ShowIf("isHasPortrait")]
@@ -54,32 +65,8 @@ namespace Game.Systems.SheetSystem
     }
 
 	[System.Serializable]
-    public class HumanoidInformation : EntityInformation
-    {
-		public override string Name
-		{
-			get
-			{
-				string name = string.IsNullOrEmpty(base.Name) ? "EMPTY" : base.Name;
-				return $"<color=#{ColorUtility.ToHtmlStringRGBA(nameColor)}>{name}</color>";
-			}
-		}
-
-		public Color nameColor = Color.white;
-    }
+    public class HumanoidInformation : EntityInformation { }
 
     [System.Serializable]
-    public class ModelInformation : EntityInformation
-    {
-        public override string Name
-        {
-            get
-            {
-                string name = string.IsNullOrEmpty(base.Name) ? "EMPTY" : base.Name;
-                return $"<color=#{ColorUtility.ToHtmlStringRGBA(nameColor)}>{name}</color>";
-            }
-        }
-
-        public Color nameColor = Color.white;
-    }
+    public class ModelInformation : EntityInformation { }
 }

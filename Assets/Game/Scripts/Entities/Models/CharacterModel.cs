@@ -16,7 +16,7 @@ using Game.Systems.SheetSystem;
 
 namespace Game.Entities.Models
 {
-	public interface ICharacterModel : IEntityModel, IBattlable, IActor, IDamegeable, IKillable
+	public interface ICharacterModel : IEntityModel, ISheetable, IBattlable, IActor, IDamegeable, IKillable
 	{
 		bool IsWithRangedWeapon { get; }//rm
 		float CharacterRange { get; }//rm
@@ -40,10 +40,13 @@ namespace Game.Entities.Models
 
 		public ICharacter Character { get; protected set; }
 
+		public ISheet Sheet => Character.Sheet;
+
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorControl AnimatorControl { get; private set; }
 
 		public Transform DialogueTransform => Transform;
+
 
 		private IEquipment equipment;
 
@@ -380,14 +383,9 @@ namespace Game.Entities.Models
 	//Override Battle & Animations implementation
 	partial class CharacterModel
 	{
-		public override void SetTarget(Vector3 point, float maxPathDistance = -1)
-		{
-			//base.SetTarget(point, InBattle ? Sheet.Stats.Move.CurrentValue : maxPathDistance);
-		}
-
 		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
 		{
-			base.SetDestination(destination, /*InBattle ? Sheet.Stats.Move.CurrentValue :*/ maxPathDistance);
+			base.SetDestination(destination, maxPathDistance);
 
 			if (!InBattle)
 			{
@@ -433,33 +431,24 @@ namespace Game.Entities.Models
 					case BattleState.PreBattle:
 					{
 						Markers.FollowMarker.Enable(true);
-
 						Markers.TargetMarker.Enable(false);
-
 						Markers.AreaMarker.Enable(false);
-
 						Markers.LineMarker.Enable(false);
 						break;
 					}
 					case BattleState.Battle:
 					{
 						Markers.FollowMarker.Enable(true);
-
 						Markers.TargetMarker.Enable(true);
-
 						Markers.AreaMarker.Enable(false);
-
 						Markers.LineMarker.Enable(true);
 						break;
 					}
 					case BattleState.EndBattle:
 					{
 						Markers.FollowMarker.Enable(false);
-
 						Markers.TargetMarker.Enable(true);
-
 						Markers.AreaMarker.Enable(false);
-
 						Markers.LineMarker.Enable(false);
 						break;
 					}

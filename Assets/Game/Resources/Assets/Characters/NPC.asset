@@ -15,7 +15,7 @@ MonoBehaviour:
   sheet:
     identity: 0
     age: -1
-    race: 106
+    race: 0
     gender: 0
     isImmortal: 0
     stats:
@@ -199,7 +199,7 @@ MonoBehaviour:
     nameId: 
     localizations:
     - language: 10
-      name: Zombie
+      name: Trader
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
     isHasPortrait: 0
     portrait: {fileID: 0}
-    nameColor: {r: 1, g: 1, b: 1, a: 1}

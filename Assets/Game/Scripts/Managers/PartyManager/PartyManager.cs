@@ -74,6 +74,11 @@ namespace Game.Managers.PartyManager
 				signalBus?.Fire(new SignalPartyChanged());
 			}
 		}
+
+		public bool Contains(ICharacter character)
+		{
+			return Characters.Contains(character);
+		}
 	}
 
 	public class PlayerParty : Party

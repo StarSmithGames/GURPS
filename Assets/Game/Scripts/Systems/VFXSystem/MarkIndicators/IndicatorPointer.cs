@@ -29,7 +29,7 @@ namespace Game.Systems.VFX
 					}
 					else
 					{
-						currentPointer = new Pointer(Instantiate(pointer2DPrefab, uiManager.transform));
+						//currentPointer = new Pointer(Instantiate(pointer2DPrefab, uiManager.transform));
 					}
 				}
 
@@ -40,7 +40,6 @@ namespace Game.Systems.VFX
 
 		private Cinemachine.CinemachineBrain brain;
 		private CharacterManager characterManager;
-		private UIManager uiManager;
 
 		[Inject]
 		private void Construct(Cinemachine.CinemachineBrain brain, CharacterManager characterManager)

@@ -43,8 +43,7 @@ namespace Game.Systems.BattleSystem
 					var entities = new List<IBattlable>(battlables);
 					entities.Add(battlable);
 
-					var battle = new Battle(entities);
-					battle.Initialization();
+					battleSystem.StartBattle(entities);
 
 					Disable();
 				}

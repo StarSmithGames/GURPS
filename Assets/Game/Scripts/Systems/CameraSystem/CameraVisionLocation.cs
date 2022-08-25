@@ -5,9 +5,12 @@ using Game.Entities.Models;
 using Game.Managers.CharacterManager;
 using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
+using Game.Systems.BattleSystem;
 using Game.Systems.ContextMenu;
 using Game.Systems.InteractionSystem;
+using Game.Systems.SheetSystem;
 using Game.Systems.TooltipSystem;
+using Game.UI;
 
 using System;
 
@@ -18,14 +21,29 @@ using Zenject;
 
 namespace Game.Systems.CameraSystem
 {
-	public class CameraVisionLocation : CameraVision
+	public partial class CameraVisionLocation : CameraVision
 	{
 		private ICharacter leader;
 		private ICharacterModel leaderModel;
 
+		private WindowEntityInformation EntityInformation
+		{
+			get
+			{
+				if(entityInformation == null)
+				{
+					entityInformation = subCanvas.WindowsRegistrator.GetAs<WindowEntityInformation>();
+				}
+
+				return entityInformation;
+			}
+		}
+		private WindowEntityInformation entityInformation;
+
 		private PartyManager partyManager;
 		private TooltipSystem.TooltipSystem tooltipSystem;
-		private ContextMenuSystem contextMenuHandler;
+		private ContextMenuSystem contextMenuSystem;
+		private UISubCanvas subCanvas;
 
 		public CameraVisionLocation(SignalBus signalBus,
 			CinemachineBrain brain,
@@ -33,12 +51,14 @@ namespace Game.Systems.CameraSystem
 			PartyManager partyManager,
 			GlobalSettings settings,
 			TooltipSystem.TooltipSystem tooltipSystem,
-			ContextMenuSystem contextMenuHandler) : base(signalBus, brain, inputManager)
+			ContextMenuSystem contextMenuSystem,
+			UISubCanvas subCanvas) : base(signalBus, brain, inputManager)
 		{
 			this.partyManager = partyManager;
 			this.settings = settings.cameraVisionLocation;
 			this.tooltipSystem = tooltipSystem;
-			this.contextMenuHandler = contextMenuHandler;
+			this.contextMenuSystem = contextMenuSystem;
+			this.subCanvas = subCanvas;
 		}
 
 		public override void Initialize()
@@ -61,7 +81,7 @@ namespace Game.Systems.CameraSystem
 		{
 			base.Tick();
 
-			if (!leaderModel.IsInDialogue)
+			if (leaderModel.InBattle && !leaderModel.IsHasTarget)
 			{
 				TooltipRuler();
 			}
@@ -71,33 +91,28 @@ namespace Game.Systems.CameraSystem
 		{
 			if (!leaderModel.IsInDialogue)
 			{
-				if (leaderModel.InBattle)
+				if (CurrentObserve != null)
 				{
-					if (!leaderModel.IsHasTarget)
+					if (CurrentObserve is ISheetable sheetable)
 					{
-						if (CurrentObserve != null)
+						if (!EntityInformation.IsShowing)
 						{
-							if (leaderModel.IsWithRangedWeapon && CurrentObserve != leaderModel)
-							{
-								//leaderModel.Controller.RotateTo(point);
-								leaderModel.Markers.SplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
-								leaderModel.Markers.AdditionalSplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
-							}
-							else if (CurrentObserve is IInteractable interactable)
-							{
-								//leaderModel.SetTarget(interactable.GetIteractionPosition(leader));
-							}
-						}
-						else
-						{
-							leaderModel.SetTarget(point);
-
-							//if (leader.IsRangeAttackTest)
-							//{
-							//	leader.Controller.RotateTo(point);
-							//}
+							EntityInformation.SetSheet(sheetable.Sheet);
+							EntityInformation.Enable(true);
 						}
 					}
+				}
+				else
+				{
+					if (EntityInformation.IsShowing)
+					{
+						EntityInformation.Enable(false);
+					}
+				}
+
+				if (leaderModel.InBattle)
+				{
+					HoverInBattle(point);
 				}
 			}
 		}
@@ -108,40 +123,13 @@ namespace Game.Systems.CameraSystem
 			{
 				if (inputManager.IsLeftMouseButtonPressed())
 				{
-					if (CurrentObserve != null)
+					if (!leaderModel.InBattle)
 					{
-						//Interaction
-						if (inputManager.IsLeftMouseButtonDown())
-						{
-							if (CurrentObserve is IInteractable interactable)
-							{
-								if (leaderModel.InBattle)
-								{
-									bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leaderModel.Navigation.FullPathDistance) >= 0 &&
-										leaderModel.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
-
-									//if (isCanReach || interactable.IsInRange(leader))
-									//{
-									//	interactionHandler.InteractInBattle(leader, interactable);
-									//}
-								}
-								else
-								{
-									Interactor.ABInteraction(leaderModel, interactable);
-								}
-							}
-						}
+						MouseClick(point);
 					}
 					else
 					{
-						//Targeting
-						if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
-						{
-							if (IsMouseHit && !IsUI)
-							{
-								leaderModel.SetDestination(point);
-							}
-						}
+						MouseClickInBattle(point);
 					}
 				}
 				else if (inputManager.IsRightMouseButtonPressed())
@@ -153,7 +141,7 @@ namespace Game.Systems.CameraSystem
 
 						if (CurrentObserve != null/* && leader != CurrentObserve*/)
 						{
-							contextMenuHandler.SetTarget(CurrentObserve);
+							contextMenuSystem.SetTarget(CurrentObserve);
 						}
 					}
 				}
@@ -172,7 +160,9 @@ namespace Game.Systems.CameraSystem
 					leaderModel.InBattle && !leaderModel.IsHasTarget &&
 					(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
 
-				if (isInvalidTarget || isNotEnoughMovement || isOutOfRange)
+				bool isError = isInvalidTarget || isNotEnoughMovement || isOutOfRange;
+
+				if (isError)
 				{
 					if (isInvalidTarget)
 					{
@@ -198,55 +188,26 @@ namespace Game.Systems.CameraSystem
 			}
 		}
 
-		protected override void OnHoverObserveChanged()
-		{
-			if (!leaderModel.IsInDialogue)
-			{
-				if (leaderModel.InBattle)
-				{
-					if (CurrentObserve == null || CurrentObserve == leaderModel)
-					{
-						leaderModel.Markers.SplineMarker.Enable(false);
-						leaderModel.Markers.AdditionalSplineMarker.Enable(false);
-						leaderModel.Markers.AreaMarker.Enable(false);
-					}
-					else
-					{
-						if (leaderModel.IsWithRangedWeapon)
-						{
-							leaderModel.SetTarget((leaderModel as IPathfinderable).Transform.position);//hide target
-
-							leaderModel.Markers.AdditionalSplineMarker.Enable(true);
-							leaderModel.Markers.SplineMarker.Enable(true);
-
-							leaderModel.Markers.AreaMarker.Radius = leaderModel.CharacterRange;
-							leaderModel.Markers.AreaMarker.Enable(true);
-							leaderModel.Markers.AreaMarker.DrawCircle();
-						}
-					}
-				}
-			}
-		}
-
 		private void TooltipRuler()
 		{
-			if (leaderModel.InBattle && !leaderModel.IsHasTarget)
+			if (IsMouseHit && !IsUI)
 			{
-				if (IsMouseHit && !IsUI)
+				string text = Math.Round(leaderModel.Navigation.CurrentNavMeshPathDistance, 2) +
+					SymbolCollector.METRE.ToString() + "-" +
+					Math.Round(leaderModel.Navigation.FullPathDistance, 2) +
+					SymbolCollector.METRE.ToString();
+
+				tooltipSystem.SetRulerText(text);
+				if (!tooltipSystem.IsRulerShowing)
 				{
-					string text = Math.Round(leaderModel.Navigation.CurrentNavMeshPathDistance, 2) +
-						SymbolCollector.METRE.ToString() + "-" +
-						Math.Round(leaderModel.Navigation.FullPathDistance, 2) +
-						SymbolCollector.METRE.ToString();
-					tooltipSystem.SetRulerText(text);
 					tooltipSystem.EnableRuler(true);
 				}
-				else
+			}
+			else
+			{
+				if (tooltipSystem.IsRulerShowing)
 				{
-					if (tooltipSystem.IsRulerShowing)
-					{
-						tooltipSystem.EnableRuler(false);
-					}
+					tooltipSystem.EnableRuler(false);
 				}
 			}
 		}
@@ -256,19 +217,144 @@ namespace Game.Systems.CameraSystem
 			return (Vector3.Distance(leaderModel.Outfit.LeftHandPivot.position, point) <= leaderModel.CharacterRange);
 		}
 
+		protected override void OnHoverObserveChanged()
+		{
+			if (!leaderModel.IsInDialogue)
+			{
+				if (leaderModel.InBattle)
+				{
+					HoverObserveChangedInBattle();
+				}
+			}
+		}
+
 		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 		{
-			IsCanHoldMouse = /*signal.leader.InBattle ? false : */settings.isCanHoldMouse;
+			leader = signal.leader;
+			leaderModel = signal.leader.Model as ICharacterModel;
 
-			if(leader != null)
+			IsCanHoldMouse = leaderModel.InBattle ? false : settings.isCanHoldMouse;
+
+			leaderModel.Markers.SplineMarker.Enable(false);
+			leaderModel.Markers.AdditionalSplineMarker.Enable(false);
+			leaderModel.Markers.AreaMarker.Enable(false);
+		}
+	}
+
+	//Free implementation
+	public partial class CameraVisionLocation
+	{
+		private void MouseClick(Vector3 point)
+		{
+			if (CurrentObserve != null)
+			{
+				//Interaction
+				if (inputManager.IsLeftMouseButtonDown())
+				{
+					if (CurrentObserve is IInteractable interactable)
+					{
+						Interactor.ABInteraction(leaderModel, interactable);
+					}
+				}
+			}
+			else
+			{
+				//Targeting
+				if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
+				{
+					if (IsMouseHit && !IsUI)
+					{
+						leaderModel.SetDestination(point);
+					}
+				}
+			}
+		}
+	}
+
+
+	//In Battle implementation
+	public partial class CameraVisionLocation
+	{
+		private void HoverInBattle(Vector3 point)
+		{
+			if (!leaderModel.IsHasTarget)
+			{
+				if (CurrentObserve != null)
+				{
+					if (leaderModel.IsWithRangedWeapon && CurrentObserve != leaderModel)
+					{
+						//leaderModel.Controller.RotateTo(point);
+						leaderModel.Markers.SplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
+						leaderModel.Markers.AdditionalSplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
+					}
+					else if (CurrentObserve is IInteractable interactable)
+					{
+						leaderModel.SetTarget(interactable.InteractionPoint.GetIteractionPosition(leaderModel));
+					}
+				}
+				else
+				{
+					leaderModel.SetTarget(point, leaderModel.Sheet.Stats.Move.CurrentValue);
+
+					//if (leader.IsRangeAttackTest)
+					//{
+					//	leader.Controller.RotateTo(point);
+					//}
+				}
+			}
+		}
+
+		private void MouseClickInBattle(Vector3 point)
+		{
+			if (CurrentObserve != null)
+			{
+				//bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leaderModel.Navigation.FullPathDistance) >= 0 &&
+				//						leaderModel.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
+
+				//if (isCanReach || interactable.InteractionPoint.IsInRange(leaderModel.Transform.position))
+				//{
+				//	//Interactor.InteractInBattle(leader, interactable);
+				//}
+			}
+			else
+			{
+				//if (!leader.TaskSequence.IsSequenceProcess || leader.TaskSequence.IsCanBeBreaked)
+				//Targeting
+				if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
+				{
+					if (IsMouseHit && !IsUI)
+					{
+						if (!leaderModel.IsHasTarget && leaderModel.Sheet.Stats.Move.CurrentValue >= 0.1f)
+						{
+							leaderModel.SetDestination(point, leaderModel.Sheet.Stats.Move.CurrentValue);
+						}
+					}
+				}
+			}
+		}
+
+		private void HoverObserveChangedInBattle()
+		{
+			if (CurrentObserve == null || CurrentObserve == leaderModel)
 			{
 				leaderModel.Markers.SplineMarker.Enable(false);
 				leaderModel.Markers.AdditionalSplineMarker.Enable(false);
 				leaderModel.Markers.AreaMarker.Enable(false);
 			}
+			else
+			{
+				if (leaderModel.IsWithRangedWeapon)
+				{
+					leaderModel.SetTarget(leaderModel.Transform.position);//hide target
 
-			leader = signal.leader;
-			leaderModel = signal.leader.Model as ICharacterModel;
+					leaderModel.Markers.AdditionalSplineMarker.Enable(true);
+					leaderModel.Markers.SplineMarker.Enable(true);
+
+					leaderModel.Markers.AreaMarker.Radius = leaderModel.CharacterRange;
+					leaderModel.Markers.AreaMarker.Enable(true);
+					leaderModel.Markers.AreaMarker.DrawCircle();
+				}
+			}
 		}
 	}
 }

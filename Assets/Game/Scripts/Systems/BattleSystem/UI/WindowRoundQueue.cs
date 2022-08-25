@@ -1,4 +1,5 @@
 using Game.Systems.CameraSystem;
+using Game.UI.Windows;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using Zenject;
 
 namespace Game.Systems.BattleSystem
 {
-	public class UIRoundQueue : MonoBehaviour
+	public class WindowRoundQueue : WindowBase
 	{
 		private List<UITurn> turns = new List<UITurn>();
 

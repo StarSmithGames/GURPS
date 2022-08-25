@@ -1,11 +1,15 @@
 using Game.Entities;
 using Game.Systems.SheetSystem;
+using Game.UI;
+using Game.UI.Windows;
 
 using UnityEngine;
 
+using Zenject;
+
 namespace Game.Systems.BattleSystem
 {
-    public class UIEntityInformation : MonoBehaviour
+    public class WindowEntityInformation : WindowBase
     {
         [field: SerializeField] public TMPro.TextMeshProUGUI Name { get; private set; }
         [field: SerializeField] public UIBar HealthBar { get; private set; }
@@ -13,7 +17,27 @@ namespace Game.Systems.BattleSystem
 
         private ISheet sheet;
 
-		public void SetSheet(ISheet sheet)
+        private UISubCanvas subCanvas;
+
+        [Inject]
+        private void Construct(UISubCanvas subCanvas)
+		{
+            this.subCanvas = subCanvas;
+
+        }
+
+		private void Start()
+		{
+            Enable(false);
+            subCanvas.WindowsRegistrator.Registrate(this);
+        }
+
+		private void OnDestroy()
+		{
+            subCanvas.WindowsRegistrator.UnRegistrate(this);
+        }
+
+        public void SetSheet(ISheet sheet)
 		{
             this.sheet = sheet;
 

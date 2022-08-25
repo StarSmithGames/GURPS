@@ -33,8 +33,6 @@ namespace Game.Systems.BattleSystem
 
         public IEntityModel CurrentEntity { get; private set; }
 
-        private UIManager uiManager;
-
         [Inject]
         private void Construct()
 		{
@@ -103,7 +101,7 @@ namespace Game.Systems.BattleSystem
         }
         private void OnPointerExit(PointerEventData eventData)
         {
-            uiManager.Battle.SetSheet(null);
+            //uiManager.Battle.SetSheet(null);
         }
 
         public class Factory : PlaceholderFactory<UITurn> { }

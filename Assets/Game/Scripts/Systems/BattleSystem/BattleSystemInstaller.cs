@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using UnityEngine;
 
 using Zenject;
@@ -11,7 +13,16 @@ namespace Game.Systems.BattleSystem
 		{
 			Container.DeclareSignal<SignalCurrentBattleChanged>();
 
+			Container.BindFactory< List <IBattlable>, Battle, Battle.Factory>().WhenInjectedInto<BattleExecutor>();
+			Container.BindFactory<BattleExecutor.Settings, BattleExecutor, BattleExecutor.Factory>().WhenInjectedInto<BattleSystem>();
 			Container.BindInterfacesAndSelfTo<BattleSystem>().AsSingle();
 		}
+	}
+
+	public enum BattleState
+	{
+		PreBattle,
+		Battle,
+		EndBattle,
 	}
 }
