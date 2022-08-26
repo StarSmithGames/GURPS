@@ -152,7 +152,7 @@ namespace Game.Systems.CameraSystem
 		{
 			if (!leaderModel.IsInDialogue)
 			{
-				float pathDistance = CurrentObserve != null ? leaderModel.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leaderModel.Navigation.FullPathDistance, 2);
+				float pathDistance = CurrentObserve != null ? leaderModel.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leaderModel.Navigation.FullPath.Distance, 2);
 
 				bool isInvalidTarget = !IsMouseHit || !leaderModel.Navigation.NavMeshAgent.IsPathValid(point);
 				bool isOutOfRange = IsMouseHit && !IsUI && leaderModel.InBattle && leaderModel.IsWithRangedWeapon && CurrentObserve != null && !IsPointInLeaderRange(point);
@@ -192,10 +192,9 @@ namespace Game.Systems.CameraSystem
 		{
 			if (IsMouseHit && !IsUI)
 			{
-				string text = Math.Round(leaderModel.Navigation.CurrentNavMeshPathDistance, 2) +
-					SymbolCollector.METRE.ToString() + "-" +
-					Math.Round(leaderModel.Navigation.FullPathDistance, 2) +
-					SymbolCollector.METRE.ToString();
+				string text = 
+					Math.Round(leaderModel.Navigation.CurrentNavMeshPathDistance, 2) + SymbolCollector.METRE.ToString() + "-" +
+					Math.Round(leaderModel.Navigation.FullPath.Distance, 2) + SymbolCollector.METRE.ToString();
 
 				tooltipSystem.SetRulerText(text);
 				if (!tooltipSystem.IsRulerShowing)

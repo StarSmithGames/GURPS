@@ -26,7 +26,7 @@ MonoBehaviour:
       health: 10
       addHitPoints: 0
       addFatiguePoints: 0
-      addMove: 0
+      addMove: 5
       addSpeed: 0
       addWill: 0
       addPerception: 0
@@ -340,10 +340,10 @@ MonoBehaviour:
       barks: {fileID: 0}
       dialogues: {fileID: 0}
   information:
-    nameColor: {r: 1, g: 1, b: 1, a: 1}
     nameId: Player
     localizations:
     - language: 10
       name: Player
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
     isHasPortrait: 1
     portrait: {fileID: 21300000, guid: 3f80cbec08daddb44bb5316bd40a3414, type: 3}

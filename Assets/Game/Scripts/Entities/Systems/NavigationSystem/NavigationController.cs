@@ -12,22 +12,23 @@ namespace Game.Entities
 {
 	public class NavigationController : MonoBehaviour
     {
+		public NavigationPath FullPath = new NavigationPath();
+		public NavigationPath CurrentPath = new NavigationPath();
+
 		public NavMeshAgent NavMeshAgent { get; private set; }
 
-		public NavigationPath FullPath = new NavigationPath();
-		public float FullPathDistance => FullPath.Distance;
-		public Vector3 PathDestination => FullPath.EndPoint;
-
-		[HideInInspector] public NavMeshPath CurrentNavMeshPath;
+		public float CurrentPathDistance => CurrentPath.Distance;
 		public float CurrentNavMeshPathDistance => CurrentNavMeshPath.GetPathDistance();
 		public Vector3 CurrentNavMeshDestination => NavMeshAgent.pathEndPosition;
-
 
 		public float NavMeshRemainingDistance => NavMeshAgent.GetPathRemainingDistance();
 		public float NavMeshPercentRemainingDistance => NavMeshRemainingDistance / CurrentNavMeshPathDistance;
 		public float NavMeshInvertedPercentRemainingDistance => 1 - NavMeshPercentRemainingDistance;
 
 		[SerializeField] private Settings settings;
+
+		private NavMeshPath CurrentNavMeshPath;
+		private Transform root;
 
 		[Inject]
         private void Construct(NavMeshAgent navMeshAgent)
@@ -37,6 +38,8 @@ namespace Game.Entities
 
 		private void Start()
 		{
+			root = transform.root;
+
 			NavMeshAgent.stoppingDistance = settings.reachTargetThreshold;
 			CurrentNavMeshPath = NavMeshAgent.path;
 		}
@@ -49,62 +52,62 @@ namespace Game.Entities
 			{
 				NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
 
-				FullPath = new NavigationPath() { Path = CurrentNavMeshPath.corners };
+				FullPath = new NavigationPath(CurrentNavMeshPath.corners);
 
 				if (maxPathDistance != -1)
 				{
 					float distance = CurrentNavMeshPathDistance;
 
-					if (distance >= maxPathDistance)
+					if (distance > maxPathDistance)
 					{
-						destination = transform.root.position + (maxPathDistance * (destination - transform.root.position).normalized);//TODO
+						//destination = root.position + (maxPathDistance * (destination - root.position).normalized);//TODO
+						destination = root.position + ((maxPathDistance - 0.5f) * (destination - root.position).normalized);//Need lil Fix
 
 						if (NavMeshAgent.IsPathValid(destination))
 						{
-							NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
+							NavMeshAgent.CalculatePath(destination, out NavMeshPath path);
 
-							result = NavMeshAgent.SetPath(CurrentNavMeshPath);
-							return result;
+							if (path.GetPathDistance() > maxPathDistance)//ignore path over distance
+							{
+								return false;
+							}
 						}
 					}
 					else if(distance < settings.minPathDistance)
 					{
 						if((maxPathDistance - settings.minPathDistance) > 0)
 						{
-							destination = transform.root.position + (settings.minPathDistance * (destination - transform.root.position).normalized);
-
-							if (NavMeshAgent.IsPathValid(destination))
-							{
-								NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
-
-								result = NavMeshAgent.SetPath(CurrentNavMeshPath);
-								return result;
-							}
+							destination = root.position + (settings.minPathDistance * (destination - root.position).normalized);
 						}
 					}
 				}
 
-				result = NavMeshAgent.SetPath(CurrentNavMeshPath);
-				return result;
+				if (NavMeshAgent.IsPathValid(destination))
+				{
+					NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
+					CurrentPath = new NavigationPath(CurrentNavMeshPath.corners);
+					result = NavMeshAgent.SetPath(CurrentNavMeshPath);
+					return result;
+				}
 			}
 
 			return result;
 		}
-		
-		private void OnDrawGizmos()
+
+		private void OnDrawGizmosSelected()
 		{
-			Gizmos.color = Color.red;
+			Gizmos.color = Color.blue;
 			Gizmos.DrawWireSphere(transform.position, settings.reachTargetThreshold);
 
 			if (!Application.isPlaying) return;
 
-			Gizmos.color = Color.blue;
-			for (int i = 0; i < FullPath.Path.Length - 1; i++)
+			Gizmos.color = Color.red;
+			for (int i = 0; i < FullPath.Path.Count - 1; i++)
 			{
 				Gizmos.DrawLine(FullPath.Path[i], FullPath.Path[i + 1]);
 			}
 
-			Gizmos.color = Color.red;
+			Gizmos.color = Color.blue;
 			for (int i = 0; i < CurrentNavMeshPath.corners.Length - 1; i++)
 			{
 				Gizmos.DrawLine(CurrentNavMeshPath.corners[i], CurrentNavMeshPath.corners[i + 1]);
@@ -119,25 +122,51 @@ namespace Game.Entities
 		}
 	}
 
-	public class NavigationPath
+	public class NavigationPath : ICopyable<NavigationPath>
 	{
-		public Vector3[] Path = new Vector3[0];
+		public List<Vector3> Path = new List<Vector3>();
 
 		public Vector3 StartPoint => Path.First();
 		public Vector3 EndPoint => Path.Last();
+
+		public Vector3 this[int i] {
+			
+			get => Path[i];
+			set => Path[i] = value;
+		}
 		
 		public float Distance
 		{
 			get
 			{
 				float distance = 0.0f;
-				for (int i = 0; i < Path.Length - 1; ++i)
+				for (int i = 0; i < Path.Count - 1; ++i)
 				{
 					distance += Vector3.Distance(Path[i], Path[i + 1]);
 				}
 
 				return distance;
 			}
+		}
+
+		public NavigationPath()
+		{
+			Path = new List<Vector3>();
+		}
+
+		public NavigationPath(Vector3[] path)
+		{
+			Path = new List<Vector3>(path);
+		}
+		public NavigationPath(List<Vector3> path)
+		{
+			Path = new List<Vector3>(path);
+		}
+
+
+		public NavigationPath Copy()
+		{
+			return new NavigationPath(Path);
 		}
 	}
 }

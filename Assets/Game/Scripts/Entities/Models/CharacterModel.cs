@@ -110,41 +110,9 @@ namespace Game.Entities.Models
 
 			Markers.FollowMarker.DrawCircle();
 
-			if (InBattle)
+			if (InBattle && isMineTurn)
 			{
-				Markers.LineMarker.DrawLine(Navigation.NavMeshAgent.path.corners);
-
-				if (Navigation.FullPathDistance != 0 && Sheet.Stats.Move.CurrentValue != 0)
-				{
-					var path = new List<Vector3>(Navigation.FullPath.Path);
-
-					var distance = Navigation.FullPathDistance - Sheet.Stats.Move.CurrentValue;
-
-					if (distance > 0 && path.Count > 0)
-					{
-						Vector3[] result = null;
-						while (path.Count != 0)
-						{
-							var newPath = new NavigationPath() { Path = path.ToArray() };
-
-							if (Sheet.Stats.Move.CurrentValue <= newPath.Distance)
-							{
-								result = path.ToArray();
-								break;
-							}
-
-							path.Remove(path.First());
-						}
-
-						result[0] = Navigation.NavMeshAgent.pathEndPosition;
-
-						Markers.LineErrorMarker.DrawLine(result);
-					}
-					else
-					{
-						Markers.LineErrorMarker.DrawLine(null);
-					}
-				}
+				Markers.WayLine(Navigation.CurrentPath /*new NavigationPath(Navigation.NavMeshAgent.path.corners)*/, Navigation.FullPath, Sheet.Stats.Move.CurrentValue);
 			}
 		}
 
@@ -389,6 +357,8 @@ namespace Game.Entities.Models
 		public bool InBattle => CurrentBattle != null;
 		public Battle CurrentBattle { get; private set; }
 
+		private bool isMineTurn = false;
+
 		public virtual bool JoinBattle(Battle battle)
 		{
 			if (CurrentBattle != null)
@@ -502,10 +472,9 @@ namespace Game.Entities.Models
 		}
 		protected virtual void OnBattleUpdated()
 		{
-			bool isMineTurn = CurrentBattle.BattleFSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
+			isMineTurn = CurrentBattle.BattleFSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
 
 			Markers.LineMarker.Enable(InBattle && isMineTurn);
-			Markers.LineErrorMarker.Enable(InBattle && isMineTurn);
 			Markers.TargetMarker.Enable(InBattle && isMineTurn);
 		}
 	}
