@@ -50,14 +50,14 @@ namespace Game.Systems.VFX
 
 		private void Update()
 		{
-			if (!indicator.IsSwowing)
-			{
-				if (CurrentPointer.IsShowing)
-				{
-					CurrentPointer.Enable(false);
-				}
-				return;
-			}
+			//if (!indicator.IsSwowing)
+			//{
+			//	if (CurrentPointer.IsShowing)
+			//	{
+			//		CurrentPointer.Enable(false);
+			//	}
+			//	return;
+			//}
 
 			//Vector3 playerPosition = characterManager.CurrentParty.LeaderParty.transform.position;
 			//Vector3 direction = transform.position - playerPosition;

@@ -17,6 +17,7 @@ namespace Game.Entities
 		[field: SerializeField] public LineRendererSplineVFX AdditionalSplineMarker { get; private set; }
 		[field: Space]
 		[field: SerializeField] public LineRendererLineVFX LineMarker { get; private set; }
+		[field: SerializeField] public LineRendererLineVFX LineErrorMarker { get; private set; }
 		[Space]
 		[SerializeField] private List<Material> markerColors = new List<Material>();
 

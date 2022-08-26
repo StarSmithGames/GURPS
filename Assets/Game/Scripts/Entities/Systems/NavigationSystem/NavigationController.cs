@@ -18,7 +18,6 @@ namespace Game.Entities
 		public float FullPathDistance => FullPath.Distance;
 		public Vector3 PathDestination => FullPath.EndPoint;
 
-
 		[HideInInspector] public NavMeshPath CurrentNavMeshPath;
 		public float CurrentNavMeshPathDistance => CurrentNavMeshPath.GetPathDistance();
 		public Vector3 CurrentNavMeshDestination => NavMeshAgent.pathEndPosition;
@@ -50,7 +49,7 @@ namespace Game.Entities
 			{
 				NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
 
-				FullPath = new NavigationPath() { Path = CurrentNavMeshPath.corners.ToList() };
+				FullPath = new NavigationPath() { Path = CurrentNavMeshPath.corners };
 
 				if (maxPathDistance != -1)
 				{
@@ -100,7 +99,7 @@ namespace Game.Entities
 			if (!Application.isPlaying) return;
 
 			Gizmos.color = Color.blue;
-			for (int i = 0; i < FullPath.Path.Count - 1; i++)
+			for (int i = 0; i < FullPath.Path.Length - 1; i++)
 			{
 				Gizmos.DrawLine(FullPath.Path[i], FullPath.Path[i + 1]);
 			}
@@ -122,7 +121,7 @@ namespace Game.Entities
 
 	public class NavigationPath
 	{
-		public List<Vector3> Path = new List<Vector3>();
+		public Vector3[] Path = new Vector3[0];
 
 		public Vector3 StartPoint => Path.First();
 		public Vector3 EndPoint => Path.Last();
@@ -132,7 +131,7 @@ namespace Game.Entities
 			get
 			{
 				float distance = 0.0f;
-				for (int i = 0; i < Path.Count - 1; ++i)
+				for (int i = 0; i < Path.Length - 1; ++i)
 				{
 					distance += Vector3.Distance(Path[i], Path[i + 1]);
 				}

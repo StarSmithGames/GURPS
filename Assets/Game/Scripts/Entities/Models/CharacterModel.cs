@@ -13,6 +13,7 @@ using Game.Systems.InteractionSystem;
 using Game.Systems.DamageSystem;
 using Game.Systems.FloatingTextSystem;
 using Game.Systems.SheetSystem;
+using System.Collections.Generic;
 
 namespace Game.Entities.Models
 {
@@ -82,9 +83,6 @@ namespace Game.Entities.Models
 
 			ResetMarkers();
 
-			Markers.Exclamation.Enable(false);
-			Markers.Question.Enable(false);
-
 			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
 			signalBus?.Subscribe<SignalEndDialogue>(OnDialogueEnded);
 
@@ -112,7 +110,42 @@ namespace Game.Entities.Models
 
 			Markers.FollowMarker.DrawCircle();
 
-			Markers.LineMarker.DrawLine(Navigation.NavMeshAgent.path.corners);
+			if (InBattle)
+			{
+				Markers.LineMarker.DrawLine(Navigation.NavMeshAgent.path.corners);
+
+				if (Navigation.FullPathDistance != 0 && Sheet.Stats.Move.CurrentValue != 0)
+				{
+					var path = new List<Vector3>(Navigation.FullPath.Path);
+
+					var distance = Navigation.FullPathDistance - Sheet.Stats.Move.CurrentValue;
+
+					if (distance > 0 && path.Count > 0)
+					{
+						Vector3[] result = null;
+						while (path.Count != 0)
+						{
+							var newPath = new NavigationPath() { Path = path.ToArray() };
+
+							if (Sheet.Stats.Move.CurrentValue <= newPath.Distance)
+							{
+								result = path.ToArray();
+								break;
+							}
+
+							path.Remove(path.First());
+						}
+
+						result[0] = Navigation.NavMeshAgent.pathEndPosition;
+
+						Markers.LineErrorMarker.DrawLine(result);
+					}
+					else
+					{
+						Markers.LineErrorMarker.DrawLine(null);
+					}
+				}
+			}
 		}
 
 		protected virtual void InitializePersonality()
@@ -158,7 +191,14 @@ namespace Game.Entities.Models
 
 			Markers.AreaMarker.Enable(false);
 
+			Markers.SplineMarker.Enable(false);
+			Markers.AdditionalSplineMarker.Enable(false);
+
 			Markers.LineMarker.Enable(false);
+			Markers.LineErrorMarker.Enable(false);
+
+			Markers.Exclamation.Enable(false);
+			Markers.Question.Enable(false);
 		}
 	}
 
@@ -341,7 +381,7 @@ namespace Game.Entities.Models
 		}
 	}
 
-	//IBattlable implementation
+	//IBattlable, Battle & Animations implementation
 	partial class CharacterModel
 	{
 		public event UnityAction onBattleChanged;
@@ -378,11 +418,12 @@ namespace Game.Entities.Models
 
 			return true;
 		}
-	}
 
-	//Override Battle & Animations implementation
-	partial class CharacterModel
-	{
+		public override void SetTarget(Vector3 point, float maxPathDistance = -1)
+		{
+			base.SetTarget(point, maxPathDistance);
+		}
+
 		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
 		{
 			base.SetDestination(destination, maxPathDistance);
@@ -464,6 +505,7 @@ namespace Game.Entities.Models
 			bool isMineTurn = CurrentBattle.BattleFSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
 
 			Markers.LineMarker.Enable(InBattle && isMineTurn);
+			Markers.LineErrorMarker.Enable(InBattle && isMineTurn);
 			Markers.TargetMarker.Enable(InBattle && isMineTurn);
 		}
 	}
