@@ -1,4 +1,5 @@
 using Game.Entities.Models;
+using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
 
 using UnityEngine;
@@ -74,6 +75,23 @@ namespace Game.Systems.InteractionSystem
 		public void Release() { }
 	}
 
+	public class TalkInteraction : IInteraction
+	{
+		private IActor initiator;
+
+		public TalkInteraction(IActor actor)
+		{
+			this.initiator = actor;
+		}
+
+		public void Execute(IInteractable interactor)
+		{
+			Talker.ABTalk(initiator, interactor as IActor);
+		}
+
+		public void Release() { }
+	}
+
 	public class ContainerInteraction : IInteraction
 	{
 		private IContainer container;
@@ -101,8 +119,6 @@ namespace Game.Systems.InteractionSystem
 			}
 		}
 
-		public void Release()
-		{
-		}
+		public void Release() { }
 	}
 }

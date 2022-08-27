@@ -7,6 +7,7 @@ using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
 using Game.Systems.BattleSystem;
 using Game.Systems.ContextMenu;
+using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 using Game.Systems.TooltipSystem;
@@ -193,7 +194,7 @@ namespace Game.Systems.CameraSystem
 			if (IsMouseHit && !IsUI)
 			{
 				string text = 
-					Math.Round(leaderModel.Navigation.CurrentNavMeshPathDistance, 2) + SymbolCollector.METRE.ToString() + "-" +
+					Math.Round(leaderModel.Navigation.CurrentPath.Distance, 2) + SymbolCollector.METRE.ToString() + "-" +
 					Math.Round(leaderModel.Navigation.FullPath.Distance, 2) + SymbolCollector.METRE.ToString();
 
 				tooltipSystem.SetRulerText(text);
@@ -250,7 +251,11 @@ namespace Game.Systems.CameraSystem
 				//Interaction
 				if (inputManager.IsLeftMouseButtonDown())
 				{
-					if (CurrentObserve is IInteractable interactable)
+					if(CurrentObserve is IActor actor)
+					{
+						Talker.ABTalk(leaderModel, actor);
+					}
+					else if (CurrentObserve is IInteractable interactable)
 					{
 						Interactor.ABInteraction(leaderModel, interactable);
 					}

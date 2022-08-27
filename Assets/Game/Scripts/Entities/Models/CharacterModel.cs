@@ -48,7 +48,6 @@ namespace Game.Entities.Models
 
 		public Transform DialogueTransform => Transform;
 
-
 		private IEquipment equipment;
 
 		[Inject]
@@ -103,16 +102,17 @@ namespace Game.Entities.Models
 			//}
 		}
 
-		protected virtual void Update()
+		private void Update()
 		{
 			Markers.TargetMarker.transform.position = Navigation.CurrentNavMeshDestination;
 			Markers.TargetMarker.DrawCircle();
 
 			Markers.FollowMarker.DrawCircle();
 
-			if (InBattle && isMineTurn)
+
+			if (InBattle)
 			{
-				Markers.WayLine(Navigation.CurrentPath /*new NavigationPath(Navigation.NavMeshAgent.path.corners)*/, Navigation.FullPath, Sheet.Stats.Move.CurrentValue);
+				BattleTick();
 			}
 		}
 
@@ -163,7 +163,6 @@ namespace Game.Entities.Models
 			Markers.AdditionalSplineMarker.Enable(false);
 
 			Markers.LineMarker.Enable(false);
-			Markers.LineErrorMarker.Enable(false);
 
 			Markers.Exclamation.Enable(false);
 			Markers.Question.Enable(false);
@@ -201,7 +200,7 @@ namespace Game.Entities.Models
 		{
 			if (actor.IsHasSomethingToSay)
 			{
-				if(actor is IInteractable interactable)
+				if (actor is IInteractable interactable)
 				{
 					if (interactable.InteractionPoint.IsInRange(Transform.position))
 					{
@@ -209,7 +208,8 @@ namespace Game.Entities.Models
 					}
 					else
 					{
-						new GoToPointInteraction(interactable.InteractionPoint, () => dialogueSystem.StartDialogue(this, actor)).Execute(this);
+						new GoToPointInteraction(interactable.InteractionPoint, () => dialogueSystem.StartDialogue(this, actor))
+							.Execute(this);
 					}
 				}
 				else
@@ -358,6 +358,14 @@ namespace Game.Entities.Models
 		public Battle CurrentBattle { get; private set; }
 
 		private bool isMineTurn = false;
+
+		protected virtual void BattleTick()
+		{
+			if (isMineTurn)
+			{
+				Markers.LineMarker.DrawLine(Navigation.CurrentPath.Path.ToArray());
+			}
+		}
 
 		public virtual bool JoinBattle(Battle battle)
 		{

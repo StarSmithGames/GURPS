@@ -17,9 +17,8 @@ namespace Game.Entities
 
 		public NavMeshAgent NavMeshAgent { get; private set; }
 
-		public float CurrentPathDistance => CurrentPath.Distance;
-		public float CurrentNavMeshPathDistance => CurrentNavMeshPath.GetPathDistance();
-		public Vector3 CurrentNavMeshDestination => NavMeshAgent.pathEndPosition;
+		public float CurrentNavMeshPathDistance => CurrentPath.Distance; //CurrentNavMeshPath.GetPathDistance();
+		public Vector3 CurrentNavMeshDestination => CurrentPath.EndPoint;
 
 		public float NavMeshRemainingDistance => NavMeshAgent.GetPathRemainingDistance();
 		public float NavMeshPercentRemainingDistance => NavMeshRemainingDistance / CurrentNavMeshPathDistance;
@@ -27,7 +26,6 @@ namespace Game.Entities
 
 		[SerializeField] private Settings settings;
 
-		private NavMeshPath CurrentNavMeshPath;
 		private Transform root;
 
 		[Inject]
@@ -41,7 +39,7 @@ namespace Game.Entities
 			root = transform.root;
 
 			NavMeshAgent.stoppingDistance = settings.reachTargetThreshold;
-			CurrentNavMeshPath = NavMeshAgent.path;
+			CurrentPath = new NavigationPath(NavMeshAgent.path.corners);
 		}
 
 		public bool SetTarget(Vector3 destination, float maxPathDistance = -1)
@@ -50,49 +48,52 @@ namespace Game.Entities
 
 			if (NavMeshAgent.IsPathValid(destination))
 			{
-				NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
-
-				FullPath = new NavigationPath(CurrentNavMeshPath.corners);
+				NavMeshAgent.CalculatePath(destination, out NavMeshPath fullPath);
+				FullPath = new NavigationPath(fullPath.corners);
 
 				if (maxPathDistance != -1)
 				{
-					float distance = CurrentNavMeshPathDistance;
+					NavMeshAgent.CalculatePath(destination, out NavMeshPath navMeshPath);
+					var path = new NavigationPath(navMeshPath.corners);
+					float distance = path.Distance;
 
-					if (distance > maxPathDistance)
+					if (distance >= maxPathDistance)
 					{
-						//destination = root.position + (maxPathDistance * (destination - root.position).normalized);//TODO
-						destination = root.position + ((maxPathDistance - 0.5f) * (destination - root.position).normalized);//Need lil Fix
+						destination = root.position + (maxPathDistance * (destination - root.position).normalized);//TODO need destination on distance
+						//destination = root.position + ((maxPathDistance - 0.1f) * (destination - root.position).normalized);//Need lil Fix
 
-						if (NavMeshAgent.IsPathValid(destination))
-						{
-							NavMeshAgent.CalculatePath(destination, out NavMeshPath path);
+						//if (NavMeshAgent.IsPathValid(destination))
+						//{
+						//	NavMeshAgent.CalculatePath(destination, out NavMeshPath path);
 
-							if (path.GetPathDistance() > maxPathDistance)//ignore path over distance
-							{
-								return false;
-							}
-						}
+						//	if (path.GetPathDistance() > maxPathDistance)//ignore path over distance
+						//	{
+						//		return false;
+						//	}
+						//}
 					}
 					else if(distance < settings.minPathDistance)
 					{
 						if((maxPathDistance - settings.minPathDistance) > 0)
 						{
-							destination = root.position + (settings.minPathDistance * (destination - root.position).normalized);
+							destination = root.position + ((settings.minPathDistance - 0.1f) * (destination - root.position).normalized);
 						}
 					}
 				}
 
 				if (NavMeshAgent.IsPathValid(destination))
 				{
-					NavMeshAgent.CalculatePath(destination, out CurrentNavMeshPath);
-					CurrentPath = new NavigationPath(CurrentNavMeshPath.corners);
-					result = NavMeshAgent.SetPath(CurrentNavMeshPath);
+					NavMeshAgent.CalculatePath(destination, out NavMeshPath currentPath);
+					CurrentPath = new NavigationPath(currentPath.corners);
+
+					result = NavMeshAgent.SetPath(currentPath);
 					return result;
 				}
 			}
 
 			return result;
 		}
+
 
 		private void OnDrawGizmosSelected()
 		{
@@ -107,11 +108,11 @@ namespace Game.Entities
 				Gizmos.DrawLine(FullPath.Path[i], FullPath.Path[i + 1]);
 			}
 
-			Gizmos.color = Color.blue;
-			for (int i = 0; i < CurrentNavMeshPath.corners.Length - 1; i++)
-			{
-				Gizmos.DrawLine(CurrentNavMeshPath.corners[i], CurrentNavMeshPath.corners[i + 1]);
-			}
+			//Gizmos.color = Color.blue;
+			//for (int i = 0; i < CurrentNavMeshPath.corners.Length - 1; i++)
+			//{
+			//	Gizmos.DrawLine(CurrentNavMeshPath.corners[i], CurrentNavMeshPath.corners[i + 1]);
+			//}
 		}
 
 		[System.Serializable]

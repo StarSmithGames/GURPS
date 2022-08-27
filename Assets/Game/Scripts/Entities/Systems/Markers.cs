@@ -20,7 +20,6 @@ namespace Game.Entities
 		[field: SerializeField] public LineRendererSplineVFX AdditionalSplineMarker { get; private set; }
 		[field: Space]
 		[field: SerializeField] public LineRendererLineVFX LineMarker { get; private set; }
-		[field: SerializeField] public LineRendererLineVFX LineErrorMarker { get; private set; }
 		[Space]
 		[SerializeField] private List<Material> markerColors = new List<Material>();
 
@@ -40,40 +39,40 @@ namespace Game.Entities
 			FollowMarker.Line.material = markerColors[(int)type];
 		}
 
-		public void WayLine(NavigationPath path, NavigationPath fullPath, float maxDistance)
-		{
-			LineMarker.DrawLine(path.Path.ToArray());
+		//public void WayLine(NavigationPath path, NavigationPath fullPath, float maxDistance)
+		//{
+			
 
-			float fullPathDistance = fullPath.Distance;
-			var distance = fullPathDistance - maxDistance;
+			//float fullPathDistance = fullPath.Distance;
+			//var distance = fullPathDistance - maxDistance;
 
-			if (distance > 0)
-			{
-				var errorLine = fullPath.Copy().Path;
-				var endPoint = path.EndPoint;
+			//if (distance > 0)
+			//{
+			//	var errorLine = fullPath.Copy().Path;
+			//	var endPoint = path.EndPoint;
 
-				var result = errorLine.OrderByDescending((point) => Vector2.Distance(endPoint, point)).First();
+			//	var result = errorLine.OrderByDescending((point) => Vector2.Distance(endPoint, point)).First();
 
-				int index = errorLine.IndexOf(result);
-				if (index != -1)
-				{
-					for (int i = 0; i <= index; i++)
-					{
-						errorLine.RemoveAt(i);
-					}
-				}
+			//	int index = errorLine.IndexOf(result);
+			//	if (index != -1)
+			//	{
+			//		for (int i = 0; i <= index; i++)
+			//		{
+			//			errorLine.RemoveAt(i);
+			//		}
+			//	}
 
-				errorLine[0] = endPoint;
+			//	errorLine[0] = endPoint;
 
 
-				LineErrorMarker.Enable(true);
-				LineErrorMarker.DrawLine(errorLine.ToArray());
-			}
-			else
-			{
-				LineErrorMarker.Enable(false);
-			}
-
+			//	LineErrorMarker.Enable(true);
+			//	LineErrorMarker.DrawLine(errorLine.ToArray());
+			//}
+			//else
+			//{
+			//	LineErrorMarker.Enable(false);
+			//}
+			////////
 
 			//float fullPathDistance = fullPath.Distance;
 
@@ -116,7 +115,7 @@ namespace Game.Entities
 			//		LineErrorMarker.Enable(false);
 			//	}
 			//}
-		}
+		//}
 
 		public Vector2 FindNearestPointOnLine(Vector2 origin, Vector2 direction, Vector2 point)
 		{

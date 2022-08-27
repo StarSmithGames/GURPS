@@ -26,7 +26,7 @@ MonoBehaviour:
       health: 10
       addHitPoints: 0
       addFatiguePoints: 0
-      addMove: 5
+      addMove: 0
       addSpeed: 0
       addWill: 0
       addPerception: 0
