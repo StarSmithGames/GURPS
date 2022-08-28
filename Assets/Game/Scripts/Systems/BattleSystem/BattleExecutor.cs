@@ -18,14 +18,16 @@ namespace Game.Systems.BattleSystem
 		public bool IsBattleProcess => battleCoroutine != null;
 		private Coroutine battleCoroutine = null;
 
+		public Battle Battle { get; private set; }
 		public IBattlable CurrentInitiator { get; private set; }
+		public List<IBattlable> Entities { get; private set; }
+
 		public Turn CurrentTurn { get; private set; }
 
 		private ICharacter cachedLeader;
 		private bool isSkipTurn = false;
 		private bool terminateBattle = false;
 
-		private Battle battle;
 		private UIBattleSystem battleSystemUI;
 
 		private Settings settings;
@@ -53,34 +55,44 @@ namespace Game.Systems.BattleSystem
 
 		public void Initialize()
 		{
-			battle = battleFactory.Create(settings.entities);
+			Entities = new List<IBattlable>(settings.entities);
 
-			battle.onNextTurn += OnTurnChanged;
-			battle.onNextRound += OnRoundChanged;
+			//Battle
+			Battle = battleFactory.Create(Entities);
+			Battle.SetState(BattleState.PreBattle);
 
-			battle.Initialization();
+			Entities.ForEach((x) =>
+			{
+				x.JoinBattle(Battle);
+			});
+
+			Battle.onNextTurn += OnTurnChanged;
+			Battle.onNextRound += OnRoundChanged;
 
 
 			cachedLeader = partyManager.PlayerParty.LeaderParty;
 
+			//UI
 			battleSystemUI = subCanvas.WindowsRegistrator.GetAs<UIBattleSystem>();
-			battleSystemUI.SetBattle(battle);
+			battleSystemUI.SetBattle(Battle);
 
 			battleSystemUI.Messages.ShowCommenceBattle();
 			//uiManager.Battle.SkipTurn.ButtonPointer.onClick.AddListener(StartSkipTurn);
 			//uiManager.Battle.RunAway.ButtonPointer.onClick.AddListener(StopBattle);
 
-			battle.SetState(BattleState.PreBattle);
 
-			battleSystemUI.Show(() => battle.SetState(BattleState.Battle));
+			battleSystemUI.Show(() => Battle.SetState(BattleState.Battle));
 		}
 
 		public void Dispose()
 		{
-			battle.onNextTurn -= OnTurnChanged;
-			battle.onNextRound -= OnRoundChanged;
+			Battle.onNextTurn -= OnTurnChanged;
+			Battle.onNextRound -= OnRoundChanged;
 
-			battle.Dispose();
+			Entities.ForEach((x) =>
+			{
+				x.LeaveBattle();
+			});
 		}
 
 		public void Start()
@@ -114,7 +126,7 @@ namespace Game.Systems.BattleSystem
 				yield return InitiatorTurn();
 			}
 
-			battle.SetState(BattleState.EndBattle);
+			Battle.SetState(BattleState.EndBattle);
 
 			yield return new WaitWhile(() => CurrentInitiator.InAction);
 			yield return null;//? initiator stuck without frame
@@ -154,16 +166,16 @@ namespace Game.Systems.BattleSystem
 				}
 			}
 
-			battle.NextTurn();
+			Battle.NextTurn();
 		}
 
 
 		private void UpdateStates()
 		{
-			var initiator = battle.BattleFSM.CurrentTurn.Initiator;
-			bool isEndBattle = battle.CurrentState == BattleState.EndBattle;
+			var initiator = Battle.BattleFSM.CurrentTurn.Initiator;
+			bool isEndBattle = Battle.CurrentState == BattleState.EndBattle;
 
-			battle.Entities.ForEach((x) =>
+			Entities.ForEach((x) =>
 			{
 				if (x is ICharacterModel model)
 				{
@@ -190,7 +202,7 @@ namespace Game.Systems.BattleSystem
 				}
 			});
 
-			if (battle.CurrentState == BattleState.Battle)
+			if (Battle.CurrentState == BattleState.Battle)
 			{
 				if (initiator is ICharacterModel model)
 				{
@@ -229,7 +241,7 @@ namespace Game.Systems.BattleSystem
 				}
 				(CurrentInitiator as ISheetable).Sheet.Stats.ActionPoints.onStatChanged -= OnInitiatorActionPointsChanged;
 			}
-			CurrentTurn = battle.BattleFSM.CurrentTurn;
+			CurrentTurn = Battle.BattleFSM.CurrentTurn;
 			CurrentInitiator = CurrentTurn.Initiator;
 
 			//InitiatorRecoveActionsPoints();

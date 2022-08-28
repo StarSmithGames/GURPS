@@ -45,6 +45,7 @@ namespace Game.Systems.CameraSystem
 		private TooltipSystem.TooltipSystem tooltipSystem;
 		private ContextMenuSystem contextMenuSystem;
 		private UISubCanvas subCanvas;
+		private BattleSystem.BattleSystem battleSystem;
 
 		public CameraVisionLocation(SignalBus signalBus,
 			CinemachineBrain brain,
@@ -53,13 +54,15 @@ namespace Game.Systems.CameraSystem
 			GlobalSettings settings,
 			TooltipSystem.TooltipSystem tooltipSystem,
 			ContextMenuSystem contextMenuSystem,
-			UISubCanvas subCanvas) : base(signalBus, brain, inputManager)
+			UISubCanvas subCanvas,
+			BattleSystem.BattleSystem battleSystem) : base(signalBus, brain, inputManager)
 		{
 			this.partyManager = partyManager;
 			this.settings = settings.cameraVisionLocation;
 			this.tooltipSystem = tooltipSystem;
 			this.contextMenuSystem = contextMenuSystem;
 			this.subCanvas = subCanvas;
+			this.battleSystem = battleSystem;
 		}
 
 		public override void Initialize()
@@ -84,7 +87,13 @@ namespace Game.Systems.CameraSystem
 
 			if (leaderModel.InBattle && !leaderModel.IsHasTarget)
 			{
-				TooltipRuler();
+				if (battleSystem.CurrentExecutor.CurrentInitiator == leaderModel)
+				{
+					if (battleSystem.CurrentExecutor.Battle.CurrentState == BattleState.Battle)
+					{
+						TooltipRuler();
+					}
+				}
 			}
 		}
 

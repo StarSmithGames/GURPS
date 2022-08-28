@@ -20,36 +20,18 @@ namespace Game.Systems.BattleSystem
 
 		public BattleState CurrentState { get; private set; }
 		public BattleFSM BattleFSM { get; private set; }
-		public List<IBattlable> Entities { get; private set; }
 
 		public Battle(List<IBattlable> entities)
 		{
 			BattleFSM = new BattleFSM();
-			Entities = entities;
-		}
-
-		public void Initialization()
-		{
-			Entities.ForEach((x) =>
-			{
-				x.JoinBattle(this);
-			});
-
+			
 			List<Turn> turns = new List<Turn>();
-			Entities.ForEach((x) => turns.Add(new Turn(x)));
+			entities.ForEach((x) => turns.Add(new Turn(x)));
+
 			Round round = new Round(turns);
 			BattleFSM.Rounds.Add(round);
 			BattleFSM.Rounds.Add(round.Copy());
 		}
-
-		public void Dispose()
-		{
-			Entities.ForEach((x) =>
-			{
-				x.LeaveBattle();
-			});
-		}
-
 
 		public void NextTurn()
 		{

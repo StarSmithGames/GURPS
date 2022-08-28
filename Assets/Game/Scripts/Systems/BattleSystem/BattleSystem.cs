@@ -26,8 +26,6 @@ namespace Game.Systems.BattleSystem
 		}
 		private BattleManager battleManager;
 
-		public IBattlable CurrentInitiator { get; private set; }
-
 		public BattleExecutor CurrentExecutor { get; private set; }
 
 		private List<BattleExecutor> executors = new List<BattleExecutor>();
