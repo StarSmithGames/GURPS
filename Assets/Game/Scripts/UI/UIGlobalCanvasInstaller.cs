@@ -1,7 +1,5 @@
 using CodeStage.AdvancedFPSCounter;
 
-using Game.Managers.TransitionManager;
-using Game.Systems.InventorySystem;
 using Game.UI.Windows;
 
 using UnityEngine;
@@ -41,13 +39,13 @@ namespace Game.UI
             //Windows
             Container.Bind<WindowInfinityLoading>()
                 .FromComponentInNewPrefab(infinityLoadingWindow)
-                .UnderTransform(x => x.Container.Resolve<UIGlobalCanvas>().transform.Find("Windows"))
+                .UnderTransform(x => x.Container.Resolve<UIGlobalCanvas>().Windows)
                 .AsSingle()
                 .NonLazy();
 
             Container.Bind<WindowInputGenericDialogue>()
                 .FromComponentInNewPrefab(inputGenericDialogue)
-                .UnderTransform(x => x.Container.Resolve<UIGlobalCanvas>().transform.Find("Windows"))
+                .UnderTransform(x => x.Container.Resolve<UIGlobalCanvas>().Windows)
                 .AsSingle()
                 .NonLazy();
 

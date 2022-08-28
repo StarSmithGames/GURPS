@@ -1,6 +1,4 @@
-using Game.Managers.CharacterManager;
-
-using Sirenix.OdinInspector;
+using Game.Managers.PartyManager;
 
 using UnityEngine;
 
@@ -12,99 +10,74 @@ namespace Game.Systems.VFX
 	{
 		[SerializeField] private IndicatorVFX indicator;
 		[SerializeField] private bool isPointer3d = false;
-		[ShowIf("isPointer3d")]
-		[SerializeField] private Transform pointer3DPrefab;
-		[HideIf("isPointer3d")]
-		[SerializeField] private Transform pointer2DPrefab;
 
-		private Pointer CurrentPointer
-		{
-			get
-			{
-				if (currentPointer == null)
-				{
-					if (isPointer3d)
-					{
-						currentPointer = new Pointer(Instantiate(pointer3DPrefab));
-					}
-					else
-					{
-						//currentPointer = new Pointer(Instantiate(pointer2DPrefab, uiManager.transform));
-					}
-				}
-
-				return currentPointer;
-			}
-		}
-		private Pointer currentPointer;
+		private IPointer pointer;
 
 		private Cinemachine.CinemachineBrain brain;
-		private CharacterManager characterManager;
+		private PartyManager partyManager;
+		private Pointer3D.Factory factory3D;
+		private Pointer2D.Factory factory2D;
 
 		[Inject]
-		private void Construct(Cinemachine.CinemachineBrain brain, CharacterManager characterManager)
+		private void Construct(Cinemachine.CinemachineBrain brain, PartyManager partyManager, Pointer3D.Factory factory3D, Pointer2D.Factory factory2D)
 		{
 			this.brain = brain;
-			this.characterManager = characterManager;
+			this.partyManager = partyManager;
+			this.factory3D = factory3D;
+			this.factory2D = factory2D;
 		}
 
 		private void Update()
 		{
-			//if (!indicator.IsSwowing)
-			//{
-			//	if (CurrentPointer.IsShowing)
-			//	{
-			//		CurrentPointer.Enable(false);
-			//	}
-			//	return;
-			//}
+			if (!indicator.IsSwowing)
+			{
+				DisposePointer();
+				return;
+			}
 
-			//Vector3 playerPosition = characterManager.CurrentParty.LeaderParty.transform.position;
-			//Vector3 direction = transform.position - playerPosition;
+			Vector3 playerPosition = partyManager.PlayerParty.LeaderParty.Model.Transform.position;
+			Vector3 direction = transform.position - playerPosition;
 
-			//Ray ray = new Ray(playerPosition, direction);
+			Ray ray = new Ray(playerPosition, direction);
 			//Debug.DrawRay(playerPosition, direction);
 
-			////[0]-left [1]-right [2]-up [3]-down
-			//var panels = GeometryUtility.CalculateFrustumPlanes(brain.OutputCamera);
-			//int planeIndex = 0;
+			//[0]-left [1]-right [2]-up [3]-down
+			var panels = GeometryUtility.CalculateFrustumPlanes(brain.OutputCamera);
+			int planeIndex = 0;
 
-			//float minDistance = Mathf.Infinity;
+			float minDistance = Mathf.Infinity;
 
-			//for (int i = 0; i < panels.Length; i++)
-			//{
-			//	if (panels[i].Raycast(ray, out float distance))
-			//	{
-			//		if (distance < minDistance)
-			//		{
-			//			minDistance = distance;
-			//			planeIndex = i;
-			//		}
-			//	}
-			//}
+			for (int i = 0; i < panels.Length; i++)
+			{
+				if (panels[i].Raycast(ray, out float distance))
+				{
+					if (distance < minDistance)
+					{
+						minDistance = distance;
+						planeIndex = i;
+					}
+				}
+			}
 
-			//if (direction.magnitude > minDistance)//show
-			//{
-			//	if (!CurrentPointer.IsShowing)
-			//	{
-			//		CurrentPointer.Enable(true);
-			//	}
-			//	CurrentPointer.Transform.position = isPointer3d ?
-			//		ray.GetPoint(minDistance) :
-			//		brain.OutputCamera.WorldToScreenPoint(ray.GetPoint(minDistance));
+			if (direction.magnitude > minDistance)//show
+			{
+				if (pointer == null)
+				{
+					CreatePointer();
+				}
+				pointer.Transform.position = isPointer3d ? 
+					ray.GetPoint(minDistance) :
+					brain.OutputCamera.WorldToScreenPoint(ray.GetPoint(minDistance));
 
-			//	if (!isPointer3d)
-			//	{
-			//		CurrentPointer.Transform.rotation = GetIconRotation(planeIndex);
-			//	}
-			//}
-			//else//hide
-			//{
-			//	if (CurrentPointer.IsShowing)
-			//	{
-			//		CurrentPointer.Enable(false);
-			//	}
-			//}
+				if (!isPointer3d)
+				{
+					pointer.Transform.rotation = GetIconRotation(planeIndex);
+				}
+			}
+			else//hide
+			{
+				DisposePointer();
+			}
 		}
 
 		private Quaternion GetIconRotation(int planeIndex)
@@ -124,22 +97,25 @@ namespace Game.Systems.VFX
 
 			return Quaternion.Euler(0, 0, 180f);
 		}
-
-		public class Pointer
+	
+		private void CreatePointer()
 		{
-			public bool IsShowing { get; private set; }
-			public Transform Transform { get; private set; }
-
-			public Pointer(Transform pointer)
+			if (isPointer3d)
 			{
-				Transform = pointer;
-				IsShowing = pointer.gameObject.activeSelf;
+				pointer = factory3D.Create();
 			}
-
-			public void Enable(bool trigger)
+			else
 			{
-				IsShowing = trigger;
-				Transform.gameObject.SetActive(trigger);
+				pointer = factory2D.Create();
+			}
+		}
+
+		private void DisposePointer()
+		{
+			if (pointer != null)
+			{
+				pointer.DespawnIt();
+				pointer = null;
 			}
 		}
 	}

@@ -18,7 +18,7 @@ namespace Game.Managers.TransitionManager
 				.BindFactory<UIFadeTransition, UIFadeTransition.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
 				.FromComponentInNewPrefab(fadePrefab)
-				.UnderTransform((x) => x.Container.Resolve<UIGlobalCanvas>().transform.Find("Transitions")))
+				.UnderTransform((x) => x.Container.Resolve<UIGlobalCanvas>().Transitions))
 				.WhenInjectedInto<TransitionManager>();
 
 			Container.BindInterfacesAndSelfTo<TransitionManager>().AsSingle();

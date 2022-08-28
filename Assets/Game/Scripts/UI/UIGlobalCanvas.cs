@@ -23,7 +23,35 @@ namespace Game.UI
 		}
 		private WindowsRegistrator windowsManager;
 
-		[field: SerializeField] public CanvasGroup GaveSaved { get; private set; }
+		public Transform Windows
+		{
+			get
+			{
+				if (windows == null)
+				{
+					windows = transform.Find("Windows");
+				}
+
+				return windows;
+			}
+		}
+		private Transform windows;
+
+		public Transform Transitions
+		{
+			get
+			{
+				if(transitions == null)
+				{
+					transitions = transform.Find("Transitions");
+				}
+
+				return transitions;
+			}
+		}
+		private Transform transitions;
+
+		[field: SerializeField] public CanvasGroup GameSaved { get; private set; }
 
 		private SignalBus signalBus;
 
@@ -35,7 +63,7 @@ namespace Game.UI
 
 		private void Start()
 		{
-			GaveSaved.alpha = 0f;
+			GameSaved.alpha = 0f;
 
 			signalBus?.Subscribe<SignalSaveStorage>(OnSaveStorage);
 		}
@@ -50,9 +78,9 @@ namespace Game.UI
 			Sequence sequence = DOTween.Sequence();
 
 			sequence
-				.Append(GaveSaved.DOFade(1f, 0.2f))
+				.Append(GameSaved.DOFade(1f, 0.2f))
 				.AppendInterval(1f)
-				.Append(GaveSaved.DOFade(0f, 0.15f));
+				.Append(GameSaved.DOFade(0f, 0.15f));
 			
 		}
 	}

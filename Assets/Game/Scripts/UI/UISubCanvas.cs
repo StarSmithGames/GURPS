@@ -20,6 +20,20 @@ namespace Game.UI
 		}
 		private WindowsRegistrator windowsManager;
 
+		public Transform VFXIndicators
+		{
+			get
+			{
+				if(vfxIndicators == null)
+				{
+					vfxIndicators = transform.Find("VFX/Indicators");
+				}
+
+				return vfxIndicators;
+			}
+		}
+		private Transform vfxIndicators;
+
 		public Transform Windows
 		{
 			get

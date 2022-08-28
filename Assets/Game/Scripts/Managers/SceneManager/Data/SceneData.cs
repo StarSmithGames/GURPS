@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Game.Managers.SceneManager
 {
-	[CreateAssetMenu(fileName = "Scene", menuName = "Scene")]
+	[CreateAssetMenu(fileName = "SceneData", menuName = "SceneData")]
 	public class SceneData : ScriptableObject
 	{
 		[HideLabel]

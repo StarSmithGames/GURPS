@@ -1,9 +1,6 @@
 using Cinemachine;
 
-using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
-using Game.Systems.ContextMenu;
-using Game.Systems.InventorySystem;
 using Game.UI;
 
 using System.Collections.Generic;

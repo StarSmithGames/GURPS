@@ -541,7 +541,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1129835330179371827}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1448295734}
@@ -572,6 +572,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 501fa21c19e2a50448fad92ee320d7c9, type: 2}
   - {fileID: 11400000, guid: 1e992dd2d0196a9439e5383234d3565d, type: 2}
   - {fileID: 11400000, guid: 5225799fc833dde4c985132ce8eb21aa, type: 2}
+  - {fileID: 11400000, guid: ccbce1683a9c95a49809bc2cb6521933, type: 2}
   _monoInstallers:
   - {fileID: 9203395883120049922}
   _installerPrefabs: []

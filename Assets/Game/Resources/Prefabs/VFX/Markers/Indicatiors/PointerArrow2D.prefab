@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8295302268580238078}
   - component: {fileID: 8040037344300844611}
+  - component: {fileID: 3591282316941683730}
   m_Layer: 5
-  m_Name: PointerArrow
+  m_Name: PointerArrow2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,6 +46,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1270053162924549786}
   m_CullTransparentMesh: 1
+--- !u!114 &3591282316941683730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270053162924549786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a7106f7cdcd33b488602faf13b3a035, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6511516410839979130
 GameObject:
   m_ObjectHideFlags: 0
