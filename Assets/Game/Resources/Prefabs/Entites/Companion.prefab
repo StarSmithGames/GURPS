@@ -102,19 +102,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410057c28bbd3d847882337c4be72468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  outline: {fileID: 7707879391142115215}
+  entity: {fileID: 5468961598750850960}
+  model: {fileID: 3761009277470784773}
   animator: {fileID: 7120726294155093887}
   navMeshAgent: {fileID: 397710266938422184}
   characterController: {fileID: 397710266938422186}
-  model: {fileID: 3761009277470784773}
-  cameraPivot: {fileID: 2518957565947038372}
   animatorControl: {fileID: 4369649228409784950}
   controller: {fileID: 5874318617756271098}
   navigationController: {fileID: 5879010994844666634}
+  interactionPoint: {fileID: 4398526078524752907}
+  cameraPivot: {fileID: 2518957565947038372}
   markers: {fileID: 2416944364642038130}
-  outline: {fileID: 7707879391142115215}
-  entity: {fileID: 5468961598750850960}
-  barker: {fileID: 3344450178590481488}
   outfit: {fileID: 3955389302228173797}
+  barker: {fileID: 3344450178590481488}
 --- !u!114 &5468961598750850960
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,25 +19,25 @@ namespace Game.Systems.BattleSystem
 		public UnityAction onNextTurn;
 
 		public BattleState CurrentState { get; private set; }
-		public BattleFSM BattleFSM { get; private set; }
+		public BattleFSM FSM { get; private set; }
 
 		public Battle(List<IBattlable> entities)
 		{
-			BattleFSM = new BattleFSM();
+			FSM = new BattleFSM();
 			
 			List<Turn> turns = new List<Turn>();
 			entities.ForEach((x) => turns.Add(new Turn(x)));
 
 			Round round = new Round(turns);
-			BattleFSM.Rounds.Add(round);
-			BattleFSM.Rounds.Add(round.Copy());
+			FSM.Rounds.Add(round);
+			FSM.Rounds.Add(round.Copy());
 		}
 
 		public void NextTurn()
 		{
-			if (!BattleFSM.NextTurn())
+			if (!FSM.NextTurn())
 			{
-				if (!BattleFSM.NextRound())
+				if (!FSM.NextRound())
 				{
 					onVictory?.Invoke();
 					onBattleUpdated?.Invoke();

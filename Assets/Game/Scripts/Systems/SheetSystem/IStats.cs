@@ -128,8 +128,6 @@ namespace Game.Systems.SheetSystem
         }
     }
 
-	//TODO Нагрузка и движение
-	//TODO Damage table
 	[System.Serializable]
     public class StatsSettigns
     {

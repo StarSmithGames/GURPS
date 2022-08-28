@@ -1,6 +1,7 @@
 using Game.Entities.AI;
 using Game.Managers.FactionManager;
 using Game.Systems.BattleSystem;
+using Game.Systems.CameraSystem;
 using Game.Systems.DialogueSystem;
 using Game.Systems.SheetSystem;
 
@@ -16,10 +17,11 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-	public partial class DummyModel : Model, IAI, ISheetable, IActor, IBattlable, IFactionable
+	public partial class DummyModel : Model, IAI, ISheetable, IActor, IBattlable, ICameraReporter, IFactionable
 	{
 		[field: InlineProperty]
 		[field: SerializeField] public Faction Faction { get; private set; }
+		[field: SerializeField] public CameraPivot CameraPivot { get; private set; }
 
 		public ModelData data;
 
@@ -38,7 +40,6 @@ namespace Game.Entities.Models
 		private ISheet sheet;
 
 		public Brain Brain { get; private set; }
-
 
 		[Inject]
 		private void Construct(DialogueSystem dialogueSystem)

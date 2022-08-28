@@ -23,14 +23,14 @@ public class UIBars : MonoBehaviour
 	private List<UIAction> actions = new List<UIAction>();
 
 	private SignalBus signalBus;
-	private CharacterManager characterManager;
+	private PartyManager partyManager;
 	private UIAction.Factory actionFactory;
 
 	[Inject]
-	private void Construct(SignalBus signalBus, CharacterManager characterManager, UIAction.Factory actionFactory)
+	private void Construct(SignalBus signalBus, PartyManager partyManager, UIAction.Factory actionFactory)
 	{
 		this.signalBus = signalBus;
-		this.characterManager = characterManager;
+		this.partyManager = partyManager;
 		this.actionFactory = actionFactory;
 	}
 
@@ -48,29 +48,29 @@ public class UIBars : MonoBehaviour
 	{
 		signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 
-		//SetEntity(characterManager.CurrentParty.LeaderParty);
+		SetEntity(partyManager.PlayerParty.LeaderParty);
 	}
 
-	private void SetEntity(IEntityModel entity)
+	private void SetEntity(ISheetable sheetable)
 	{
 		if(actionStat != null)
 		{
 			actionStat.onStatChanged -= OnStatChanged;
 		}
 
-		//HealthBar.SetStat(entity?.Sheet.Stats.HitPoints);
-		//EnergyBar.SetStat(entity?.Sheet.Stats.Move);
+		HealthBar.SetStat(sheetable?.Sheet.Stats.HitPoints);
+		EnergyBar.SetStat(sheetable?.Sheet.Stats.Move);
 
-		//actionStat = entity?.Sheet.Stats.ActionPoints;
+		actionStat = sheetable?.Sheet.Stats.ActionPoints;
 
-		if(actionStat != null)
+		if (actionStat != null)
 		{
 			actionStat.onStatChanged += OnStatChanged;
 		}
 
 		if (actionStat != null)
 		{
-			if(actionStat.MaxValue != actions.Count)//need resizer
+			if(actionStat.MaxValue != actions.Count)//TODO need resizer
 			{
 				ActionContent.DestroyChildren();
 				actions.Clear();
@@ -99,6 +99,6 @@ public class UIBars : MonoBehaviour
 
 	private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 	{
-		//SetEntity(signal.leader);
+		SetEntity(signal.leader);
 	}
 }

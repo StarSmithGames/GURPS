@@ -213,14 +213,14 @@ namespace Game.Systems.CameraSystem
 			});
 		}
 
-		public void LookAt(IEntityModel entity)
+		public void LookAt(ICameraReporter reporter)
 		{
-			if (entity is CharacterModel character)
+			if (reporter is CharacterModel character)
 			{
 				//characterManager.CurrentParty.SetLeader(character);
 			}
 
-			SetFollowTarget(entity.CameraPivot);
+			SetFollowTarget(reporter.CameraPivot);
 			CameraToHome();
 		}
 

@@ -4,6 +4,7 @@ using Game.Managers.GameManager;
 using Game.Managers.PartyManager;
 using Game.Managers.StorageManager;
 using Game.Systems.CommandCenter;
+using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
@@ -32,6 +33,7 @@ namespace Game
 
 			GameManagerInstaller.Install(Container);
 			PartyManagerInstaller.Install(Container);
+			//Container.Bind<SheetSystem>().AsSingle().NonLazy();
 
 			Container.BindInstance(globalSettings);
 		}

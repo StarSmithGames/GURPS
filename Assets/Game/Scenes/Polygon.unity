@@ -934,7 +934,6 @@ RectTransform:
   m_Children:
   - {fileID: 636861637}
   - {fileID: 1311428776}
-  - {fileID: 1005420105}
   m_Father: {fileID: 1573839947}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4611,6 +4610,7 @@ RectTransform:
   - {fileID: 529471269}
   - {fileID: 1302692848}
   - {fileID: 391517577}
+  - {fileID: 1005420105}
   m_Father: {fileID: 1573839947}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4642,7 +4642,7 @@ MonoBehaviour:
   <CommenceBattle>k__BackingField: {fileID: 529471272}
   <NewRound>k__BackingField: {fileID: 1302692852}
   <SurpiseEnemy>k__BackingField: {fileID: 391517580}
-  <TurnInforamtion>k__BackingField: {fileID: 1005420107}
+  <TurnInformation>k__BackingField: {fileID: 1005420107}
 --- !u!1 &487388676
 GameObject:
   m_ObjectHideFlags: 0
@@ -10059,7 +10059,7 @@ GameObject:
   - component: {fileID: 1005420108}
   - component: {fileID: 1005420107}
   m_Layer: 5
-  m_Name: Turn
+  m_Name: TurnInformation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10078,8 +10078,8 @@ RectTransform:
   m_Children:
   - {fileID: 935156219}
   - {fileID: 546146712}
-  m_Father: {fileID: 90369388}
-  m_RootOrder: 2
+  m_Father: {fileID: 482791929}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -10103,11 +10103,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1005420104}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 518347639e476194180ec081d9d3c250, type: 3}
+  m_Script: {fileID: 11500000, guid: 792073fcee3712b4391e647df7b23843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <CanvasGroup>k__BackingField: {fileID: 1005420108}
+  <Back>k__BackingField: {fileID: 935156220}
   <Text>k__BackingField: {fileID: 546146713}
+  playerBackground: {fileID: 21300000, guid: 9d50fceafab3c3c45875004544e7c7e6, type: 3}
+  enemyBackground: {fileID: 21300000, guid: 327dba628dfbf684793d4ee4328db9d9, type: 3}
 --- !u!225 &1005420108
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -20553,11 +20556,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000026813668
+      value: -0.000000026813673
       objectReference: {fileID: 0}
     - target: {fileID: 1316808352, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000013798795
+      value: 0.000000013798794
       objectReference: {fileID: 0}
     - target: {fileID: 1316808353, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Follow
@@ -20589,11 +20592,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000026813668
+      value: -0.000000026813673
       objectReference: {fileID: 0}
     - target: {fileID: 1448295734, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000013798795
+      value: 0.000000013798794
       objectReference: {fileID: 0}
     - target: {fileID: 1643292430, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_Follow
@@ -20927,6 +20930,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7443346904798804033, guid: 58110c025190bf3419a03edec12a75c9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7546608636564682104, guid: 58110c025190bf3419a03edec12a75c9, type: 3}
+      propertyPath: outlineTargets.Array.data[0].IsVisible
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7784406252879700731, guid: 58110c025190bf3419a03edec12a75c9, type: 3}

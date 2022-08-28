@@ -1,16 +1,28 @@
+using Game.Systems.CameraSystem;
+using Game.Systems.DialogueSystem;
+
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 namespace Game.Entities
 {
     public class CharacterInstaller : EntityInstaller
     {
+		[Title("Character")]
+		[SerializeField] private CameraPivot cameraPivot;
+		[SerializeField] private Markers markers;
+		[SerializeField] private CharacterOutfit outfit;
 		[Space]
-        [SerializeField] private CharacterOutfit outfit;
+		[SerializeField] private Barker barker;
 
 		public override void InstallBindings()
 		{
 			base.InstallBindings();
+			Container.BindInstance(cameraPivot);
+			Container.BindInstance(markers);
 			Container.BindInstance(outfit);
+			Container.BindInstance(barker);
 		}
 	}
 }

@@ -162,6 +162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outline: {fileID: 8166100552612022645}
+  interactionPoint: {fileID: 7241427450542474156}
 --- !u!65 &7206860126743418008
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -204,7 +205,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <ContainerData>k__BackingField: {fileID: 11400000, guid: b0f6ad7a6bb1ce749b746081bfb299cf, type: 2}
-  <InteractionPoint>k__BackingField: {fileID: 7241427450542474156}
 --- !u!114 &7241427450542474156
 MonoBehaviour:
   m_ObjectHideFlags: 0

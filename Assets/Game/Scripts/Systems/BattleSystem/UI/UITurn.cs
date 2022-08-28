@@ -31,7 +31,7 @@ namespace Game.Systems.BattleSystem
         [SerializeField] private Vector2 selectedSize = new Vector2(100, 100);
         [SerializeField] private Vector2 diselectedSize = new Vector2(60, 60);
 
-        public IEntityModel CurrentEntity { get; private set; }
+        public IBattlable CurrentBattlable { get; private set; }
 
         [Inject]
         private void Construct()
@@ -59,9 +59,9 @@ namespace Game.Systems.BattleSystem
             PointerHover.onPointerExit += OnPointerExit;
         }
 
-        public void SetEntity(IEntityModel entity)
+        public void SetEntity(IBattlable battlable)
 		{
-            CurrentEntity = entity;
+            CurrentBattlable = battlable;
             //HPBar.SetStat(CurrentEntity?.Sheet.Stats.HitPoints, CurrentEntity?.Sheet.Settings.isImmortal ?? false);
 
             UpdateUI();

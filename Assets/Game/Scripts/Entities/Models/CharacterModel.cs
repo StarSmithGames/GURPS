@@ -14,10 +14,11 @@ using Game.Systems.DamageSystem;
 using Game.Systems.FloatingTextSystem;
 using Game.Systems.SheetSystem;
 using System.Collections.Generic;
+using Game.Systems.CameraSystem;
 
 namespace Game.Entities.Models
 {
-	public interface ICharacterModel : IEntityModel, ISheetable, IBattlable, IActor, IDamegeable, IKillable
+	public interface ICharacterModel : IEntityModel, ISheetable, IBattlable, IActor, ICameraReporter, IDamegeable, IKillable
 	{
 		bool IsWithRangedWeapon { get; }//rm
 		float CharacterRange { get; }//rm
@@ -45,8 +46,9 @@ namespace Game.Entities.Models
 
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorControl AnimatorControl { get; private set; }
+		public CameraPivot CameraPivot { get; private set; }
 
-		public Transform DialogueTransform => Transform;
+		public Transform DialogueTransform => Transform;//TODO rm
 
 		private IEquipment equipment;
 
@@ -58,12 +60,14 @@ namespace Game.Entities.Models
 			Markers markerController,
 			DialogueSystem dialogueSystem,
 			Barker barker,
-			FloatingSystem floatingSystem)
+			FloatingSystem floatingSystem,
+			CameraPivot cameraPivot)
 		{
 			Outfit = outfit;
 			AnimatorControl = animatorControl;
 			Outline = outline;
 			Markers = markerController;
+			CameraPivot = cameraPivot;
 
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
@@ -480,7 +484,7 @@ namespace Game.Entities.Models
 		}
 		protected virtual void OnBattleUpdated()
 		{
-			isMineTurn = CurrentBattle.BattleFSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
+			isMineTurn = CurrentBattle.FSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
 
 			Markers.LineMarker.Enable(InBattle && isMineTurn);
 			Markers.TargetMarker.Enable(InBattle && isMineTurn);

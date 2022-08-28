@@ -319,27 +319,33 @@ namespace Game.Systems.CameraSystem
 
 		private void MouseClickInBattle(Vector3 point)
 		{
-			if (CurrentObserve != null)
+			if (battleSystem.CurrentExecutor.Battle.CurrentState == BattleState.Battle)
 			{
-				//bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leaderModel.Navigation.FullPathDistance) >= 0 &&
-				//						leaderModel.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
-
-				//if (isCanReach || interactable.InteractionPoint.IsInRange(leaderModel.Transform.position))
-				//{
-				//	//Interactor.InteractInBattle(leader, interactable);
-				//}
-			}
-			else
-			{
-				//if (!leader.TaskSequence.IsSequenceProcess || leader.TaskSequence.IsCanBeBreaked)
-				//Targeting
-				if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
+				if (CurrentObserve != null)
 				{
-					if (IsMouseHit && !IsUI)
+					//bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leaderModel.Navigation.FullPathDistance) >= 0 &&
+					//						leaderModel.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
+
+					//if (isCanReach || interactable.InteractionPoint.IsInRange(leaderModel.Transform.position))
+					//{
+					//	//Interactor.InteractInBattle(leader, interactable);
+					//}
+				}
+				else
+				{
+					//if (!leader.TaskSequence.IsSequenceProcess || leader.TaskSequence.IsCanBeBreaked)
+					//Targeting
+					if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 					{
-						if (!leaderModel.IsHasTarget && leaderModel.Sheet.Stats.Move.CurrentValue >= 0.1f)
+						if (IsMouseHit && !IsUI)
 						{
-							leaderModel.SetDestination(point, leaderModel.Sheet.Stats.Move.CurrentValue);
+							if (battleSystem.CurrentExecutor.IsPlayerTurn && battleSystem.CurrentExecutor.InitiatorCanAct)
+							{
+								if (!leaderModel.IsHasTarget && leaderModel.Sheet.Stats.Move.CurrentValue >= 0.1f)
+								{
+									leaderModel.SetDestination(point, leaderModel.Sheet.Stats.Move.CurrentValue);
+								}
+							}
 						}
 					}
 				}

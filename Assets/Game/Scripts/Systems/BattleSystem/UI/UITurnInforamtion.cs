@@ -1,14 +1,36 @@
+using Game.UI.Windows;
+
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.Systems.BattleSystem
 {
-	public class UITurnInforamtion : MonoBehaviour
+	public class UITurnInforamtion : WindowBase
 	{
-		[SerializeField] private TMPro.TextMeshProUGUI textMesh;
+		[field: SerializeField] public Image Back { get; private set; }
+		[field: SerializeField] public TMPro.TextMeshProUGUI Text { get; private set; }
 
-		public void SetText(string text)
+		[SerializeField] private Sprite playerBackground;
+		[SerializeField] private Sprite enemyBackground;
+
+		private void Start()
 		{
-			textMesh.text = text;
+			Enable(false);
 		}
+
+		public UITurnInforamtion SetText(string text, TurnInformationBackground background = TurnInformationBackground.Player)
+		{
+			Text.text = text;
+
+			Back.sprite = background == TurnInformationBackground.Player ? playerBackground : enemyBackground;
+
+			return this;
+		}
+	}
+
+	public enum TurnInformationBackground
+	{
+		Player,
+		Enemy,
 	}
 }

@@ -1,47 +1,38 @@
-using EPOOutline;
-
 using Game.Entities.Models;
-using Game.Systems.CameraSystem;
-using Game.Systems.DialogueSystem;
+
+using Sirenix.OdinInspector;
 
 using UnityEngine;
 using UnityEngine.AI;
 
-using Zenject;
 
 namespace Game.Entities
 {
-	public class EntityInstaller : MonoInstaller
+	public class EntityInstaller : ModelInstaller
 	{
+		[Title("Entity")]
+		[SerializeField] private EntityModel entity;
+		[SerializeField] private Transform model;
+		[Space]
 		[SerializeField] private Animator animator;
 		[SerializeField] private NavMeshAgent navMeshAgent;
 		[SerializeField] private CharacterController characterController;
 		[Space]
-		[SerializeField] private Transform model;
-		[SerializeField] private CameraPivot cameraPivot;
 		[SerializeField] private AnimatorControl animatorControl;
 		[SerializeField] private CharacterController3D controller;
 		[SerializeField] private NavigationController navigationController;
-		[SerializeField] private Markers markers;
-		[SerializeField] private Outlinable outline;
-		[SerializeField] private EntityModel entity;
-		[Space]
-		[SerializeField] private Barker barker;
 
 		public override void InstallBindings()
 		{
+			base.InstallBindings();
 			Container.BindInstance(animator);
 			Container.BindInstance(navMeshAgent);
 			Container.BindInstance(characterController);
 			Container.BindInstance(model).WithId("Model");
-			Container.BindInstance(cameraPivot);
 			Container.BindInstance(animatorControl);
-			Container.Bind<IController>().FromMethod(() => controller);
+			Container.BindInstance<IController>(controller);
 			Container.BindInstance(navigationController);
-			Container.BindInstance(markers);
-			Container.BindInstance(outline);
 			Container.BindInstance<IEntityModel>(entity);
-			Container.BindInstance(barker);
 		}
 	}
 }

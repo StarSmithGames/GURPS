@@ -22,7 +22,7 @@ namespace Game.Systems.BattleSystem
 		[field: SerializeField] public Button SkipTurn { get; private set; }
 		[field: SerializeField] public Button RunAway { get; private set; }
 
-		private Battle currentBattle;
+		private BattleExecutor battleExecutor;
 
 		private UISubCanvas subCanvas;
 
@@ -34,6 +34,9 @@ namespace Game.Systems.BattleSystem
 
 		private void Start()
 		{
+			SkipTurn.onClick.AddListener(OnSkipTurn);
+			RunAway.onClick.AddListener(OnRunAway);
+
 			subCanvas.WindowsRegistrator.Registrate(this);
 
 			Enable(false);
@@ -42,26 +45,30 @@ namespace Game.Systems.BattleSystem
 		private void OnDestroy()
 		{
 			subCanvas.WindowsRegistrator.UnRegistrate(this);
+
+			SkipTurn?.onClick.RemoveAllListeners();
+			RunAway?.onClick.RemoveAllListeners();
 		}
 
-		public void SetBattle(Battle battle)
+		public void SetBattleExecutor(BattleExecutor battleExecutor)
 		{
-			if (currentBattle != null)
+			if (battleExecutor != null)
 			{
-				currentBattle.onBattleUpdated -= OnBattleUpdated;
+				battleExecutor.Battle.onBattleUpdated -= OnBattleUpdated;
 			}
 
-			currentBattle = battle;
+			this.battleExecutor = battleExecutor;
 
-			if (currentBattle != null)
+			if (battleExecutor != null)
 			{
-				currentBattle.onBattleUpdated += OnBattleUpdated;
+				battleExecutor.Battle.onBattleUpdated += OnBattleUpdated;
 			}
 		}
 
 		public void Show(UnityAction callback = null)
 		{
 			IsShowing = true;
+			CanvasGroup.Enable(true, false);
 
 			Sequence sequence = DOTween.Sequence();
 
@@ -79,6 +86,7 @@ namespace Game.Systems.BattleSystem
 				.Append(CanvasGroup.DOFade(0f, 0.2f))
 				.OnComplete(() =>
 				{
+					CanvasGroup.Enable(true);
 					IsShowing = false;
 					callback?.Invoke();
 				});
@@ -94,10 +102,26 @@ namespace Game.Systems.BattleSystem
 
 		private void OnBattleUpdated()
 		{
-			if(currentBattle != null)
+			if(battleExecutor != null)
 			{
-				RoundQueue.UpdateTurns(currentBattle.BattleFSM.Rounds);
+				RoundQueue.UpdateTurns(battleExecutor.Battle.FSM.Rounds);
 			}
+
+			SkipTurn.interactable = true;
+			RunAway.interactable = true;
+		}
+
+		private void OnSkipTurn()
+		{
+			SkipTurn.interactable = false;
+
+			battleExecutor.SkipTurn();
+		}
+
+		private void OnRunAway()
+		{
+			RunAway.interactable = false;
+
 		}
 	}
 }

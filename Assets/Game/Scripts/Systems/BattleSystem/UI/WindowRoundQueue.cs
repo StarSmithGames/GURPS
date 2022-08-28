@@ -113,7 +113,7 @@ namespace Game.Systems.BattleSystem
 
 		private void OnTurnClickChanged(UITurn turn)
 		{
-			cameraController.SetFollowTarget(turn.CurrentEntity.CameraPivot);
+			//cameraController.SetFollowTarget(turn.CurrentBattlable.CameraPivot);
 			cameraController.CameraToHome();
 		}
 	}

@@ -16,13 +16,13 @@ namespace Game.Entities.Models
 		public Transform Transform => transform;
 
 		public Outlinable Outline { get; protected set; }
-
-		[field: SerializeField] public InteractionPoint InteractionPoint { get; private set; }
+		public InteractionPoint InteractionPoint { get; protected set; }
 
 		[Inject]
-		private void Construct(Outlinable outline)
+		private void Construct(Outlinable outline, InteractionPoint interactionPoint)
 		{
 			Outline = outline;
+			InteractionPoint = interactionPoint;
 
 			Outline.enabled = false;
 		}

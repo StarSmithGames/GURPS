@@ -14,7 +14,6 @@ namespace Game.Entities.Models
 	{
 		MonoBehaviour MonoBehaviour { get; }
 		TaskSequence TaskSequence { get; }
-		CameraPivot CameraPivot { get; }
 	}
 
 	public abstract partial class EntityModel : Model, IEntityModel
@@ -22,23 +21,18 @@ namespace Game.Entities.Models
 		public MonoBehaviour MonoBehaviour => this;
 		public TaskSequence TaskSequence { get; private set; }
 
-		public CameraPivot CameraPivot { get; private set; }
-
 		protected SignalBus signalBus;
 
 		[Inject]
 		private void Construct(
 			SignalBus signalBus,
 			NavigationController navigationController,
-			IController controller,
-			CameraPivot cameraPivot)
+			IController controller)
 		{
 			this.signalBus = signalBus;
 
 			Navigation = navigationController;
 			Controller = controller;
-
-			CameraPivot = cameraPivot;
 
 			TaskSequence = new TaskSequence(this);
 
@@ -56,7 +50,6 @@ namespace Game.Entities.Models
 		{
 			Assert.IsNotNull(Navigation, $"Entity {gameObject.name} lost component.");
 			Assert.IsNotNull(Controller, $"Entity {gameObject.name} lost component.");
-			Assert.IsNotNull(CameraPivot, $"Entity {gameObject.name} lost component.");
 		}
 	}
 

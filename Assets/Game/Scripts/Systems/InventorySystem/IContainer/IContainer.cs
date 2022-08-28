@@ -8,8 +8,6 @@ namespace Game.Systems.InventorySystem
 
         bool IsSearched { get; }
 
-        InteractionPoint InteractionPoint { get; }
-
         void Open(IInteractable interactor);
         void Close();
     }
