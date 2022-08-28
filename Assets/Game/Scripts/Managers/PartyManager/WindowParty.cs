@@ -1,6 +1,3 @@
-using Game.Entities;
-using Game.Managers.CharacterManager;
-using Game.Managers.PartyManager;
 using Game.Systems.CameraSystem;
 using Game.UI;
 using Game.UI.Windows;

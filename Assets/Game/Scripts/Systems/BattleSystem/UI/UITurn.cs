@@ -31,26 +31,29 @@ namespace Game.Systems.BattleSystem
         [SerializeField] private Vector2 selectedSize = new Vector2(100, 100);
         [SerializeField] private Vector2 diselectedSize = new Vector2(60, 60);
 
-        public IBattlable CurrentBattlable { get; private set; }
+        private WindowEntityInformation EntityInformation
+        {
+            get
+            {
+                if (entityInformation == null)
+                {
+                    entityInformation = subCanvas.WindowsRegistrator.GetAs<WindowEntityInformation>();
+                }
+
+                return entityInformation;
+            }
+        }
+        private WindowEntityInformation entityInformation;
+
+        public ISheetable CurrentSheetable { get; private set; }
+
+        private UISubCanvas subCanvas;
 
         [Inject]
-        private void Construct()
+        private void Construct(UISubCanvas subCanvas)
 		{
+            this.subCanvas = subCanvas;
         }
-
-		private void OnDestroy()
-		{
-			if(BackgroundButton != null)
-			{
-                BackgroundButton.onClickChanged -= OnClickChanged;
-            }
-
-			if (PointerHover != null)
-			{
-                PointerHover.onPointerEnter -= OnPointerEnter;
-                PointerHover.onPointerExit -= OnPointerExit;
-            }
-		}
 
 		private void Start()
 		{
@@ -59,18 +62,32 @@ namespace Game.Systems.BattleSystem
             PointerHover.onPointerExit += OnPointerExit;
         }
 
-        public void SetEntity(IBattlable battlable)
-		{
-            CurrentBattlable = battlable;
-            //HPBar.SetStat(CurrentEntity?.Sheet.Stats.HitPoints, CurrentEntity?.Sheet.Settings.isImmortal ?? false);
+        private void OnDestroy()
+        {
+            if (BackgroundButton != null)
+            {
+                BackgroundButton.onClickChanged -= OnClickChanged;
+            }
 
-            UpdateUI();
+            if (PointerHover != null)
+            {
+                PointerHover.onPointerEnter -= OnPointerEnter;
+                PointerHover.onPointerExit -= OnPointerExit;
+            }
+        }
+
+        public void SetEntity(ISheetable sheetable)
+		{
+            CurrentSheetable = sheetable;
+			HPBar.SetStat(CurrentSheetable?.Sheet.Stats.HitPoints, CurrentSheetable?.Sheet.Settings.isImmortal ?? false);
+
+			UpdateUI();
         }
 
         public void Select()
 		{
-            //Name.text = CurrentEntity.Sheet.Information.Name;
-            Name.enabled = true;
+			Name.text = CurrentSheetable.Sheet.Information.Name;
+			Name.enabled = true;
             (transform as RectTransform).sizeDelta = selectedSize;
 		}
 
@@ -84,8 +101,8 @@ namespace Game.Systems.BattleSystem
 
         private void UpdateUI()
 		{
-            //Avatar.sprite = (CurrentEntity.Sheet.Information as HumanoidEntityInformation).portrait;
-        }
+			Avatar.sprite = CurrentSheetable.Sheet.Information.portrait;
+		}
 
         private void OnClickChanged(int count)
 		{
@@ -97,11 +114,23 @@ namespace Game.Systems.BattleSystem
 
         private void OnPointerEnter(PointerEventData eventData)
         {
-            //uiManager.Battle.SetSheet(CurrentEntity.Sheet);
+            if (CurrentSheetable != null)
+            {
+                EntityInformation.SetSheet(CurrentSheetable.Sheet);
+
+                if (!EntityInformation.IsShowing)
+                {
+                    EntityInformation.Enable(true);
+                }
+            }
         }
+
         private void OnPointerExit(PointerEventData eventData)
         {
-            //uiManager.Battle.SetSheet(null);
+            if (EntityInformation.IsShowing)
+            {
+                EntityInformation.Enable(true);
+            }
         }
 
         public class Factory : PlaceholderFactory<UITurn> { }

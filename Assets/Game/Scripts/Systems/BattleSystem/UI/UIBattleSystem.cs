@@ -39,6 +39,7 @@ namespace Game.Systems.BattleSystem
 
 			subCanvas.WindowsRegistrator.Registrate(this);
 
+			RoundQueue.Enable(false);
 			Enable(false);
 		}
 
@@ -94,7 +95,6 @@ namespace Game.Systems.BattleSystem
 
 		public void Enable(bool trigger)
 		{
-			RoundQueue.Enable(trigger);
 			CanvasGroup.Enable(trigger);
 			IsShowing = trigger;
 		}

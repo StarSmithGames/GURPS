@@ -20,6 +20,7 @@ public class CharacterController3D : MonoBehaviour, IController
 	public event UnityAction onReachedDestination;
 
 	public bool IsGrounded => characterController.isGrounded;
+
 	public bool IsHasTarget
 	{
 		get => isHasTarget;
@@ -32,7 +33,6 @@ public class CharacterController3D : MonoBehaviour, IController
 		}
 	}
 	private bool isHasTarget = false;
-	public Vector3 CurrentDestination { get; private set; }
 
 	public bool IsFreezed { get; private set; }
 	public bool IsWaitAnimation { get; set; }
@@ -42,6 +42,8 @@ public class CharacterController3D : MonoBehaviour, IController
 
 	public bool IsCanRotate { get => isCanRotate; set => isCanRotate = value; }
 	private bool isCanRotate = true;
+
+	public Vector3 CurrentDestination { get; private set; }
 
 	[OnValueChanged("Validate", true)]
 	[SerializeField] private Settings settings;

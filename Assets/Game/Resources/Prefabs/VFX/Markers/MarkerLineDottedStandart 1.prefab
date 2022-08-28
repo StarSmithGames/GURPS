@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4001474256616797333}
   - component: {fileID: 1048525448597392365}
   m_Layer: 6
-  m_Name: MarkerLineDottedStandart
+  m_Name: MarkerLineDottedStandart 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,7 +77,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d886bb3146d16c3418d5a474a625c33f, type: 2}
+  - {fileID: 2100000, guid: dea0c57bbb9b5474392d4b5e87b55030, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -103,7 +103,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.05
+    widthMultiplier: 0.5
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -149,7 +149,7 @@ LineRenderer:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
-    numCapVertices: 10
+    numCapVertices: 0
     alignment: 0
     textureMode: 1
     shadowBias: 0.5

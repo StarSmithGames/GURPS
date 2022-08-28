@@ -243,7 +243,6 @@ namespace Game.Systems.BattleSystem
 				{
 					pathfinderable.onDestinationChanged -= OnInitiatorDestinationChanged;
 				}
-				//(CurrentInitiator as ISheetable).Sheet.Stats.ActionPoints.onStatChanged -= OnInitiatorActionPointsChanged;
 			}
 
 			CurrentTurn = Battle.FSM.CurrentTurn;
@@ -274,7 +273,6 @@ namespace Game.Systems.BattleSystem
 			{
 				pathfinderable1.onDestinationChanged += OnInitiatorDestinationChanged;
 			}
-			//(CurrentInitiator as ISheetable).Sheet.Stats.ActionPoints.onStatChanged += OnInitiatorActionPointsChanged;
 		}
 
 		private void OnRoundChanged()
@@ -292,18 +290,6 @@ namespace Game.Systems.BattleSystem
 				}
 			}
 		}
-
-		//private void OnInitiatorActionPointsChanged()
-		//{
-		//	//if (settings.isInfinityActionStat)
-		//	//{
-		//	//	var stat = (CurrentInitiator as ISheetable).Sheet.Stats.ActionPoints;
-		//	//	if (stat.CurrentValue != stat.MaxValue)
-		//	//	{
-		//	//		stat.CurrentValue = stat.MaxValue;
-		//	//	}
-		//	//}
-		//}
 
 		private void OnDied(IEntityModel entity)
 		{

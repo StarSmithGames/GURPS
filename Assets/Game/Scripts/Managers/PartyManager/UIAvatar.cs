@@ -1,5 +1,6 @@
 using Game.Entities;
 using Game.Entities.Models;
+using Game.Systems.BattleSystem;
 using Game.Systems.SheetSystem;
 using Game.UI;
 
@@ -28,8 +29,31 @@ namespace Game.Managers.PartyManager
 		[field: Space]
 		[field: SerializeField] public UIBar HPBar { get; private set; }
 
-		public ICharacter CurrentCharacter { get; private set; }
+		public ICharacterModel CurrentModel { get; private set; }
+
 		private IStatBar stat;
+
+		private WindowEntityInformation EntityInformation
+		{
+			get
+			{
+				if (entityInformation == null)
+				{
+					entityInformation = subCanvas.WindowsRegistrator.GetAs<WindowEntityInformation>();
+				}
+
+				return entityInformation;
+			}
+		}
+		private WindowEntityInformation entityInformation;
+
+		private UISubCanvas subCanvas;
+
+		[Inject]
+		private void Construct(UISubCanvas subCanvas)
+		{
+			this.subCanvas = subCanvas;
+		}
 
 		private void Start()
 		{
@@ -52,27 +76,28 @@ namespace Game.Managers.PartyManager
 				PointerHover.onPointerExit -= OnPointerExit;
 			}
 
-			if (CurrentCharacter != null)
+			if (CurrentModel != null)
 			{
-				//CurrentCharacter.onBattleChanged -= UpdateBattleUI;
+				CurrentModel.onBattleChanged -= UpdateBattleUI;
 			}
 		}
-		
 
 		public void SetCharacter(ICharacter character)
 		{
-			if (CurrentCharacter != null)
+			if (CurrentModel != null)
 			{
-				//CurrentCharacter.onBattleChanged -= UpdateBattleUI;
-			}
-			CurrentCharacter = character;
-			HPBar.SetStat(CurrentCharacter?.Sheet.Stats.HitPoints, CurrentCharacter?.Sheet.Settings.isImmortal ?? false);
-			if (CurrentCharacter != null)
-			{
-				//CurrentCharacter.onBattleChanged += UpdateBattleUI;
+				CurrentModel.onBattleChanged -= UpdateBattleUI;
 			}
 
+			CurrentModel = character.Model as ICharacterModel;
+			HPBar.SetStat(CurrentModel.Sheet.Stats.HitPoints, CurrentModel.Sheet.Settings.isImmortal);
+
 			UpdateUI();
+
+			if (CurrentModel != null)
+			{
+				CurrentModel.onBattleChanged += UpdateBattleUI;
+			}
 		}
 
 		public void SetFrame(bool isLeader)
@@ -83,16 +108,16 @@ namespace Game.Managers.PartyManager
 
 		private void UpdateUI()
 		{
-			Avatar.sprite = CurrentCharacter.Sheet.Information.portrait;
+			Avatar.sprite = CurrentModel.Sheet.Information.portrait;
 			UpdateBattleUI();
 		}
 
 		private void UpdateBattleUI()
 		{
-			IconInBattle.enabled = false; //= CurrentCharacter.InBattle;
+			IconInBattle.enabled = CurrentModel.InBattle;
 
-			FrameLeader.color = /*CurrentCharacter.InBattle ? Color.grey :*/ Color.white;
-			FrameSpare.color = /*CurrentCharacter.InBattle ? Color.grey :*/ Color.white;
+			FrameLeader.color = CurrentModel.InBattle ? Color.grey : Color.white;
+			FrameSpare.color = CurrentModel.InBattle ? Color.grey : Color.white;
 		}
 
 		private void OnClick(int count)
@@ -109,11 +134,23 @@ namespace Game.Managers.PartyManager
 
 		private void OnPointerEnter(PointerEventData eventData)
 		{
-			//uiManager.Battle.SetSheet(CurrentCharacter.Sheet);
+			if (CurrentModel != null)
+			{
+				EntityInformation.SetSheet(CurrentModel.Sheet);
+
+				if (!EntityInformation.IsShowing)
+				{
+					EntityInformation.Enable(true);
+				}
+			}
 		}
+
 		private void OnPointerExit(PointerEventData eventData)
 		{
-			//uiManager.Battle.SetSheet(null);
+			if (EntityInformation.IsShowing)
+			{
+				EntityInformation.Enable(true);
+			}
 		}
 
 		public class Factory : PlaceholderFactory<UIAvatar> { }

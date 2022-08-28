@@ -1,4 +1,5 @@
 using Game.Systems.CameraSystem;
+using Game.Systems.SheetSystem;
 using Game.UI.Windows;
 
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace Game.Systems.BattleSystem
 			{
 				for (int j = 0; j < rounds[i].Turns.Count; j++)
 				{
-					//turns[count].SetEntity(rounds[i].Turns[j].Initiator);
+					turns[count].SetEntity(rounds[i].Turns[j].Initiator as ISheetable);
 
 					if (count == 0)
 					{

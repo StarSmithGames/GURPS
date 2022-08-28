@@ -50,18 +50,18 @@ namespace Game.Systems.CameraSystem
 		public CameraVisionLocation(SignalBus signalBus,
 			CinemachineBrain brain,
 			InputManager inputManager,
+			UISubCanvas subCanvas,
 			PartyManager partyManager,
 			GlobalSettings settings,
 			TooltipSystem.TooltipSystem tooltipSystem,
 			ContextMenuSystem contextMenuSystem,
-			UISubCanvas subCanvas,
 			BattleSystem.BattleSystem battleSystem) : base(signalBus, brain, inputManager)
 		{
+			this.subCanvas = subCanvas;
 			this.partyManager = partyManager;
 			this.settings = settings.cameraVisionLocation;
 			this.tooltipSystem = tooltipSystem;
 			this.contextMenuSystem = contextMenuSystem;
-			this.subCanvas = subCanvas;
 			this.battleSystem = battleSystem;
 		}
 
@@ -99,31 +99,32 @@ namespace Game.Systems.CameraSystem
 
 		protected override void HandleHover(Vector3 point)
 		{
-			if (!leaderModel.IsInDialogue)
-			{
-				if (CurrentObserve != null)
-				{
-					if (CurrentObserve is ISheetable sheetable)
-					{
-						if (!EntityInformation.IsShowing)
-						{
-							EntityInformation.SetSheet(sheetable.Sheet);
-							EntityInformation.Enable(true);
-						}
-					}
-				}
-				else
-				{
-					if (EntityInformation.IsShowing)
-					{
-						EntityInformation.Enable(false);
-					}
-				}
+			if (IsUI) return; 
 
-				if (leaderModel.InBattle)
+			if (CurrentObserve != null)
+			{
+				if (CurrentObserve is ISheetable sheetable)
 				{
-					HoverInBattle(point);
+					EntityInformation.SetSheet(sheetable.Sheet);
+
+					if (!EntityInformation.IsShowing)
+					{
+						EntityInformation.Enable(true);
+					}
 				}
+			}
+			else
+			{
+				if (EntityInformation.IsShowing)
+				{
+					EntityInformation.Enable(false);
+				}
+			}
+			
+
+			if (leaderModel.InBattle)
+			{
+				HoverInBattle(point);
 			}
 		}
 
@@ -302,7 +303,7 @@ namespace Game.Systems.CameraSystem
 					}
 					else if (CurrentObserve is IInteractable interactable)
 					{
-						leaderModel.SetTarget(interactable.InteractionPoint.GetIteractionPosition(leaderModel));
+						leaderModel.SetTarget(interactable.InteractionPoint.GetIteractionPosition(leaderModel), leaderModel.Sheet.Stats.Move.CurrentValue);
 					}
 				}
 				else
@@ -323,18 +324,20 @@ namespace Game.Systems.CameraSystem
 			{
 				if (CurrentObserve != null)
 				{
-					//bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leaderModel.Navigation.FullPathDistance) >= 0 &&
-					//						leaderModel.Navigation.FullPathDistance != 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
+					if (CurrentObserve is IInteractable interactable)
+					{
+						bool isCanReach = (leader.Sheet.Stats.Move.CurrentValue - leaderModel.Navigation.FullPath.Distance) >= 0 && leader.Sheet.Stats.Move.CurrentValue != 0;
 
-					//if (isCanReach || interactable.InteractionPoint.IsInRange(leaderModel.Transform.position))
-					//{
-					//	//Interactor.InteractInBattle(leader, interactable);
-					//}
+						if (isCanReach || interactable.InteractionPoint.IsInRange(leaderModel.Transform.position))
+						{
+							Interactor.ABInteraction(leaderModel, interactable);
+						}
+					}
 				}
 				else
 				{
 					//if (!leader.TaskSequence.IsSequenceProcess || leader.TaskSequence.IsCanBeBreaked)
-					//Targeting
+					//Free space
 					if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 					{
 						if (IsMouseHit && !IsUI)

@@ -1,19 +1,7 @@
 fileFormatVersion: 2
-guid: 465068002817bc0469c083e99c7e2926
+guid: d01c06310ac41fe48880c9151f129313
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 8834012785355152245
-    second: talkbubble_0
-  - first:
-      213: 8284254036765662737
-    second: talkbubble_1
-  - first:
-      213: 7262412696162536343
-    second: talkbubble_2
-  - first:
-      213: -9077993986018456513
-    second: talkbubble_3
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -53,7 +41,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -125,95 +113,11 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: talkbubble_0
-      rect:
-        serializedVersion: 2
-        x: 24
-        y: 593
-        width: 460
-        height: 353
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 57b5a5cd2d7b89a70800000000000000
-      internalID: 8834012785355152245
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: talkbubble_1
-      rect:
-        serializedVersion: 2
-        x: 536
-        y: 593
-        width: 460
-        height: 353
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 11e5382972597f270800000000000000
-      internalID: 8284254036765662737
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: talkbubble_2
-      rect:
-        serializedVersion: 2
-        x: 24
-        y: 81
-        width: 460
-        height: 353
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 79b0e078ed549c460800000000000000
-      internalID: 7262412696162536343
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: talkbubble_3
-      rect:
-        serializedVersion: 2
-        x: 536
-        y: 81
-        width: 460
-        height: 353
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f3ccc36219c740280800000000000000
-      internalID: -9077993986018456513
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 7cfe8fd8f2d889c45a859513e7135dbe
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 

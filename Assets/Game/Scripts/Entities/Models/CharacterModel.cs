@@ -154,6 +154,10 @@ namespace Game.Entities.Models
 	{
 		public Markers Markers { get; protected set; }
 
+		public bool IsLineAnimationProcess => LineAnimationCoroutine != null;
+		private Coroutine LineAnimationCoroutine = null;
+
+
 		protected virtual void ResetMarkers()
 		{
 			Markers.FollowMarker.Enable(false);
@@ -170,6 +174,45 @@ namespace Game.Entities.Models
 
 			Markers.Exclamation.Enable(false);
 			Markers.Question.Enable(false);
+		}
+
+		private IEnumerator LineAnimation()
+		{
+			while (Navigation.NavMeshInvertedPercentRemainingDistance < 0.99f)
+			{
+				var path = Navigation.CurrentPath.Path;
+				var point = Navigation.FindPointAlongPath(Navigation.CurrentPath, Navigation.NavMeshInvertedPercentRemainingDistance);
+
+				float minDistance = float.MaxValue;
+				int index = -1;
+				for (int i = 0; i < path.Count; i++)
+				{
+					var distance = Vector3.Distance(point, path[i]);
+					if (distance < minDistance)
+					{
+						minDistance = distance;
+						index = i;
+					}
+				}
+
+				if (index != -1)
+				{
+					path[index] = point;
+
+					if (index > 0)
+					{
+						for (int i = 0; i < index; i++)
+						{
+							path.Remove(path[i]);
+						}
+					}
+				}
+
+				Markers.LineMarker.DrawLine(path.ToArray());
+				yield return null;
+			}
+
+			LineAnimationCoroutine = null;
 		}
 	}
 
@@ -206,6 +249,8 @@ namespace Game.Entities.Models
 			{
 				if (actor is IInteractable interactable)
 				{
+					Stop();
+
 					if (interactable.InteractionPoint.IsInRange(Transform.position))
 					{
 						dialogueSystem.StartDialogue(this, actor);
@@ -363,11 +408,23 @@ namespace Game.Entities.Models
 
 		private bool isMineTurn = false;
 
+		private bool isAnimat = false;
+
 		protected virtual void BattleTick()
 		{
 			if (isMineTurn)
 			{
-				Markers.LineMarker.DrawLine(Navigation.CurrentPath.Path.ToArray());
+				if (IsHasTarget)
+				{
+					if (!IsLineAnimationProcess)
+					{
+						LineAnimationCoroutine = StartCoroutine(LineAnimation());
+					}
+				}
+				else
+				{
+					Markers.LineMarker.DrawLine(Navigation.CurrentPath.Path.ToArray());
+				}
 			}
 		}
 
@@ -424,7 +481,6 @@ namespace Game.Entities.Models
 		}
 
 		public virtual void Attack() { }
-
 
 		public override void Stop()
 		{
