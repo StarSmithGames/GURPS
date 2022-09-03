@@ -471,6 +471,7 @@ namespace Game.Entities.Models
 			}
 			else
 			{
+				Markers.LineMarker.DrawLine(Navigation.CurrentPath.Path.ToArray());//redraw last choice destination
 				Markers.LineMarker.SetMaterialSpeed(0);//stop line
 			}
 		}

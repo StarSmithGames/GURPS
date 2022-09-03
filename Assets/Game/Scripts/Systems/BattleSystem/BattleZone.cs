@@ -14,6 +14,7 @@ namespace Game.Systems.BattleSystem
 	//required tag -> "Ignore Raycast"
 	public class BattleZone : SerializedMonoBehaviour
 	{
+		[SerializeField] private Collider collider;
 		[SerializeField] private List<IBattlable> battlables = new List<IBattlable>();
 
 		private Battle battle;
@@ -72,7 +73,7 @@ namespace Game.Systems.BattleSystem
 
 		private void Disable()
 		{
-			enabled = false;
+			collider.enabled = false;
 		}
 	}
 }

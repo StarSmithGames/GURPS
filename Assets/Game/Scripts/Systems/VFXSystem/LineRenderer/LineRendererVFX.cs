@@ -66,7 +66,6 @@ namespace Game.Systems.VFX
 					.Append(Line.sharedMaterial.DOColor(colorOut, 0.2f))
 					.OnComplete(() =>
 					{
-						Debug.LogError("Enable == false");
 						Enable(false);
 						callback?.Invoke();
 					});

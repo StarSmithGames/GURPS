@@ -2402,7 +2402,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -7697,7 +7697,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -11642,6 +11642,10 @@ PrefabInstance:
       propertyPath: barksInBattle
       value: 
       objectReference: {fileID: 11400000, guid: c250c003cb791fc439c5a6cb4d68546c, type: 2}
+    - target: {fileID: 8730467907109418137, guid: 58110c025190bf3419a03edec12a75c9, type: 3}
+      propertyPath: barksTakeDamage
+      value: 
+      objectReference: {fileID: 11400000, guid: 1a6d3975c3915ff4c9393b5bb7ad1f8a, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58110c025190bf3419a03edec12a75c9, type: 3}
 --- !u!1 &1200181663
@@ -13386,7 +13390,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -15506,6 +15510,7 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+  collider: {fileID: 1497449988}
 --- !u!1 &1511093348
 GameObject:
   m_ObjectHideFlags: 0
@@ -15954,9 +15959,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac9e90f722f8e6b448cc48fa8f03b1dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <CanvasGroup>k__BackingField: {fileID: 90369389}
   <RoundQueue>k__BackingField: {fileID: 1377036764}
   <Messages>k__BackingField: {fileID: 482791931}
-  <CanvasGroup>k__BackingField: {fileID: 90369389}
   <SkipTurn>k__BackingField: {fileID: 1801975665}
   <RunAway>k__BackingField: {fileID: 652101065}
 --- !u!1 &1588417272
@@ -19968,7 +19973,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 0
+  - IsVisible: 1
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5

@@ -193,26 +193,26 @@ partial class HumanoidAnimatorControl
 		//}
 	}
 
-	private void OnBattleChanged()
-	{
-		if (humanoid.CurrentBattle != null)
-		{
-			if (currentBattle != null)
-			{
-				currentBattle.onBattleStateChanged -= OnBattleStateChanged;
-			}
+	//private void OnBattleChanged()
+	//{
+	//	if (humanoid.CurrentBattle != null)
+	//	{
+	//		if (currentBattle != null)
+	//		{
+	//			currentBattle.onBattleStateChanged -= OnBattleStateChanged;
+	//		}
 
-			//currentBattle = humanoid.CurrentBattle;
-			currentBattle.onBattleStateChanged += OnBattleStateChanged;
-		}
-		else
-		{
-			if (currentBattle != null)
-			{
-				currentBattle.onBattleStateChanged -= OnBattleStateChanged;
-			}
-		}
-	}
+	//		//currentBattle = humanoid.CurrentBattle;
+	//		currentBattle.onBattleStateChanged += OnBattleStateChanged;
+	//	}
+	//	else
+	//	{
+	//		if (currentBattle != null)
+	//		{
+	//			currentBattle.onBattleStateChanged -= OnBattleStateChanged;
+	//		}
+	//	}
+	//}
 
 
 	public abstract class WeaponBehavior

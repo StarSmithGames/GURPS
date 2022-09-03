@@ -11,24 +11,24 @@ using Zenject;
 
 namespace Game.Systems.BattleSystem
 {
-	public class UIBattleSystem : MonoBehaviour, IWindow
+	public class UIBattleSystem : WindowBase
 	{
-		public bool IsShowing { get; private set; }
-
+		[field: Space]
 		[field: SerializeField] public WindowRoundQueue RoundQueue { get; private set; }
 		[field: SerializeField] public UIMessages Messages { get; private set; }
 		[field: Space]
-		[field: SerializeField] public CanvasGroup CanvasGroup { get; private set; }
 		[field: SerializeField] public Button SkipTurn { get; private set; }
 		[field: SerializeField] public Button RunAway { get; private set; }
 
-		private BattleExecutor battleExecutor;
+		private BattleExecutor currentBattleExecutor;
 
+		private SignalBus signalBus;
 		private UISubCanvas subCanvas;
 
 		[Inject]
-		private void Construct(UISubCanvas subCanvas)
+		private void Construct(SignalBus signalBus, UISubCanvas subCanvas)
 		{
+			this.signalBus = signalBus;
 			this.subCanvas = subCanvas;
 		}
 
@@ -36,6 +36,8 @@ namespace Game.Systems.BattleSystem
 		{
 			SkipTurn.onClick.AddListener(OnSkipTurn);
 			RunAway.onClick.AddListener(OnRunAway);
+
+			signalBus?.Subscribe<SignalCurrentBattleExecutorChanged>(OnBattleExecutorChanged);
 
 			subCanvas.WindowsRegistrator.Registrate(this);
 
@@ -45,83 +47,106 @@ namespace Game.Systems.BattleSystem
 
 		private void OnDestroy()
 		{
+			if (currentBattleExecutor != null)
+			{
+				currentBattleExecutor.onBattleStateChanged -= OnBattleStateChanged;
+				currentBattleExecutor.onBattleOrderChanged -= OnBattleOrderChanged;
+
+				currentBattleExecutor = null;
+			}
+
 			subCanvas.WindowsRegistrator.UnRegistrate(this);
 
 			SkipTurn?.onClick.RemoveAllListeners();
 			RunAway?.onClick.RemoveAllListeners();
 		}
 
-		public void SetBattleExecutor(BattleExecutor battleExecutor)
+		private void OnBattleExecutorChanged(SignalCurrentBattleExecutorChanged signal)
 		{
-			if (battleExecutor != null)
+			if (currentBattleExecutor != null)
 			{
-				battleExecutor.Battle.onBattleUpdated -= OnBattleUpdated;
+				currentBattleExecutor.onBattleStateChanged -= OnBattleStateChanged;
+				currentBattleExecutor.onBattleOrderChanged -= OnBattleOrderChanged;
+				//currentBattleExecutor.Battle.onBattleUpdated -= OnBattleUpdated;
 			}
 
-			this.battleExecutor = battleExecutor;
+			currentBattleExecutor = signal.currentBattleExecutor;
 
-			if (battleExecutor != null)
+			if (currentBattleExecutor != null)
 			{
-				battleExecutor.Battle.onBattleUpdated += OnBattleUpdated;
+				currentBattleExecutor.onBattleStateChanged += OnBattleStateChanged;
+				currentBattleExecutor.onBattleOrderChanged += OnBattleOrderChanged;
 			}
 		}
 
-		public void Show(UnityAction callback = null)
+		private void OnBattleStateChanged(BattleExecutorState oldState, BattleExecutorState newState)
 		{
-			IsShowing = true;
-			CanvasGroup.Enable(true, false);
+			if(newState == BattleExecutorState.PreBattle)
+			{
+				currentBattleExecutor.Battle.onBattleUpdated += onBattleUpdated;
+				onBattleUpdated();
 
-			Sequence sequence = DOTween.Sequence();
-
-			sequence
-				.Append(CanvasGroup.DOFade(1f, 0.25f))
-				.AppendCallback(() => RoundQueue.Show())
-				.OnComplete(() => callback?.Invoke());
-		}
-
-		public void Hide(UnityAction callback = null)
-		{
-			Sequence sequence = DOTween.Sequence();
-
-			sequence
-				.Append(CanvasGroup.DOFade(0f, 0.2f))
-				.OnComplete(() =>
+				if (!IsShowing)
 				{
-					CanvasGroup.Enable(true);
-					IsShowing = false;
-					callback?.Invoke();
-				});
-		}
-
-		public void Enable(bool trigger)
-		{
-			CanvasGroup.Enable(trigger);
-			IsShowing = trigger;
-		}
-
-
-		private void OnBattleUpdated()
-		{
-			if(battleExecutor != null)
-			{
-				RoundQueue.UpdateTurns(battleExecutor.Battle.FSM.Rounds);
+					Show();
+					RoundQueue.Show();
+				}
+				Messages.ShowCommenceBattle();
 			}
+			else if (newState == BattleExecutorState.EndBattle)
+			{
+				Hide();
+				RoundQueue.Hide();
 
-			SkipTurn.interactable = true;
-			RunAway.interactable = true;
+				currentBattleExecutor.Battle.onBattleUpdated -= onBattleUpdated;
+			}
+		}
+
+		private void OnBattleOrderChanged(BattleOrder order)
+		{
+			if(order == BattleOrder.Turn)
+			{
+				var isPlayerTurn = currentBattleExecutor.IsPlayerTurn;
+
+				if (isPlayerTurn)
+				{
+					SkipTurn.interactable = true;
+					RunAway.interactable = true;
+
+					if (!IsShowing)
+					{
+						Show();
+					}
+				}
+				else
+				{
+					Enable(false);
+				}
+
+				Messages.TurnInformation.SetText(isPlayerTurn ? "YOU TURN" : "ENEMY TURN", isPlayerTurn ? TurnInformationBackground.Player : TurnInformationBackground.Enemy).Show();
+			}
+		}
+
+		private void onBattleUpdated()
+		{
+			if(currentBattleExecutor != null && currentBattleExecutor.Battle != null)
+			{
+				RoundQueue.UpdateTurns(currentBattleExecutor.Battle.FSM.Rounds);
+			}
 		}
 
 		private void OnSkipTurn()
 		{
 			SkipTurn.interactable = false;
 
-			battleExecutor.SkipTurn();
+			currentBattleExecutor.SkipTurn();
 		}
 
 		private void OnRunAway()
 		{
 			RunAway.interactable = false;
 
+			currentBattleExecutor.TerminateBattle();
 		}
 	}
 }

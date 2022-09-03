@@ -12,8 +12,6 @@ namespace Game.Systems.BattleSystem
 	{
 		public UnityAction onBattleUpdated;
 
-		public UnityAction onBattleStateChanged;
-
 		public UnityAction onVictory;
 		public UnityAction onNextRound;
 		public UnityAction onNextTurn;

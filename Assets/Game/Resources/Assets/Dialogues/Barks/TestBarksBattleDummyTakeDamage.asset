@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e041519adf50fd4c9ddea3646afc87a, type: 3}
+  m_Name: TestBarksBattleDummyTakeDamage
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"Game.Systems.DialogueSystem.BarkTree","nodes":[{"statement":{"texts":[{"language":"Russian","value":"\u0410\u0439!"},{"language":"English","value":"This
+    is a text!"}],"isShowFoldout":true},"_position":{"x":300.0,"y":285.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"},{"statement":{"texts":[{"language":"Russian","value":"\u0411\u043e\u043b\u044c\u043d\u043e!","isShowFoldout":true},{"language":"English","value":"This
+    is a text!"}],"isShowFoldout":true},"_position":{"x":465.0,"y":345.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"},{"statement":{"texts":[{"language":"Russian","value":"\u041f\u0435\u0440\u0435\u0441\u0442\u0430\u043d\u044c
+    \u0431\u0438\u0442\u044c \u043c\u0435\u043d\u044f!","isShowFoldout":true},{"language":"English","value":"This
+    is a text!"}],"isShowFoldout":true},"_position":{"x":285.0,"y":435.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode"}],"connections":[],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
+  _objectReferences: []
+  _graphSource:
+    _version: 3.22
+    _category: 
+    _comments: 
+    _translation: {x: 93, y: -93}
+    _zoomFactor: 1
+  _haltSerialization: 0
+  actorParameters: []
+  barkType: 1

@@ -65,40 +65,31 @@ namespace Game.Entities.Models
 		public bool IsInDialogue { get; set; }
 
 		public BarkTree barksInBattle;
-
+		public BarkTree barksTakeDamage;
 
 		private DialogueSystem dialogueSystem;
 
 		//Dummy can't start dialogue
 		public bool TalkWith(IActor actor) => false;
 
-		public void Bark(BarkTree barkTree)
-		{
-
-		}
-
-		public void BarkInBattle()
-		{
-			var bark = barksInBattle.TreeData.isFirstTime?
-				barksInBattle.allNodes.FirstOrDefault() :
-				barksInBattle.allNodes.RandomItem(1);
-
-			Assert.IsNotNull(bark, "Bark In Battle == null");
-
-			if (bark is I2StatementNode node)
-			{
-				ShowBarkSubtitles(node.statement.GetCurrent());
-			}
-
-			barksInBattle.TreeData.isFirstTime = false;
-		}
-
 		public ISheet GetSheet()
 		{
 			return Sheet;
 		}
 
-		protected void ShowBarkSubtitles(I2AudioText subtitles)
+		public void Bark(BarkTree barkTree)
+		{
+
+		}
+
+		private void Bark(I2StatementNode bark)
+		{
+			Assert.IsNotNull(bark, "Bark In Battle == null");
+
+			ShowBarkSubtitles(bark.statement.GetCurrent());
+		}
+
+		private void ShowBarkSubtitles(I2AudioText subtitles)
 		{
 			if (subtitles != null)
 			{
@@ -128,15 +119,53 @@ namespace Game.Entities.Models
 
 		public bool JoinBattle(BattleExecutor battle)
 		{
+			if(CurrentBattle != null)
+			{
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.onBattleOrderChanged -= OnBattleOrderChanged;
+			}
+
 			CurrentBattle = battle;
+
+			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
+			CurrentBattle.onBattleOrderChanged += OnBattleOrderChanged;
 
 			return true;
 		}
 
 		public bool LeaveBattle()
 		{
+			if (CurrentBattle != null)
+			{
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+			}
+
 			CurrentBattle = null;
 			return true;
+		}
+
+		private void OnBattleStateChanged(BattleExecutorState oldState, BattleExecutorState newState)
+		{
+			if(newState == BattleExecutorState.PreBattle)
+			{
+				Bark(barksInBattle.allNodes.FirstOrDefault() as I2StatementNode);
+			}
+
+			if (newState == BattleExecutorState.EndBattle)
+			{
+				Bark(barksInBattle.allNodes.LastOrDefault() as I2StatementNode);
+			}
+		}
+
+		private void OnBattleOrderChanged(BattleOrder order)
+		{
+			if(order == BattleOrder.Turn)
+			{
+				if(CurrentBattle.CurrentInitiator as Object == this)
+				{
+					Bark(barksInBattle.allNodes.RandomItem(1, barksInBattle.allNodes.Count - 1) as I2StatementNode);
+				}
+			}
 		}
 	}
 }

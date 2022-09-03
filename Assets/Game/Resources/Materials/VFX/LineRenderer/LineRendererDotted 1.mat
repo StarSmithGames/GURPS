@@ -69,6 +69,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - ENUM_A353C26CF50245E0A9031772B2C41530: 0
+    - Heigth: 0.25
+    - Speed: 2
+    - TYPE: 0
+    - Vector1_4329813a376243bbaf2ade9884d5a82a: 1
+    - Width: 0.5
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -76,6 +81,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _Heigth: 0.25
     - _Metallic: 0
     - _Mode: 2
     - _OcclusionStrength: 1
@@ -87,14 +93,19 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _Spacing: 2.5
     - _SpecularHighlights: 1
+    - _Speed: 2
     - _SrcBlend: 5
+    - _TYPE: 0
     - _Thickness: 0.5
     - _UVSec: 0
+    - _Width: 0.5
     - _ZWrite: 0
     - heigth: 0.35
     - width: 0.35
     m_Colors:
+    - Tiling: {r: -4, g: 1, b: 0, a: 0}
     - Vector2_912bc593c7d64c95b9359c659ef37a42: {r: -2, g: 1, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Tiling: {r: -4, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []

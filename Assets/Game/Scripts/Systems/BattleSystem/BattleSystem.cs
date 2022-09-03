@@ -52,15 +52,15 @@ namespace Game.Systems.BattleSystem
 			CurrentExecutor = battleExecutor;
 			executors.Add(battleExecutor);
 
-			CurrentExecutor.Initialize(CurrentExecutor.Start);
+			CurrentExecutor.Initialize();
+			CurrentExecutor.Start();
 		}
 
 		public void StopBattle()
 		{
-			CurrentExecutor.Stop();
-			CurrentExecutor.Dispose();
-			executors.Add(CurrentExecutor);
+			CurrentExecutor.TerminateBattle();
 
+			executors.Remove(CurrentExecutor);
 			CurrentExecutor = null;
 		}
 

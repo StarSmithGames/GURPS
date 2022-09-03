@@ -73,20 +73,22 @@ namespace Game.Entities.AI
 		{
 			while (IsAlive)
 			{
-				if (dummy.InBattle)
-				{
-					if (dummy.barksInBattle.TreeData.isFirstTime)
-					{
-						dummy.BarkInBattle();
-					}
+				//if (dummy.InBattle)
+				//{
+				//	if (dummy.barksInBattle.TreeData.isFirstTime)
+				//	{
+				//		dummy.BarkInBattle();
+				//	}
 
-					yield return null;
-				}
-				else
-				{
-					CurrentBehavior = PassiveBehavior;
-					yield return CurrentBehavior.Tick();
-				}
+				//	yield return null;
+				//}
+				//else
+				//{
+				//	CurrentBehavior = PassiveBehavior;
+				//	yield return CurrentBehavior.Tick();
+				//}
+
+				yield return null;
 			}
 		}
 	}

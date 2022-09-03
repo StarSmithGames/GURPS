@@ -40,8 +40,6 @@ namespace Game.Systems.BattleSystem
 		private bool isSkipTurn = false;
 		private bool terminateBattle = false;
 
-		private UIBattleSystem battleSystemUI;
-
 		private Settings settings;
 		private AsyncManager asyncManager;
 		private Battle.Factory battleFactory;
@@ -65,7 +63,7 @@ namespace Game.Systems.BattleSystem
 			this.cameraController = cameraController;
 		}
 
-		public void Initialize(UnityAction callback = null)
+		public void Initialize()
 		{
 			SetState(BattleExecutorState.Initialization);
 
@@ -81,23 +79,15 @@ namespace Game.Systems.BattleSystem
 			});
 
 			Battle.onNextTurn += OnTurnChanged;
-			Battle.onNextRound += OnRoundChanged;
-
-			SetState(BattleExecutorState.PreBattle);
-
-			//UI
-			battleSystemUI = subCanvas.WindowsRegistrator.GetAs<UIBattleSystem>();
-			battleSystemUI.SetBattleExecutor(this);
-			battleSystemUI.Messages.ShowCommenceBattle();
-			battleSystemUI.Show(() => callback?.Invoke());
 
 			InitiatorCanAct = true;//skip first InitiatorRecovery
+
+			SetState(BattleExecutorState.PreBattle);
 		}
 
 		public void Dispose()
 		{
 			Battle.onNextTurn -= OnTurnChanged;
-			Battle.onNextRound -= OnRoundChanged;
 
 			Entities.ForEach((x) =>
 			{
@@ -286,31 +276,11 @@ namespace Game.Systems.BattleSystem
 			InitiatorCanAct = false;
 			IsPlayerTurn = CurrentInitiator is ICharacterModel model ? partyManager.PlayerParty.Contains(model.Character) : false;
 
-			if (IsPlayerTurn)
-			{
-				if (!battleSystemUI.IsShowing)
-				{
-					battleSystemUI.Show();
-				}
-			}
-			else
-			{
-				battleSystemUI.Enable(false);
-			}
-
-			//UI
-			battleSystemUI.Messages.TurnInformation.SetText(IsPlayerTurn ? "YOU TURN" : "ENEMY TURN", IsPlayerTurn ? TurnInformationBackground.Player : TurnInformationBackground.Enemy).Show();
-
 			//Subscribtions
 			if (CurrentInitiator is IPathfinderable pathfinderable1)
 			{
 				pathfinderable1.onDestinationChanged += OnInitiatorDestinationChanged;
 			}
-		}
-
-		private void OnRoundChanged()
-		{
-			battleSystemUI.Messages.ShowNewRound();
 		}
 
 		private void OnInitiatorDestinationChanged()
@@ -360,34 +330,30 @@ namespace Game.Systems.BattleSystem
 			public List<IBattlable> entities;
 		}
 
+		public class Data
+		{
+			//cached leader.//how blyat
+		}
+
 		public class Factory : PlaceholderFactory<Settings, BattleExecutor> { }
 	}
 
 	//Skip
 	partial class BattleExecutor
 	{
-		public bool IsSkipProcess => skipCoroutine != null;
-		private Coroutine skipCoroutine = null;
+		//public bool IsSkipProcess => skipCoroutine != null;
+		//private Coroutine skipCoroutine = null;
 
 		public void SkipTurn()
 		{
 			isSkipTurn = true;
 		}
 
-		private IEnumerator SkipTurnProcess()
+		public void TerminateBattle()
 		{
-			yield return null;//WaitInitiatorAction();
-
-			isSkipTurn = true;
-
-			skipCoroutine = null;
-		}
-
-		private void StartSkipTurn()
-		{
-			if (IsSkipProcess) return;
-
-			skipCoroutine = asyncManager.StartCoroutine(SkipTurnProcess());
+			SetState(BattleExecutorState.EndBattle);
+			Stop();
+			Dispose();
 		}
 	}
 
