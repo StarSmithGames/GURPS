@@ -30,6 +30,8 @@ namespace Game.Entities.Models
 		Markers Markers { get; }
 		Outlinable Outline { get; }
 
+		bool IsCanBattleMove { get; }
+
 		CharacterModel.Data GetData();
 	}
 
@@ -82,12 +84,12 @@ namespace Game.Entities.Models
 			Controller.onReachedDestination += OnReachedDestination;
 			//equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 
+			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
+			signalBus?.Subscribe<SignalEndDialogue>(OnDialogueEnded);
+
 			Outline.enabled = false;
 
 			ResetMarkers();
-
-			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
-			signalBus?.Subscribe<SignalEndDialogue>(OnDialogueEnded);
 
 			yield return base.Start();
 			yield return new WaitForSeconds(2.5f);
@@ -97,6 +99,9 @@ namespace Game.Entities.Models
 		protected override void OnDestroy()
 		{
 			signalBus?.Unsubscribe<SignalStartDialogue>(OnDialogueStarted);
+			signalBus?.Unsubscribe<SignalEndDialogue>(OnDialogueEnded);
+
+			Controller.onReachedDestination -= OnReachedDestination;
 
 			base.OnDestroy();
 
@@ -404,11 +409,12 @@ namespace Game.Entities.Models
 		public event UnityAction onBattleChanged;
 
 		public bool InBattle => CurrentBattle != null;
-		public Battle CurrentBattle { get; private set; }
+		public BattleExecutor CurrentBattle { get; private set; }
+
+		public bool IsCanBattleMove => Sheet.Stats.Move.CurrentValue >= 0.1f;
+		private bool IsMoveAvailable => InBattle && isMineTurn && IsCanBattleMove;
 
 		private bool isMineTurn = false;
-
-		private bool isAnimat = false;
 
 		protected virtual void BattleTick()
 		{
@@ -416,10 +422,10 @@ namespace Game.Entities.Models
 			{
 				if (IsHasTarget)
 				{
-					if (!IsLineAnimationProcess)
-					{
-						LineAnimationCoroutine = StartCoroutine(LineAnimation());
-					}
+					//if (!IsLineAnimationProcess)
+					//{
+					//	LineAnimationCoroutine = StartCoroutine(LineAnimation());
+					//}
 				}
 				else
 				{
@@ -428,39 +434,24 @@ namespace Game.Entities.Models
 			}
 		}
 
-		public virtual bool JoinBattle(Battle battle)
-		{
-			if (CurrentBattle != null)
-			{
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
-			}
-			CurrentBattle = battle;
-			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
-			CurrentBattle.onBattleUpdated += OnBattleUpdated;
 
-			onBattleChanged?.Invoke();
+		public virtual bool JoinBattle(BattleExecutor battle)
+		{
+			BattleUnsubscribe();
+
+			CurrentBattle = battle;
+
+			BattleSubscribe();
 
 			return true;
 		}
 
 		public virtual bool LeaveBattle()
 		{
-			if (CurrentBattle != null)
-			{
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-				CurrentBattle.onBattleUpdated -= OnBattleUpdated;
-			}
+			BattleUnsubscribe();
 			CurrentBattle = null;
 
-			onBattleChanged?.Invoke();
-
 			return true;
-		}
-
-		public override void SetTarget(Vector3 point, float maxPathDistance = -1)
-		{
-			base.SetTarget(point, maxPathDistance);
 		}
 
 		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
@@ -478,16 +469,13 @@ namespace Game.Entities.Models
 					}
 				}
 			}
+			else
+			{
+				Markers.LineMarker.SetMaterialSpeed(0);//stop line
+			}
 		}
 
 		public virtual void Attack() { }
-
-		public override void Stop()
-		{
-			base.Stop();
-
-			OnReachedDestination();
-		}
 
 		private void OnReachedDestination()
 		{
@@ -499,51 +487,70 @@ namespace Game.Entities.Models
 					Markers.TargetMarker.EnableOut();
 				}
 			}
+			else
+			{
+				Markers.LineMarker.EnableOut(() =>
+				{
+					Markers.LineMarker.Clear();
+					Markers.LineMarker.SetMaterialSpeedToDefault();
+
+					if (IsMoveAvailable)
+					{
+						Markers.LineMarker.EnableIn();
+					}
+				});
+			}
 		}
 
-		protected virtual void OnBattleStateChanged()
+		private void OnBattleStateChanged(BattleExecutorState oldState, BattleExecutorState newState)
 		{
-			if (InBattle)
+			if(newState == BattleExecutorState.PreBattle)
 			{
-				switch (CurrentBattle.CurrentState)
-				{
-					case BattleState.PreBattle:
-					{
-						Markers.FollowMarker.Enable(true);
-						Markers.TargetMarker.Enable(false);
-						Markers.AreaMarker.Enable(false);
-						Markers.LineMarker.Enable(false);
-						break;
-					}
-					case BattleState.Battle:
-					{
-						Markers.FollowMarker.Enable(true);
-						Markers.TargetMarker.Enable(true);
-						Markers.AreaMarker.Enable(false);
-						Markers.LineMarker.Enable(true);
-						break;
-					}
-					case BattleState.EndBattle:
-					{
-						Markers.FollowMarker.Enable(false);
-						Markers.TargetMarker.Enable(true);
-						Markers.AreaMarker.Enable(false);
-						Markers.LineMarker.Enable(false);
-						break;
-					}
-				}
+				Markers.FollowMarker.Enable(true);
+				Markers.TargetMarker.Enable(false);
+				Markers.AreaMarker.Enable(false);
 			}
-			else
+			else if(newState == BattleExecutorState.EndBattle)
 			{
 				ResetMarkers();
 			}
 		}
-		protected virtual void OnBattleUpdated()
-		{
-			isMineTurn = CurrentBattle.FSM.CurrentTurn.Initiator == this && CurrentBattle.CurrentState != BattleState.EndBattle;
 
-			Markers.LineMarker.Enable(InBattle && isMineTurn);
-			Markers.TargetMarker.Enable(InBattle && isMineTurn);
+		private void onBattleOrderChanged(BattleOrder order)
+		{
+			if (order == BattleOrder.Turn)//update turn
+			{
+				isMineTurn = CurrentBattle.CurrentInitiator as Object == this;
+
+				if (IsMoveAvailable)
+				{
+					Markers.LineMarker.EnableIn();
+				}
+				else
+				{
+					if (Markers.LineMarker.IsEnabled)
+					{
+						Markers.LineMarker.EnableOut();
+					}
+				}
+
+				Markers.TargetMarker.Enable(IsMoveAvailable);
+			}
+		}
+	
+		private void BattleSubscribe()
+		{
+			CurrentBattle.onBattleOrderChanged += onBattleOrderChanged;
+			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
+		}
+
+		private void BattleUnsubscribe()
+		{
+			if (CurrentBattle != null)
+			{
+				CurrentBattle.onBattleOrderChanged -= onBattleOrderChanged;
+				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+			}
 		}
 	}
 

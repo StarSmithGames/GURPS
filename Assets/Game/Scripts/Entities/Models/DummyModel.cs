@@ -122,11 +122,11 @@ namespace Game.Entities.Models
 	{
 		public bool InBattle => CurrentBattle != null;
 		public bool InAction { get; }
-		public Battle CurrentBattle { get; private set; }
+		public BattleExecutor CurrentBattle { get; private set; }
 
 		public event UnityAction onBattleChanged;
 
-		public bool JoinBattle(Battle battle)
+		public bool JoinBattle(BattleExecutor battle)
 		{
 			CurrentBattle = battle;
 

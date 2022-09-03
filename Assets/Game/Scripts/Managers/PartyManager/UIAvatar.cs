@@ -76,28 +76,28 @@ namespace Game.Managers.PartyManager
 				PointerHover.onPointerExit -= OnPointerExit;
 			}
 
-			if (CurrentModel != null)
-			{
-				CurrentModel.onBattleChanged -= UpdateBattleUI;
-			}
+			//if (CurrentModel != null)
+			//{
+			//	CurrentModel.onBattleChanged -= UpdateBattleUI;
+			//}
 		}
 
 		public void SetCharacter(ICharacter character)
 		{
-			if (CurrentModel != null)
-			{
-				CurrentModel.onBattleChanged -= UpdateBattleUI;
-			}
+			//if (CurrentModel != null)
+			//{
+			//	CurrentModel.onBattleChanged -= UpdateBattleUI;
+			//}
 
 			CurrentModel = character.Model as ICharacterModel;
 			HPBar.SetStat(CurrentModel.Sheet.Stats.HitPoints, CurrentModel.Sheet.Settings.isImmortal);
 
 			UpdateUI();
 
-			if (CurrentModel != null)
-			{
-				CurrentModel.onBattleChanged += UpdateBattleUI;
-			}
+			//if (CurrentModel != null)
+			//{
+			//	CurrentModel.onBattleChanged += UpdateBattleUI;
+			//}
 		}
 
 		public void SetFrame(bool isLeader)

@@ -11,7 +11,7 @@ namespace Game.Systems.BattleSystem
 	{
 		public override void InstallBindings()
 		{
-			Container.DeclareSignal<SignalCurrentBattleChanged>();
+			Container.DeclareSignal<SignalCurrentBattleExecutorChanged>();
 
 			Container.BindFactory< List <IBattlable>, Battle, Battle.Factory>().WhenInjectedInto<BattleExecutor>();
 			Container.BindFactory<BattleExecutor.Settings, BattleExecutor, BattleExecutor.Factory>().WhenInjectedInto<BattleSystem>();
@@ -19,10 +19,17 @@ namespace Game.Systems.BattleSystem
 		}
 	}
 
-	public enum BattleState
+	public enum BattleExecutorState
 	{
+		Initialization,
 		PreBattle,
 		Battle,
 		EndBattle,
+	}
+
+	public enum BattleOrder
+	{
+		Recovery,
+		Turn,
 	}
 }

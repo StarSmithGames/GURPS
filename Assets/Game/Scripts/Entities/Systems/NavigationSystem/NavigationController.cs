@@ -42,6 +42,20 @@ namespace Game.Entities
 			CurrentPath = new NavigationPath(NavMeshAgent.path.corners);
 		}
 
+		public bool IsTargetInReach(Vector3 destination)
+		{
+			if (NavMeshAgent.IsPathValid(destination))
+			{
+				NavMeshAgent.CalculatePath(destination, out NavMeshPath navMeshPath);
+				var path = new NavigationPath(navMeshPath.corners);
+				float distance = path.Distance;
+				
+				return distance > settings.minPathDistance;
+			}
+
+			return false;
+		}
+
 		public bool SetTarget(Vector3 destination, float maxPathDistance = -1)
 		{
 			bool result = false;
@@ -172,8 +186,8 @@ namespace Game.Entities
 		[System.Serializable]
 		public class Settings
 		{
-			public float reachTargetThreshold = 0.1f;
-			public float minPathDistance = 1f;
+			public float reachTargetThreshold = 0.01f;
+			public float minPathDistance = 0.5f;
 		}
 	}
 

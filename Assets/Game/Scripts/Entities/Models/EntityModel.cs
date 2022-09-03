@@ -64,6 +64,11 @@ namespace Game.Entities.Models
 		public NavigationController Navigation { get; private set; }
 		public IController Controller { get; private set; }
 
+		public virtual bool IsInReach(Vector3 point)
+		{
+			return Navigation.IsTargetInReach(point);
+		}
+
 		public virtual void SetTarget(Vector3 point, float maxPathDistance = -1)
 		{
 			Navigation.SetTarget(point, maxPathDistance: maxPathDistance);

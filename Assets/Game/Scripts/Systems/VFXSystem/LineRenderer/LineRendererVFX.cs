@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Events;
 
 namespace Game.Systems.VFX
 {
@@ -23,53 +24,63 @@ namespace Game.Systems.VFX
 		[SerializeField] protected float rayLength = 100f;
 		[ShowIf("useRaycast")]
 		[SerializeField] protected LayerMask raycastLayerMask = ~0;
-		[Space]
-		[SerializeField] private bool isCanMove = false;
-		[ShowIf("isCanMove")]
-		[MinValue(-1f), MaxValue(1f)]
-		[SerializeField] private Vector2 moveDirection = Vector2.left;
-		[ShowIf("isCanMove")]
-		[SerializeField] private float speed = 2f;
 
-		private void Update()
-		{
-			if (IsEnabled)
-			{
-				if (isCanMove)
-				{
-					line.material.SetTextureOffset("_MainTex", moveDirection * speed * Time.time);
-				}
-			}
-		}
-
-		public void Enable(bool trigger)
+		public virtual void Enable(bool trigger)
 		{
 			IsEnabled = trigger;
 			Line.enabled = IsEnabled;
 		}
 
-		public void EnableIn()
+		public virtual void EnableIn(UnityAction callback = null)
 		{
-			Sequence sequence = DOTween.Sequence();
-
-			Color color = Line.material.color;
-			color.a = 0;
-			Line.material.color = color;
-
 			Enable(true);
 
-			sequence
-				.Append(Line.material.DOFade(1, 0.25f));
+			if (Line.material.HasProperty("_Color"))
+			{
+				Color colorIn = Line.sharedMaterial.color;
+				colorIn.a = 1;
+
+				Sequence sequence = DOTween.Sequence();
+
+				sequence
+					.Append(Line.sharedMaterial.DOColor(colorIn, 0.25f))
+					.OnComplete(() => callback?.Invoke());
+			}
+			else
+			{
+				callback?.Invoke();
+			}
 		}
-		public void EnableOut()
+		public virtual void EnableOut(UnityAction callback = null)
 		{
-			IsEnabled = false;
+			if (Line.material.HasProperty("_Color"))
+			{
+				Enable(true);
 
-			Sequence sequence = DOTween.Sequence();
+				Color colorOut = Line.sharedMaterial.color;
+				colorOut.a = 0;
 
-			sequence
-				.Append(Line.material.DOFade(0, 0.25f))
-				.AppendCallback(() => Enable(false));
+				Sequence sequence = DOTween.Sequence();
+
+				sequence
+					.Append(Line.sharedMaterial.DOColor(colorOut, 0.2f))
+					.OnComplete(() =>
+					{
+						Debug.LogError("Enable == false");
+						Enable(false);
+						callback?.Invoke();
+					});
+			}
+			else
+			{
+				Enable(false);
+				callback?.Invoke();
+			}
+		}
+
+		public void Clear()
+		{
+			line.positionCount = 0;
 		}
 
 		void DrawTriangle(Vector3[] vertexPositions, float startWidth, float endWidth)

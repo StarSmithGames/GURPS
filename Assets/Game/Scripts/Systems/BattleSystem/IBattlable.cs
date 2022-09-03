@@ -9,10 +9,9 @@ namespace Game.Systems.BattleSystem
 		public bool InBattle { get; }
 		public bool InAction { get; }
 
+		public BattleExecutor CurrentBattle { get; }
 
-		public Battle CurrentBattle { get; }
-
-		public bool JoinBattle(Battle battle);
+		public bool JoinBattle(BattleExecutor battle);
 		public bool LeaveBattle();
 	}
 }

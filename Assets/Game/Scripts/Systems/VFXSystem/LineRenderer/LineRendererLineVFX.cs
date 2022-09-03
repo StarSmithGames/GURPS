@@ -7,12 +7,31 @@ using System.Collections.Generic;
 using UnityEditor;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Systems.VFX
 {
 	public class LineRendererLineVFX : LineRendererVFX
 	{
 		public bool useSmooth = false;
+
+		private float speed;
+
+		private void Start()
+		{
+			speed = Line.material.GetFloat("_Speed");
+		}
+
+		public void SetMaterialSpeed(float speed)
+		{
+			Line.material.SetFloat("_Speed", speed);
+		}
+
+		public void SetMaterialSpeedToDefault()
+		{
+			SetMaterialSpeed(speed);
+		}
+
 
 		public void DrawLine(Vector3[] points)
 		{

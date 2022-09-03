@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using Zenject;
+
 namespace Game.Systems.BattleSystem
 {
 	public class BattleSystem
@@ -18,14 +20,29 @@ namespace Game.Systems.BattleSystem
 		}
 		private BattleManager battleManager;
 
-		public BattleExecutor CurrentExecutor { get; private set; }
+		public BattleExecutor CurrentExecutor
+		{
+			get => currentExecutor;
+			private set
+			{
+				if(currentExecutor != value || currentExecutor == null)
+				{
+					currentExecutor = value;
+				
+					signalBus?.Fire(new SignalCurrentBattleExecutorChanged() { currentBattleExecutor = currentExecutor });
+				}
+			}
+		}
+		private BattleExecutor currentExecutor;
 
 		private List<BattleExecutor> executors = new List<BattleExecutor>();
 
+		private SignalBus signalBus;
 		private BattleExecutor.Factory battleExecutorFactory;
 
-		public BattleSystem(BattleExecutor.Factory battleExecutorFactory)
+		public BattleSystem(SignalBus signalBus, BattleExecutor.Factory battleExecutorFactory)
 		{
+			this.signalBus = signalBus;
 			this.battleExecutorFactory = battleExecutorFactory;
 		}
 
@@ -35,8 +52,7 @@ namespace Game.Systems.BattleSystem
 			CurrentExecutor = battleExecutor;
 			executors.Add(battleExecutor);
 
-			CurrentExecutor.Initialize();
-			CurrentExecutor.Start();
+			CurrentExecutor.Initialize(CurrentExecutor.Start);
 		}
 
 		public void StopBattle()
@@ -44,6 +60,8 @@ namespace Game.Systems.BattleSystem
 			CurrentExecutor.Stop();
 			CurrentExecutor.Dispose();
 			executors.Add(CurrentExecutor);
+
+			CurrentExecutor = null;
 		}
 
 

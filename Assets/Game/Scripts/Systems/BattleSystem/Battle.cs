@@ -18,7 +18,6 @@ namespace Game.Systems.BattleSystem
 		public UnityAction onNextRound;
 		public UnityAction onNextTurn;
 
-		public BattleState CurrentState { get; private set; }
 		public BattleFSM FSM { get; private set; }
 
 		public Battle(List<IBattlable> entities)
@@ -54,15 +53,6 @@ namespace Game.Systems.BattleSystem
 				onNextTurn?.Invoke();
 				onBattleUpdated?.Invoke();
 			}
-		}
-
-		public Battle SetState(BattleState state)
-		{
-			CurrentState = state;
-
-			onBattleStateChanged?.Invoke();
-			onBattleUpdated?.Invoke();
-			return this;
 		}
 
 		public class Factory : PlaceholderFactory<List<IBattlable>, Battle> { }

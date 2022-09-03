@@ -125,6 +125,7 @@ public class CharacterController3D : MonoBehaviour, IController
 	public void Stop()
 	{
 		IsHasTarget = false;
+		onReachedDestination?.Invoke();
 		CurrentDestination = Vector3.zero;
 	}
 
@@ -201,11 +202,9 @@ public class CharacterController3D : MonoBehaviour, IController
 
 		if (navigationController.NavMeshAgent.IsReachedDestination())
 		{
-			IsHasTarget = false;
+			Stop();
 
-			onReachedDestination?.Invoke();
-
-			return Vector3.zero;
+			return CurrentDestination;
 		}
 
 		if (!IsCanMove || IsWaitAnimation) return Vector3.zero;

@@ -22,6 +22,9 @@ using Zenject;
 
 namespace Game.Systems.CameraSystem
 {
+	/// <summary>
+	/// TODO sub on battleSystem.CurrentExecutor
+	/// </summary>
 	public partial class CameraVisionLocation : CameraVision
 	{
 		private ICharacter leader;
@@ -89,7 +92,7 @@ namespace Game.Systems.CameraSystem
 			{
 				if (battleSystem.CurrentExecutor.CurrentInitiator == leaderModel)
 				{
-					if (battleSystem.CurrentExecutor.Battle.CurrentState == BattleState.Battle)
+					if (battleSystem.CurrentExecutor.CurrentState == BattleExecutorState.Battle)
 					{
 						TooltipRuler();
 					}
@@ -320,7 +323,7 @@ namespace Game.Systems.CameraSystem
 
 		private void MouseClickInBattle(Vector3 point)
 		{
-			if (battleSystem.CurrentExecutor.Battle.CurrentState == BattleState.Battle)
+			if (battleSystem.CurrentExecutor.CurrentState == BattleExecutorState.Battle)
 			{
 				if (CurrentObserve != null)
 				{
@@ -344,7 +347,7 @@ namespace Game.Systems.CameraSystem
 						{
 							if (battleSystem.CurrentExecutor.IsPlayerTurn && battleSystem.CurrentExecutor.InitiatorCanAct)
 							{
-								if (!leaderModel.IsHasTarget && leaderModel.Sheet.Stats.Move.CurrentValue >= 0.1f)
+								if (!leaderModel.IsHasTarget && leaderModel.IsCanBattleMove)
 								{
 									leaderModel.SetDestination(point, leaderModel.Sheet.Stats.Move.CurrentValue);
 								}

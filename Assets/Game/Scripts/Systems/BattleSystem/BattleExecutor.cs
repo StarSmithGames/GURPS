@@ -17,17 +17,24 @@ namespace Game.Systems.BattleSystem
 {
 	public partial class BattleExecutor
 	{
+		/// <summary>
+		/// Last state && New state
+		/// </summary>
+		public UnityAction<BattleExecutorState, BattleExecutorState> onBattleStateChanged;
+		public UnityAction<BattleOrder> onBattleOrderChanged;
+
 		public bool InitiatorCanAct { get; private set; }
 		public bool IsPlayerTurn { get; private set; }
 
-		public bool IsBattleProcess => battleCoroutine != null;
-		private Coroutine battleCoroutine = null;
-
 		public Battle Battle { get; private set; }
+		public BattleExecutorState CurrentState { get; private set; }
+		public BattleOrder CurrentOrder { get; private set; }
+		public Turn CurrentTurn { get; private set; }
 		public IBattlable CurrentInitiator { get; private set; }
 		public List<IBattlable> Entities { get; private set; }
 
-		public Turn CurrentTurn { get; private set; }
+		public bool IsBattleProcess => battleCoroutine != null;
+		private Coroutine battleCoroutine = null;
 
 		private ICharacter cachedLeader;
 		private bool isSkipTurn = false;
@@ -58,29 +65,31 @@ namespace Game.Systems.BattleSystem
 			this.cameraController = cameraController;
 		}
 
-		public void Initialize()
+		public void Initialize(UnityAction callback = null)
 		{
+			SetState(BattleExecutorState.Initialization);
+
 			Entities = new List<IBattlable>(settings.entities);
 
 			cachedLeader = partyManager.PlayerParty.LeaderParty;
 
 			//Battle
 			Battle = battleFactory.Create(Entities);
-			Battle.SetState(BattleState.PreBattle);
-
 			Entities.ForEach((x) =>
 			{
-				x.JoinBattle(Battle);
+				x.JoinBattle(this);
 			});
 
 			Battle.onNextTurn += OnTurnChanged;
 			Battle.onNextRound += OnRoundChanged;
 
+			SetState(BattleExecutorState.PreBattle);
+
 			//UI
 			battleSystemUI = subCanvas.WindowsRegistrator.GetAs<UIBattleSystem>();
 			battleSystemUI.SetBattleExecutor(this);
 			battleSystemUI.Messages.ShowCommenceBattle();
-			battleSystemUI.Show(() => Battle.SetState(BattleState.Battle));
+			battleSystemUI.Show(() => callback?.Invoke());
 
 			InitiatorCanAct = true;//skip first InitiatorRecovery
 		}
@@ -100,6 +109,8 @@ namespace Game.Systems.BattleSystem
 		{
 			if (!IsBattleProcess)
 			{
+				SetState(BattleExecutorState.Battle);
+
 				battleCoroutine = asyncManager.StartCoroutine(BattleProcess());
 			}
 
@@ -117,6 +128,7 @@ namespace Game.Systems.BattleSystem
 			}
 		}
 
+
 		private IEnumerator BattleProcess()
 		{
 			while (!terminateBattle)
@@ -128,10 +140,11 @@ namespace Game.Systems.BattleSystem
 				{
 					yield return InitiatorRecovery();
 				}
+
 				yield return InitiatorTurn();
 			}
 
-			Battle.SetState(BattleState.EndBattle);
+			SetState(BattleExecutorState.EndBattle);
 
 			yield return new WaitWhile(() => CurrentInitiator.InAction);
 			yield return null;//? initiator stuck without frame
@@ -141,6 +154,8 @@ namespace Game.Systems.BattleSystem
 
 		private IEnumerator InitiatorRecovery()
 		{
+			SetOrder(BattleOrder.Recovery);
+
 			//statActions
 			var statActions = (CurrentInitiator as ISheetable).Sheet.Stats.ActionPoints;
 			bool isStatActionsReady = false;
@@ -161,6 +176,8 @@ namespace Game.Systems.BattleSystem
 
 		private IEnumerator InitiatorTurn()
 		{
+			SetOrder(BattleOrder.Turn);
+
 			//Death
 			//if ((CurrentInitiator as ISheetable).Sheet.Conditions.IsContains<Death>())
 			//{
@@ -196,7 +213,7 @@ namespace Game.Systems.BattleSystem
 		private void UpdateStates()
 		{
 			var initiator = Battle.FSM.CurrentTurn.Initiator;
-			bool isEndBattle = Battle.CurrentState == BattleState.EndBattle;
+			bool isEndBattle = CurrentState == BattleExecutorState.EndBattle;
 
 			Entities.ForEach((x) =>
 			{
@@ -225,7 +242,7 @@ namespace Game.Systems.BattleSystem
 				}
 			});
 
-			if (Battle.CurrentState == BattleState.Battle)
+			if (CurrentState == BattleExecutorState.Battle)
 			{
 				if (initiator is ICharacterModel model)
 				{
@@ -233,6 +250,22 @@ namespace Game.Systems.BattleSystem
 				}
 			}
 		}
+
+		private void SetState(BattleExecutorState state)
+		{
+			var lastState = CurrentState;
+			CurrentState = state;
+
+			onBattleStateChanged?.Invoke(lastState, CurrentState);
+		}
+
+		private void SetOrder(BattleOrder order)
+		{
+			CurrentOrder = order;
+
+			onBattleOrderChanged?.Invoke(CurrentOrder);
+		}
+
 
 		private void OnTurnChanged()
 		{
@@ -340,7 +373,6 @@ namespace Game.Systems.BattleSystem
 		{
 			isSkipTurn = true;
 		}
-
 
 		private IEnumerator SkipTurnProcess()
 		{

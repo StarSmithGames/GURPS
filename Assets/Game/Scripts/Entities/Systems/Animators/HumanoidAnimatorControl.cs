@@ -45,7 +45,7 @@ public partial class HumanoidAnimatorControl : AnimatorControl
 
 		base.Start();
 
-		humanoid.onBattleChanged += OnBattleChanged;
+		//humanoid.onBattleChanged += OnBattleChanged;
 		//(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 		OnEquipWeaponChanged();
 	}
@@ -120,7 +120,7 @@ partial class HumanoidAnimatorControl
 
 		if (humanoid != null)
 		{
-			humanoid.onBattleChanged -= OnBattleChanged;
+			//humanoid.onBattleChanged -= OnBattleChanged;
 			//(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
 		}
 	}
@@ -169,28 +169,28 @@ partial class HumanoidAnimatorControl
 
 	private void OnBattleStateChanged()
 	{
-		if (humanoid.InBattle)
-		{
-			switch (humanoid.CurrentBattle.CurrentState)
-			{
-				case BattleState.PreBattle:
-				{
-					if(currentWeaponBehavior is DrawableWeapon drawable)
-					{
-						drawable.DrawWeapon();
-					}
-					break;
-				}
-				case BattleState.EndBattle:
-				{
-					if (currentWeaponBehavior is DrawableWeapon drawable)
-					{
-						drawable.SheathWeapon();
-					}
-					break;
-				}
-			}
-		}
+		//if (humanoid.InBattle)
+		//{
+		//	switch (humanoid.CurrentBattle.CurrentState)
+		//	{
+		//		case BattleState.PreBattle:
+		//		{
+		//			if(currentWeaponBehavior is DrawableWeapon drawable)
+		//			{
+		//				drawable.DrawWeapon();
+		//			}
+		//			break;
+		//		}
+		//		case BattleState.EndBattle:
+		//		{
+		//			if (currentWeaponBehavior is DrawableWeapon drawable)
+		//			{
+		//				drawable.SheathWeapon();
+		//			}
+		//			break;
+		//		}
+		//	}
+		//}
 	}
 
 	private void OnBattleChanged()
@@ -202,7 +202,7 @@ partial class HumanoidAnimatorControl
 				currentBattle.onBattleStateChanged -= OnBattleStateChanged;
 			}
 
-			currentBattle = humanoid.CurrentBattle;
+			//currentBattle = humanoid.CurrentBattle;
 			currentBattle.onBattleStateChanged += OnBattleStateChanged;
 		}
 		else
