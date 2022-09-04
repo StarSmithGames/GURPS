@@ -1,10 +1,11 @@
 using Game.Entities.Models;
+using Game.Systems.AnimatorController;
+using Game.Systems.NavigationSystem;
 
 using Sirenix.OdinInspector;
 
 using UnityEngine;
 using UnityEngine.AI;
-
 
 namespace Game.Entities
 {
@@ -18,7 +19,7 @@ namespace Game.Entities
 		[SerializeField] private NavMeshAgent navMeshAgent;
 		[SerializeField] private CharacterController characterController;
 		[Space]
-		[SerializeField] private AnimatorControl animatorControl;
+		[SerializeField] private AnimatorController animatorControl;
 		[SerializeField] private CharacterController3D controller;
 		[SerializeField] private NavigationController navigationController;
 

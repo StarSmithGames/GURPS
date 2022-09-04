@@ -1,9 +1,9 @@
-using Game.Entities;
 using Game.Entities.Models;
-
 using Sirenix.OdinInspector;
-
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Game.Systems.InteractionSystem
 {
@@ -37,17 +37,29 @@ namespace Game.Systems.InteractionSystem
 			return distance <= settings.maxRange + 0.1f;
 		}
 
-		private void OnDrawGizmosSelected()
+		private void OnDrawGizmos()
 		{
-			Gizmos.color = Color.red;
+
+			Gizmos.color = settings.gizmosEditor;
 			if (settings.interaction == InteractionType.CustomPoint)
 			{
-				Gizmos.DrawSphere(transform.TransformPoint(settings.position), 0.1f);
+#if UNITY_EDITOR
+				Handles.color = settings.gizmosEditor;
+				Handles.DrawSolidDisc(transform.TransformPoint(settings.position), transform.up, 0.25f);
+#endif
+				//Gizmos.DrawSphere(transform.TransformPoint(settings.position), 0.1f);
 			}
 			else
 			{
 				Gizmos.DrawWireSphere(transform.position, settings.maxRange);
 			}
+
+#if UNITY_EDITOR
+			var style = new GUIStyle();
+			style.normal.textColor = settings.gizmosEditor;
+
+			Handles.Label(transform.position + (Vector3.right * settings.maxRange), transform.name, style);
+#endif
 		}
 
 		[System.Serializable]
@@ -59,6 +71,9 @@ namespace Game.Systems.InteractionSystem
 			public InteractionType interaction = InteractionType.DirectionPoint;
 			[ShowIf("interaction", InteractionType.CustomPoint)]
 			public Vector3 position;
+
+			[ColorPalette("Gizmos")]
+			public Color gizmosEditor;
 		}
 	}
 

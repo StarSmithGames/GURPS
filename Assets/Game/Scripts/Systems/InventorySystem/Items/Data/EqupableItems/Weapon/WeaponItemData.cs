@@ -8,7 +8,7 @@ namespace Game.Systems.InventorySystem
 {
     public abstract class WeaponItemData : EquippableItemData
     {
-        public DamageSystem.WeaponDamage weaponDamage;
+        public CombatDamageSystem.WeaponDamage weaponDamage;
         [SuffixLabel("m", true)]
         [Range(0.8f, 26f)]
         public float weaponRange = 0.8f;

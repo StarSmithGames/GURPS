@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 397710266938422186}
   - component: {fileID: 397710266938422184}
   - component: {fileID: 5879010994844666634}
-  - component: {fileID: 4398526078524752907}
+  - component: {fileID: -4890257562983519317}
   m_Layer: 0
   m_Name: Companion
   m_TagString: Untagged
@@ -103,6 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   outline: {fileID: 7707879391142115215}
+  interactionPoint: {fileID: 0}
   entity: {fileID: 5468961598750850960}
   model: {fileID: 3761009277470784773}
   animator: {fileID: 7120726294155093887}
@@ -111,7 +112,6 @@ MonoBehaviour:
   animatorControl: {fileID: 4369649228409784950}
   controller: {fileID: 5874318617756271098}
   navigationController: {fileID: 5879010994844666634}
-  interactionPoint: {fileID: 4398526078524752907}
   cameraPivot: {fileID: 2518957565947038372}
   markers: {fileID: 2416944364642038130}
   outfit: {fileID: 3955389302228173797}
@@ -128,7 +128,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 280456f466d5d74499c6b5fb084439c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <InteractionPoint>k__BackingField: {fileID: 4398526078524752907}
+  <DamagePosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <BattlePoint>k__BackingField: {fileID: 0}
+  <OpportunityPoint>k__BackingField: {fileID: 0}
   data: {fileID: 11400000, guid: cfb8e78f85231eb4fab2bf87d164e5fb, type: 2}
 --- !u!143 &397710266938422186
 CharacterController:
@@ -185,7 +187,9 @@ MonoBehaviour:
   settings:
     reachTargetThreshold: 0.01
     minPathDistance: 0.5
---- !u!114 &4398526078524752907
+    pathOutIterations: 21
+    pathOutRecursionDeep: 21
+--- !u!114 &-4890257562983519317
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,9 +202,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   settings:
-    maxRange: 3
+    maxRange: 0.5
     interaction: 0
     position: {x: 0, y: 0, z: 0}
+    gizmosEditor: {r: 0.074186325, g: 1, b: 0, a: 1}
 --- !u!1 &409231901323381397
 GameObject:
   m_ObjectHideFlags: 0

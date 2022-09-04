@@ -1,5 +1,6 @@
 using Game.Entities.Models;
 using Game.Managers.InputManager;
+using Game.Systems.CombatDamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 using Game.UI;
@@ -11,12 +12,15 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : Model, IContainer, ISheetable/*, IDamegeable*/
+	public class ContainerModel : Model, IContainer, ISheetable, IDamageable, IDestructible
 	{
 		public bool IsOpened => window?.IsShowing ?? false;
 		public bool IsSearched => data.isSearched;
 
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
+		[field: SerializeField] public Vector3 DamagePosition { get; private set; }
+		public InteractionPoint BattlePoint => InteractionPoint;
+		public InteractionPoint OpportunityPoint => null;
 
 		public ISheet Sheet
 		{
@@ -53,13 +57,18 @@ namespace Game.Systems.InventorySystem
 		private UISubCanvas subCanvas;
 		private UIContainerWindow.Factory containerWindowFactory;
 		private InputManager inputManager;
+		private CombatDamageSystem.CombatDamageSystem combatDamageSystem;
 
 		[Inject]
-		private void Construct(UISubCanvas subCanvas, UIContainerWindow.Factory containerWindowFactory, InputManager inputManager)
+		private void Construct(UISubCanvas subCanvas,
+			UIContainerWindow.Factory containerWindowFactory,
+			InputManager inputManager,
+			CombatDamageSystem.CombatDamageSystem combatDamageSystem)
 		{
 			this.subCanvas = subCanvas;
 			this.containerWindowFactory = containerWindowFactory;
 			this.inputManager = inputManager;
+			this.combatDamageSystem = combatDamageSystem;
 		}
 
 		private void Start()
@@ -92,43 +101,37 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-		#region Observe
-		public override void StartObserve()
-		{
-			base.StartObserve();
-			//uiManager.Battle.SetSheet(Sheet);
-		}
-
-		public override void EndObserve()
-		{
-			base.EndObserve();
-			//uiManager.Battle.SetSheet(null);
-		}
-		#endregion
-
-		#region OpenClose
+		#region Open Close Dispose
 		public void Open(IInteractable interactor)
 		{
-			lastInteractor = interactor;
+			if (window == null)
+			{
+				lastInteractor = interactor;
 
-			Assert.IsNull(window);
+				window = containerWindowFactory.Create();
 
-			window = containerWindowFactory.Create();
+				window.transform.SetParent(subCanvas.Windows);
+				(window.transform as RectTransform).anchoredPosition = Vector2.zero;
 
-			window.transform.SetParent(subCanvas.Windows);
-			(window.transform as RectTransform).anchoredPosition = Vector2.zero;
-
-			window.Inventory.SetInventory(Sheet.Inventory);
-			window.onClose += Dispose;
-			window.onTakeAll += OnTakeAll;
-			window.ShowPopup();
+				window.Inventory.SetInventory(Sheet.Inventory);
+				window.onClose += Dispose;
+				window.onTakeAll += OnTakeAll;
+				window.ShowPopup();
+			}
+			else
+			{
+				Close();
+			}
 		}
 
 		public void Close()
 		{
-			window?.HidePopup(Dispose);
+			window?.HidePopup();
+			if(window != null)
+			{
+				Dispose();
+			}
 		}
-		#endregion
 
 		private void Dispose()
 		{
@@ -141,11 +144,35 @@ namespace Game.Systems.InventorySystem
 			}
 			window = null;
 		}
+		#endregion
 
 		private void OnTakeAll()
 		{
 			Dispose();
 			//containerHandler.CharacterTakeAllFrom(Sheet.Inventory);
+		}
+
+		public void ApplyDamage<T>(T value)
+		{
+			if (value is Damage damage)
+			{
+				combatDamageSystem.DealDamage(damage, this);
+			}
+		}
+
+		public Damage GetDamage()
+		{
+			return null;//container can't deal damage
+		}
+
+		public void Destruct()
+		{
+			DestroyImmediate(gameObject);
+		}
+
+		private void OnDrawGizmos()
+		{
+			Gizmos.DrawSphere(transform.TransformPoint(DamagePosition), 0.1f);
 		}
 
 		public class Data

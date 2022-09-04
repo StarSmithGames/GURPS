@@ -205,6 +205,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <ContainerData>k__BackingField: {fileID: 11400000, guid: b0f6ad7a6bb1ce749b746081bfb299cf, type: 2}
+  <BattlePoint>k__BackingField: {fileID: 7241427450542474156}
+  <OpportunityPoint>k__BackingField: {fileID: 0}
 --- !u!114 &7241427450542474156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,7 +222,8 @@ MonoBehaviour:
   settings:
     maxRange: 3
     interaction: 0
-    position: {x: 0, y: 0, z: 0}
+    position: {x: 0, y: 0, z: -1.72}
+    gizmosEditor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &7548737537099246685
 GameObject:
   m_ObjectHideFlags: 0

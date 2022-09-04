@@ -1,6 +1,7 @@
 using Cinemachine;
 
 using Game.Systems.CameraSystem;
+using Game.Systems.CombatDamageSystem;
 using Game.UI;
 
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace Game
 		public override void InstallBindings()
 		{
 			Container.BindInstance(subCanvas);
+
+			Container.Bind<CombatDamageSystem>().AsSingle();
 
 			BindCameras();
 		}

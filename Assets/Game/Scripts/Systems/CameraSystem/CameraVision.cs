@@ -16,6 +16,8 @@ namespace Game.Systems.CameraSystem
 		public bool IsCanHoldMouse { get; protected set; }
 		public bool IsMouseHit { get; protected set; }
 		public bool IsUI { get; protected set; }
+		public RaycastHit Hit { get; protected set; }
+		public Vector3 HitPoint { get; protected set; }
 
 		protected IObservable CurrentObserve
 		{
@@ -65,26 +67,23 @@ namespace Game.Systems.CameraSystem
 		public virtual void Tick()
 		{
 			IsUI = EventSystem.current.IsPointerOverGameObject();
-			RaycastHit hit;
 			Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
-			IsMouseHit = Physics.Raycast(mouseRay, out hit, settings.raycastLength, settings.raycastLayerMask);
+			IsMouseHit = Physics.Raycast(mouseRay, out RaycastHit hit, settings.raycastLength, settings.raycastLayerMask);
 			IsUI = EventSystem.current.IsPointerOverGameObject();
-			Vector3 point = hit.point;
+			Hit = hit;
+			HitPoint = hit.point;
 
 			//Looking
-			CurrentObserve = IsMouseHit && !IsUI ? hit.transform.root.GetComponent<IObservable>() : null;
+			CurrentObserve = IsMouseHit && !IsUI ? Hit.transform.root.GetComponent<IObservable>() : null;
 
-			HandleHover(point);
-			HandleMouseClick(point);
-			ValidatePath(point);
+			HandleHover(HitPoint);
+			HandleMouseClick(HitPoint);
 		}
 
 
 		protected virtual void HandleHover(Vector3 point) { }
 
 		protected virtual void HandleMouseClick(Vector3 point) { }
-
-		protected virtual void ValidatePath(Vector3 point) { }
 
 		protected virtual void OnHoverObserveChanged() { }
 

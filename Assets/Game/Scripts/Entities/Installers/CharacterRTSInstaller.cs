@@ -1,11 +1,8 @@
 using EPOOutline;
-
-using Game.Entities;
 using Game.Systems.CameraSystem;
-
+using Game.Systems.NavigationSystem;
 using UnityEngine;
 using UnityEngine.AI;
-
 using Zenject;
 
 public class CharacterRTSInstaller : MonoInstaller

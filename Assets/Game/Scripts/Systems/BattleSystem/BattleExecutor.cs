@@ -12,6 +12,7 @@ using Game.UI;
 using Game.Managers.PartyManager;
 using DG.Tweening;
 using UnityEngine.Events;
+using Game.Systems.NavigationSystem;
 
 namespace Game.Systems.BattleSystem
 {

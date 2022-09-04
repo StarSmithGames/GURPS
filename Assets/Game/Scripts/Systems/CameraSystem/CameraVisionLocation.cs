@@ -17,6 +17,7 @@ using System;
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 using Zenject;
 
@@ -87,6 +88,11 @@ namespace Game.Systems.CameraSystem
 		public override void Tick()
 		{
 			base.Tick();
+
+			if (!leaderModel.IsInDialogue)
+			{
+				ValidatePath(HitPoint);
+			}
 
 			if (leaderModel.InBattle && !leaderModel.IsHasTarget)
 			{
@@ -162,42 +168,39 @@ namespace Game.Systems.CameraSystem
 			}
 		}
 
-		protected override void ValidatePath(Vector3 point)
+		private void ValidatePath(Vector3 point)
 		{
-			if (!leaderModel.IsInDialogue)
+			float pathDistance = CurrentObserve != null ? leaderModel.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leaderModel.Navigation.FullPath.Distance, 2);
+
+			bool isInvalidTarget = !IsMouseHit || !leaderModel.Navigation.NavMeshAgent.IsPathValid(point);
+			bool isOutOfRange = IsMouseHit && !IsUI && leaderModel.InBattle && leaderModel.IsWithRangedWeapon && CurrentObserve != null && !IsPointInLeaderRange(point);
+			bool isNotEnoughMovement = IsMouseHit && !IsUI &&
+				leaderModel.InBattle && !leaderModel.IsHasTarget &&
+				(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
+
+			bool isError = isInvalidTarget || isNotEnoughMovement || isOutOfRange;
+
+			if (isError)
 			{
-				float pathDistance = CurrentObserve != null ? leaderModel.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leaderModel.Navigation.FullPath.Distance, 2);
-
-				bool isInvalidTarget = !IsMouseHit || !leaderModel.Navigation.NavMeshAgent.IsPathValid(point);
-				bool isOutOfRange = IsMouseHit && !IsUI && leaderModel.InBattle && leaderModel.IsWithRangedWeapon && CurrentObserve != null && !IsPointInLeaderRange(point);
-				bool isNotEnoughMovement = IsMouseHit && !IsUI &&
-					leaderModel.InBattle && !leaderModel.IsHasTarget &&
-					(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
-
-				bool isError = isInvalidTarget || isNotEnoughMovement || isOutOfRange;
-
-				if (isError)
+				if (isInvalidTarget)
 				{
-					if (isInvalidTarget)
-					{
-						tooltipSystem.SetMessage(TooltipMessageType.InvalidTarget);
-					}
-					else if (isOutOfRange)
-					{
-						tooltipSystem.SetMessage(TooltipMessageType.OutOfRange);
-					}
-					else if (isNotEnoughMovement)
-					{
-						tooltipSystem.SetMessage(TooltipMessageType.NotEnoughMovement);
-					}
-					tooltipSystem.EnableMessage(true);
+					tooltipSystem.SetMessage(TooltipMessageType.InvalidTarget);
 				}
-				else
+				else if (isOutOfRange)
 				{
-					if (tooltipSystem.IsMessageShowing)
-					{
-						tooltipSystem.EnableMessage(false);
-					}
+					tooltipSystem.SetMessage(TooltipMessageType.OutOfRange);
+				}
+				else if (isNotEnoughMovement)
+				{
+					tooltipSystem.SetMessage(TooltipMessageType.NotEnoughMovement);
+				}
+				tooltipSystem.EnableMessage(true);
+			}
+			else
+			{
+				if (tooltipSystem.IsMessageShowing)
+				{
+					tooltipSystem.EnableMessage(false);
 				}
 			}
 		}
@@ -279,9 +282,16 @@ namespace Game.Systems.CameraSystem
 				//Targeting
 				if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
 				{
-					if (IsMouseHit && !IsUI)
+					if (!IsUI)
 					{
-						leaderModel.SetDestination(point);
+						if (IsMouseHit)
+						{
+							leaderModel.SetDestination(point);
+						}
+						else
+						{
+							leaderModel.SetDestination(leaderModel.Navigation.CurrentNavMeshDestination);
+						}
 					}
 				}
 			}

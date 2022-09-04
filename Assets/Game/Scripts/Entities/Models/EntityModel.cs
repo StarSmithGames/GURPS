@@ -1,4 +1,3 @@
-using Game.Systems.CameraSystem;
 using Game.Systems.InteractionSystem;
 
 using UnityEngine;
@@ -7,6 +6,7 @@ using UnityEngine.Events;
 
 using Zenject;
 using System.Collections;
+using Game.Systems.NavigationSystem;
 
 namespace Game.Entities.Models
 {

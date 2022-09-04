@@ -1,5 +1,5 @@
 using Game.Systems.CutomizationSystem;
-using Game.Systems.DamageSystem;
+using Game.Systems.CombatDamageSystem;
 
 using System;
 using System.Collections.Generic;
@@ -454,7 +454,7 @@ namespace Game.Systems.InventorySystem
 		{
 			if (item.IsTwoHandedWeapon)
 			{
-				if (Main.IsEmpty)//двухручное
+				if (Main.IsEmpty)//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				{
 					if (!Spare.IsEmpty)
 					{
@@ -489,7 +489,7 @@ namespace Game.Systems.InventorySystem
 			}
 			else
 			{
-				if (Main.IsEmpty)//одноручное
+				if (Main.IsEmpty)//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 				{
 					Main.SetItem(item);
 					onEquipWeaponChanged?.Invoke();

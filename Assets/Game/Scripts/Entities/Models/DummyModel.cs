@@ -2,7 +2,9 @@ using Game.Entities.AI;
 using Game.Managers.FactionManager;
 using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
+using Game.Systems.CombatDamageSystem;
 using Game.Systems.DialogueSystem;
+using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
 using Sirenix.OdinInspector;
@@ -17,7 +19,7 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-	public partial class DummyModel : Model, IAI, ISheetable, IActor, IBattlable, ICameraReporter, IFactionable
+	public partial class DummyModel : Model, IAI, ISheetable, ICombatable, IActor, ICameraReporter, IFactionable
 	{
 		[field: InlineProperty]
 		[field: SerializeField] public Faction Faction { get; private set; }
@@ -39,12 +41,14 @@ namespace Game.Entities.Models
 		}
 		private ISheet sheet;
 
+
 		public Brain Brain { get; private set; }
 
 		[Inject]
-		private void Construct(DialogueSystem dialogueSystem)
+		private void Construct(DialogueSystem dialogueSystem, CombatDamageSystem combatDamageSystem)
 		{
 			this.dialogueSystem = dialogueSystem;
+			this.combatDamageSystem = combatDamageSystem;
 
 			Brain = new DummyAI(this);
 			Brain.StartBrain();
@@ -167,5 +171,38 @@ namespace Game.Entities.Models
 				}
 			}
 		}
+	}
+
+	//ICombatable implementation
+	public partial class DummyModel
+	{
+		public event UnityAction<IEntity> onDied;
+
+		[field: Space]
+		[field: SerializeField] public Vector3 DamagePosition { get; private set; }
+		[field: SerializeField] public InteractionPoint BattlePoint { get; private set; }
+		[field: SerializeField] public InteractionPoint OpportunityPoint { get; private set; }
+
+		private CombatDamageSystem combatDamageSystem;
+
+		public void ApplyDamage<T>(T value)
+		{
+			if (value is Damage damage)
+			{
+				combatDamageSystem.DealDamage(damage, this);
+			}
+		}
+
+		public Damage GetDamage()//can't deal damage
+		{
+			return null;
+		}
+
+		public bool CombatWith(IDamageable damageable)
+		{
+			return false;
+		}
+
+		public void Kill() { }
 	}
 }

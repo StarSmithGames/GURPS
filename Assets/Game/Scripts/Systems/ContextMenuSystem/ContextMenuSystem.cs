@@ -9,7 +9,7 @@ using Game.Map;
 using Game.Managers.GameManager;
 using Game.Systems.InteractionSystem;
 using Game.Entities;
-using Game.Systems.DamageSystem;
+using Game.Systems.CombatDamageSystem;
 using Game.Systems.CommandCenter;
 
 namespace Game.Systems.ContextMenu
@@ -43,9 +43,9 @@ namespace Game.Systems.ContextMenu
 			var self = partyManager.PlayerParty.LeaderParty.Model;
 			bool isSelf = observable == self;
 
-			if (observable is IDamegeable && !isSelf)
+			if (observable is IDamageable damegeable && !isSelf)
 			{
-				commands.Add(new CommandAttack() { name = "Attack", type = ContextType.Negative });
+				commands.Add(new CommandAttack(self as ICombatable, damegeable) { name = "Attack", type = ContextType.Negative });
 			}
 
 			if (observable is IActor actor && !isSelf)

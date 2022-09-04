@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-	public class Model : MonoBehaviour, IInteractable, IObservable
+	public abstract class Model : MonoBehaviour, IInteractable, IObservable
 	{
 		public bool IsInteractable { get => isInteractable; protected set => isInteractable = value; }
 		protected bool isInteractable = true;

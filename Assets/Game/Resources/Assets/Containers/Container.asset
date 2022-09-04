@@ -12,18 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c34e898270762954ab77f139a7ec2601, type: 3}
   m_Name: Container
   m_EditorClassIdentifier: 
-  information:
-    localizations:
-    - language: 10
-      name: Chest
   sheet:
     identity: 100
     age: -1
     race: 0
     gender: 0
-    aligment: 4
-    isImmortal: 1
+    isImmortal: 0
     stats:
+      level: 1
       strength: 10
       dexterity: 10
       intelligence: 10
@@ -34,15 +30,20 @@ MonoBehaviour:
       addSpeed: 0
       addWill: 0
       addPerception: 0
+    characteristics:
+      alignment: 4
     inventory:
       useRandomItems: 0
       shuffleList: 1
       items:
-      - useRandom: 0
-        data: {fileID: 11400000, guid: 5a435e1e1ece6c9428a29f20bd09a9c5, type: 2}
+      - data: {fileID: 11400000, guid: 5a435e1e1ece6c9428a29f20bd09a9c5, type: 2}
+        useRandom: 0
         currentStackSize: 4999
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       randomSettings:
         isUnique: 0
         useRandomCount: 1
@@ -60,92 +61,153 @@ MonoBehaviour:
         ignoreList: []
     equipment:
       head:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       sholders:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       chest:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       forearms:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       legs:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       feet:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon00:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon01:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon10:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       weapon11:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       cloak:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       jewelry:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       ring0:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       ring1:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
       trinket:
-        useRandom: 0
         data: {fileID: 0}
+        useRandom: 0
         currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
         currentWeight: 0.01
         currentDurability: 100
+        isShowFoldout: 0
+    actor:
+      useBarks: 0
+      useBarksInWorld: 0
+      barksInWorld: {fileID: 0}
+      isImportanatBark: 0
+      indicator: 1
+      barks: {fileID: 0}
+      dialogues: {fileID: 0}
+  information:
+    nameId: 
+    localizations:
+    - language: 10
+      name: Chest
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+    isHasPortrait: 0
+    portrait: {fileID: 0}

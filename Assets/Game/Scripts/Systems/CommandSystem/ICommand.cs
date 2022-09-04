@@ -1,6 +1,6 @@
 using Game.Entities;
-using Game.Entities.Models;
 using Game.Managers.PartyManager;
+using Game.Systems.CombatDamageSystem;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
@@ -39,13 +39,22 @@ namespace Game.Systems.CommandCenter
 	}
 
 	#region ContextCommands
-	public class CommandUse : ContextCommand//eat, drink, use spells
+	public class CommandAttack : ContextCommand
 	{
+		private ICombatable initiator;
+		private IDamageable damageable;
+
+		public CommandAttack(ICombatable initiator, IDamageable damageable)
+		{
+			this.initiator = initiator;
+			this.damageable = damageable;
+		}
+
 		public override void Execute()
 		{
+			Combator.ABCombat(initiator, damageable);
 		}
 	}
-
 
 	public class CommandTalk : ContextCommand
 	{
@@ -63,6 +72,7 @@ namespace Game.Systems.CommandCenter
 			Talker.ABTalk(initiator, actor);
 		}
 	}
+
 	public class CommandExamine : ContextCommand
 	{
 		public CommandExamine(IObservable observable)
@@ -74,7 +84,6 @@ namespace Game.Systems.CommandCenter
 		{
 		}
 	}
-
 
 	public class CommandInteract : ContextCommand
 	{
@@ -108,14 +117,13 @@ namespace Game.Systems.CommandCenter
 		}
 	}
 
-	public class CommandAttack : ContextCommand
+
+	public class CommandUse : ContextCommand//eat, drink, use spells
 	{
 		public override void Execute()
 		{
 		}
 	}
-
-
 	public class CommandPickUp : ContextCommand
 	{
 		public override void Execute()

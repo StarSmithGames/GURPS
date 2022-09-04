@@ -1,31 +1,28 @@
+using EPOOutline;
+using Game.Systems.AnimatorController;
 using Game.Systems.BattleSystem;
+using Game.Systems.CameraSystem;
+using Game.Systems.CombatDamageSystem;
+using Game.Systems.DialogueSystem;
+using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
-
+using Game.Systems.SheetSystem;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
-using System.Collections;
-using Game.Systems.DialogueSystem;
-using System.Linq;
-using UnityEngine.Events;
-using EPOOutline;
-using Game.Systems.InteractionSystem;
-using Game.Systems.DamageSystem;
-using Game.Systems.FloatingTextSystem;
-using Game.Systems.SheetSystem;
-using System.Collections.Generic;
-using Game.Systems.CameraSystem;
 
 namespace Game.Entities.Models
 {
-	public interface ICharacterModel : IEntityModel, ISheetable, IBattlable, IActor, ICameraReporter, IDamegeable, IKillable
+	public interface ICharacterModel : IEntityModel, ISheetable, ICombatable, IActor, ICameraReporter
 	{
 		bool IsWithRangedWeapon { get; }//rm
 		float CharacterRange { get; }//rm
 
 		ICharacter Character { get; }
 
-		AnimatorControl AnimatorControl { get; }
+		AnimatorController AnimatorController { get; }
 		CharacterOutfit Outfit { get; }
 		Markers Markers { get; }
 		Outlinable Outline { get; }
@@ -37,52 +34,53 @@ namespace Game.Entities.Models
 
 	public abstract partial class CharacterModel : EntityModel, ICharacterModel
 	{
-		public bool InAction => AnimatorControl.IsAnimationProcess || IsHasTarget;
+		public bool InAction => AnimatorController.IsAnimationProcess || IsHasTarget;
 
 		public float CharacterRange => equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>().weaponRange ?? 0f;
 		public bool IsWithRangedWeapon { get; private set; }
 
 		public ICharacter Character { get; protected set; }
-
 		public ISheet Sheet => Character.Sheet;
 
 		public CharacterOutfit Outfit { get; private set; }
-		public AnimatorControl AnimatorControl { get; private set; }
+		public AnimatorController AnimatorController { get; private set; }
 		public CameraPivot CameraPivot { get; private set; }
 
-		public Transform DialogueTransform => Transform;//TODO rm
+		public Transform DialogueTransform => Transform;//rm
+
 
 		private IEquipment equipment;
 
 		[Inject]
 		private void Construct(
 			CharacterOutfit outfit,
-			AnimatorControl animatorControl,
+			AnimatorController animatorControl,
 			Outlinable outline,
 			Markers markerController,
 			DialogueSystem dialogueSystem,
 			Barker barker,
-			FloatingSystem floatingSystem,
-			CameraPivot cameraPivot)
+			CameraPivot cameraPivot,
+			CombatDamageSystem combatDamageSystem)
 		{
 			Outfit = outfit;
-			AnimatorControl = animatorControl;
+			AnimatorController = animatorControl;
 			Outline = outline;
 			Markers = markerController;
 			CameraPivot = cameraPivot;
 
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
-			this.floatingSystem = floatingSystem;
-			//equipment = (Sheet as CharacterSheet).Equipment;
+			this.combatDamageSystem = combatDamageSystem;
 		}
 
 		protected override IEnumerator Start()
 		{
 			InitializePersonality();
 
+			equipment = (Sheet as CharacterSheet).Equipment;
+
 			Controller.onReachedDestination += OnReachedDestination;
-			//equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
+			equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 
 			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
 			signalBus?.Subscribe<SignalEndDialogue>(OnDialogueEnded);
@@ -91,7 +89,8 @@ namespace Game.Entities.Models
 
 			ResetMarkers();
 
-			yield return base.Start();
+			AnimatorController.Initialize();
+
 			yield return new WaitForSeconds(2.5f);
 			CheckReplicas();
 		}
@@ -128,6 +127,43 @@ namespace Game.Entities.Models
 		protected virtual void InitializePersonality()
 		{
 			//Character = new Character(this, data);
+		}
+
+		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
+		{
+			if (!InBattle)
+			{
+				base.SetDestination(destination, maxPathDistance);
+
+				//Fade-In TargetMarker
+				if (Controller.IsHasTarget)
+				{
+					if (!Markers.TargetMarker.IsEnabled)
+					{
+						Markers.TargetMarker.EnableIn();
+					}
+				}
+			}
+			else
+			{
+				SetDestinationInBattle(destination, maxPathDistance);
+			}
+		}
+
+		private void OnReachedDestination()
+		{
+			if (!InBattle)
+			{
+				//Fade-Out TargetMarker
+				if (Markers.TargetMarker.IsEnabled)
+				{
+					Markers.TargetMarker.EnableOut();
+				}
+			}
+			else
+			{
+				OnReachedDestinationInBattle();
+			}
 		}
 
 		private void OnEquipWeaponChanged()
@@ -262,8 +298,7 @@ namespace Game.Entities.Models
 					}
 					else
 					{
-						new GoToPointInteraction(interactable.InteractionPoint, () => dialogueSystem.StartDialogue(this, actor))
-							.Execute(this);
+						new GoToPointInteraction(interactable.InteractionPoint, () => dialogueSystem.StartDialogue(this, actor)).Execute(this);
 					}
 				}
 				else
@@ -406,8 +441,6 @@ namespace Game.Entities.Models
 	//IBattlable, Battle & Animations implementation
 	partial class CharacterModel
 	{
-		public event UnityAction onBattleChanged;
-
 		public bool InBattle => CurrentBattle != null;
 		public BattleExecutor CurrentBattle { get; private set; }
 
@@ -434,7 +467,6 @@ namespace Game.Entities.Models
 			}
 		}
 
-
 		public virtual bool JoinBattle(BattleExecutor battle)
 		{
 			BattleUnsubscribe();
@@ -442,6 +474,8 @@ namespace Game.Entities.Models
 			CurrentBattle = battle;
 
 			BattleSubscribe();
+
+			signalBus?.Fire(new SignalJoinBattleLocal());
 
 			return true;
 		}
@@ -451,56 +485,32 @@ namespace Game.Entities.Models
 			BattleUnsubscribe();
 			CurrentBattle = null;
 
+			signalBus?.Fire(new SignalLeaveBattleLocal());
+
 			return true;
 		}
 
-		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
+		
+		private void SetDestinationInBattle(Vector3 destination, float maxPathDistance)
 		{
 			base.SetDestination(destination, maxPathDistance);
 
-			if (!InBattle)
-			{
-				//Fade-In TargetMarker
-				if (Controller.IsHasTarget)
-				{
-					if (!Markers.TargetMarker.IsEnabled)
-					{
-						Markers.TargetMarker.EnableIn();
-					}
-				}
-			}
-			else
-			{
-				Markers.LineMarker.DrawLine(Navigation.CurrentPath.Path.ToArray());//redraw last choice destination
-				Markers.LineMarker.SetMaterialSpeed(0);//stop line
-			}
+			Markers.LineMarker.DrawLine(Navigation.CurrentPath.Path.ToArray());//redraw last choice destination
+			Markers.LineMarker.SetMaterialSpeed(0);//stop line
 		}
 
-		public virtual void Attack() { }
-
-		private void OnReachedDestination()
+		private void OnReachedDestinationInBattle()
 		{
-			if (!InBattle)
+			Markers.LineMarker.EnableOut(() =>
 			{
-				//Fade-Out TargetMarker
-				if (Markers.TargetMarker.IsEnabled)
-				{
-					Markers.TargetMarker.EnableOut();
-				}
-			}
-			else
-			{
-				Markers.LineMarker.EnableOut(() =>
-				{
-					Markers.LineMarker.Clear();
-					Markers.LineMarker.SetMaterialSpeedToDefault();
+				Markers.LineMarker.Clear();
+				Markers.LineMarker.SetMaterialSpeedToDefault();
 
-					if (IsMoveAvailable)
-					{
-						Markers.LineMarker.EnableIn();
-					}
-				});
-			}
+				if (IsMoveAvailable)
+				{
+					Markers.LineMarker.EnableIn();
+				}
+			});
 		}
 
 		private void OnBattleStateChanged(BattleExecutorState oldState, BattleExecutorState newState)
@@ -517,7 +527,7 @@ namespace Game.Entities.Models
 			}
 		}
 
-		private void onBattleOrderChanged(BattleOrder order)
+		private void OnBattleOrderChanged(BattleOrder order)
 		{
 			if (order == BattleOrder.Turn)//update turn
 			{
@@ -541,7 +551,7 @@ namespace Game.Entities.Models
 	
 		private void BattleSubscribe()
 		{
-			CurrentBattle.onBattleOrderChanged += onBattleOrderChanged;
+			CurrentBattle.onBattleOrderChanged += OnBattleOrderChanged;
 			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
 		}
 
@@ -549,18 +559,38 @@ namespace Game.Entities.Models
 		{
 			if (CurrentBattle != null)
 			{
-				CurrentBattle.onBattleOrderChanged -= onBattleOrderChanged;
+				CurrentBattle.onBattleOrderChanged -= OnBattleOrderChanged;
 				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
 			}
 		}
 	}
 
-	//IDamegeable, IKillable implementation
+	//ICombatable implementation
 	partial class CharacterModel
 	{
 		public event UnityAction<IEntity> onDied;
 
-		protected FloatingSystem floatingSystem;
+		[field: SerializeField] public Vector3 DamagePosition { get; private set; }
+		[field: SerializeField] public InteractionPoint BattlePoint { get; private set; }
+		[field: SerializeField] public InteractionPoint OpportunityPoint { get; private set; }
+
+		protected CombatDamageSystem combatDamageSystem;
+
+		public bool CombatWith(IDamageable damageable)
+		{
+			if (damageable.BattlePoint.IsInRange(Transform.position))
+			{
+				damageable.ApplyDamage(GetDamage());
+			}
+			else
+			{
+				new GoToPointInteraction(damageable.BattlePoint, () => Attack(damageable)).Execute(this);
+			}
+
+			return false;
+		}
+
+
 
 		public virtual Damage GetDamage()
 		{
@@ -575,30 +605,7 @@ namespace Game.Entities.Models
 		{
 			if (value is Damage damage)
 			{
-				float dmg = (int)Mathf.Max(damage.DMG - 2, 0);
-
-				if (dmg == 0)
-				{
-					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), "Miss!", type: AnimationType.BasicDamageType);
-				}
-				else
-				{
-					floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), damage.damageType.ToString(), type: AnimationType.BasicDamageType);
-
-					if (damage.IsPhysicalDamage)
-					{
-
-						floatingSystem.CreateText(transform.TransformPoint(CameraPivot.settings.startPosition), dmg.ToString(), type: AnimationType.AdvanceDamage);
-						if (!Character.Sheet.Settings.isImmortal)
-						{
-							Character.Sheet.Stats.HitPoints.CurrentValue -= dmg;
-						}
-					}
-					else if (damage.IsMagicalDamage)
-					{
-
-					}
-				}
+				combatDamageSystem.DealDamage(damage, this);
 			}
 		}
 
@@ -607,6 +614,14 @@ namespace Game.Entities.Models
 			Controller.Enable(false);
 			onDied?.Invoke(Character);
 		}
+
+
+		protected virtual void Attack(IDamageable damageable)
+		{
+			AnimatorController.Attack();
+			damageable.ApplyDamage(GetDamage());
+		}
+
 
 		protected Vector2 GetDamageFromTable()
 		{
