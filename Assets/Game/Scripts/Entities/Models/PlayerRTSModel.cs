@@ -1,6 +1,7 @@
 using EPOOutline;
 
 using Game.Managers.StorageManager;
+using Game.Systems;
 using Game.Systems.InteractionSystem;
 
 using System.Collections;
@@ -11,10 +12,6 @@ namespace Game.Entities.Models
 {
 	public class PlayerRTSModel : EntityModel, IObservable, IInteractable
 	{
-		public bool IsInteractable { get; }
-		public IInteraction Interaction { get; }
-
-		private SignalBus signalBus;
 		private IPlayer player;
 		private Outlinable outline;
 		private ISaveLoad saveLoad;
@@ -58,21 +55,6 @@ namespace Game.Entities.Models
 			outline.enabled = false;
 		}
 		#endregion
-
-		public bool InteractWith(IInteractable interactable)
-		{
-			if (interactable.IsInteractable)
-			{
-				if (interactable.Interaction != null)
-				{
-					interactable.Interaction.Execute(this);
-
-					return true;
-				}
-			}
-
-			return false;
-		}
 
 		private void LoadTransformOnMap()
 		{

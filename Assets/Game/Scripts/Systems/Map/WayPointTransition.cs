@@ -7,6 +7,7 @@ using Game.Managers.GameManager;
 using Game.Managers.SceneManager;
 using Game.Managers.StorageManager;
 using Game.Managers.TransitionManager;
+using Game.Systems;
 using Game.Systems.InteractionSystem;
 using Game.UI;
 using Game.UI.Windows;
@@ -26,19 +27,19 @@ namespace Game.Map
 
 	public class WayPointTransition : Model, IWayPoint
 	{
-		public override IInteraction Interaction
-		{
-			get
-			{
-				if(interaction == null)
-				{
-					interaction = new GoToPointInteraction(InteractionPoint, Action);
-				}
+		//public override IInteraction Interaction
+		//{
+		//	get
+		//	{
+		//		if(interaction == null)
+		//		{
+		//			interaction = new GoToPointAction(InteractionPoint, Action);
+		//		}
 
-				return interaction;
-			}
-		}
-		private IInteraction interaction = null;
+		//		return interaction;
+		//	}
+		//}
+		//private IInteraction interaction = null;
 
 		[HideLabel]
 		public SceneName sceneName;

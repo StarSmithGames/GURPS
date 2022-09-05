@@ -14,7 +14,7 @@ using Zenject;
 
 namespace Game.Systems.AnimatorController
 {
-	public partial class HumanoidAnimatorControl : AnimatorController
+	public partial class HumanoidAnimatorController : AnimatorController
 	{
 		public UnityAction onAttackLeftHand;
 		public UnityAction onAttackRightHand;
@@ -29,6 +29,8 @@ namespace Game.Systems.AnimatorController
 		private string rightArmLayer = "RightArm";
 		private string leftHandLayer = "LeftHand";
 		private string rightHandLayer = "RightHand";
+
+		private string nodeIdleAction = "IdleAction";
 
 		private ICharacterModel humanoid;
 		private WeaponBehavior currentWeaponBehavior;
@@ -65,7 +67,6 @@ namespace Game.Systems.AnimatorController
 		{
 			base.Update();
 
-			animator.SetBool(isBattleModeHash, humanoid.InBattle);
 
 			if (humanoid.InBattle)
 			{
@@ -73,24 +74,58 @@ namespace Game.Systems.AnimatorController
 			}
 		}
 
+
+
 		public override void Attack()
 		{
 			StartCoroutine(AttackProcess());
 		}
+		//transform.DOMove(transform.root.position, 0.25f);
 
 		private IEnumerator AttackProcess()
 		{
 			IsAttackProccess = true;
-			yield return WaitWhileNode("IdleAction");
-			currentWeaponBehavior.Attack();
-			yield return WaitWhileNode("IdleAction", true);
-			yield return WaitWhileNode("IdleAction");
-			transform.DOMove(transform.root.position, 0.25f);
+
+			yield return EnterIdleAction();
+			yield return Attacking();
+			yield return ExitIdleAction();
+
 			IsAttackProccess = false;
 		}
 
+		private IEnumerator Attacking()
+		{
+			currentWeaponBehavior.Attack();
+
+			yield return new WaitUntil(() => !IsCurrentNodeName(nodeIdleAction));
+			yield return new WaitUntil(() => IsCurrentNodeName(nodeIdleAction));
+		}
+
+		private IEnumerator EnterIdleAction()
+		{
+			if (!humanoid.InBattle)
+			{
+				EnableBattleMode(true);
+		
+				yield return new WaitUntil(() => IsCurrentNodeName(nodeIdleAction));
+			}
+		}
+
+		private IEnumerator ExitIdleAction()
+		{
+			if (!humanoid.InBattle)
+			{
+				EnableBattleMode(false);
+			
+				yield return new WaitUntil(() => !IsCurrentNodeName(nodeIdleAction));
+			}
+		}
+
+
 		private void OnJoinedBattle(SignalJoinBattleLocal signal)
 		{
+			EnableBattleMode(true);
+
 			if (currentWeaponBehavior is DrawableWeapon drawable)
 			{
 				drawable.DrawWeapon();
@@ -99,6 +134,8 @@ namespace Game.Systems.AnimatorController
 
 		private void OnLeavedBattle(SignalLeaveBattleLocal signal)
 		{
+			EnableBattleMode(false);
+
 			if (currentWeaponBehavior is DrawableWeapon drawable)
 			{
 				drawable.SheathWeapon();
@@ -138,7 +175,7 @@ namespace Game.Systems.AnimatorController
 	}
 
 	#region WeaponBehavior
-	partial class HumanoidAnimatorControl
+	partial class HumanoidAnimatorController
 	{
 		private void OnEquipWeaponChanged()
 		{
@@ -189,7 +226,7 @@ namespace Game.Systems.AnimatorController
 
 			protected IEquipment equipment;
 			protected Animator animator;
-			protected HumanoidAnimatorControl control;
+			protected HumanoidAnimatorController control;
 			protected CharacterOutfit outfit;
 
 			protected IBattlable owner;
@@ -199,7 +236,7 @@ namespace Game.Systems.AnimatorController
 				this.owner = owner;
 				equipment = (owner.Sheet as CharacterSheet).Equipment;
 				outfit = (owner as CharacterModel).Outfit;
-				control = owner.AnimatorController as HumanoidAnimatorControl;
+				control = owner.AnimatorController as HumanoidAnimatorController;
 				animator = control.animator;
 
 				weaponTypeHash = Animator.StringToHash("WeaponType");

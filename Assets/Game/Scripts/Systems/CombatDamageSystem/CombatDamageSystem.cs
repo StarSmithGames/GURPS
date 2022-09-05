@@ -1,6 +1,14 @@
+using Game.Entities;
+using Game.Entities.Models;
+using Game.Managers.StorageManager;
+using Game.Systems.AnimatorController;
+using Game.Systems.CombatDamageSystem;
 using Game.Systems.FloatingTextSystem;
+using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 using Sirenix.OdinInspector;
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -32,27 +40,16 @@ namespace Game.Systems.CombatDamageSystem
 
 				if (damage.IsPhysicalDamage)
 				{
-
 					floatingSystem.CreateText(pos, ((int)dmg).ToString(), type: AnimationType.AdvanceDamage);
 
-					if(damageable is ISheetable sheetable)
+					if (damageable is ISheetable sheetable)
 					{
 						if (!sheetable.Sheet.Settings.isImmortal)
 						{
 							sheetable.Sheet.Stats.HitPoints.CurrentValue -= dmg;
 						}
 
-						if(sheetable.Sheet.Stats.HitPoints.CurrentValue == 0)
-						{
-							if (damageable is IDestructible destructible)
-							{
-								destructible.Destruct();
-							}
-							else if (damageable is IKillable killable)
-							{
-								killable.Kill();
-							}
-						}
+						CheckDeath(sheetable);
 					}
 				}
 				else if (damage.IsMagicalDamage)
@@ -61,8 +58,24 @@ namespace Game.Systems.CombatDamageSystem
 				}
 			}
 		}
-	}
 
+		private void CheckDeath(ISheetable sheetable)
+		{
+			if (sheetable.Sheet.Stats.HitPoints.CurrentValue == 0)
+			{
+				if (sheetable is IDieable dieable)
+				{
+					if (!sheetable.Sheet.Conditions.IsContains<Death>())
+					{
+						if (sheetable.Sheet.Conditions.Add(new Death()))
+						{
+							dieable.Die();
+						}
+					}
+				}
+			}
+		}
+	}
 
 	[System.Serializable]
 	public class WeaponDamage
@@ -90,9 +103,12 @@ namespace Game.Systems.CombatDamageSystem
 		}
 	}
 
-	[System.Serializable]
 	public class Damage
 	{
+		public IDamageable owner;
+
+		public Vector3 direction;
+
 		[MinMaxSlider(0, 99, true)]
 		public Vector2 amount;
 		public DamageType damageType;
@@ -114,7 +130,6 @@ namespace Game.Systems.CombatDamageSystem
 			damageType == DamageType.Electricity ||
 			damageType == DamageType.Poison;
 	}
-
 
 	[System.Serializable]
 	public struct Resistances

@@ -23,7 +23,7 @@ namespace Game
 		{
 			Container.BindInstance(subCanvas);
 
-			Container.Bind<CombatDamageSystem>().AsSingle();
+			CombatDamageSystemInstaller.Install(Container);
 
 			BindCameras();
 		}

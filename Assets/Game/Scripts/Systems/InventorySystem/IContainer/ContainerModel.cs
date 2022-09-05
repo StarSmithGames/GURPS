@@ -6,23 +6,20 @@ using Game.Systems.SheetSystem;
 using Game.UI;
 
 using UnityEngine;
-using UnityEngine.Assertions;
 
 using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : Model, IContainer, ISheetable, IDamageable, IDestructible
+	public class ContainerModel : CombatModel, IContainer, IDestructible
 	{
 		public bool IsOpened => window?.IsShowing ?? false;
 		public bool IsSearched => data.isSearched;
 
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
-		[field: SerializeField] public Vector3 DamagePosition { get; private set; }
-		public InteractionPoint BattlePoint => InteractionPoint;
-		public InteractionPoint OpportunityPoint => null;
+		public override InteractionPoint BattlePoint => InteractionPoint;
 
-		public ISheet Sheet
+		public override ISheet Sheet
 		{
 			get
 			{
@@ -57,18 +54,15 @@ namespace Game.Systems.InventorySystem
 		private UISubCanvas subCanvas;
 		private UIContainerWindow.Factory containerWindowFactory;
 		private InputManager inputManager;
-		private CombatDamageSystem.CombatDamageSystem combatDamageSystem;
 
 		[Inject]
 		private void Construct(UISubCanvas subCanvas,
 			UIContainerWindow.Factory containerWindowFactory,
-			InputManager inputManager,
-			CombatDamageSystem.CombatDamageSystem combatDamageSystem)
+			InputManager inputManager)
 		{
 			this.subCanvas = subCanvas;
 			this.containerWindowFactory = containerWindowFactory;
 			this.inputManager = inputManager;
-			this.combatDamageSystem = combatDamageSystem;
 		}
 
 		private void Start()
@@ -99,6 +93,17 @@ namespace Game.Systems.InventorySystem
 					}
 				}
 			}
+		}
+
+
+		public override void Die()
+		{
+			Destruct();
+		}
+
+		public void Destruct()
+		{
+			gameObject.SetActive(false);
 		}
 
 		#region Open Close Dispose
@@ -150,24 +155,6 @@ namespace Game.Systems.InventorySystem
 		{
 			Dispose();
 			//containerHandler.CharacterTakeAllFrom(Sheet.Inventory);
-		}
-
-		public void ApplyDamage<T>(T value)
-		{
-			if (value is Damage damage)
-			{
-				combatDamageSystem.DealDamage(damage, this);
-			}
-		}
-
-		public Damage GetDamage()
-		{
-			return null;//container can't deal damage
-		}
-
-		public void Destruct()
-		{
-			DestroyImmediate(gameObject);
 		}
 
 		private void OnDrawGizmos()

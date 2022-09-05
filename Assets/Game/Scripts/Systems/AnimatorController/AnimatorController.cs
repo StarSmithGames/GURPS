@@ -11,7 +11,7 @@ using Zenject;
 
 namespace Game.Systems.AnimatorController
 {
-	public class AnimatorController : MonoBehaviour
+	public partial class AnimatorController : MonoBehaviour
 	{
 		public UnityAction onAttackEvent;
 
@@ -21,7 +21,6 @@ namespace Game.Systems.AnimatorController
 		public virtual bool IsAnimationProcess => IsAttackProccess || isWaitAnimationProccess || isWaitTransitionProccess;
 		public bool IsAttackProccess { get; protected set; }
 
-		public bool IsIdleTransaction => IsCurrentNodeName("IdleToIdleAction") || IsCurrentNodeName("IdleActionToIdle");
 
 		protected bool isWaitAnimationProccess = false;
 		protected bool isWaitTransitionProccess = false;
@@ -103,6 +102,11 @@ namespace Game.Systems.AnimatorController
 			}
 		}
 
+		public void EnableBattleMode(bool trigger)
+		{
+			animator.SetBool(isBattleModeHash, trigger);
+		}
+
 
 		public virtual void Hit(int type = 0)
 		{
@@ -115,54 +119,6 @@ namespace Game.Systems.AnimatorController
 		{
 			animator.SetInteger(deathTypeHash, type);
 			animator.SetTrigger(deathHash);
-		}
-
-
-
-		protected bool IsCurrentNodeName(string name)
-		{
-			return animator.GetCurrentAnimatorStateInfo(0).IsName(name);
-		}
-
-		protected bool IsCurrentAnimationName(string animation)
-		{
-			return animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == animation;
-		}
-
-		protected bool IsCurrentTransitionName(string transition)
-		{
-			return animator.GetAnimatorTransitionInfo(0).IsName(transition);
-		}
-
-		protected IEnumerator WaitWhileNode(string node, bool isNot = false)
-		{
-			if (entity is IBattlable battlable)
-			{
-				isWaitAnimationProccess = true;
-
-				while (battlable.InBattle)
-				{
-					if (isNot)
-					{
-						if (!IsCurrentNodeName(node))
-						{
-							break;
-						}
-					}
-					else
-					{
-						if (IsCurrentNodeName(node))
-						{
-							break;
-						}
-					}
-
-
-					yield return null;
-				}
-
-				isWaitAnimationProccess = false;
-			}
 		}
 
 		protected IEnumerator WaitWhileAnimation(string animation)
@@ -228,5 +184,25 @@ namespace Game.Systems.AnimatorController
 			onAttackEvent?.Invoke();
 		}
 		#endregion
+	}
+
+	public partial class AnimatorController
+	{
+		public bool IsIdleTransaction => IsCurrentNodeName("IdleToIdleAction") || IsCurrentNodeName("IdleActionToIdle");
+
+		protected bool IsCurrentNodeName(string name)
+		{
+			return animator.GetCurrentAnimatorStateInfo(0).IsName(name);
+		}
+
+		protected bool IsCurrentAnimationName(string animation)
+		{
+			return animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == animation;
+		}
+
+		protected bool IsCurrentTransitionName(string transition)
+		{
+			return animator.GetAnimatorTransitionInfo(0).IsName(transition);
+		}
 	}
 }

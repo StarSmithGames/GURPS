@@ -1,12 +1,3 @@
-using DG.Tweening;
-
-using Game.Entities;
-using Game.Entities.Models;
-using Game.Systems.BattleSystem;
-using Game.Systems.DialogueSystem;
-using Game.Systems.InventorySystem;
-using Game.Systems.SheetSystem;
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Timers;
@@ -14,7 +5,7 @@ using System.Timers;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Systems.InteractionSystem
+namespace Game.Systems
 {
 	public class TaskSequence
 	{

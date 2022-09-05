@@ -1,7 +1,7 @@
 namespace Game.Systems.CombatDamageSystem
 {
-	public interface IKillable
+	public interface IDieable
 	{
-		void Kill();
+		void Die();
 	}
 }

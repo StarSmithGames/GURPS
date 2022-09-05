@@ -9,7 +9,6 @@ namespace Game.Systems.CombatDamageSystem
 		Vector3 DamagePosition { get; }
 
 		InteractionPoint BattlePoint { get; }
-		InteractionPoint OpportunityPoint { get; }
 
 		void ApplyDamage<T>(T value);
 		Damage GetDamage();

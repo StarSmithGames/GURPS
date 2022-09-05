@@ -6,6 +6,7 @@ using Game.Managers.CharacterManager;
 using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
 using Game.Systems.BattleSystem;
+using Game.Systems.CombatDamageSystem;
 using Game.Systems.ContextMenu;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
@@ -159,7 +160,7 @@ namespace Game.Systems.CameraSystem
 					{
 						leaderModel.Stop();
 
-						if (CurrentObserve != null/* && leader != CurrentObserve*/)
+						if (CurrentObserve != null)
 						{
 							contextMenuSystem.SetTarget(CurrentObserve);
 						}
@@ -314,9 +315,9 @@ namespace Game.Systems.CameraSystem
 						leaderModel.Markers.SplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
 						leaderModel.Markers.AdditionalSplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
 					}
-					else if (CurrentObserve is IInteractable interactable)
+					else if (CurrentObserve is ICombatable combatable)
 					{
-						leaderModel.SetTarget(interactable.InteractionPoint.GetIteractionPosition(leaderModel), leaderModel.Sheet.Stats.Move.CurrentValue);
+						leaderModel.SetTarget(combatable.BattlePoint.GetIteractionPosition(leaderModel), leaderModel.Sheet.Stats.Move.CurrentValue);
 					}
 				}
 				else
@@ -344,6 +345,10 @@ namespace Game.Systems.CameraSystem
 						if (isCanReach || interactable.InteractionPoint.IsInRange(leaderModel.Transform.position))
 						{
 							Interactor.ABInteraction(leaderModel, interactable);
+						}
+						else
+						{
+
 						}
 					}
 				}

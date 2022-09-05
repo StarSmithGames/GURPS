@@ -1,8 +1,11 @@
 using Game.Entities;
+using Game.Entities.Models;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Managers.PartyManager;
 using Game.Managers.StorageManager;
+using Game.Systems;
+using Game.Systems.CombatDamageSystem;
 using Game.Systems.CommandCenter;
 using Game.Systems.SheetSystem;
 
@@ -33,7 +36,6 @@ namespace Game
 
 			GameManagerInstaller.Install(Container);
 			PartyManagerInstaller.Install(Container);
-			//Container.Bind<SheetSystem>().AsSingle().NonLazy();
 
 			Container.BindInstance(globalSettings);
 		}

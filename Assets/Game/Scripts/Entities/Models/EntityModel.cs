@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using Zenject;
 using System.Collections;
 using Game.Systems.NavigationSystem;
+using Game.Systems;
 
 namespace Game.Entities.Models
 {

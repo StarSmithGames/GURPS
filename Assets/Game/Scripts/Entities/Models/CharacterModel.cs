@@ -1,4 +1,6 @@
 using EPOOutline;
+
+using Game.Systems;
 using Game.Systems.AnimatorController;
 using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
@@ -48,7 +50,7 @@ namespace Game.Entities.Models
 
 		public Transform DialogueTransform => Transform;//rm
 
-
+		private CharacterAttackFactory factory;
 		private IEquipment equipment;
 
 		[Inject]
@@ -60,7 +62,8 @@ namespace Game.Entities.Models
 			DialogueSystem dialogueSystem,
 			Barker barker,
 			CameraPivot cameraPivot,
-			CombatDamageSystem combatDamageSystem)
+			CombatDamageSystem combatDamageSystem,
+			CharacterAttackFactory factory)
 		{
 			Outfit = outfit;
 			AnimatorController = animatorControl;
@@ -71,6 +74,7 @@ namespace Game.Entities.Models
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
 			this.combatDamageSystem = combatDamageSystem;
+			this.factory = factory;
 		}
 
 		protected override IEnumerator Start()
@@ -298,7 +302,7 @@ namespace Game.Entities.Models
 					}
 					else
 					{
-						new GoToPointInteraction(interactable.InteractionPoint, () => dialogueSystem.StartDialogue(this, actor)).Execute(this);
+						new GoToPointAction(interactable.InteractionPoint, () => dialogueSystem.StartDialogue(this, actor)).Execute(this);
 					}
 				}
 				else
@@ -568,8 +572,6 @@ namespace Game.Entities.Models
 	//ICombatable implementation
 	partial class CharacterModel
 	{
-		public event UnityAction<IEntity> onDied;
-
 		[field: SerializeField] public Vector3 DamagePosition { get; private set; }
 		[field: SerializeField] public InteractionPoint BattlePoint { get; private set; }
 		[field: SerializeField] public InteractionPoint OpportunityPoint { get; private set; }
@@ -580,48 +582,37 @@ namespace Game.Entities.Models
 		{
 			if (damageable.BattlePoint.IsInRange(Transform.position))
 			{
-				damageable.ApplyDamage(GetDamage());
+				TaskSequence.Append(factory.Create(this, damageable));
 			}
 			else
 			{
-				new GoToPointInteraction(damageable.BattlePoint, () => Attack(damageable)).Execute(this);
+				TaskSequence
+					.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
+					.Append(factory.Create(this, damageable));
 			}
 
-			return false;
+			TaskSequence.Execute();
+
+			return true;
 		}
-
-
 
 		public virtual Damage GetDamage()
 		{
 			return new Damage()
 			{
+				owner = this,
 				amount = GetDamageFromTable(),
 				damageType = DamageType.Crushing,
 			};
 		}
 
-		public virtual void ApplyDamage<T>(T value)
-		{
-			if (value is Damage damage)
-			{
-				combatDamageSystem.DealDamage(damage, this);
-			}
-		}
+		public virtual void ApplyDamage<T>(T value) { }
 
-		public virtual void Kill()
+		public virtual void Die()
 		{
 			Controller.Enable(false);
-			onDied?.Invoke(Character);
+			AnimatorController.Death();
 		}
-
-
-		protected virtual void Attack(IDamageable damageable)
-		{
-			AnimatorController.Attack();
-			damageable.ApplyDamage(GetDamage());
-		}
-
 
 		protected Vector2 GetDamageFromTable()
 		{

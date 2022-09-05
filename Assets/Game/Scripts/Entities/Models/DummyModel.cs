@@ -19,7 +19,7 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-	public partial class DummyModel : Model, IAI, ISheetable, ICombatable, IActor, ICameraReporter, IFactionable
+	public partial class DummyModel : CombatModel, IAI, ISheetable, ICombatable, IActor, ICameraReporter, IFactionable
 	{
 		[field: InlineProperty]
 		[field: SerializeField] public Faction Faction { get; private set; }
@@ -27,7 +27,7 @@ namespace Game.Entities.Models
 
 		public ModelData data;
 
-		public ISheet Sheet
+		public override ISheet Sheet
 		{
 			get
 			{
@@ -176,24 +176,11 @@ namespace Game.Entities.Models
 	//ICombatable implementation
 	public partial class DummyModel
 	{
-		public event UnityAction<IEntity> onDied;
-
 		[field: Space]
-		[field: SerializeField] public Vector3 DamagePosition { get; private set; }
-		[field: SerializeField] public InteractionPoint BattlePoint { get; private set; }
-		[field: SerializeField] public InteractionPoint OpportunityPoint { get; private set; }
+		[field: SerializeField] public override InteractionPoint BattlePoint { get; protected set; }
+		[field: SerializeField] public InteractionPoint OpportunityPoint { get; protected set; }
 
-		private CombatDamageSystem combatDamageSystem;
-
-		public void ApplyDamage<T>(T value)
-		{
-			if (value is Damage damage)
-			{
-				combatDamageSystem.DealDamage(damage, this);
-			}
-		}
-
-		public Damage GetDamage()//can't deal damage
+		public override Damage GetDamage()//can't deal damage
 		{
 			return null;
 		}

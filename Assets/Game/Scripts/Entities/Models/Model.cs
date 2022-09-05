@@ -1,6 +1,10 @@
 using EPOOutline;
 
+using Game.Systems;
+using Game.Systems.CombatDamageSystem;
 using Game.Systems.InteractionSystem;
+using Game.Systems.SheetSystem;
+
 using UnityEngine;
 
 using Zenject;
@@ -61,5 +65,38 @@ namespace Game.Entities.Models
 			}
 		}
 		#endregion
+	}
+
+	public abstract class CombatModel : Model, ISheetable, IDamageable, IDieable
+	{
+		[field: SerializeField] public Vector3 DamagePosition { get; protected set; }
+		public virtual InteractionPoint BattlePoint { get; protected set; }
+		public virtual ISheet Sheet { get; }
+
+		protected CombatDamageSystem combatDamageSystem;
+
+		[Inject]
+		private void Construct(CombatDamageSystem combatDamageSystem)
+		{
+			this.combatDamageSystem = combatDamageSystem;
+		}
+
+		public void ApplyDamage<T>(T value)
+		{
+			if (value is Damage damage)
+			{
+				//combatDamageSystem.DealDamage(damage, this);
+			}
+		}
+
+		public virtual Damage GetDamage()
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public virtual void Die()
+		{
+			DestroyImmediate(gameObject);
+		}
 	}
 }
