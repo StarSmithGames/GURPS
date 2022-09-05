@@ -11,7 +11,7 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : CombatModel, IContainer, IDestructible
+	public class ContainerModel : DamageableModel, IContainer, IDestructible
 	{
 		public bool IsOpened => window?.IsShowing ?? false;
 		public bool IsSearched => data.isSearched;

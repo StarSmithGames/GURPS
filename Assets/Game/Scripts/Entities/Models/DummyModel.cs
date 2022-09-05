@@ -19,7 +19,7 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-	public partial class DummyModel : CombatModel, IAI, ISheetable, ICombatable, IActor, ICameraReporter, IFactionable
+	public partial class DummyModel : DamageableModel, IAI, ISheetable, ICombatable, IActor, ICameraReporter, IFactionable
 	{
 		[field: InlineProperty]
 		[field: SerializeField] public Faction Faction { get; private set; }
@@ -45,10 +45,9 @@ namespace Game.Entities.Models
 		public Brain Brain { get; private set; }
 
 		[Inject]
-		private void Construct(DialogueSystem dialogueSystem, CombatDamageSystem combatDamageSystem)
+		private void Construct(DialogueSystem dialogueSystem)
 		{
 			this.dialogueSystem = dialogueSystem;
-			this.combatDamageSystem = combatDamageSystem;
 
 			Brain = new DummyAI(this);
 			Brain.StartBrain();
@@ -180,16 +179,9 @@ namespace Game.Entities.Models
 		[field: SerializeField] public override InteractionPoint BattlePoint { get; protected set; }
 		[field: SerializeField] public InteractionPoint OpportunityPoint { get; protected set; }
 
-		public override Damage GetDamage()//can't deal damage
-		{
-			return null;
-		}
-
 		public bool CombatWith(IDamageable damageable)
 		{
 			return false;
 		}
-
-		public void Kill() { }
 	}
 }

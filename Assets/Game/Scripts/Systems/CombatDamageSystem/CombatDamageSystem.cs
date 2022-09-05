@@ -30,6 +30,8 @@ namespace Game.Systems.CombatDamageSystem
 
 			var pos = (damageable as MonoBehaviour).transform.TransformPoint(damageable.DamagePosition);
 
+			Debug.LogError(dmg);
+
 			if (dmg < 1)
 			{
 				floatingSystem.CreateText(pos, "Miss!", type: AnimationType.BasicDamageType);

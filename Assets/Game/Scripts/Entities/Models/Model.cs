@@ -67,36 +67,20 @@ namespace Game.Entities.Models
 		#endregion
 	}
 
-	public abstract class CombatModel : Model, ISheetable, IDamageable, IDieable
+	public abstract class DamageableModel : Model, ISheetable, IDamageable, IDieable
 	{
 		[field: SerializeField] public Vector3 DamagePosition { get; protected set; }
 		public virtual InteractionPoint BattlePoint { get; protected set; }
 		public virtual ISheet Sheet { get; }
 
-		protected CombatDamageSystem combatDamageSystem;
-
-		[Inject]
-		private void Construct(CombatDamageSystem combatDamageSystem)
-		{
-			this.combatDamageSystem = combatDamageSystem;
-		}
-
-		public void ApplyDamage<T>(T value)
-		{
-			if (value is Damage damage)
-			{
-				//combatDamageSystem.DealDamage(damage, this);
-			}
-		}
-
 		public virtual Damage GetDamage()
 		{
-			throw new System.NotImplementedException();
+			return null;
 		}
 
 		public virtual void Die()
 		{
-			DestroyImmediate(gameObject);
+			gameObject.SetActive(false);
 		}
 	}
 }

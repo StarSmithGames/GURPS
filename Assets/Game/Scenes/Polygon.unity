@@ -2497,7 +2497,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -7794,7 +7794,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5

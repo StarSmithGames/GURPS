@@ -336,6 +336,8 @@ namespace Game.Systems.CameraSystem
 		{
 			if (battleSystem.CurrentExecutor.CurrentState == BattleExecutorState.Battle)
 			{
+				if (!(IsMouseHit && !IsUI)) return;
+
 				if (CurrentObserve != null)
 				{
 					if (CurrentObserve is IInteractable interactable)
@@ -346,27 +348,29 @@ namespace Game.Systems.CameraSystem
 						{
 							Interactor.ABInteraction(leaderModel, interactable);
 						}
-						else
+						else//Try reach target
 						{
-
+							SetDestination();
 						}
 					}
 				}
-				else
+				else//Free space
 				{
-					//if (!leader.TaskSequence.IsSequenceProcess || leader.TaskSequence.IsCanBeBreaked)
-					//Free space
-					if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
+					
+					SetDestination();
+				}
+			}
+
+			void SetDestination()
+			{
+				//if (!leader.TaskSequence.IsSequenceProcess || leader.TaskSequence.IsCanBeBreaked)
+				if (IsCanHoldMouse || inputManager.IsLeftMouseButtonDown())
+				{
+					if (battleSystem.CurrentExecutor.IsPlayerTurn && battleSystem.CurrentExecutor.InitiatorCanAct)
 					{
-						if (IsMouseHit && !IsUI)
+						if (!leaderModel.IsHasTarget && leaderModel.IsCanBattleMove)
 						{
-							if (battleSystem.CurrentExecutor.IsPlayerTurn && battleSystem.CurrentExecutor.InitiatorCanAct)
-							{
-								if (!leaderModel.IsHasTarget && leaderModel.IsCanBattleMove)
-								{
-									leaderModel.SetDestination(point, leaderModel.Sheet.Stats.Move.CurrentValue);
-								}
-							}
+							leaderModel.SetDestination(point, leaderModel.Sheet.Stats.Move.CurrentValue);
 						}
 					}
 				}

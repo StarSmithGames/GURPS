@@ -63,6 +63,7 @@ namespace Game.Systems
 
 			//}
 			Initialization();
+			yield return null;
 			Attack();
 
 			//wait start and then end attack
@@ -76,8 +77,6 @@ namespace Game.Systems
 			initiator.AnimatorController.Attack();
 		}
 
-		protected virtual void Hit() { }
-
 		protected virtual void OnAttacked()
 		{
 			Debug.LogError("OnAttacked");
@@ -86,33 +85,13 @@ namespace Game.Systems
 		protected virtual void OnAttackedLeftHand()
 		{
 			Debug.LogError("OnAttackedLeftHand");
-
-			if (false)//!equipment.WeaponCurrent.Spare.IsEmpty)
-			{
-				//Hit();
-				//DealDamage();
-				//damageable.ApplyDamage(equipment.WeaponCurrent.Spare.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
-			}
-			else
-			{
-				OnAttacked();
-			}
+			OnAttacked();
 		}
 
 		protected virtual void OnAttackRightHand()
 		{
 			Debug.LogError("OnAttackRightHand");
-
-			if (false)//!equipment.WeaponCurrent.Main.IsEmpty)
-			{
-				//Hit();
-				//DealDamage();
-				//damageable.ApplyDamage(equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>().weaponDamage.mainDamage);
-			}
-			else
-			{
-				OnAttacked();
-			}
+			OnAttacked();
 		}
 
 		protected virtual void OnAttackKick()
@@ -133,10 +112,10 @@ namespace Game.Systems
 			initiator.AnimatorController.Attack();
 		}
 
-		protected override void Hit()
-		{
-			//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
-		}
+		//protected override void Hit()
+		//{
+		//	//var direction = ((lastInteractable as MonoBehaviour).transform.position - transform.position).normalized;
+		//}
 
 		protected override void OnAttacked()
 		{
@@ -154,7 +133,8 @@ namespace Game.Systems
 
 		protected override void OnAttacked()
 		{
-			damageable.AnimatorController.Hit(Random.Range(0, 2));//animation
+			combatDamageSystem.DealDamage(initiator.GetDamage(), damageable);
+			//damageable.AnimatorController.Hit(Random.Range(0, 2));//animation
 		}
 
 		public class Factory : PlaceholderFactory<ICharacterModel, ICharacterModel, TaskCharacterAttackCharacter> { }

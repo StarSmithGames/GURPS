@@ -50,7 +50,6 @@ namespace Game.Entities.Models
 
 		public Transform DialogueTransform => Transform;//rm
 
-		private CharacterAttackFactory factory;
 		private IEquipment equipment;
 
 		[Inject]
@@ -62,8 +61,7 @@ namespace Game.Entities.Models
 			DialogueSystem dialogueSystem,
 			Barker barker,
 			CameraPivot cameraPivot,
-			CombatDamageSystem combatDamageSystem,
-			CharacterAttackFactory factory)
+			CharacterAttackFactory attackFactory)
 		{
 			Outfit = outfit;
 			AnimatorController = animatorControl;
@@ -73,8 +71,7 @@ namespace Game.Entities.Models
 
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
-			this.combatDamageSystem = combatDamageSystem;
-			this.factory = factory;
+			this.attackFactory = attackFactory;
 		}
 
 		protected override IEnumerator Start()
@@ -576,24 +573,55 @@ namespace Game.Entities.Models
 		[field: SerializeField] public InteractionPoint BattlePoint { get; private set; }
 		[field: SerializeField] public InteractionPoint OpportunityPoint { get; private set; }
 
-		protected CombatDamageSystem combatDamageSystem;
+		protected CharacterAttackFactory attackFactory;
 
 		public bool CombatWith(IDamageable damageable)
 		{
-			if (damageable.BattlePoint.IsInRange(Transform.position))
+			if (InBattle)
 			{
-				TaskSequence.Append(factory.Create(this, damageable));
+				if (damageable.BattlePoint.IsInRange(Transform.position))
+				{
+					TaskSequence
+						.Append(attackFactory.Create(this, damageable))
+						.Execute();
+
+					return true;
+				}
+				else
+				{
+					bool isCanReach = (Sheet.Stats.Move.CurrentValue - Navigation.FullPath.Distance) >= 0 && Sheet.Stats.Move.CurrentValue != 0;
+
+					if (isCanReach)
+					{
+						TaskSequence
+							.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
+							.Append(attackFactory.Create(this, damageable))
+							.Execute();
+
+						return true;
+					}
+				}
 			}
 			else
 			{
-				TaskSequence
-					.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
-					.Append(factory.Create(this, damageable));
+				if (damageable.BattlePoint.IsInRange(Transform.position))
+				{
+					TaskSequence
+						.Append(attackFactory.Create(this, damageable));
+				}
+				else
+				{
+					TaskSequence
+						.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
+						.Append(attackFactory.Create(this, damageable));
+				}
+
+				TaskSequence.Execute();
+
+				return true;
 			}
 
-			TaskSequence.Execute();
-
-			return true;
+			return false;
 		}
 
 		public virtual Damage GetDamage()

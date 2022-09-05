@@ -40,19 +40,19 @@ namespace Game.Systems.ContextMenu
 
 			List<ContextCommand> commands = new List<ContextCommand>();
 
-			var self = partyManager.PlayerParty.LeaderParty.Model;
+			var self = partyManager.PlayerParty.LeaderParty.Model as ICharacterModel;
 			bool isSelf = observable == self;
 
 			if (observable is IDamageable damegeable && !isSelf)
 			{
-				commands.Add(new CommandAttack(self as ICombatable, damegeable) { name = "Attack", type = ContextType.Negative });
+				commands.Add(new CommandAttack(self, damegeable) { name = "Attack", type = self.InBattle ? ContextType.Normal : ContextType.Negative });
 			}
 
 			if (observable is IActor actor && !isSelf)
 			{
 				if (actor.IsHasSomethingToSay)
 				{
-					commands.Add(new CommandTalk(self as IActor, actor) { name = "Talk" });
+					commands.Add(new CommandTalk(self, actor) { name = "Talk" });
 				}
 			}
 			
