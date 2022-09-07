@@ -10,13 +10,12 @@ namespace Game.Systems.CombatDamageSystem
 		{
 			Container.Bind<CombatDamageSystem>().AsSingle().NonLazy();
 
-			//Bind Character Attack Factories
-			Container.BindFactory<ICharacterModel, ICharacterModel, TaskCharacterAttackCharacter, TaskCharacterAttackCharacter.Factory>().AsSingle();
-			Container.BindFactory<ICharacterModel, IDamageable, TaskCharacterAttackDamageable, TaskCharacterAttackDamageable.Factory>().AsSingle();
+			Container.BindFactory<ICharacterModel, IDamageable, CombatBase, CombatBase.Factory>().NonLazy();
+			Container.BindFactory<ICharacterModel, IDamageable, CombatHumanoid, CombatHumanoid.Factory>().NonLazy();
 
 			Container
-				.BindFactory<ICharacterModel, IDamageable, ITaskAction, CharacterAttackFactory>()
-				.FromFactory<CustomCharacterAttackFactory>()
+				.BindFactory<ICharacterModel, IDamageable, CombatBase, CombatFactory>()
+				.FromFactory<CustomCombatFactory>()
 				.NonLazy();
 		}
 	}

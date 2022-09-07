@@ -3,6 +3,7 @@ using CMF;
 using Game.Entities.Models;
 using Game.Systems.BattleSystem;
 
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -13,7 +14,9 @@ namespace Game.Systems.AnimatorController
 {
 	public partial class AnimatorController : MonoBehaviour
 	{
-		public UnityAction onAttackEvent;
+		public delegate void AttackTriggerEvent();
+
+		public event AttackTriggerEvent onAttack;
 
 		public bool IsRootMotion { get; private set; }
 		public bool IsIdle { get; private set; }
@@ -181,7 +184,8 @@ namespace Game.Systems.AnimatorController
 		#region AnimationEvents
 		private void AttackEvent()
 		{
-			onAttackEvent?.Invoke();
+			Debug.LogError("AttackEvent");
+			onAttack?.Invoke();
 		}
 		#endregion
 	}

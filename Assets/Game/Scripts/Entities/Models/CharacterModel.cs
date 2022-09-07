@@ -61,7 +61,7 @@ namespace Game.Entities.Models
 			DialogueSystem dialogueSystem,
 			Barker barker,
 			CameraPivot cameraPivot,
-			CharacterAttackFactory attackFactory)
+			CombatFactory combatFactory)
 		{
 			Outfit = outfit;
 			AnimatorController = animatorControl;
@@ -71,12 +71,18 @@ namespace Game.Entities.Models
 
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;
-			this.attackFactory = attackFactory;
+			this.combatFactory = combatFactory;
 		}
 
 		protected override IEnumerator Start()
 		{
+			Outline.enabled = false;
+			ResetMarkers();
+
 			InitializePersonality();
+			AnimatorController.Initialize();
+			
+			yield return null;
 
 			equipment = (Sheet as CharacterSheet).Equipment;
 
@@ -86,14 +92,8 @@ namespace Game.Entities.Models
 			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
 			signalBus?.Subscribe<SignalEndDialogue>(OnDialogueEnded);
 
-			Outline.enabled = false;
-
-			ResetMarkers();
-
-			AnimatorController.Initialize();
-
-			yield return new WaitForSeconds(2.5f);
-			CheckReplicas();
+			//yield return new WaitForSeconds(2.5f);
+			//CheckReplicas();
 		}
 
 		protected override void OnDestroy()
@@ -573,7 +573,8 @@ namespace Game.Entities.Models
 		[field: SerializeField] public InteractionPoint BattlePoint { get; private set; }
 		[field: SerializeField] public InteractionPoint OpportunityPoint { get; private set; }
 
-		protected CharacterAttackFactory attackFactory;
+		protected CombatBase currentCombat;
+		protected CombatFactory combatFactory;
 
 		public bool CombatWith(IDamageable damageable)
 		{
@@ -581,8 +582,11 @@ namespace Game.Entities.Models
 			{
 				if (damageable.BattlePoint.IsInRange(Transform.position))
 				{
+					currentCombat = combatFactory.Create(this, damageable);
+
 					TaskSequence
-						.Append(attackFactory.Create(this, damageable))
+						.Append(currentCombat.Attack)
+						.Append(new TaskWaitAttack(AnimatorController))
 						.Execute();
 
 					return true;
@@ -593,9 +597,12 @@ namespace Game.Entities.Models
 
 					if (isCanReach)
 					{
+						currentCombat = combatFactory.Create(this, damageable);
+
 						TaskSequence
 							.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
-							.Append(attackFactory.Create(this, damageable))
+							.Append(currentCombat.Attack)
+							.Append(new TaskWaitAttack(AnimatorController))
 							.Execute();
 
 						return true;
@@ -606,14 +613,20 @@ namespace Game.Entities.Models
 			{
 				if (damageable.BattlePoint.IsInRange(Transform.position))
 				{
+					currentCombat = combatFactory.Create(this, damageable);
+
 					TaskSequence
-						.Append(attackFactory.Create(this, damageable));
+						.Append(currentCombat.Attack)
+						.Append(new TaskWaitAttack(AnimatorController));
 				}
 				else
 				{
+					currentCombat = combatFactory.Create(this, damageable);
+
 					TaskSequence
 						.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
-						.Append(attackFactory.Create(this, damageable));
+						.Append(currentCombat.Attack)
+						.Append(new TaskWaitAttack(AnimatorController));
 				}
 
 				TaskSequence.Execute();
@@ -634,8 +647,6 @@ namespace Game.Entities.Models
 			};
 		}
 
-		public virtual void ApplyDamage<T>(T value) { }
-
 		public virtual void Die()
 		{
 			Controller.Enable(false);
@@ -645,6 +656,82 @@ namespace Game.Entities.Models
 		protected Vector2 GetDamageFromTable()
 		{
 			return new Vector2(1, 7);
+		}
+	}
+
+	public class CombatBase
+	{
+		protected ICharacterModel initiator;
+		protected IDamageable damageable;
+
+		protected CombatDamageSystem combatDamageSystem;
+
+		public CombatBase(ICharacterModel initiator, IDamageable damageable,
+			CombatDamageSystem combatDamageSystem)
+		{
+			this.initiator = initiator;
+			this.damageable = damageable;
+			this.combatDamageSystem = combatDamageSystem;
+		}
+
+		public virtual void Attack()
+		{
+			initiator.AnimatorController.Attack();
+		}
+
+		public virtual void DealDamage()
+		{
+			combatDamageSystem.DealDamage(initiator.GetDamage(), damageable);
+		}
+
+		public class Factory : PlaceholderFactory<ICharacterModel, IDamageable, CombatBase> { }
+	}
+
+	public class CombatHumanoid : CombatBase
+	{
+		private HumanoidAnimatorController animatorController;
+
+		public CombatHumanoid(ICharacterModel initiator, IDamageable damageable, CombatDamageSystem combatDamageSystem) 
+			: base(initiator, damageable, combatDamageSystem)
+		{
+			animatorController = initiator.AnimatorController as HumanoidAnimatorController;
+		}
+
+		public override void Attack()
+		{
+			animatorController.AttackKick();
+		}
+
+		public override void DealDamage()
+		{
+			combatDamageSystem.DealDamage(initiator.GetDamage(), damageable);
+		}
+
+		public new class Factory : PlaceholderFactory<ICharacterModel, IDamageable, CombatHumanoid> { }
+	}
+
+	public class CombatFactory : PlaceholderFactory<ICharacterModel, IDamageable, CombatBase> { }
+
+	public class CustomCombatFactory : IFactory<ICharacterModel, IDamageable, CombatBase>
+	{
+		private CombatBase.Factory combatFactory;
+		private CombatHumanoid.Factory humanoidCombatFactory;
+
+		public CustomCombatFactory(CombatBase.Factory combatFactory,
+			CombatHumanoid.Factory humanoidCombatFactory)
+		{
+			this.combatFactory = combatFactory;
+			this.humanoidCombatFactory = humanoidCombatFactory;
+		}
+
+		public CombatBase Create(ICharacterModel model, IDamageable damageable)
+		{
+			if(model is HumanoidCharacterModel)
+			{
+				return humanoidCombatFactory.Create(model, damageable);
+			}
+
+			return combatFactory.Create(model, damageable);
 		}
 	}
 }

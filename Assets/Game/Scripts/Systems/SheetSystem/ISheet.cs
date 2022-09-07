@@ -14,7 +14,9 @@ namespace Game.Systems.SheetSystem
         ICharacteristics Characteristics { get; }
         //ITalents
         //abilities
-        //traits 
+        //Skills
+        //Personality Traits
+        //Ancestry?
         IConditions Conditions { get; }
         IInventory Inventory { get; }
 

@@ -6,22 +6,25 @@ using Game.Systems.BattleSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 
+using System;
 using System.Collections;
 
 using UnityEngine;
 using UnityEngine.Events;
 using Zenject;
 
+using Random = UnityEngine.Random;
+
 namespace Game.Systems.AnimatorController
 {
 	public partial class HumanoidAnimatorController : AnimatorController
 	{
-		public UnityAction onAttackLeftHand;
-		public UnityAction onAttackRightHand;
-		public UnityAction onAttackKick;
+		public event AttackTriggerEvent onAttackLeftHand;
+		public event AttackTriggerEvent onAttackRightHand;
+		public event AttackTriggerEvent onAttackKick;
 
-		public UnityAction onDrawWeapon;
-		public UnityAction onSheathWeapon;
+		public event UnityAction onDrawWeapon;
+		public event UnityAction onSheathWeapon;
 
 		protected int isAimingHash;
 
@@ -78,24 +81,31 @@ namespace Game.Systems.AnimatorController
 
 		public override void Attack()
 		{
-			StartCoroutine(AttackProcess());
+			StartCoroutine(AttackProcess(currentWeaponBehavior.Attack));
 		}
+
+		public void AttackKick()
+		{
+			SetBehaviorToUnArmed();
+			StartCoroutine(AttackProcess((currentWeaponBehavior as UnArmedBehavior).Kick));
+		}
+
 		//transform.DOMove(transform.root.position, 0.25f);
 
-		private IEnumerator AttackProcess()
+		private IEnumerator AttackProcess(UnityAction attack)
 		{
 			IsAttackProccess = true;
 
 			yield return EnterIdleAction();
-			yield return Attacking();
+			yield return Attacking(attack);
 			yield return ExitIdleAction();
 
 			IsAttackProccess = false;
 		}
 
-		private IEnumerator Attacking()
+		private IEnumerator Attacking(UnityAction attack)
 		{
-			currentWeaponBehavior.Attack();
+			attack?.Invoke();
 
 			yield return new WaitUntil(() => !IsCurrentNodeName(nodeIdleAction));
 			yield return new WaitUntil(() => IsCurrentNodeName(nodeIdleAction));
@@ -144,15 +154,15 @@ namespace Game.Systems.AnimatorController
 
 
 		#region AnimationEvents
-		private void AttackLeftHand()
+		private void AttackLeftHandEvent()
 		{
 			onAttackLeftHand?.Invoke();
 		}
-		private void AttackRightHand()
+		private void AttackRightHandEvent()
 		{
 			onAttackRightHand?.Invoke();
 		}
-		private void AttackKick()
+		private void AttackKickEvent()
 		{
 			onAttackKick?.Invoke();
 		}
@@ -177,6 +187,11 @@ namespace Game.Systems.AnimatorController
 	#region WeaponBehavior
 	partial class HumanoidAnimatorController
 	{
+		private void SetBehaviorToUnArmed()
+		{
+			currentWeaponBehavior = new UnArmedBehavior(humanoid);
+		}
+
 		private void OnEquipWeaponChanged()
 		{
 			CharacterSheet sheet = humanoid.Sheet as CharacterSheet;
@@ -185,7 +200,7 @@ namespace Game.Systems.AnimatorController
 
 			var weaponMain = sheet.Equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>();
 
-			var lastBehabior = currentWeaponBehavior;
+			var lastBehavior = currentWeaponBehavior;
 
 			if (hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
 			{
@@ -208,9 +223,9 @@ namespace Game.Systems.AnimatorController
 			}
 
 
-			if (lastBehabior != null && lastBehabior != currentWeaponBehavior)
+			if (lastBehavior != null && lastBehavior != currentWeaponBehavior)
 			{
-				lastBehabior.Dispose();
+				lastBehavior.Dispose();
 			}
 
 			if (humanoid.InBattle)
@@ -226,7 +241,7 @@ namespace Game.Systems.AnimatorController
 
 			protected IEquipment equipment;
 			protected Animator animator;
-			protected HumanoidAnimatorController control;
+			protected HumanoidAnimatorController animatorController;
 			protected CharacterOutfit outfit;
 
 			protected IBattlable owner;
@@ -236,8 +251,8 @@ namespace Game.Systems.AnimatorController
 				this.owner = owner;
 				equipment = (owner.Sheet as CharacterSheet).Equipment;
 				outfit = (owner as CharacterModel).Outfit;
-				control = owner.AnimatorController as HumanoidAnimatorController;
-				animator = control.animator;
+				animatorController = owner.AnimatorController as HumanoidAnimatorController;
+				animator = animatorController.animator;
 
 				weaponTypeHash = Animator.StringToHash("WeaponType");
 				attackTypeHash = Animator.StringToHash("AttackType");
@@ -267,8 +282,8 @@ namespace Game.Systems.AnimatorController
 				drawWeaponHash = Animator.StringToHash("DrawWeapon");
 				sheathWeaponHash = Animator.StringToHash("SheathWeapon");
 
-				control.onDrawWeapon += OnWeaponDrawed;
-				control.onSheathWeapon += OnWeaponSheathed;
+				animatorController.onDrawWeapon += OnWeaponDrawed;
+				animatorController.onSheathWeapon += OnWeaponSheathed;
 
 				outfit.Slots.Clear();
 			}
@@ -294,8 +309,8 @@ namespace Game.Systems.AnimatorController
 			{
 				isAnimated = true;
 
-				control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
-				control.SetLayerWeightByName(control.rightArmLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0f);
 
 				animator.SetInteger(drawTypeHash, 1);//left hand
 				animator.SetTrigger(drawWeaponHash);
@@ -304,8 +319,8 @@ namespace Game.Systems.AnimatorController
 			{
 				isAnimated = true;
 
-				control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
-				control.SetLayerWeightByName(control.rightArmLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0f);
 
 				animator.SetInteger(drawTypeHash, 1);//left hand
 				animator.SetTrigger(sheathWeaponHash);
@@ -315,8 +330,8 @@ namespace Game.Systems.AnimatorController
 			{
 				isAnimated = true;
 
-				control.SetLayerWeightByName(control.leftArmLayer, 0f);
-				control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0.7f);
 
 				animator.SetInteger(drawTypeHash, 0);//right hand
 				animator.SetTrigger(drawWeaponHash);
@@ -325,8 +340,8 @@ namespace Game.Systems.AnimatorController
 			{
 				isAnimated = true;
 
-				control.SetLayerWeightByName(control.leftArmLayer, 0f);
-				control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0.7f);
 
 				animator.SetInteger(drawTypeHash, 0);//right hand
 				animator.SetTrigger(sheathWeaponHash);
@@ -336,8 +351,8 @@ namespace Game.Systems.AnimatorController
 			{
 				isAnimated = true;
 
-				control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
-				control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0.7f);
 
 				animator.SetInteger(drawTypeHash, 2);//both hands
 				animator.SetTrigger(drawWeaponHash);
@@ -346,8 +361,8 @@ namespace Game.Systems.AnimatorController
 			{
 				isAnimated = true;
 
-				control.SetLayerWeightByName(control.leftArmLayer, 0.7f);
-				control.SetLayerWeightByName(control.rightArmLayer, 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0.7f);
 
 				animator.SetInteger(drawTypeHash, 2);//both hands
 				animator.SetTrigger(sheathWeaponHash);
@@ -355,33 +370,33 @@ namespace Game.Systems.AnimatorController
 
 			protected void AnimateLeftHand()
 			{
-				control.SetLayerWeightByName(control.leftArmLayer, owner.InBattle ? 0f : 0.7f);
-				control.SetLayerWeightByName(control.leftHandLayer, 1f);
-				control.SetLayerWeightByName(control.rightArmLayer, 0);
-				control.SetLayerWeightByName(control.rightHandLayer, 0);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, owner.InBattle ? 0f : 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.leftHandLayer, 1f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0);
+				animatorController.SetLayerWeightByName(animatorController.rightHandLayer, 0);
 			}
 			protected void AnimateRightHand()
 			{
-				control.SetLayerWeightByName(control.leftArmLayer, 0);
-				control.SetLayerWeightByName(control.leftHandLayer, 0);
-				control.SetLayerWeightByName(control.rightArmLayer, owner.InBattle ? 0f : 0.7f);
-				control.SetLayerWeightByName(control.rightHandLayer, 1f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0);
+				animatorController.SetLayerWeightByName(animatorController.leftHandLayer, 0);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, owner.InBattle ? 0f : 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.rightHandLayer, 1f);
 			}
 			protected void AnimateBothHands()
 			{
-				control.SetLayerWeightByName(control.leftArmLayer, owner.InBattle ? 0f : 0.7f);
-				control.SetLayerWeightByName(control.leftHandLayer, 1f);
-				control.SetLayerWeightByName(control.rightArmLayer, owner.InBattle ? 0f : 0.7f);
-				control.SetLayerWeightByName(control.rightHandLayer, 1f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, owner.InBattle ? 0f : 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.leftHandLayer, 1f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, owner.InBattle ? 0f : 0.7f);
+				animatorController.SetLayerWeightByName(animatorController.rightHandLayer, 1f);
 			}
 
 			public virtual void OnWeaponDrawed() { }
 			public virtual void OnWeaponSheathed()
 			{
-				control.SetLayerWeightByName(control.rightArmLayer, 0f);
-				control.SetLayerWeightByName(control.rightHandLayer, 0f);
-				control.SetLayerWeightByName(control.leftArmLayer, 0f);
-				control.SetLayerWeightByName(control.leftHandLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.rightHandLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.leftHandLayer, 0f);
 			}
 		}
 
@@ -395,10 +410,10 @@ namespace Game.Systems.AnimatorController
 
 			public override void UpdatePose()
 			{
-				control.SetLayerWeightByName(control.leftArmLayer, 0f);
-				control.SetLayerWeightByName(control.leftHandLayer, 0f);
-				control.SetLayerWeightByName(control.rightArmLayer, 0f);
-				control.SetLayerWeightByName(control.rightHandLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.leftArmLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.leftHandLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.rightArmLayer, 0f);
+				animatorController.SetLayerWeightByName(animatorController.rightHandLayer, 0f);
 
 				outfit.Slots.Clear();
 			}
@@ -407,7 +422,14 @@ namespace Game.Systems.AnimatorController
 			{
 				animator.SetInteger(weaponTypeHash, 0);
 				animator.SetInteger(attackTypeHash, Random.Range(0, 3));
-				animator.SetTrigger(control.attackHash);
+				animator.SetTrigger(animatorController.attackHash);
+			}
+
+			public void Kick()
+			{
+				animator.SetInteger(weaponTypeHash, 0);
+				animator.SetInteger(attackTypeHash, 2);//1 - skill
+				animator.SetTrigger(animatorController.attackHash);
 			}
 		}
 
@@ -435,8 +457,8 @@ namespace Game.Systems.AnimatorController
 
 			public override void Dispose()
 			{
-				control.onDrawWeapon -= OnWeaponDrawed;
-				control.onSheathWeapon -= OnWeaponSheathed;
+				animatorController.onDrawWeapon -= OnWeaponDrawed;
+				animatorController.onSheathWeapon -= OnWeaponSheathed;
 			}
 
 
@@ -444,7 +466,7 @@ namespace Game.Systems.AnimatorController
 			{
 				animator.SetInteger(weaponTypeHash, 1);
 				animator.SetInteger(attackTypeHash, Random.Range(0, 5));
-				animator.SetTrigger(control.attackHash);
+				animator.SetTrigger(animatorController.attackHash);
 			}
 			public override void DrawWeapon()
 			{
@@ -538,8 +560,8 @@ namespace Game.Systems.AnimatorController
 
 			public override void Dispose()
 			{
-				control.onDrawWeapon -= OnWeaponDrawed;
-				control.onSheathWeapon -= OnWeaponSheathed;
+				animatorController.onDrawWeapon -= OnWeaponDrawed;
+				animatorController.onSheathWeapon -= OnWeaponSheathed;
 			}
 
 
@@ -547,7 +569,7 @@ namespace Game.Systems.AnimatorController
 			{
 				animator.SetInteger(weaponTypeHash, 1);
 				animator.SetInteger(attackTypeHash, 1);
-				animator.SetTrigger(control.attackHash);
+				animator.SetTrigger(animatorController.attackHash);
 			}
 			public override void DrawWeapon()
 			{
@@ -603,15 +625,15 @@ namespace Game.Systems.AnimatorController
 
 			public override void Dispose()
 			{
-				control.onDrawWeapon -= OnWeaponDrawed;
-				control.onSheathWeapon -= OnWeaponSheathed;
+				animatorController.onDrawWeapon -= OnWeaponDrawed;
+				animatorController.onSheathWeapon -= OnWeaponSheathed;
 			}
 
 			public override void Attack()
 			{
 				animator.SetInteger(weaponTypeHash, 3);
 				animator.SetInteger(attackTypeHash, 0);
-				animator.SetTrigger(control.attackHash);
+				animator.SetTrigger(animatorController.attackHash);
 			}
 			public override void DrawWeapon()
 			{

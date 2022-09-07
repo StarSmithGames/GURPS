@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-	public class PlayerModel : CharacterModel, IFactionable
+	public class PlayerModel : HumanoidCharacterModel, IFactionable
 	{
 		[field: InlineProperty]
 		[field: SerializeField] public Faction Faction { get; private set; }
