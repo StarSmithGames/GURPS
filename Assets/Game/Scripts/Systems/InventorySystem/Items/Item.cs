@@ -10,7 +10,7 @@ using UnityEditor;
 namespace Game.Systems.InventorySystem
 {
 	[System.Serializable]
-	public class Item : ICopyable<Item>
+	public partial class Item : ICopyable<Item>
 	{
 		public UnityAction OnItemChanged;
 
@@ -173,6 +173,8 @@ namespace Game.Systems.InventorySystem
 
 			return $"{data.ItemName}{(data.isStackable ? $" x{CurrentStackSize}" : "")}";
 		}
+
+		private string Title => data?.ItemName ?? "NULL";
 
 #if UNITY_EDITOR
 		public bool isShowFoldout = false;

@@ -21,7 +21,6 @@ namespace Game.Systems
 
 	public static class Alignment
 	{
-
 		/// <summary>
 		/// LawfulGood(-1, 1)		NeutralGood(0, 1)		ChaoticGood(1, 1)
 		/// LawfulNeutral(-1, 0)	TrueNeutral(0, 0)		ChaoticNeutral(1, 0)
@@ -87,7 +86,6 @@ namespace Game.Systems
 			},
 		};
 
-
 		public static AlignmentType ConvertVector2ToAlignment(Vector2 vector)
 		{
 			float minDistance = float.MaxValue;
@@ -115,7 +113,6 @@ namespace Game.Systems
 		{
 			return NineAlignments.Find((x) => x.type == alignment).color;
 		}
-
 
 		public class Data
 		{

@@ -1,6 +1,8 @@
 using Game.Systems.DialogueSystem;
 using Game.Systems.SheetSystem;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 namespace Game.Entities
@@ -8,6 +10,8 @@ namespace Game.Entities
 	[CreateAssetMenu(fileName = "Character", menuName = "Game/Characters/Character")]
 	public class CharacterData : EntityData
 	{
-        public HumanoidInformation information;
+		[PropertyOrder(-1)]
+		[HideLabel]
+		public HumanoidInformation information;
 	}
 }

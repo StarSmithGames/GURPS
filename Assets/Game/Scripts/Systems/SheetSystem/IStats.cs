@@ -66,7 +66,7 @@ namespace Game.Systems.SheetSystem
 
             ActionPoints = new ActionPointsStat(1, 1);
 
-            Lift = new LiftStat(0, settigns.MaxLift);
+            Lift = new LiftStat(0, settigns.LiftMax);
         }
 
         public Stats(Data data)
@@ -128,72 +128,83 @@ namespace Game.Systems.SheetSystem
         }
     }
 
+    [HideLabel]
 	[System.Serializable]
     public class StatsSettigns
     {
         [Min(1)]
         public int level = 1;
-        [Header("Primary")]
+        [HorizontalGroup("Stats", LabelWidth = 100)]
+        [VerticalGroup("Stats/Primary")]
         [RangeStep(0, 20, 1)]
         public float strength = 10;
+        [VerticalGroup("Stats/Primary")]
         [RangeStep(0, 20, 1)]
         public float dexterity = 10;
+        [VerticalGroup("Stats/Primary")]
         [RangeStep(0, 20, 1)]
         public float intelligence = 10;
+        [VerticalGroup("Stats/Primary")]
         [RangeStep(0, 20, 1)]
         public float health = 10;
 
-        [Header("Secondary")]
+        [VerticalGroup("Stats/Secondary")]
         [RangeStep(-50, 50, 1)]
         public float addHitPoints = 0;
+        [VerticalGroup("Stats/Secondary")]
         [RangeStep(-50, 50, 1)]
         public float addFatiguePoints = 0;
+        [VerticalGroup("Stats/Secondary")]
         [RangeStep(-50, 50, 1)]
         public float addMove = 0;
+        [VerticalGroup("Stats/Secondary")]
         [RangeStep(-10, 10, 0.25f)]
         public float addSpeed = 0;
+        [VerticalGroup("Stats/Secondary")]
         [RangeStep(-50, 50, 1)]
         public float addWill = 0;
+        [VerticalGroup("Stats/Secondary")]
         [RangeStep(-50, 50, 1)]
         public float addPerception = 0;
 
-        [PropertySpace]
-        [ReadOnly][ShowInInspector] public float BasicHitPoints => strength;
+        [ShowInInspector]
         [GUIColor("HitPointsColor")]
-        [ReadOnly][ShowInInspector] public float HitPoints => BasicHitPoints + addHitPoints;
+        [FoldoutGroup("Read Only Properties")]
+        public float HitPoints => strength + addHitPoints;
 
-        [PropertySpace]
-        [ReadOnly][ShowInInspector] public float BasicFatiguePoints => health;
+        [ShowInInspector]
         [GUIColor("FatiguePointsColor")]
-        [ReadOnly][ShowInInspector] public float FatiguePoints => BasicFatiguePoints + addFatiguePoints;
+        [FoldoutGroup("Read Only Properties")]
+        public float FatiguePoints => health + addFatiguePoints;
 
-        [PropertySpace]
-        [ReadOnly][ShowInInspector] public float BasicMove => (health + dexterity) / 4f;
+        [ShowInInspector]
         [GUIColor("MoveColor")]
-        [ReadOnly][ShowInInspector] public float Move => (int)(BasicMove + addMove);
+        [FoldoutGroup("Read Only Properties")]
+        public float Move => (int)((health + dexterity) / 4f + addMove);
 
-        [PropertySpace]
-        [ReadOnly][ShowInInspector] public float BasicSpeed => (health + dexterity) / 4f;
+        [ShowInInspector]
         [GUIColor("SpeedColor")]
-        [ReadOnly][ShowInInspector] public float Speed => BasicSpeed + addSpeed;
+        [FoldoutGroup("Read Only Properties")]
+        public float Speed => (int)((health + dexterity) / 4f + addSpeed);
 
-        [PropertySpace]
-        [ReadOnly][ShowInInspector] public float BasicWill => intelligence;
+        [ShowInInspector]
         [GUIColor("WillColor")]
-        [ReadOnly][ShowInInspector] public float Will => BasicWill + addWill;
+        [FoldoutGroup("Read Only Properties")]
+        public float Will => intelligence + addWill;
 
-        [PropertySpace]
-        [ReadOnly][ShowInInspector] public float BasicPerception => intelligence;
+        [ShowInInspector]
         [GUIColor("PerceptionColor")]
-        [ReadOnly][ShowInInspector] public float Perception => BasicPerception + addPerception;
+        [FoldoutGroup("Read Only Properties")]
+        public float Perception => intelligence + addPerception;
 
-        [PropertySpace]
-        [SuffixLabel("kg", true)]
-        [ReadOnly][ShowInInspector] public float BasicLift => (float)Math.Round((strength * strength) / 5f);
-        [SuffixLabel("kg", true)]
-        [ReadOnly][ShowInInspector] public float MaxLift => (float)Math.Round(strength * strength);
+        [ShowInInspector]
+        [GUIColor("PerceptionColor")]
+        [LabelText("Lift Min Max kg")]
+        [FoldoutGroup("Read Only Properties")]
+        public Vector2 Lift => new Vector2(LiftMin, LiftMax);
 
-        [PropertySpace]
+        public float LiftMin => (float)Math.Round((strength * strength) / 5f);
+        public float LiftMax => (float)Math.Round(strength * strength);
 
 
         [Button]
@@ -212,8 +223,8 @@ namespace Game.Systems.SheetSystem
             addPerception = 0;
         }
 
-        private Color HitPointsColor => (((BasicHitPoints * 0.7f) <= HitPoints) && (HitPoints <= Math.Ceiling(BasicHitPoints * 1.3f))) ? Color.white : Color.red;
-        private Color FatiguePointsColor => (((BasicFatiguePoints * 0.7f) <= FatiguePoints) && (FatiguePoints <= Math.Ceiling(BasicFatiguePoints * 1.3f))) ? Color.white : Color.red;
+        private Color HitPointsColor => (((strength * 0.7f) <= HitPoints) && (HitPoints <= Math.Ceiling(strength * 1.3f))) ? Color.white : Color.red;
+        private Color FatiguePointsColor => (((health * 0.7f) <= FatiguePoints) && (FatiguePoints <= Math.Ceiling(health * 1.3f))) ? Color.white : Color.red;
         private Color MoveColor => Move <= 0 ? Color.red : Color.white;
         private Color SpeedColor => Speed <= 0 ? Color.red : Color.white;
         private Color WillColor => Will <= 4 || Will >= 20 ? Color.red : Color.white;

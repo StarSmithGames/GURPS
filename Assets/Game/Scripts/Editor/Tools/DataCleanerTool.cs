@@ -1,7 +1,3 @@
-using Game.Managers.StorageManager;
-
-using I2.Loc.SimpleJSON;
-
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,7 +5,6 @@ using System.Text;
 
 using UnityEditor;
 using UnityEngine;
-using Newtonsoft.Json;
 
 namespace Game.Editor
 {

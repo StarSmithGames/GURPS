@@ -51,7 +51,7 @@ namespace Game.Systems.BattleSystem
             if (sheet == null) return;
 
             Name.text = sheet.Information.Name;
-            Level.text = sheet.Settings.identity != Identity.Lifeless ? $"Level {sheet.Stats.Level}" : "";
+            Level.text = sheet.Settings.info.identity != Identity.Lifeless ? $"Level {sheet.Stats.Level}" : "";
         }
     }
 }

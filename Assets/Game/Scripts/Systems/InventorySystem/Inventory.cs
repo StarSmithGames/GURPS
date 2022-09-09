@@ -134,7 +134,7 @@ namespace Game.Systems.InventorySystem
         //sort by
 
         [HideIf("useRandomItems")]
-        [ListDrawerSettings(ShowIndexLabels = true, ListElementLabelName = "Tittle")]
+        [ListDrawerSettings(ShowIndexLabels = true, ListElementLabelName = "Title")]
         public List<Item> items = new List<Item>();
 
         [ShowIf("useRandomItems")]

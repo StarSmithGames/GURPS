@@ -1,5 +1,7 @@
 using Game.Systems.SheetSystem;
 
+using Sirenix.OdinInspector;
+
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem
@@ -9,6 +11,8 @@ namespace Game.Systems.SheetSystem
 		ICharacteristic<int> Level { get; }
 		ICharacteristic<int> Experience { get; }
 		ICharacteristic<Vector2> Alignment { get; }
+		ICharacteristic<Deity> Deity { get; }
+		ICharacteristic<Handed> Handed { get; }
 	}
 
 	public class Characteristics : ICharacteristics
@@ -16,6 +20,9 @@ namespace Game.Systems.SheetSystem
 		public ICharacteristic<int> Level { get; }
 		public ICharacteristic<int> Experience { get; }
 		public ICharacteristic<Vector2> Alignment { get; }
+		public ICharacteristic<Deity> Deity { get; }
+		public ICharacteristic<Handed> Handed { get; }
+
 
 		public Characteristics(CharacteristicsSettings settings)
 		{
@@ -49,10 +56,30 @@ namespace Game.Systems.SheetSystem
 		}
 	}
 
-
+	[HideLabel]
 	[System.Serializable]
 	public class CharacteristicsSettings
 	{
+		[Title("ALignment", horizontalLine: false, bold: false)]
+		[HideLabel]
+		[EnumToggleButtons]
+		[HorizontalGroup("Split", 300, MarginLeft = 0.25f, MarginRight = 0.25f)]
 		public AlignmentType alignment = AlignmentType.TrueNeutral;
+		public Deity deity = Deity.None;
+		public Handed handed = Handed.Right;
+	}
+
+	public enum Handed
+	{
+		None,
+		Right,
+		Left,
+		Ambidextrous,
+	}
+
+	public enum Deity
+	{
+		None,
+		Cthulhu,
 	}
 }

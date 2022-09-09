@@ -30,25 +30,30 @@ namespace Game.Systems.SheetSystem
             }
 		}
 
+        [TitleGroup("Information")]
+        [HorizontalGroup("Information/Split", LabelWidth = 100)]
+        [VerticalGroup("Information/Split/Left")]
+        [PreviewField(ObjectFieldAlignment.Left, Height = 64)]
+        [HideLabel]
+        public Sprite portrait;
+
+        [VerticalGroup("Information/Split/Right")]
         public string nameId;
 
+        [VerticalGroup("Information/Split/Right")]
         [ListDrawerSettings(ListElementLabelName = "Tittle")]
         [InfoBox("@LocalizationInfo", InfoMessageType.Warning)]
         public List<Localization> localizations = new List<Localization>();
 
+        [VerticalGroup("Information/Split/Right")]
         public Color nameColor = Color.white;
-
-        public bool isHasPortrait = false;
-        [ShowIf("isHasPortrait")]
-        [PreviewField]
-        public Sprite portrait;
 
         public Localization GetLocalization(SystemLanguage language = SystemLanguage.English)
         {
             return localizations.Find((x) => x.language == language) ?? localizations[0];
         }
 
-        public bool IsHasPortrait => isHasPortrait && portrait != null;
+        public bool IsHasPortrait => portrait != null;
 
         private string LocalizationInfo => "Required :\n" + SystemLanguage.English.ToString();
 

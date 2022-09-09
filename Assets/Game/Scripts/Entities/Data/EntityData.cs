@@ -1,5 +1,4 @@
 ﻿using Game.Systems.SheetSystem;
-
 using UnityEngine;
 
 namespace Game.Entities

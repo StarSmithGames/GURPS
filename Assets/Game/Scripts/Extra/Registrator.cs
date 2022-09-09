@@ -11,11 +11,11 @@ public class Registrator<T>
 	}
 
 
-	public void Registrate(T executor)
+	public void Registrate(T register)
 	{
-		if (!registers.Contains(executor))
+		if (!registers.Contains(register))
 		{
-			registers.Add(executor);
+			registers.Add(register);
 		}
 	}
 
