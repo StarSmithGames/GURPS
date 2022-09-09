@@ -1,8 +1,12 @@
 using Game.Systems.AnimatorController;
+using Game.Systems.CombatDamageSystem;
 
 using System.Collections;
+
 using UnityEngine;
 using UnityEngine.Assertions;
+
+using Zenject;
 
 namespace Game.Entities.Models
 {

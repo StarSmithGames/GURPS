@@ -14,7 +14,7 @@ namespace Game.Systems.CombatDamageSystem
 			Container.BindFactory<ICharacterModel, IDamageable, CombatHumanoid, CombatHumanoid.Factory>().NonLazy();
 
 			Container
-				.BindFactory<ICharacterModel, IDamageable, CombatBase, CombatFactory>()
+				.BindFactory<ICharacterModel, IDamageable, ICombat, CombatFactory>()
 				.FromFactory<CustomCombatFactory>()
 				.NonLazy();
 		}

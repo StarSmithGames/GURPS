@@ -1,7 +1,9 @@
 using Cinemachine;
 
+using Game.Entities.Models;
 using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
+using Game.Systems.SheetSystem.Abilities;
 using Game.UI;
 
 using System.Collections.Generic;
@@ -25,6 +27,8 @@ namespace Game
 
 			CombatDamageSystemInstaller.Install(Container);
 
+			BindAbilityActivators();
+
 			BindCameras();
 		}
 
@@ -35,6 +39,17 @@ namespace Game
 
 			Container.BindInterfacesTo<CameraVisionLocation>().AsSingle().NonLazy();
 			Container.BindInterfacesAndSelfTo<CameraController>().AsSingle().NonLazy();
+		}
+
+		private void BindAbilityActivators()
+		{
+			Container.BindFactory<IAbility, InstantActivation, InstantActivation.Factory>().NonLazy();
+			Container.BindFactory<IAbility, CastActivation, CastActivation.Factory>().NonLazy();
+
+			Container
+				.BindFactory<IAbility, IActivation, ActivationFactory>()
+				.FromFactory<CustomActivationFactory>()
+				.NonLazy();
 		}
 	}
 }

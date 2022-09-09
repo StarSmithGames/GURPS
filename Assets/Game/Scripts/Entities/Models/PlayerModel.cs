@@ -12,10 +12,25 @@ namespace Game.Entities.Models
 		[field: InlineProperty]
 		[field: SerializeField] public Faction Faction { get; private set; }
 
+		public CharacterData data;
+
+		public override ICharacter Character
+		{
+			get
+			{
+				if(character == null)
+				{
+					character = new Player(this, data);
+				}
+				return character;
+			}
+		}
+		private ICharacter character;
+
+
 		[Inject]
 		private void Construct(IPlayer player)
 		{
-			Character = player;
 			player.Registrate(this);
 		}
 

@@ -3,6 +3,8 @@ using FlowCanvas.Nodes;
 using Game.Entities;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem.Abilities;
+
 using Sirenix.OdinInspector;
 
 using UnityEngine;
@@ -20,7 +22,7 @@ namespace Game.Systems.SheetSystem
         IInventory Inventory { get; }
 
         Conditions Conditions { get; }
-        Abilities Abilities { get; }
+        Abilities.Abilities Abilities { get; }
         Skills Skills { get; }
         Traits Traits { get; }//?
         Talents Talents { get; }
@@ -42,7 +44,7 @@ namespace Game.Systems.SheetSystem
         public virtual IInventory Inventory { get; private set; }
 
         public virtual Conditions Conditions { get; private set; }
-        public virtual Abilities Abilities { get; private set; }
+        public virtual Abilities.Abilities Abilities { get; private set; }
         public virtual Skills Skills { get; private set; }
         public virtual Traits Traits { get; private set; }
         public virtual Talents Talents { get; private set; }
@@ -62,7 +64,7 @@ namespace Game.Systems.SheetSystem
             Inventory = new Inventory(Settings.inventory);
 
             Conditions = new Conditions();
-            Abilities = new Abilities(sheetSettings.abilities);
+            Abilities = new Abilities.Abilities(sheetSettings.abilities);
             Skills = new Skills();
             Traits = new Traits();
             Talents = new Talents();

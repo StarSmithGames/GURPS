@@ -9,6 +9,8 @@ using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Abilities;
+
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -41,7 +43,7 @@ namespace Game.Entities.Models
 		public float CharacterRange => equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>().weaponRange ?? 0f;
 		public bool IsWithRangedWeapon { get; private set; }
 
-		public ICharacter Character { get; protected set; }
+		public virtual ICharacter Character { get; }
 		public ISheet Sheet => Character.Sheet;
 
 		public CharacterOutfit Outfit { get; private set; }
@@ -573,8 +575,8 @@ namespace Game.Entities.Models
 		[field: SerializeField] public InteractionPoint BattlePoint { get; private set; }
 		[field: SerializeField] public InteractionPoint OpportunityPoint { get; private set; }
 
-		protected CombatBase currentCombat;
 		protected CombatFactory combatFactory;
+		protected ICombat currentCombat;
 
 		public bool CombatWith(IDamageable damageable)
 		{
@@ -585,7 +587,7 @@ namespace Game.Entities.Models
 					currentCombat = combatFactory.Create(this, damageable);
 
 					TaskSequence
-						.Append(currentCombat.Attack)
+						.Append(currentCombat.AttackAnimation)
 						.Append(new TaskWaitAttack(AnimatorController))
 						.Execute();
 
@@ -601,7 +603,7 @@ namespace Game.Entities.Models
 
 						TaskSequence
 							.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
-							.Append(currentCombat.Attack)
+							.Append(currentCombat.AttackAnimation)
 							.Append(new TaskWaitAttack(AnimatorController))
 							.Execute();
 
@@ -616,7 +618,7 @@ namespace Game.Entities.Models
 					currentCombat = combatFactory.Create(this, damageable);
 
 					TaskSequence
-						.Append(currentCombat.Attack)
+						.Append(currentCombat.AttackAnimation)
 						.Append(new TaskWaitAttack(AnimatorController));
 				}
 				else
@@ -625,7 +627,7 @@ namespace Game.Entities.Models
 
 					TaskSequence
 						.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
-						.Append(currentCombat.Attack)
+						.Append(currentCombat.AttackAnimation)
 						.Append(new TaskWaitAttack(AnimatorController));
 				}
 
@@ -659,79 +661,9 @@ namespace Game.Entities.Models
 		}
 	}
 
-	public class CombatBase
+	//Providers
+	partial class CharacterModel
 	{
-		protected ICharacterModel initiator;
-		protected IDamageable damageable;
 
-		protected CombatDamageSystem combatDamageSystem;
-
-		public CombatBase(ICharacterModel initiator, IDamageable damageable,
-			CombatDamageSystem combatDamageSystem)
-		{
-			this.initiator = initiator;
-			this.damageable = damageable;
-			this.combatDamageSystem = combatDamageSystem;
-		}
-
-		public virtual void Attack()
-		{
-			initiator.AnimatorController.Attack();
-		}
-
-		public virtual void DealDamage()
-		{
-			combatDamageSystem.DealDamage(initiator.GetDamage(), damageable);
-		}
-
-		public class Factory : PlaceholderFactory<ICharacterModel, IDamageable, CombatBase> { }
-	}
-
-	public class CombatHumanoid : CombatBase
-	{
-		private HumanoidAnimatorController animatorController;
-
-		public CombatHumanoid(ICharacterModel initiator, IDamageable damageable, CombatDamageSystem combatDamageSystem) 
-			: base(initiator, damageable, combatDamageSystem)
-		{
-			animatorController = initiator.AnimatorController as HumanoidAnimatorController;
-		}
-
-		public override void Attack()
-		{
-			animatorController.AttackKick();
-		}
-
-		public override void DealDamage()
-		{
-			combatDamageSystem.DealDamage(initiator.GetDamage(), damageable);
-		}
-
-		public new class Factory : PlaceholderFactory<ICharacterModel, IDamageable, CombatHumanoid> { }
-	}
-
-	public class CombatFactory : PlaceholderFactory<ICharacterModel, IDamageable, CombatBase> { }
-
-	public class CustomCombatFactory : IFactory<ICharacterModel, IDamageable, CombatBase>
-	{
-		private CombatBase.Factory combatFactory;
-		private CombatHumanoid.Factory humanoidCombatFactory;
-
-		public CustomCombatFactory(CombatBase.Factory combatFactory,
-			CombatHumanoid.Factory humanoidCombatFactory)
-		{
-			this.combatFactory = combatFactory;
-			this.humanoidCombatFactory = humanoidCombatFactory;
-		}
-
-		public CombatBase Create(ICharacterModel model, IDamageable damageable)
-		{
-			if(model is HumanoidCharacterModel)
-			{
-				return humanoidCombatFactory.Create(model, damageable);
-			}
-
-			return combatFactory.Create(model, damageable);
-		}
 	}
 }

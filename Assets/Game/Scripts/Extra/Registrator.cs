@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using UnityEngine.Events;
+
 public class Registrator<T>
 {
+	public event UnityAction onCollectionChanged;
+
+
 	public List<T> registers;
 
 	public Registrator()
@@ -11,21 +16,26 @@ public class Registrator<T>
 	}
 
 
-	public void Registrate(T register)
+	public virtual void Registrate(T register)
 	{
 		if (!registers.Contains(register))
 		{
 			registers.Add(register);
+
+			onCollectionChanged?.Invoke();
 		}
 	}
 
-	public void UnRegistrate(T register)
+	public virtual void UnRegistrate(T register)
 	{
 		if (registers.Contains(register))
 		{
 			registers.Remove(register);
+
+			onCollectionChanged?.Invoke();
 		}
 	}
+
 
 	public REGISTR GetAs<REGISTR>() where REGISTR : class, T
 	{
@@ -45,5 +55,11 @@ public class Registrator<T>
 	public bool Contains<REGISTR>() where REGISTR : T
 	{
 		return registers.OfType<REGISTR>().Any();
+	}
+
+	public bool Contains<REGISTR>(out REGISTR registr) where REGISTR : T
+	{
+		registr = registers.OfType<REGISTR>().FirstOrDefault();
+		return registr != null;
 	}
 }

@@ -1,5 +1,7 @@
 using Game.Entities;
 using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Abilities;
+
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
@@ -236,5 +238,12 @@ namespace Game.Editor
 
             return true;
 		}
-	}
+
+        //private static IEnumerable GetScriptableObject()
+        //{
+        //	return UnityEditor.AssetDatabase.FindAssets("t: ScriptableObject")
+        //		.Select((x) => UnityEditor.AssetDatabase.GUIDToAssetPath(x))
+        //		.Select((x) => new ValueDropdownItem(x, UnityEditor.AssetDatabase.LoadAssetAtPath<ScriptableObject>(x)));
+        //}
+    }
 }

@@ -12,6 +12,20 @@ namespace Game.Entities.Models
 	{
 		public NPCData data;
 
+		public override ICharacter Character
+		{
+			get
+			{
+				if(character == null)
+				{
+					character = new NPC(this, data);
+				}
+
+				return character;
+			}
+		}
+		private ICharacter character;
+
 		protected FieldOfView fov;
 		protected BattleSystem battleSystem;
 
@@ -51,13 +65,6 @@ namespace Game.Entities.Models
 			//	}
 			//}
 		//}
-
-		protected override void InitializePersonality()
-		{
-			Character = new NPC(this, data);
-		}
-
-
 
 		protected override void ResetMarkers()
 		{

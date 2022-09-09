@@ -14,6 +14,19 @@ namespace Game.Entities.Models
     {
 		public CompanionData data;
 
+		public override ICharacter Character
+		{
+			get
+			{
+				if(character == null)
+				{
+					character = new Companion(this, data);
+				}
+				return character;
+			}
+		}
+		private ICharacter character;
+
 		private PartyManager partyManager;
 
 		[Inject]
@@ -24,8 +37,6 @@ namespace Game.Entities.Models
 
 		protected override void InitializePersonality()
 		{
-			Character = new Companion(this, data);
-
 			if (partyManager.PlayerParty.ContainsByData(data))
 			{
 				DestroyImmediate(gameObject);

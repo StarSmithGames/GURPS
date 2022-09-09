@@ -1,19 +1,17 @@
 using System.Collections.Generic;
-using System.Collections;
 
 using Sirenix.OdinInspector;
-using System.Linq;
-using UnityEngine;
-using Sirenix.Utilities;
 
-namespace Game.Systems.SheetSystem
+namespace Game.Systems.SheetSystem.Abilities
 {
 	public class Abilities : Registrator<IAbility>
 	{
-
 		public Abilities(AbilitiesSettings settings)
 		{
-
+			for (int i = 0; i < settings.baseAbilities.Count; i++)
+			{
+				Registrate(settings.baseAbilities[i].Copy());
+			}
 		}
 	}
 
@@ -28,12 +26,5 @@ namespace Game.Systems.SheetSystem
 		[ListDrawerSettings(Expanded = true)]
 		[VerticalGroup("Abilities/Right")]
 		public List<AbilityData> abilities = new List<AbilityData>();
-
-		//private static IEnumerable GetScriptableObject()
-		//{
-		//	return UnityEditor.AssetDatabase.FindAssets("t: ScriptableObject")
-		//		.Select((x) => UnityEditor.AssetDatabase.GUIDToAssetPath(x))
-		//		.Select((x) => new ValueDropdownItem(x, UnityEditor.AssetDatabase.LoadAssetAtPath<ScriptableObject>(x)));
-		//}
 	}
 }

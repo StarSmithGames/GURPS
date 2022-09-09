@@ -11,6 +11,7 @@ using Game.Systems.InteractionSystem;
 using Game.Entities;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.CommandCenter;
+using Game.Systems.SheetSystem.Abilities;
 
 namespace Game.Systems.ContextMenu
 {
@@ -45,7 +46,10 @@ namespace Game.Systems.ContextMenu
 
 			if (observable is IDamageable damegeable && !isSelf)
 			{
-				commands.Add(new CommandAttack(self, damegeable) { name = "Attack", type = self.InBattle ? ContextType.Normal : ContextType.Negative });
+				if (self.Sheet.Abilities.Contains<AttackAbility>(out var ability))
+				{
+					commands.Add(new CommandAttack(self, damegeable) { name = ability.Data.abilityName, type = self.InBattle ? ContextType.Normal : ContextType.Negative });
+				}
 			}
 
 			if (observable is IActor actor && !isSelf)

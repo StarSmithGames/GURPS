@@ -118,7 +118,7 @@ namespace Game.Managers.PartyManager
 
 		public bool ContainsByData(CompanionData data)
 		{
-			return Characters.Any((x) => (x is ICompanion) ? (x as ICompanion).Data == data : false);
+			return false;//Characters.Any((x) => (x is ICompanion) ? x. == data : false);
 		}
 	}
 }

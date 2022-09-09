@@ -344,8 +344,7 @@ MonoBehaviour:
     abilities:
       baseAbilities:
       - {fileID: 11400000, guid: 7be1af33b58e994498a0c53de84c2689, type: 2}
-      abilities:
-      - {fileID: 11400000, guid: f9bf97253c6f0e84f92bfa961b608ef0, type: 2}
+      abilities: []
     isImmortal: 0
   information:
     portrait: {fileID: 21300000, guid: 3f80cbec08daddb44bb5316bd40a3414, type: 3}

@@ -2,10 +2,9 @@
 
 using UnityEngine;
 
-namespace Game.Systems.SheetSystem
+namespace Game.Systems.SheetSystem.Abilities
 {
-	[CreateAssetMenu(fileName = "AbilityData", menuName = "Game/Sheet/Ability")]
-	public class AbilityData : ScriptableObject
+	public abstract class AbilityData : ScriptableObject, ICopyable<IAbility>
 	{
 		public bool isHasIcon = true;
 		[HideLabel]
@@ -15,7 +14,10 @@ namespace Game.Systems.SheetSystem
 
 		public string abilityName;
 		public string description;
-		public Requirements requirements;
+
+		public ActivationType activation;
+
+		public abstract IAbility Copy();
 	}
 
 	[System.Serializable]
