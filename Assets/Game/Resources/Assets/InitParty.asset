@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5466d87996dafa84aa8e0ba2ebc8d805, type: 3}
   m_Name: InitParty
   m_EditorClassIdentifier: 
+  characters: []
