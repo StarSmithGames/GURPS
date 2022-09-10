@@ -32,8 +32,6 @@ namespace Game
 
 			BindSaveLoad();
 
-			//Container.BindInterfacesTo<Player>().AsSingle();//rm
-
 			GameManagerInstaller.Install(Container);
 			PartyManagerInstaller.Install(Container);
 

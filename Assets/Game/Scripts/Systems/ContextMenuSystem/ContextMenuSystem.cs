@@ -22,14 +22,12 @@ namespace Game.Systems.ContextMenu
 		private UISubCanvas subCanvas;
 		private PartyManager partyManager;
 		private GameManager gameManager;
-		private IPlayer player;
 
-		public ContextMenuSystem(UISubCanvas subCanvas, PartyManager partyManager, GameManager gameManager, IPlayer player)
+		public ContextMenuSystem(UISubCanvas subCanvas, PartyManager partyManager, GameManager gameManager)
 		{
 			this.subCanvas = subCanvas;
 			this.partyManager = partyManager;
 			this.gameManager = gameManager;
-			this.player = player;
 		}
 
 		public void SetTarget(IObservable observable)
@@ -85,7 +83,7 @@ namespace Game.Systems.ContextMenu
 			}
 			else
 			{
-				IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model : player.RTSModel as IInteractable;
+				IInteractable interactable = partyManager.PlayerParty.LeaderParty.Model;
 				commands.Add(new CommandInteract(interactable, container) { name = "Open" });
 			}
 
@@ -96,7 +94,7 @@ namespace Game.Systems.ContextMenu
 		{
 			List<ContextCommand> commands = new List<ContextCommand>();
 
-			IInteractable interactable = gameManager.CurrentGameLocation == GameLocation.Location ? partyManager.PlayerParty.LeaderParty.Model : player.RTSModel as IInteractable;
+			IInteractable interactable = partyManager.PlayerParty.LeaderParty.Model;
 			commands.Add(new CommandInteract(interactable, wayPoint) { name = "GoTo" });
 
 			return commands;

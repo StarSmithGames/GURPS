@@ -19,7 +19,7 @@ namespace Game.Systems.SheetSystem.Abilities
 
 		public void Initialize()
 		{
-			abilities.onCollectionChanged += OnAbilitiesChanged;
+			//abilities.onCollectionChanged += OnAbilitiesChanged;
 		}
 
 		public void Dispose()

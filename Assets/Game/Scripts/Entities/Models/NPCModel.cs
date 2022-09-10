@@ -10,7 +10,7 @@ namespace Game.Entities.Models
 
 	public class NPCModel : CharacterModel, INPCModel
 	{
-		public NPCData data;
+		public NonPlayableCharacterData data;
 
 		public override ICharacter Character
 		{
@@ -18,7 +18,7 @@ namespace Game.Entities.Models
 			{
 				if(character == null)
 				{
-					character = new NPC(this, data);
+					character = new NonPlayableCharacter(this, data);
 				}
 
 				return character;

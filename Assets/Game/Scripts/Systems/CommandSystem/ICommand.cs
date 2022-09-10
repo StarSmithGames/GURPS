@@ -261,9 +261,9 @@ namespace Game.Systems.CommandCenter
 
 	public class CommandAddCompanionInPlayerParty : IPartyManagerCommand
 	{
-		private ICompanion companion;
+		private PlayableCharacter companion;
 
-		public CommandAddCompanionInPlayerParty(ICompanion companion)
+		public CommandAddCompanionInPlayerParty(PlayableCharacter companion)
 		{
 			this.companion = companion;
 		}

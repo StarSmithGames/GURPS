@@ -20,7 +20,7 @@ namespace Game.Entities.Models
 			{
 				if(character == null)
 				{
-					character = new Player(this, data);
+					character = new PlayableCharacter(this, data);
 				}
 				return character;
 			}
@@ -29,15 +29,9 @@ namespace Game.Entities.Models
 
 
 		[Inject]
-		private void Construct(IPlayer player)
+		private void Construct()
 		{
-			player.Registrate(this);
-		}
 
-		protected override void OnDestroy()
-		{
-			(Character as IPlayer).UnRegistrate(this);
-			base.OnDestroy();
 		}
 
 		protected override void CheckReplicas() { }

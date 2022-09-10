@@ -660,10 +660,4 @@ namespace Game.Entities.Models
 			return new Vector2(1, 7);
 		}
 	}
-
-	//Providers
-	partial class CharacterModel
-	{
-
-	}
 }

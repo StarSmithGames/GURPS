@@ -20,10 +20,10 @@ namespace Game.Systems.DialogueSystem.Nodes
 	public class PartyAddCompanionCommand : CommandActionTask
 	{
 		public bool isSelf = true;
-		public CompanionData data;
+		public PlayableCharacterData data;
 
 		private ICommandExecutor<IPartyManagerCommand> executor;
-		private ICompanion companion;
+		private PlayableCharacter companion;
 		//var controller = ownerSystemAgent as DialogueTreeController;
 
 		public override void Initialize()
@@ -39,7 +39,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 					var model = (node.FinalActor as ICharacterModel);
 					Assert.IsNotNull(model, "Party Add Companion model == null");
 
-					companion = model.Character as ICompanion;
+					companion = model.Character as PlayableCharacter;
 					Assert.IsNotNull(companion, "Party Add Companion companion == null");
 
 					executor = CommandCenter.CommandCenter.Instance.Registrator.GetAs<ICommandExecutor<IPartyManagerCommand>>();
@@ -66,7 +66,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 
 			if (!isSelf)
 			{
-				data = (CompanionData)EditorGUILayout.ObjectField("Data", data, typeof(CompanionData), true);
+				data = (PlayableCharacterData)EditorGUILayout.ObjectField("Data", data, typeof(PlayableCharacterData), true);
 			}
 		}
 #endif

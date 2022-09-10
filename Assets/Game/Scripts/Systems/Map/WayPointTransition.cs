@@ -48,14 +48,12 @@ namespace Game.Map
 		[field: SerializeField] public Transitions Out { get; private set; }
 
 		private UIGlobalCanvas globalCanvas;
-		private IPlayer player;
 		private GameManager gameManager;
 
 		[Inject]
-		private void Construct(UIGlobalCanvas globalCanvas, IPlayer player, GameManager gameManager)
+		private void Construct(UIGlobalCanvas globalCanvas, GameManager gameManager)
 		{
 			this.globalCanvas = globalCanvas;
-			this.player = player;
 			this.gameManager = gameManager;
 		}
 
@@ -76,13 +74,13 @@ namespace Game.Map
 			//save map location before load scene
 			if (gameManager.CurrentGameLocation == GameLocation.Map)
 			{
-				var playerTransform = player.Transform;
-				FastStorage.LastTransformOnMap = new DefaultTransform()
-				{
-					position = playerTransform.position,
-					rotation = playerTransform.rotation,
-					scale = playerTransform.localScale,
-				};
+				//var playerTransform = player.Transform;
+				//FastStorage.LastTransformOnMap = new DefaultTransform()
+				//{
+				//	position = playerTransform.position,
+				//	rotation = playerTransform.rotation,
+				//	scale = playerTransform.localScale,
+				//};
 			}
 
 			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);

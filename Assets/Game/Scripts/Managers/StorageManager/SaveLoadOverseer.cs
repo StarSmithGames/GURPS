@@ -26,7 +26,6 @@ namespace Game.Managers.StorageManager
 		private DiContainer container;
 		private ISaveLoad saveLoad;
 		private GameManager.GameManager gameManager;
-		private IPlayer player;
 		private CharacterManager.CharacterManager characterManager;
 		private PartyManager.PartyManager partyManager;
 		private SceneManager.SceneManager sceneManager;
@@ -34,7 +33,6 @@ namespace Game.Managers.StorageManager
 
 		public SaveLoadOverseer(SignalBus signalBus, DiContainer container, ISaveLoad saveLoad,
 			GameManager.GameManager gameManager,
-			IPlayer player,
 			CharacterManager.CharacterManager characterManager,
 			PartyManager.PartyManager partyManager,
 			SceneManager.SceneManager sceneManager,
@@ -44,7 +42,6 @@ namespace Game.Managers.StorageManager
 			this.container = container;
 			this.saveLoad = saveLoad;
 			this.gameManager = gameManager;
-			this.player = player;
 			this.characterManager = characterManager;
 			this.partyManager = partyManager;
 			this.sceneManager = sceneManager;
@@ -127,13 +124,13 @@ namespace Game.Managers.StorageManager
 
 			if (gameManager.CurrentGameLocation == GameManager.GameLocation.Map)
 			{
-				var playerRTS = player.RTSModel.transform;
-				transformOnMap = new DefaultTransform()
-				{
-					position = playerRTS.position,
-					rotation = playerRTS.rotation,
-					scale = playerRTS.localScale,
-				};
+				//var playerRTS = player.RTSModel.transform;
+				//transformOnMap = new DefaultTransform()
+				//{
+				//	position = playerRTS.position,
+				//	rotation = playerRTS.rotation,
+				//	scale = playerRTS.localScale,
+				//};
 			}
 			else if (gameManager.CurrentGameLocation == GameManager.GameLocation.Location)
 			{

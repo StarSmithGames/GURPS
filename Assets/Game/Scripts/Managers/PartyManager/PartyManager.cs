@@ -17,10 +17,7 @@ namespace Game.Managers.PartyManager
 			{
 				if(playerParty == null)
 				{
-					Assert.IsNotNull(signalBus, "PartyManager lost component");
-					Assert.IsNotNull(player, "PartyManager lost component");
-
-					playerParty = new PlayerParty(signalBus, player);
+					//playerParty = new PlayerParty(signalBus, player);
 				}
 
 				return playerParty;
@@ -29,18 +26,16 @@ namespace Game.Managers.PartyManager
 		private PlayerParty playerParty = null;
 
 		private SignalBus signalBus;
-		private IPlayer player;
 
-		public PartyManager(SignalBus signalBus, IPlayer player)
+		public PartyManager(SignalBus signalBus)
 		{
 			this.signalBus = signalBus;
-			this.player = player;
 		}
 
 		public void Initialize()
 		{
-			playerParty = new PlayerParty(signalBus, player);
-			playerParty.AddCharacter(player);
+			//playerParty = new PlayerParty(signalBus, player);
+			//playerParty.AddCharacter(player);
 		}
 	}
 
@@ -86,10 +81,10 @@ namespace Game.Managers.PartyManager
 		public ICharacter LeaderParty { get; private set; }
 		public int LeaderPartyIndex => Characters.IndexOf(LeaderParty);
 
-		public PlayerParty(SignalBus signalBus, IPlayer leader) : base(signalBus)
+		public PlayerParty(SignalBus signalBus) : base(signalBus)
 		{
 			this.signalBus = signalBus;
-			SetLeader(leader);
+			//SetLeader(leader);
 		}
 
 		public bool SetLeader(ICharacter character)
@@ -116,7 +111,7 @@ namespace Game.Managers.PartyManager
 		}
 
 
-		public bool ContainsByData(CompanionData data)
+		public bool ContainsByData(PlayableCharacterData data)
 		{
 			return false;//Characters.Any((x) => (x is ICompanion) ? x. == data : false);
 		}

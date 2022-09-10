@@ -86,8 +86,6 @@ namespace Game.Managers.StorageManager
 
 	public static class FastStorage
 	{
-		public static IPlayer Player;
-
 		public static DefaultTransform LastTransformOnMap;
 
 		public static void Clear()

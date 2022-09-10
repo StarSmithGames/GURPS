@@ -29,7 +29,7 @@ namespace Game.Managers.CharacterManager
 	public class CharacterDatabase
 	{
 		public CharacterData player;
-		public List<CompanionData> companions = new List<CompanionData>();
-		public List<NPCData> npc = new List<NPCData>();
+		public List<PlayableCharacterData> companions = new List<PlayableCharacterData>();
+		public List<NonPlayableCharacterData> npc = new List<NonPlayableCharacterData>();
 	}
 }

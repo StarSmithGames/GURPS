@@ -1,16 +1,37 @@
 using Game.Entities.Models;
-
-using Zenject;
+using Game.Systems.SheetSystem;
 
 namespace Game.Entities
 {
-	public interface IEntity
+	public interface IEntity<MODEL> where MODEL : IEntityModel
 	{
-		IEntityModel Model { get; }
+		MODEL Model { get; }
 	}
 
-	public abstract class Entity : IEntity
+	public interface ICharacter : IEntity<ICharacterModel>, ISheetable { }
+
+	public abstract class Character : ICharacter
 	{
-		public virtual IEntityModel Model { get; protected set; }
+		public virtual ISheet Sheet { get; protected set; }
+		public virtual ICharacterModel Model { get; protected set; }
+
+		public Character(ICharacterModel model, CharacterData data)
+		{
+			Sheet = new CharacterSheet(data);
+			Model = model;
+		}
+	}
+
+	/// <summary>
+	/// NPC
+	/// </summary>
+	public class NonPlayableCharacter : Character
+	{
+		public NonPlayableCharacter(ICharacterModel model, CharacterData data) : base(model, data) { }
+	}
+
+	public class PlayableCharacter : Character
+	{
+		public PlayableCharacter(ICharacterModel model, CharacterData data) : base(model, data) { }
 	}
 }

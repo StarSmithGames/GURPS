@@ -12,7 +12,7 @@ namespace Game.Entities.Models
 
     public class CompanionModel : CharacterModel, ICompanionModel
     {
-		public CompanionData data;
+		public PlayableCharacterData data;
 
 		public override ICharacter Character
 		{
@@ -20,7 +20,7 @@ namespace Game.Entities.Models
 			{
 				if(character == null)
 				{
-					character = new Companion(this, data);
+					character = new PlayableCharacter(this, data);
 				}
 				return character;
 			}
