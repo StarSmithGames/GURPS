@@ -1,0 +1,178 @@
+using Game.Entities;
+using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Abilities;
+
+using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Demos.RPGEditor;
+using Sirenix.OdinInspector.Editor;
+using Sirenix.Utilities;
+using Sirenix.Utilities.Editor;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using UnityEditor;
+using UnityEditor.Experimental.GraphView;
+
+using UnityEngine;
+using UnityEngine.Assertions;
+
+namespace Game.Editor
+{
+	public class CreatorTool : OdinMenuEditorWindow
+    {
+        private static CreatorTool Window;
+
+        private static string CharactersPath = "Assets/Game/Resources/Assets/Sheet/Characters";
+        private static string ModelsPath = "Assets/Game/Resources/Assets/Sheet/Models";
+
+        private Texture2D trash;
+
+        private IEnumerable<OdinMenuItem> treeMenu;
+
+        [MenuItem("Tools/Creator", priority = 1)]
+        public static void OpenWindow()
+        {
+            //Window
+            Window = GetWindow<CreatorTool>(title: "Creator", focus: true);
+            //window.maxSize = new Vector2(250, 120);
+            Window.minSize = new Vector2(800, 500);
+            Window.position = GUIHelper.GetEditorWindowRect().AlignCenter(800, 500);
+            Window.ShowUtility();
+        }
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            
+            trash = (EditorGUIUtility.Load("Trash.png") as Texture2D);
+        }
+
+        protected override OdinMenuTree BuildMenuTree()
+        {
+            var tree = new OdinMenuTree();
+
+            Database.Instance.UpdateCharacterOverview();
+            Database.Instance.UpdateModelOverview();
+            tree.Add("Characters", new CharacterDataTable(Database.Instance.allCharacters));
+			tree.Add("Models", new ModelDataTable(Database.Instance.allModels));
+			tree.Add("Models/Containers", new ContainerDataTable(Database.Instance.allContainers));
+
+            treeMenu = tree.AddAllAssetsAtPath("Characters", CharactersPath, typeof(CharacterData), true);
+            treeMenu = tree.AddAllAssetsAtPath("Models", ModelsPath, typeof(ModelData), true);
+            treeMenu.SortMenuItemsByName();
+
+            foreach (var item in treeMenu)
+            {
+				item.OnRightClick = (menuItem) => EditorGUIUtility.PingObject(menuItem.Value as ScriptableObject);
+            }
+
+            tree.MarkDirty();
+
+            return tree;
+        }
+
+        protected override void OnBeginDrawEditors()
+        {
+            var selected = this.MenuTree.Selection.FirstOrDefault();
+            var toolbarHeight = this.MenuTree.Config.SearchToolbarHeight;
+
+            // Draws a toolbar with the name of the currently selected menu item.
+            SirenixEditorGUI.BeginHorizontalToolbar(toolbarHeight);
+            {
+                if (selected != null)
+                {
+                    GUILayout.Label(selected.Name);
+                }
+
+                if (SirenixEditorGUI.ToolbarButton(new GUIContent("Refresh")))
+				{
+                    RefreshButton();
+                }
+
+                if(GUILayout.Button("Create Entity", EditorStyles.popup))
+				{
+                    CreateCharacterButton();
+                }
+
+
+				if (selected?.Value is EntityData data)
+                {
+                    if (SirenixEditorGUI.ToolbarButton(new GUIContent("Delete", trash)))
+                    {
+                        var path = AssetDatabase.GetAssetPath(data);
+                        AssetDatabase.DeleteAsset(path);
+                    }
+                }
+            }
+            SirenixEditorGUI.EndHorizontalToolbar();
+        }
+
+        private void CreateCharacterButton()
+		{
+            SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)), new SearchProvider(Search.EntitiesCreation, (x) =>
+			{
+                if(x is Type t)
+				{
+                    if (t == typeof(PlayableCharacterData))
+                    {
+                        ShowDialogue<PlayableCharacterData>();
+                    }
+                    else if (t == typeof(NonPlayableCharacterData))
+                    {
+                        ShowDialogue<NonPlayableCharacterData>();
+                    }
+                    else if (t == typeof(ModelData))
+                    {
+                        ShowDialogue<ModelData>();
+					}
+					else
+					{
+                        Debug.LogError($"Can't create type: {t}");
+					}
+				}
+            }));
+        }
+
+        private void RefreshButton()
+		{
+            treeMenu.ForEach((x) =>
+            {
+                if (x.Value is EntityData data)
+                {
+                    RefreshData(data);
+                }
+            });
+
+            AssetDatabase.SaveAssets();
+        }
+
+        private void RefreshData(EntityData data)
+		{
+            var baseAbilityies = data.sheet.abilities.baseAbilities;
+            //if(data.sheet.abilities.baseAbilities.Count == 0)
+            {
+                baseAbilityies.Clear();
+                baseAbilityies.AddRange(GetAbilities().Where((x) => x.name.StartsWith("Base")).OrderBy((x) => x.name));
+            }
+        }
+
+        private void ShowDialogue<T>() where T : EntityData
+        {
+            Sirenix.OdinInspector.Demos.RPGEditor.ScriptableObjectCreator.ShowDialog<T>(CharactersPath, obj =>
+            {
+                base.TrySelectMenuItemWithObject(obj); // Selects the newly created item in the editor
+
+                RefreshData(obj);
+            });
+        }
+
+        public static AbilityData[] GetAbilities()
+        {
+            return AssetDatabase.FindAssets("t: AbilityData")
+                .Select((x) => AssetDatabase.GUIDToAssetPath(x))
+                .Select((x) => AssetDatabase.LoadAssetAtPath<AbilityData>(x)).ToArray();
+        }
+    }
+}

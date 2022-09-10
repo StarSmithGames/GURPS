@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5466d87996dafa84aa8e0ba2ebc8d805, type: 3}
-  m_Name: InitParty
+  m_Script: {fileID: 11500000, guid: 3d991b2ef8847e04f81f0ea9c8052769, type: 3}
+  m_Name: Database
   m_EditorClassIdentifier: 
-  characters:
+  allCharacters:
+  - {fileID: 11400000, guid: 4b4f6b172b0188c418c94fcc03e43afc, type: 2}
+  - {fileID: 11400000, guid: cfb8e78f85231eb4fab2bf87d164e5fb, type: 2}
+  - {fileID: 11400000, guid: 3d0965b4c2f5ded48a4313efa89b19ea, type: 2}
   - {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}

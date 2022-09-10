@@ -11,7 +11,13 @@ namespace Game.Managers.PartyManager
 	[CreateAssetMenu(fileName = "PartyData", menuName = "Game/Party")]
 	public class PartyData : ScriptableObject
 	{
-		[TableList(AlwaysExpanded = true, ShowIndexLabels = true)]
+		[TableList()]
 		public List<PlayableCharacterData> characters = new List<PlayableCharacterData>();
+
+		[Button]
+		private void TryGet()
+		{
+			Debug.LogError(Database.Instance != null);
+		}
 	}
 }
