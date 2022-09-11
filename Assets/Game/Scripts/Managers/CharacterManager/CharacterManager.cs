@@ -1,39 +1,23 @@
 using Game.Entities;
-using Game.Entities.Models;
-
-using System;
-using System.Collections.Generic;
-using Zenject;
 
 namespace Game.Managers.CharacterManager
 {
 	public class CharacterManager
 	{
-		private List<ICharacterModel> characters = new List<ICharacterModel>();
+		public ICharacter Player { get; private set; }
 
-		private SignalBus signalBus;
-		private GameManager.GameManager gameManager;
+		private PlayableCharacter.Factory pcFactory;
+		private NonPlayableCharacter.Factory npcFactory;
 
-		public CharacterManager(SignalBus signalBus, GameManager.GameManager gameManager)
+		public CharacterManager(PlayableCharacter.Factory pcFactory, NonPlayableCharacter.Factory npcFactory)
 		{
-			this.signalBus = signalBus;
-			this.gameManager = gameManager;
+			this.pcFactory = pcFactory;
+			this.npcFactory = npcFactory;
 		}
 
-		public void Registrate(ICharacterModel character)
+		public void CreatePlayer()
 		{
-			if (!characters.Contains(character))
-			{
-				characters.Add(character);
-			}
-		}
-
-		public void UnRegistrate(ICharacterModel character)
-		{
-			if (characters.Contains(character))
-			{
-				characters.Remove(character);
-			}
+			Player = pcFactory.Create(GlobalDatabase.Instance.player);
 		}
 	}
 }

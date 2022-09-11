@@ -1,3 +1,4 @@
+using Game.Entities;
 using Game.Systems.CommandCenter;
 
 using Zenject;
@@ -10,6 +11,8 @@ namespace Game.Managers.PartyManager
 		{
 			Container.DeclareSignal<SignalLeaderPartyChanged>();
 			Container.DeclareSignal<SignalPartyChanged>();
+
+			Container.BindFactory<ICharacter, PlayerParty, PlayerParty.Factory>().WhenInjectedInto<PartyManager>();
 
 			Container.BindInterfacesAndSelfTo<PartyManager>().AsSingle();
 

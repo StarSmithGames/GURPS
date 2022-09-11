@@ -27,16 +27,38 @@ namespace Game.Managers.SceneManager
 
 		private SignalBus signalBus;
 		private AsyncManager asyncManager;
+		private ZenjectSceneLoader sceneLoader;
 
-		public SceneManager(SignalBus signalBus, AsyncManager asyncManager)
+		public SceneManager(SignalBus signalBus, AsyncManager asyncManager,
+			ZenjectSceneLoader sceneLoader)
 		{
 			this.signalBus = signalBus;
 			this.asyncManager = asyncManager;
+			this.sceneLoader = sceneLoader;
 		}
 
 		public void Initialize()
 		{
 			CurrentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+			//editor set active scene Game
+#if UNITY_EDITOR
+			if (CurrentScene == "Game")
+			{
+				for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+				{
+					var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+
+					if(scene.name != "Game")
+					{
+						CurrentScene = scene.name;
+						UnityEngine.SceneManagement.SceneManager.SetActiveScene(scene);
+						
+						break;
+					}
+				}
+			}
+#endif
 
 			scenes = Resources.LoadAll<SceneData>(ScenesPath).ToList();
 
@@ -45,6 +67,17 @@ namespace Game.Managers.SceneManager
 
 		public void Dispose()
 		{
+			//editor unload scene Game
+#if UNITY_EDITOR
+			for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+			{
+				var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+				if(scene.name == "Game")
+				{
+					UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(scene);
+				}
+			}
+#endif
 			UnityEngine.SceneManagement.SceneManager.sceneLoaded -= OnSceneLoaded;
 		}
 

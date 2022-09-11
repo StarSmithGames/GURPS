@@ -1,6 +1,7 @@
 using Game.Entities;
 using Game.Systems.SheetSystem;
 using Game.UI;
+using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 
 using UnityEngine;

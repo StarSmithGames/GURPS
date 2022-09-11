@@ -2,6 +2,7 @@ using Game.Managers.GameManager;
 using Game.Managers.SceneManager;
 using Game.Managers.StorageManager;
 using Game.Managers.TransitionManager;
+using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 
 using System;

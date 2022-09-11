@@ -1,5 +1,6 @@
 using Game.Managers.SceneManager;
 using Game.UI;
+using Game.UI.CanvasSystem;
 
 using UnityEngine;
 
@@ -8,7 +9,7 @@ using Zenject;
 namespace Game.Managers.TransitionManager
 {
 	[CreateAssetMenu(fileName = "TransitionManagerInstaller", menuName = "Installers/TransitionManagerInstaller")]
-	public class TransitionManagerInstaller : ScriptableObjectInstaller<SceneManagerInstaller>
+	public class TransitionManagerInstaller : ScriptableObjectInstaller<TransitionManagerInstaller>
 	{
 		public UIFadeTransition fadePrefab;
 

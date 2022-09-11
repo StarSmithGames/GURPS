@@ -1,24 +1,22 @@
-using UnityEngine;
-using DG.Tweening;
-using Game.UI;
+using Game.UI.CanvasSystem;
 
 namespace Game.Systems.NotificationSystem
 {
 	public class NotificationSystem
 	{
-		private UISubCanvas subCanvas;
+		private UISubCanvas gameCanvas;
 		private UIJournalNotification.Factory journalNotificationFactory;
 
-		public NotificationSystem(UISubCanvas subCanvas, UIJournalNotification.Factory journalNotificationFactory)
+		public NotificationSystem(UIGameCanvas gameCanvas, UIJournalNotification.Factory journalNotificationFactory)
 		{
-			this.subCanvas = subCanvas;
+			this.gameCanvas = gameCanvas;
 			this.journalNotificationFactory = journalNotificationFactory;
 		}
 
 		public void PushJournalNotification(string title)
 		{
 			var notification = journalNotificationFactory.Create();
-			notification.transform.SetParent(subCanvas.transform);
+			notification.transform.SetParent(gameCanvas.transform);
 			notification.Push(title);
 		}
 	}

@@ -1,37 +1,22 @@
-using Game.Managers.FactionManager;
-
-using Sirenix.OdinInspector;
-
-using UnityEngine;
+using Game.Managers.CharacterManager;
 using Zenject;
 
 namespace Game.Entities.Models
 {
-	public class PlayerModel : HumanoidCharacterModel, IFactionable
+	public class PlayerModel : HumanoidCharacterModel
 	{
-		[field: InlineProperty]
-		[field: SerializeField] public Faction Faction { get; private set; }
-
-		public CharacterData data;
-
-		public override ICharacter Character
-		{
-			get
-			{
-				if(character == null)
-				{
-					character = new PlayableCharacter(this, data);
-				}
-				return character;
-			}
-		}
-		private ICharacter character;
-
-
 		[Inject]
-		private void Construct()
+		private void Construct(CharacterManager characterManager)
 		{
+			Character = characterManager.Player;
+			Character.SetModel(this);
+		}
 
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			Character.SetModel(null);
 		}
 
 		protected override void CheckReplicas() { }

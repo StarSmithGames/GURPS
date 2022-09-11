@@ -1,3 +1,4 @@
+using Game.Managers.CharacterManager;
 using Game.Systems.BattleSystem;
 
 using System.Collections;
@@ -18,7 +19,7 @@ namespace Game.Entities.Models
 			{
 				if(character == null)
 				{
-					character = new NonPlayableCharacter(this, data);
+					character = null;//characterManager.GetCharacter(data, this);
 				}
 
 				return character;
@@ -26,13 +27,15 @@ namespace Game.Entities.Models
 		}
 		private ICharacter character;
 
+		private CharacterManager characterManager;
 		protected FieldOfView fov;
 		protected BattleSystem battleSystem;
 
 		[Inject]
-		private void Construct(/*FieldOfView fov, */BattleSystem battleSystem)
+		private void Construct(/*FieldOfView fov, */CharacterManager characterManager, BattleSystem battleSystem)
 		{
 			//this.fov = fov;
+			this.characterManager = characterManager;
 			this.battleSystem = battleSystem;
 		}
 

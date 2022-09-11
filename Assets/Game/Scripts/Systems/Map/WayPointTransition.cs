@@ -10,6 +10,7 @@ using Game.Managers.TransitionManager;
 using Game.Systems;
 using Game.Systems.InteractionSystem;
 using Game.UI;
+using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 
 using Sirenix.OdinInspector;
@@ -83,7 +84,7 @@ namespace Game.Map
 				//};
 			}
 
-			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);
+			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);
 		}
 	}
 }

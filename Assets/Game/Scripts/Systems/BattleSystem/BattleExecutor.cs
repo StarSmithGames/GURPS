@@ -13,6 +13,7 @@ using Game.Managers.PartyManager;
 using DG.Tweening;
 using UnityEngine.Events;
 using Game.Systems.NavigationSystem;
+using Game.UI.CanvasSystem;
 
 namespace Game.Systems.BattleSystem
 {
@@ -110,7 +111,7 @@ namespace Game.Systems.BattleSystem
 
 		public void Stop()
 		{
-			cameraController.LookAt(cachedLeader.Model as ICameraReporter);
+			//cameraController.LookAt(cachedLeader.Model as ICameraReporter);
 
 			if (IsBattleProcess)
 			{

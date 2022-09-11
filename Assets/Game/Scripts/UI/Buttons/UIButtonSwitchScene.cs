@@ -1,5 +1,6 @@
 using Game.Managers.SceneManager;
 using Game.Managers.TransitionManager;
+using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 
 using Sirenix.OdinInspector;
@@ -41,7 +42,7 @@ namespace Game.UI
 
 		private void Click()
 		{
-			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);
+			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);
 		}
 	}
 }

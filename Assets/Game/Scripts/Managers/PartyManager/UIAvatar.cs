@@ -3,6 +3,7 @@ using Game.Entities.Models;
 using Game.Systems.BattleSystem;
 using Game.Systems.SheetSystem;
 using Game.UI;
+using Game.UI.CanvasSystem;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -89,7 +90,7 @@ namespace Game.Managers.PartyManager
 			//	CurrentModel.onBattleChanged -= UpdateBattleUI;
 			//}
 
-			CurrentModel = character.Model as ICharacterModel;
+			CurrentModel = character.Model;
 			HPBar.SetStat(CurrentModel.Sheet.Stats.HitPoints, CurrentModel.Sheet.Settings.isImmortal);
 
 			UpdateUI();

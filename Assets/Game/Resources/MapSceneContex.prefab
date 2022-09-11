@@ -409,12 +409,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers:
   - {fileID: 11400000, guid: 90184175911b64145802db2feb993623, type: 2}
-  - {fileID: 11400000, guid: a0a69a8c99e666b4fb01907f96913a04, type: 2}
-  - {fileID: 11400000, guid: 046b85612395444418785cac52e7a297, type: 2}
-  - {fileID: 11400000, guid: 9baa0bb500d18614a81a6f3ee9f483ff, type: 2}
-  - {fileID: 11400000, guid: 4a656e0d03b84af41876891dcea982ae, type: 2}
-  - {fileID: 11400000, guid: 367196beb0f3fac438453135bd7c7911, type: 2}
-  - {fileID: 11400000, guid: ccbce1683a9c95a49809bc2cb6521933, type: 2}
   _monoInstallers:
   - {fileID: 2169850919029107533}
   _installerPrefabs: []
@@ -446,6 +440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88c3267dd25797b4e98a07e3253581b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  subCanvas: {fileID: 0}
   brainCamera: {fileID: 1274836270536508742}
   characterCamers:
   - {fileID: 1274836270261821297}

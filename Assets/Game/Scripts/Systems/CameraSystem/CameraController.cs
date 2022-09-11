@@ -19,6 +19,8 @@ namespace Game.Systems.CameraSystem
 {
 	public class CameraController : IInitializable, ITickable, IDisposable
 	{
+		public bool IsEnabled { get; private set; }
+
 		public float movementSpeed = 10f;
 
 		public float rotationSpeed = 50f;
@@ -64,10 +66,10 @@ namespace Game.Systems.CameraSystem
 		private InputManager inputManager;
 		private ICameraVision cameraVision;
 		private AsyncManager asyncManager;
-		private CharacterManager characterManager;
 		private GameManager gameManager;
+		private CharacterManager characterManager;
 
-		private CharacterModel leader;
+		private ICharacterModel leader;
 
 		public CameraController(SignalBus signalBus,
 			CinemachineBrain brain,
@@ -75,8 +77,8 @@ namespace Game.Systems.CameraSystem
 			InputManager inputManager,
 			ICameraVision cameraVision,
 			AsyncManager asyncManager,
-			CharacterManager characterManager,
-			GameManager gameManager)
+			GameManager gameManager,
+			CharacterManager characterManager)
 		{
 			this.signalBus = signalBus;
 			this.brain = brain;
@@ -84,29 +86,28 @@ namespace Game.Systems.CameraSystem
 			this.inputManager = inputManager;
 			this.cameraVision = cameraVision;
 			this.asyncManager = asyncManager;
-			this.characterManager = characterManager;
 			this.gameManager = gameManager;
+			this.characterManager = characterManager;
 		}
 
 		public void Initialize()
 		{
-			//leader = characterManager.CurrentParty.LeaderParty;
-
 			SetZoom(zoomStandart);
 
-			//LookAt(characterManager.CurrentParty.LeaderParty);
+			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
-
-			//signalBus?.Subscribe<StartDialogueSignal>(OnStartDialogue);
 		}
 
 		public void Dispose()
 		{
+			signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
 			signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 		}
 
 		public void Tick()
 		{
+			if (!IsEnabled) return;
+
 			if (inputManager.GetKeyDown(KeyAction.CameraCenter))
 			{
 				CameraToHome();
@@ -253,16 +254,20 @@ namespace Game.Systems.CameraSystem
 		}
 
 
-		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
+		private void OnGameStateChanged(SignalGameStateChanged signal)
 		{
-			leader = signal.leader.Model as CharacterModel;
-			LookAt(leader);
+			if(signal.newGameState == GameState.Gameplay)
+			{
+				leader = characterManager.Player.Model;
+				LookAt(leader);
+
+				IsEnabled = true;
+			}
 		}
 
-		private void OnStartDialogue(SignalStartDialogue signal)
+		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 		{
-			AnimateZoom(zoomStandart);
-			CameraToHome();
+			LookAt(signal.leader.Model);
 		}
 	}
 }

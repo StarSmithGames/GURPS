@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
@@ -32,6 +33,12 @@ namespace Game.Systems.BattleSystem
 
 			turnSeparate.transform.parent = transform;
 			turnSeparate.transform.localScale = Vector3.one;
+		}
+
+		public override void Enable(bool trigger)
+		{
+			base.Enable(trigger);
+			gameObject.SetActive(trigger);
 		}
 
 		public void UpdateTurns(List<Round> rounds)

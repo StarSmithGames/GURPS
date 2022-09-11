@@ -353,3 +353,4 @@ MonoBehaviour:
     - language: 10
       name: Player
     nameColor: {r: 1, g: 1, b: 1, a: 1}
+  prefab: {fileID: 83227379555027231, guid: 36f3fa48d10fcfb44b2cca011d9132ed, type: 3}

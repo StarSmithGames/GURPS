@@ -1,0 +1,31 @@
+using Cinemachine;
+using Game.Managers.CharacterManager;
+using Game.Managers.GameManager;
+using Game.Managers.PartyManager;
+using Game.Systems.SpawnManager;
+using Game.UI.CanvasSystem;
+using UnityEngine;
+using Zenject;
+
+namespace Game
+{
+	public class GameInstaller : MonoInstaller<GameInstaller>
+	{
+		public UIGameCanvas gameCanvas;
+		public CinemachineBrain brainCamera;
+
+		public override void InstallBindings()
+		{
+			Debug.LogError("GameContext");
+
+			Container.BindInstance(gameCanvas);
+			Container.BindInstance(brainCamera);
+
+			Container.BindInterfacesAndSelfTo<GamePipeline>().AsSingle();
+
+			CharacterManagerInstaller.Install(Container);
+			PartyManagerInstaller.Install(Container);
+			SpawnManagerInstaller.Install(Container);
+		}
+	}
+}

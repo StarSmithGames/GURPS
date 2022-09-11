@@ -55,8 +55,9 @@ namespace Game.Managers.SceneManager
 
 	public enum Scenes
 	{
-		Menu = 0,
-		Map = 1,
-		Polygon = 2,
+		Menu	= 0,
+		Empty	= 1,
+		Map		= 2,
+		Polygon = 3,
 	}
 }

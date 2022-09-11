@@ -10,6 +10,7 @@ using DG.Tweening;
 using Zenject;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using Game.UI.CanvasSystem;
 
 namespace Game.UI.Windows
 {
@@ -49,14 +50,14 @@ namespace Game.UI.Windows
 		{
 			CanvasGroup.Enable(false);
 
-			globalCanvas.WindowsManager.Registrate(this);
+			globalCanvas.WindowsRegistrator.Registrate(this);
 
 			Continue.onClick.AddListener(Click);
 		}
 
 		private void OnDestroy()
 		{
-			globalCanvas.WindowsManager.UnRegistrate(this);
+			globalCanvas.WindowsRegistrator.UnRegistrate(this);
 
 			Continue?.onClick.RemoveAllListeners();
 		}

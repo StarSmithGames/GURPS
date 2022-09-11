@@ -1,8 +1,5 @@
-using Game.Systems.BattleSystem;
-using Game.UI;
-
+using Game.UI.CanvasSystem;
 using UnityEngine;
-
 using Zenject;
 
 namespace Game.Systems.VFX

@@ -33,7 +33,10 @@ namespace Game.Managers.StorageManager
 
 		public void Initialize()
 		{
-			Load();
+			if (activeStorage == null)
+			{
+				Load();
+			}
 		}
 
 		public void Dispose()
@@ -56,7 +59,7 @@ namespace Game.Managers.StorageManager
 
 			signalBus?.Fire(new SignalStorageSaved());
 
-			Debug.Log($"[SAVE] Save storage to pref: {preferenceName}");
+			Debug.Log($"[PlayerPrefsSaveLoad] Save storage to pref: {preferenceName}");
 		}
 
 		public void Load()
@@ -71,14 +74,14 @@ namespace Game.Managers.StorageManager
 			{
 				activeStorage = new Storage(defaultData);
 
-				Debug.Log($"[SAVE] Create new save");
+				Debug.Log($"[PlayerPrefsSaveLoad] Create new save");
 
 				//Save();
 			}
 
 			signalBus?.Fire(new SignalStorageLoaded() { storage = activeStorage });
 
-			Debug.Log($"[LOAD] Load storage from pref: {settings.preferenceName}");
+			Debug.Log($"[PlayerPrefsSaveLoad] Load storage from pref: {settings.preferenceName}");
 		}
 
 		public void Clear()
@@ -93,8 +96,15 @@ namespace Game.Managers.StorageManager
 			signalBus?.Fire(new SignalStorageCleared());
 		}
 
-		public Storage GetStorage() => activeStorage;
-		
+		public Storage GetStorage()
+		{
+			if(activeStorage == null)
+			{
+				Load();
+			}
+
+			return activeStorage;
+		}
 
 		[System.Serializable]
 		public class Settings

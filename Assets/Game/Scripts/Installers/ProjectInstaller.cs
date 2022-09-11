@@ -1,16 +1,9 @@
-using Game.Entities;
-using Game.Entities.Models;
-using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
-using Game.Managers.PartyManager;
+using Game.Managers.SceneManager;
 using Game.Managers.StorageManager;
-using Game.Systems;
-using Game.Systems.CombatDamageSystem;
 using Game.Systems.CommandCenter;
-using Game.Systems.SheetSystem;
 
 using UnityEngine;
-
 using Zenject;
 
 namespace Game
@@ -25,6 +18,7 @@ namespace Game
 
 		public override void InstallBindings()
 		{
+			Debug.LogError("ProjectContext");
 			SignalBusInstaller.Install(Container);
 
 			Container.BindInstance(Container.InstantiateComponentOnNewGameObject<AsyncManager>());
@@ -33,7 +27,7 @@ namespace Game
 			BindSaveLoad();
 
 			GameManagerInstaller.Install(Container);
-			PartyManagerInstaller.Install(Container);
+			SceneManagerInstaller.Install(Container);
 
 			Container.BindInstance(globalSettings);
 		}

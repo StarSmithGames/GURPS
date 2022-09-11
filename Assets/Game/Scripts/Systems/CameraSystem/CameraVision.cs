@@ -1,5 +1,6 @@
 using Cinemachine;
 
+using Game.Managers.GameManager;
 using Game.Managers.InputManager;
 
 using System;
@@ -13,6 +14,8 @@ namespace Game.Systems.CameraSystem
 {
 	public class CameraVision : IInitializable, IDisposable, ITickable, ICameraVision
 	{
+		public bool IsEnabled { get; protected set; }
+
 		public bool IsCanHoldMouse { get; protected set; }
 		public bool IsMouseHit { get; protected set; }
 		public bool IsUI { get; protected set; }
@@ -57,15 +60,19 @@ namespace Game.Systems.CameraSystem
 		public virtual void Initialize()
 		{
 			IsCanHoldMouse = settings.isCanHoldMouse;
+
+			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 		}
 
 		public virtual void Dispose()
 		{
-
+			signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
 		}
 
 		public virtual void Tick()
 		{
+			if (!IsEnabled) return;
+
 			IsUI = EventSystem.current.IsPointerOverGameObject();
 			Ray mouseRay = brain.OutputCamera.ScreenPointToRay(inputManager.GetMousePosition());
 			IsMouseHit = Physics.Raycast(mouseRay, out RaycastHit hit, settings.raycastLength, settings.raycastLayerMask);
@@ -87,6 +94,14 @@ namespace Game.Systems.CameraSystem
 
 		protected virtual void OnHoverObserveChanged() { }
 
+
+		protected virtual void OnGameStateChanged(SignalGameStateChanged signal)
+		{
+			if (signal.newGameState == GameState.Gameplay)
+			{
+				IsEnabled = true;
+			}
+		}
 
 
 		[System.Serializable]

@@ -1,15 +1,13 @@
 using Cinemachine;
 
-using Game.Entities.Models;
 using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.SheetSystem.Abilities;
-using Game.UI;
+using Game.UI.CanvasSystem;
 
 using System.Collections.Generic;
 
 using UnityEngine;
-
 using Zenject;
 
 namespace Game
@@ -17,24 +15,24 @@ namespace Game
 	public class LocationInstaller : MonoInstaller
 	{
 		public UISubCanvas subCanvas;
+
 		[Header("Cameras")]
-		public CinemachineBrain brainCamera;
 		public List<CinemachineVirtualCamera> characterCamers = new List<CinemachineVirtualCamera>();
 
 		public override void InstallBindings()
 		{
+			Debug.LogError("LocationContext");
+
 			Container.BindInstance(subCanvas);
+			BindCameras();
 
 			CombatDamageSystemInstaller.Install(Container);
 
 			BindAbilityActivators();
-
-			BindCameras();
 		}
 
 		private void BindCameras()
 		{
-			Container.BindInstance(brainCamera);
 			Container.BindInstance(characterCamers).WithId("Camers");
 
 			Container.BindInterfacesTo<CameraVisionLocation>().AsSingle().NonLazy();

@@ -1,13 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 using Zenject;
-using Zenject.Asteroids;
 
 namespace Game.Managers.GameManager
 {
-    public class GameManager : IInitializable
+    public class GameManager
     {
         public GameState CurrentGameState { get; private set; }
         public GameState PreviousGameState { get; private set; }
@@ -15,17 +11,10 @@ namespace Game.Managers.GameManager
         public GameLocation CurrentGameLocation { get; private set; }
 
         private SignalBus signalBus;
-        private SceneManager.SceneManager sceneManager;
 
-        public GameManager(SignalBus signalBus, SceneManager.SceneManager sceneManager)
+        public GameManager(SignalBus signalBus)
 		{
             this.signalBus = signalBus;
-            this.sceneManager = sceneManager;
-        }
-
-        public void Initialize()
-        {
-            ChangeLocation(sceneManager.GetSceneLocation());
         }
 
         public void ChangeState(GameState gameState)

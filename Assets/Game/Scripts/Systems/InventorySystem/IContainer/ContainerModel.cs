@@ -4,6 +4,7 @@ using Game.Systems.CombatDamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 using Game.UI;
+using Game.UI.CanvasSystem;
 
 using UnityEngine;
 

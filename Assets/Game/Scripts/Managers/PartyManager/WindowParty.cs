@@ -1,5 +1,7 @@
+using Game.Managers.GameManager;
 using Game.Systems.CameraSystem;
 using Game.UI;
+using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 
 using System.Collections.Generic;
@@ -19,6 +21,7 @@ namespace Game.Managers.PartyManager
 
 		private SignalBus signalBus;
 		private UIAvatar.Factory avatarFactory;
+		private GameManager.GameManager gameManager;
 		private PartyManager partyManager;
 		private UISubCanvas subCanvas;
 		private CameraController cameraController;
@@ -26,12 +29,14 @@ namespace Game.Managers.PartyManager
 		[Inject]
 		private void Construct(SignalBus signalBus,
 			UIAvatar.Factory avatarFactory,
+			GameManager.GameManager gameManager,
 			PartyManager partyManager,
 			UISubCanvas subCanvas,
 			CameraController cameraController)
 		{
 			this.signalBus = signalBus;
 			this.avatarFactory = avatarFactory;
+			this.gameManager = gameManager;
 			this.partyManager = partyManager;
 			this.subCanvas = subCanvas;
 			this.cameraController = cameraController;
@@ -43,10 +48,7 @@ namespace Game.Managers.PartyManager
 
 			subCanvas.WindowsRegistrator.Registrate(this);
 
-			UpdateAvatars();
-
-			UpdateLeader();
-
+			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 			signalBus?.Subscribe<SignalPartyChanged>(OnPartyChanged);
 		}
@@ -120,6 +122,15 @@ namespace Game.Managers.PartyManager
 
 			avatars.ForEach((x) => x.SetFrame(false));
 			avatars[index].SetFrame(true);
+		}
+
+		private void OnGameStateChanged(SignalGameStateChanged signal)
+		{
+			if(signal.newGameState == GameState.Gameplay)
+			{
+				UpdateAvatars();
+				UpdateLeader();
+			}
 		}
 
 		private void OnAvatarClicked(UIAvatar avatar)

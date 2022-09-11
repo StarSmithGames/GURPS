@@ -1,5 +1,5 @@
 ﻿using Game.Entities;
-
+using Game.Systems.InventorySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +12,10 @@ namespace Game.Editor
 	{
         public static List<SearchLeaf> EntitiesCreation = new List<SearchLeaf>
         {
-            new SearchLeaf() { path = "Entity/PC", data = typeof(PlayableCharacterData) },
-            new SearchLeaf() { path = "Entity/NPC", data = typeof(NonPlayableCharacterData) },
-            new SearchLeaf() { path = "Entity/Model", data = typeof(ModelData) },
+            new SearchLeaf() { path = "Entity/PC",          data = typeof(PlayableCharacterData) },
+            new SearchLeaf() { path = "Entity/NPC",         data = typeof(NonPlayableCharacterData) },
+            new SearchLeaf() { path = "Entity/Model",       data = typeof(ModelData) },
+            new SearchLeaf() { path = "Entity/Container",   data = typeof(ContainerData) },
         };
     }
 

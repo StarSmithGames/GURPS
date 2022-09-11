@@ -3,6 +3,7 @@ using Cinemachine;
 using Game.Entities;
 using Game.Entities.Models;
 using Game.Managers.CharacterManager;
+using Game.Managers.GameManager;
 using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
 using Game.Systems.BattleSystem;
@@ -13,6 +14,7 @@ using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 using Game.Systems.TooltipSystem;
 using Game.UI;
+using Game.UI.CanvasSystem;
 
 using System;
 
@@ -46,6 +48,7 @@ namespace Game.Systems.CameraSystem
 		}
 		private WindowEntityInformation entityInformation;
 
+		private CharacterManager characterManager;
 		private PartyManager partyManager;
 		private TooltipSystem.TooltipSystem tooltipSystem;
 		private ContextMenuSystem contextMenuSystem;
@@ -56,6 +59,7 @@ namespace Game.Systems.CameraSystem
 			CinemachineBrain brain,
 			InputManager inputManager,
 			UISubCanvas subCanvas,
+			CharacterManager characterManager,
 			PartyManager partyManager,
 			GlobalSettings settings,
 			TooltipSystem.TooltipSystem tooltipSystem,
@@ -63,6 +67,7 @@ namespace Game.Systems.CameraSystem
 			BattleSystem.BattleSystem battleSystem) : base(signalBus, brain, inputManager)
 		{
 			this.subCanvas = subCanvas;
+			this.characterManager = characterManager;
 			this.partyManager = partyManager;
 			this.settings = settings.cameraVisionLocation;
 			this.tooltipSystem = tooltipSystem;
@@ -72,11 +77,7 @@ namespace Game.Systems.CameraSystem
 
 		public override void Initialize()
 		{
-			leader = partyManager.PlayerParty.LeaderParty;
-			leaderModel = leader.Model as ICharacterModel;
-
 			base.Initialize();
-
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 		}
 
@@ -89,6 +90,8 @@ namespace Game.Systems.CameraSystem
 		public override void Tick()
 		{
 			base.Tick();
+
+			if (!IsEnabled) return;
 
 			if (!leaderModel.IsInDialogue)
 			{
@@ -234,6 +237,19 @@ namespace Game.Systems.CameraSystem
 			return (Vector3.Distance(leaderModel.Outfit.LeftHandPivot.position, point) <= leaderModel.CharacterRange);
 		}
 
+
+		private void ChangeLeader(ICharacter character)
+		{
+			leader = character;
+			leaderModel = leader.Model;
+
+			IsCanHoldMouse = leaderModel.InBattle ? false : settings.isCanHoldMouse;
+
+			leaderModel.Markers.SplineMarker.Enable(false);
+			leaderModel.Markers.AdditionalSplineMarker.Enable(false);
+			leaderModel.Markers.AreaMarker.Enable(false);
+		}
+
 		protected override void OnHoverObserveChanged()
 		{
 			if (!leaderModel.IsInDialogue)
@@ -247,14 +263,20 @@ namespace Game.Systems.CameraSystem
 
 		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 		{
-			leader = signal.leader;
-			leaderModel = signal.leader.Model as ICharacterModel;
+			if (IsEnabled)
+			{
+				ChangeLeader(signal.leader);
+			}
+		}
 
-			IsCanHoldMouse = leaderModel.InBattle ? false : settings.isCanHoldMouse;
+		protected override void OnGameStateChanged(SignalGameStateChanged signal)
+		{
+			if (signal.newGameState == GameState.Gameplay)
+			{
+				ChangeLeader(partyManager.PlayerParty.LeaderParty);
+			}
 
-			leaderModel.Markers.SplineMarker.Enable(false);
-			leaderModel.Markers.AdditionalSplineMarker.Enable(false);
-			leaderModel.Markers.AreaMarker.Enable(false);
+			base.OnGameStateChanged(signal);
 		}
 	}
 

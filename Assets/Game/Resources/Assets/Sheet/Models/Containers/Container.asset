@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sheet:
     info:
-      identity: 0
+      identity: 100
       race: 0
       gender: 0
-      age: 0
+      age: -1
     stats:
       level: 1
       strength: 10
@@ -45,15 +45,7 @@ MonoBehaviour:
     inventory:
       useRandomItems: 0
       shuffleList: 1
-      items:
-      - data: {fileID: 11400000, guid: 5a435e1e1ece6c9428a29f20bd09a9c5, type: 2}
-        useRandom: 0
-        currentStackSize: 4999
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
+      items: []
       randomSettings:
         isUnique: 0
         useRandomCount: 1
@@ -206,6 +198,8 @@ MonoBehaviour:
         currentDurability: 100
         isShowFoldout: 0
     abilities:
+      baseAbilities:
+      - {fileID: 11400000, guid: 7be1af33b58e994498a0c53de84c2689, type: 2}
       abilities: []
     isImmortal: 0
   information:

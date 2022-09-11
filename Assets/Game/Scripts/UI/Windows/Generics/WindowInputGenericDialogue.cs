@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using DG.Tweening;
 using Zenject;
+using Game.UI.CanvasSystem;
 
 namespace Game.UI.Windows
 {
@@ -22,7 +23,7 @@ namespace Game.UI.Windows
 		[Inject]
 		private void Construct(UIGlobalCanvas globalCanvas)
 		{
-			globalCanvas.WindowsManager.Registrate(this);
+			globalCanvas.WindowsRegistrator.Registrate(this);
 		}
 
 		private void Start()
@@ -35,7 +36,7 @@ namespace Game.UI.Windows
 
 		private void OnDestroy()
 		{
-			globalCanvas?.WindowsManager.UnRegistrate(this);
+			globalCanvas?.WindowsRegistrator.UnRegistrate(this);
 
 			Ok?.onClick.RemoveAllListeners();
 			Reject?.onClick.RemoveAllListeners();

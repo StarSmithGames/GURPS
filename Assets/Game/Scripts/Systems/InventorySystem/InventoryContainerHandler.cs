@@ -25,18 +25,15 @@ namespace Game.Systems.InventorySystem
 		private Equip slotEquip;
 
 		private UIItemCursor itemCursor;
-		private CharacterManager characterManager;
 		private UIContainerWindow.Factory containerFactory;
 		private InputManager inputManager;
 
 		public InventoryContainerHandler(
 			UIItemCursor itemCursor,
-			CharacterManager characterManager,
 			UIContainerWindow.Factory containerFactory,
 			InputManager inputManager)
 		{
 			this.itemCursor = itemCursor;
-			this.characterManager = characterManager;
 			this.containerFactory = containerFactory;
 			this.inputManager = inputManager;
 		}

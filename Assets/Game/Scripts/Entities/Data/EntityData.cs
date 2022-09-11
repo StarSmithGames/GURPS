@@ -1,4 +1,5 @@
-﻿using Game.Systems.SheetSystem;
+﻿using Game.Entities.Models;
+using Game.Systems.SheetSystem;
 using Sirenix.OdinInspector;
 
 using UnityEngine;
@@ -15,5 +16,8 @@ namespace Game.Entities
 		[PropertyOrder(-1)]
 		[HideLabel]
 		public HumanoidInformation information;
+
+		[AssetSelector]
+		public CharacterModel prefab;
 	}
 }

@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using Game.Managers.StorageManager;
 using Game.Managers.InputManager;
 using FlowCanvas.Nodes;
+using Game.UI.CanvasSystem;
 
 namespace Game.UI.Windows
 {
@@ -176,7 +177,7 @@ namespace Game.UI.Windows
 		{
 			Diselect();
 
-			var window = globalCanvas.WindowsManager.GetAs<WindowInputGenericDialogue>();
+			var window = globalCanvas.WindowsRegistrator.GetAs<WindowInputGenericDialogue>();
 			window.onOk += () =>
 			{
 				saveLoad.Save(Managers.StorageManager.CommitType.ManualSave, window.InputField.text);
@@ -204,7 +205,7 @@ namespace Game.UI.Windows
 			}
 			else//rewrite
 			{
-				var window = globalCanvas.WindowsManager.GetAs<WindowInputGenericDialogue>();
+				var window = globalCanvas.WindowsRegistrator.GetAs<WindowInputGenericDialogue>();
 				window.onOk += () =>
 				{
 					var profile = saveLoad.GetStorage().CurrentProfile.GetData();

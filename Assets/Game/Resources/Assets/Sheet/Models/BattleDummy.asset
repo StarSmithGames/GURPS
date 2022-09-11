@@ -198,11 +198,13 @@ MonoBehaviour:
         currentDurability: 100
         isShowFoldout: 0
     abilities:
+      baseAbilities:
+      - {fileID: 11400000, guid: 7be1af33b58e994498a0c53de84c2689, type: 2}
       abilities: []
     isImmortal: 0
   information:
     portrait: {fileID: 21300000, guid: 9cb7cd077a78e584aa08243418f19af5, type: 3}
-    nameId: Dummy
+    nameId: BattleDummy
     localizations:
     - language: 10
       name: Dummy

@@ -1,5 +1,6 @@
 using Game.Managers.InputManager;
 using Game.Managers.StorageManager;
+using Game.UI.CanvasSystem;
 
 using System.Collections;
 using System.Collections.Generic;

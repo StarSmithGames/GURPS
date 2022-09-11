@@ -1,5 +1,7 @@
+using Game.Managers.CharacterManager;
 using Game.Managers.PartyManager;
 using Game.Managers.SceneManager;
+using Game.Managers.StorageManager;
 
 using Zenject;
 
@@ -18,34 +20,21 @@ namespace Game.Entities.Models
 		{
 			get
 			{
-				if(character == null)
+				if (character == null)
 				{
-					character = new PlayableCharacter(this, data);
+					character = null;//characterManager.GetCharacter(data, this);
 				}
 				return character;
 			}
 		}
 		private ICharacter character;
 
-		private PartyManager partyManager;
+		private CharacterManager characterManager;
 
 		[Inject]
-		private void Construct(PartyManager partyManager)
+		private void Construct(CharacterManager characterManager)
 		{
-			this.partyManager = partyManager;
-		}
-
-		protected override void InitializePersonality()
-		{
-			if (partyManager.PlayerParty.ContainsByData(data))
-			{
-				DestroyImmediate(gameObject);
-			}
-		}
-
-		private void OnSceneChanged(SignalSceneChanged signal)
-		{
-			//partyManager.PlayerParty.RemoveCharacter(Character);
+			this.characterManager = characterManager;
 		}
 	}
 }

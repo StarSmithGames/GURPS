@@ -1,22 +1,15 @@
 using Game.Entities;
-using Game.Systems.SheetSystem;
+using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem.Abilities;
-
-using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Demos.RPGEditor;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
 using Sirenix.Utilities.Editor;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Game.Editor
 {
@@ -26,6 +19,7 @@ namespace Game.Editor
 
         private static string CharactersPath = "Assets/Game/Resources/Assets/Sheet/Characters";
         private static string ModelsPath = "Assets/Game/Resources/Assets/Sheet/Models";
+        private static string ContainerPath = "Assets/Game/Resources/Assets/Sheet/Models/Containers";
 
         private Texture2D trash;
 
@@ -53,11 +47,12 @@ namespace Game.Editor
         {
             var tree = new OdinMenuTree();
 
-            Database.Instance.UpdateCharacterOverview();
-            Database.Instance.UpdateModelOverview();
-            tree.Add("Characters", new CharacterDataTable(Database.Instance.allCharacters));
-			tree.Add("Models", new ModelDataTable(Database.Instance.allModels));
-			tree.Add("Models/Containers", new ContainerDataTable(Database.Instance.allContainers));
+            GlobalDatabase.Instance.UpdateCharacterOverview();
+            GlobalDatabase.Instance.UpdateModelOverview();
+            GlobalDatabase.Instance.UpdateContainerOverview();
+            tree.Add("Characters",          new CharacterDataTable(GlobalDatabase.Instance.allCharacters));
+			tree.Add("Models",              new ModelDataTable(GlobalDatabase.Instance.allModels));
+			tree.Add("Models/Containers",   new ContainerDataTable(GlobalDatabase.Instance.allContainers));
 
             treeMenu = tree.AddAllAssetsAtPath("Characters", CharactersPath, typeof(CharacterData), true);
             treeMenu = tree.AddAllAssetsAtPath("Models", ModelsPath, typeof(ModelData), true);
@@ -117,17 +112,21 @@ namespace Game.Editor
 				{
                     if (t == typeof(PlayableCharacterData))
                     {
-                        ShowDialogue<PlayableCharacterData>();
+                        ShowDialogue<PlayableCharacterData>(CharactersPath);
                     }
                     else if (t == typeof(NonPlayableCharacterData))
                     {
-                        ShowDialogue<NonPlayableCharacterData>();
+                        ShowDialogue<NonPlayableCharacterData>(CharactersPath);
                     }
                     else if (t == typeof(ModelData))
                     {
-                        ShowDialogue<ModelData>();
+                        ShowDialogue<ModelData>(ModelsPath);
 					}
-					else
+                    else if(t == typeof(ContainerData))
+					{
+                        ShowDialogue<ContainerData>(ContainerPath);
+                    }
+                    else
 					{
                         Debug.LogError($"Can't create type: {t}");
 					}
@@ -158,9 +157,9 @@ namespace Game.Editor
             }
         }
 
-        private void ShowDialogue<T>() where T : EntityData
+        private void ShowDialogue<T>(string path) where T : EntityData
         {
-            Sirenix.OdinInspector.Demos.RPGEditor.ScriptableObjectCreator.ShowDialog<T>(CharactersPath, obj =>
+            Sirenix.OdinInspector.Demos.RPGEditor.ScriptableObjectCreator.ShowDialog<T>(path, obj =>
             {
                 base.TrySelectMenuItemWithObject(obj); // Selects the newly created item in the editor
 

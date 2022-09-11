@@ -6,6 +6,7 @@ using Game.Systems.ContextMenu;
 using Game.Systems.DialogueSystem.Nodes;
 using Game.Systems.SheetSystem;
 using Game.UI;
+using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 
 using NodeCanvas.DialogueTrees;

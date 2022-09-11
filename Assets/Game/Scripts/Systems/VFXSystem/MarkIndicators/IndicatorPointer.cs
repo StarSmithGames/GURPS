@@ -35,7 +35,7 @@ namespace Game.Systems.VFX
 				return;
 			}
 
-			Vector3 playerPosition = partyManager.PlayerParty.LeaderParty.Model.Transform.position;
+			Vector3 playerPosition = Vector3.zero;//partyManager.PlayerParty.LeaderParty.Model.Transform.position;
 			Vector3 direction = transform.position - playerPosition;
 
 			Ray ray = new Ray(playerPosition, direction);

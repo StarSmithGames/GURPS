@@ -2,26 +2,29 @@ using Sirenix.Utilities;
 
 using UnityEngine;
 
-public class GlobalConfig<T> : ScriptableObject where T : GlobalConfig<T>, new()
+namespace Game
 {
-	public static T Instance => GlobalConfigUtility<T>.GetInstance(ConfigAttribute.AssetPath);
-
-	private static GlobalConfigAttribute ConfigAttribute
+	public class GlobalConfig<T> : ScriptableObject where T : GlobalConfig<T>, new()
 	{
-		get
+		public static T Instance => GlobalConfigUtility<T>.GetInstance(ConfigAttribute.AssetPath);
+
+		private static GlobalConfigAttribute ConfigAttribute
 		{
-			if (configAttribute == null)
+			get
 			{
-				configAttribute = typeof(T).GetCustomAttribute<GlobalConfigAttribute>();
 				if (configAttribute == null)
 				{
-					configAttribute = new GlobalConfigAttribute(typeof(T).GetNiceName());
+					configAttribute = typeof(T).GetCustomAttribute<GlobalConfigAttribute>();
+					if (configAttribute == null)
+					{
+						configAttribute = new GlobalConfigAttribute(typeof(T).GetNiceName());
+					}
 				}
+
+				return configAttribute;
 			}
-
-			return configAttribute;
 		}
-	}
 
-	private static GlobalConfigAttribute configAttribute;
+		private static GlobalConfigAttribute configAttribute;
+	}
 }

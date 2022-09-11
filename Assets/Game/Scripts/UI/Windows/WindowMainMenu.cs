@@ -5,6 +5,7 @@ using DG.Tweening;
 using Zenject;
 using Game.Managers.InputManager;
 using Game.Managers.StorageManager;
+using Game.UI.CanvasSystem;
 
 namespace Game.UI.Windows
 {

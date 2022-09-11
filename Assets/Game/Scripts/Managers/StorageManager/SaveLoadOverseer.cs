@@ -12,6 +12,8 @@ using Game.Managers.SceneManager;
 using Game.Managers.TransitionManager;
 using UnityEngine.Events;
 using Game.Entities;
+using Game.Managers.PartyManager;
+using Game.UI.CanvasSystem;
 
 namespace Game.Managers.StorageManager
 {
@@ -26,15 +28,11 @@ namespace Game.Managers.StorageManager
 		private DiContainer container;
 		private ISaveLoad saveLoad;
 		private GameManager.GameManager gameManager;
-		private CharacterManager.CharacterManager characterManager;
-		private PartyManager.PartyManager partyManager;
 		private SceneManager.SceneManager sceneManager;
 		private UIGlobalCanvas globalCanvas;
 
 		public SaveLoadOverseer(SignalBus signalBus, DiContainer container, ISaveLoad saveLoad,
 			GameManager.GameManager gameManager,
-			CharacterManager.CharacterManager characterManager,
-			PartyManager.PartyManager partyManager,
 			SceneManager.SceneManager sceneManager,
 			UIGlobalCanvas globalCanvas)
 		{
@@ -42,8 +40,6 @@ namespace Game.Managers.StorageManager
 			this.container = container;
 			this.saveLoad = saveLoad;
 			this.gameManager = gameManager;
-			this.characterManager = characterManager;
-			this.partyManager = partyManager;
 			this.sceneManager = sceneManager;
 			this.globalCanvas = globalCanvas;
 		}
@@ -51,13 +47,11 @@ namespace Game.Managers.StorageManager
 		public void Initialize()
 		{
 			signalBus?.Subscribe<SignalSaveStorage>(OnSaveStorage);
-			//signalBus?.Subscribe<SignalStorageSaved>(OnStorageSaved);
 		}
 
 		public void Dispose()
 		{
 			signalBus?.Unsubscribe<SignalSaveStorage>(OnSaveStorage);
-			//signalBus?.Unsubscribe<SignalStorageSaved>(OnStorageSaved);
 		}
 
 		public void LoadLastGame()
@@ -85,17 +79,17 @@ namespace Game.Managers.StorageManager
 
 			FastStorage.Clear();
 
-			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(Scenes.Map, transitionIn, transitionOut);
+			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(Scenes.Map, transitionIn, transitionOut);
 		}
 
 		/// <param name="callback">Вызывается до появления кнопки.</param>
 		public void LoadGame(Commit commit, UnityAction callback = null)
 		{
-			globalCanvas.WindowsManager.GetAs<WindowInfinityLoading>().Show(commit.data.lastScene, transitionIn, transitionOut, () =>
+			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(commit.data.lastScene, transitionIn, transitionOut, () =>
 			{
 				callback?.Invoke();
 
-				FastStorage.LastTransformOnMap = commit.data.lastTransformOnMap;
+				//FastStorage.LastTransformOnMap = commit.data.lastTransformOnMap;
 
 				if (gameManager.CurrentGameLocation == GameManager.GameLocation.Location)
 				{
@@ -119,8 +113,8 @@ namespace Game.Managers.StorageManager
 		{
 			var profile = saveLoad.GetStorage().CurrentProfile.GetData();
 
-			DefaultTransform transformOnMap = null;
-			DefaultTransform transformInLocation = null;
+			//DefaultTransform transformOnMap = null;
+			//DefaultTransform transformInLocation = null;
 
 			if (gameManager.CurrentGameLocation == GameManager.GameLocation.Map)
 			{
@@ -134,7 +128,7 @@ namespace Game.Managers.StorageManager
 			}
 			else if (gameManager.CurrentGameLocation == GameManager.GameLocation.Location)
 			{
-				transformOnMap = FastStorage.LastTransformOnMap;
+				//transformOnMap = FastStorage.LastTransformOnMap;
 				//transformInLocation = new DefaultTransform()
 				//{
 					//position = playerRTS.transform.position,
@@ -172,7 +166,7 @@ namespace Game.Managers.StorageManager
 				data = new Commit.Data()
 				{
 					lastScene = sceneManager.CurrentScene,
-					lastTransformOnMap = transformOnMap,
+					//lastTransformOnMap = transformOnMap,
 					//lastTransformInLocation = transformInLocation,
 				},
 			});
@@ -204,10 +198,10 @@ namespace Game.Managers.StorageManager
 		{
 			public string lastScene;
 
-			public DefaultTransform lastTransformOnMap;
+			//public DefaultTransform lastTransformOnMap;
 			//public DefaultTransform lastTransformInLocation;
 
-			//public Party party;
+			public Party.Data party;
 			public Statiscs statiscs;
 		}
 	}

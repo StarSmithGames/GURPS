@@ -64,7 +64,7 @@ namespace Game.Systems.SheetSystem
             Inventory = new Inventory(Settings.inventory);
 
             Conditions = new Conditions();
-            Abilities = new Abilities.Abilities(sheetSettings.abilities);
+            Abilities = new Abilities.Abilities(Settings.abilities);
             Skills = new Skills();
             Traits = new Traits();
             Talents = new Talents();
@@ -79,6 +79,19 @@ namespace Game.Systems.SheetSystem
         {
             Equipment = new Equipment(data.sheet.equipment, Inventory);
         }
+
+        public Data GetData()
+		{
+            return new Data
+            {
+
+            };
+		}
+
+        public class Data
+		{
+
+		}
     }
 
 	public class ModelSheet : EntitySheet

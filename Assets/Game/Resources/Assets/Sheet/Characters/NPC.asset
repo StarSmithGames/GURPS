@@ -203,8 +203,8 @@ MonoBehaviour:
       abilities: []
     isImmortal: 0
   information:
-    portrait: {fileID: 0}
-    nameId: 
+    portrait: {fileID: 21300000, guid: 54d2b1279beda12479291c18aae1a2c4, type: 3}
+    nameId: NPC
     localizations:
     - language: 10
       name: Trader

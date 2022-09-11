@@ -1,4 +1,4 @@
-using Game.UI;
+using Game.UI.CanvasSystem;
 
 using Zenject;
 

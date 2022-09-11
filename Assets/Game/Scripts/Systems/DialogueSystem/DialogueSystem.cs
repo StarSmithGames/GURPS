@@ -27,14 +27,12 @@ namespace Game.Systems.DialogueSystem
 		private SignalBus signalBus;
 		private DialogueTreeController dialogueController;
 		private AsyncManager asyncManager;
-		private CharacterManager characterManager;
 
-		public DialogueSystem(SignalBus signalBus, DialogueTreeController dialogueController, AsyncManager asyncManager, CharacterManager characterManager)
+		public DialogueSystem(SignalBus signalBus, DialogueTreeController dialogueController, AsyncManager asyncManager)
 		{
 			this.signalBus = signalBus;
 			this.dialogueController = dialogueController;
 			this.asyncManager = asyncManager;
-			this.characterManager = characterManager;
 		}
 
 		public void StartBarkConversation(IActor initiator, IActor actor)

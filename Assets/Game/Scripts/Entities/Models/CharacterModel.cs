@@ -43,7 +43,7 @@ namespace Game.Entities.Models
 		public float CharacterRange => equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>().weaponRange ?? 0f;
 		public bool IsWithRangedWeapon { get; private set; }
 
-		public virtual ICharacter Character { get; }
+		public virtual ICharacter Character { get; protected set; }
 		public ISheet Sheet => Character.Sheet;
 
 		public CharacterOutfit Outfit { get; private set; }

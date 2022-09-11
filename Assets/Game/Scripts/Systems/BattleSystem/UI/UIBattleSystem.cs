@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 
 using Zenject;
+using Game.UI.CanvasSystem;
 
 namespace Game.Systems.BattleSystem
 {

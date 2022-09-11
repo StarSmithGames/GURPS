@@ -1,41 +1,28 @@
 using Game.Entities;
-
+using Game.Managers.StorageManager;
 using System.Collections.Generic;
-using System.Linq;
-
-using UnityEngine.Assertions;
-
 using Zenject;
 
 namespace Game.Managers.PartyManager
 {
-    public class PartyManager : IInitializable
+    public class PartyManager
     {
-		public PlayerParty PlayerParty
+		public PlayerParty PlayerParty { get; private set; }
+
+		private PlayerParty.Factory playerFactory;
+		private CharacterManager.CharacterManager characterManager;
+		private ISaveLoad saveLoad;
+
+		public PartyManager(PlayerParty.Factory playerFactory, CharacterManager.CharacterManager characterManager, ISaveLoad saveLoad)
 		{
-			get
-			{
-				if(playerParty == null)
-				{
-					//playerParty = new PlayerParty(signalBus, player);
-				}
-
-				return playerParty;
-			}
-		}
-		private PlayerParty playerParty = null;
-
-		private SignalBus signalBus;
-
-		public PartyManager(SignalBus signalBus)
-		{
-			this.signalBus = signalBus;
+			this.playerFactory = playerFactory;
+			this.characterManager = characterManager;
+			this.saveLoad = saveLoad;
 		}
 
-		public void Initialize()
+		public void CreatePlayerParty()
 		{
-			//playerParty = new PlayerParty(signalBus, player);
-			//playerParty.AddCharacter(player);
+			PlayerParty = playerFactory.Create(characterManager.Player);
 		}
 	}
 
@@ -74,6 +61,11 @@ namespace Game.Managers.PartyManager
 		{
 			return Characters.Contains(character);
 		}
+
+		public class Data
+		{
+			
+		}
 	}
 
 	public class PlayerParty : Party
@@ -81,10 +73,11 @@ namespace Game.Managers.PartyManager
 		public ICharacter LeaderParty { get; private set; }
 		public int LeaderPartyIndex => Characters.IndexOf(LeaderParty);
 
-		public PlayerParty(SignalBus signalBus) : base(signalBus)
+		public PlayerParty(SignalBus signalBus, ICharacter player) : base(signalBus)
 		{
 			this.signalBus = signalBus;
-			//SetLeader(leader);
+			SetLeader(player);
+			AddCharacter(player);
 		}
 
 		public bool SetLeader(ICharacter character)
@@ -115,5 +108,7 @@ namespace Game.Managers.PartyManager
 		{
 			return false;//Characters.Any((x) => (x is ICompanion) ? x. == data : false);
 		}
+
+		public class Factory : PlaceholderFactory<ICharacter, PlayerParty> { }
 	}
 }

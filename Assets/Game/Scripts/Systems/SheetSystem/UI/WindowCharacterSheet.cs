@@ -2,6 +2,7 @@ using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
 using Game.Systems.InventorySystem;
 using Game.UI;
+using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 
 using UnityEngine;

@@ -41,6 +41,8 @@ namespace Game.Managers.StorageManager
 		public Database Database => database;
 		private Database database;
 
+		public bool IsHasProfile => CurrentProfile.GetData() != null;
+
 		public IStorageData<Profile> CurrentProfile { get; private set; }
 		public IStorageData<List<Profile>> Profilers { get; private set; }
 
