@@ -45,7 +45,15 @@ MonoBehaviour:
     inventory:
       useRandomItems: 0
       shuffleList: 1
-      items: []
+      items:
+      - data: {fileID: 11400000, guid: 5a435e1e1ece6c9428a29f20bd09a9c5, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
       randomSettings:
         isUnique: 0
         useRandomCount: 1

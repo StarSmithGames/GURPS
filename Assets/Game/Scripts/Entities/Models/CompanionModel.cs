@@ -1,7 +1,4 @@
 using Game.Managers.CharacterManager;
-using Game.Managers.PartyManager;
-using Game.Managers.SceneManager;
-using Game.Managers.StorageManager;
 
 using Zenject;
 
@@ -16,25 +13,26 @@ namespace Game.Entities.Models
     {
 		public PlayableCharacterData data;
 
-		public override ICharacter Character
-		{
-			get
-			{
-				if (character == null)
-				{
-					character = null;//characterManager.GetCharacter(data, this);
-				}
-				return character;
-			}
-		}
-		private ICharacter character;
-
-		private CharacterManager characterManager;
-
 		[Inject]
 		private void Construct(CharacterManager characterManager)
 		{
-			this.characterManager = characterManager;
+			if(characterManager.Contains(data, out ICharacter character))
+			{
+				Character = character;
+			}
+			else
+			{
+				Character = characterManager.CreateCharacter(data);
+			}
+
+			Character.SetModel(this);
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			Character.SetModel(null);
 		}
 	}
 }

@@ -44,7 +44,7 @@ public class Registrator<T>
 
 	public T Get<REGISTR>() where REGISTR : T
 	{
-		if (Contains<REGISTR>())
+		if (ContainsType<REGISTR>())
 		{
 			return registers.Where((window) => window is REGISTR).FirstOrDefault();
 		}
@@ -52,12 +52,12 @@ public class Registrator<T>
 		throw new System.Exception($"REGISTRATOR DOESN'T CONTAINS {typeof(REGISTR)} ERROR");
 	}
 
-	public bool Contains<REGISTR>() where REGISTR : T
+	public bool ContainsType<REGISTR>() where REGISTR : T
 	{
 		return registers.OfType<REGISTR>().Any();
 	}
 
-	public bool Contains<REGISTR>(out REGISTR registr) where REGISTR : T
+	public bool ContainsType<REGISTR>(out REGISTR registr) where REGISTR : T
 	{
 		registr = registers.OfType<REGISTR>().FirstOrDefault();
 		return registr != null;

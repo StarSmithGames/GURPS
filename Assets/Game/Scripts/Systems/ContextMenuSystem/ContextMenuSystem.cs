@@ -38,7 +38,7 @@ namespace Game.Systems.ContextMenu
 
 			if (observable is IDamageable damegeable && !isSelf)
 			{
-				if (self.Sheet.Abilities.Contains<AttackAbility>(out var ability))
+				if (self.Sheet.Abilities.ContainsType<AttackAbility>(out var ability))
 				{
 					commands.Add(new CommandAttack(self, damegeable) { name = ability.Data.abilityName, type = self.InBattle ? ContextType.Normal : ContextType.Negative });
 				}

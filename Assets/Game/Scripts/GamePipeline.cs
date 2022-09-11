@@ -53,7 +53,7 @@ namespace Game.Managers.GameManager
 
 		private IEnumerator Pipeline()
 		{
-			//Debug.LogError("Pipeline Start");
+			Debug.LogError("Pipeline Start");
 #if UNITY_EDITOR
 			//Profile == null
 			if (!saveLoad.GetStorage().IsHasProfile)
@@ -71,7 +71,7 @@ namespace Game.Managers.GameManager
 #endif
 			gameManager.ChangeState(GameState.Gameplay);
 
-			//Debug.LogError("Pipeline End");
+			Debug.LogError("Pipeline End");
 
 			yield return null;
 		}
@@ -79,7 +79,9 @@ namespace Game.Managers.GameManager
 		private IEnumerator SpawnProcess()
 		{
 			Assert.IsTrue(spawnManager.registers.Count == 0, "No spawn points on scene.");
-			yield return new WaitUntil(() => spawnManager.IsSpawnProcess);
+
+			yield return null;//take all spawn points need tests
+			yield return new WaitUntil(() => spawnManager.registers.Count > 0);
 			spawnManager.Spawn();
 			yield return new WaitWhile(() => spawnManager.IsSpawnProcess);
 		}

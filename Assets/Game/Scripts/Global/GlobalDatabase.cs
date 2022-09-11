@@ -22,7 +22,8 @@ namespace Game
         [ReadOnly] public ContainerData[] allContainers;
         [Header("Debug")]
         public Mesh HumanoidMesh;
-        public Material GreenMaterial;
+        public Mesh Stand;
+        public Material Material;
 
 #if UNITY_EDITOR
 

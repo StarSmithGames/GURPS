@@ -1,4 +1,7 @@
+using Game.Entities.Models;
 using Game.Managers.PartyManager;
+
+using Sirenix.OdinInspector;
 
 using System.Collections;
 
@@ -11,6 +14,8 @@ namespace Game.Systems.SpawnManager
 	[ExecuteInEditMode]
 	public class SpawnPoint : MonoBehaviour
 	{
+		public Settings settings;
+
 		public bool IsSpawnProcess => spawnCoroutine != null;
 		private Coroutine spawnCoroutine = null;
 
@@ -38,7 +43,7 @@ namespace Game.Systems.SpawnManager
 		{
 			if (Application.isPlaying)
 			{
-				spawnManager.UnRegistrate(this);
+				//spawnManager.UnRegistrate(this);
 			}
 		}
 
@@ -63,25 +68,74 @@ namespace Game.Systems.SpawnManager
 			var pos = transform.position;
 			var rot = transform.rotation;
 
-			partyManager.PlayerParty.Characters.ForEach((x) =>
+			if (settings.spawnType == SpawnType.Party)
 			{
-				container.InstantiatePrefab(x.CharacterData.prefab, pos, rot, null);
-			});
+				partyManager.PlayerParty.Characters.ForEach((x) =>
+				{
+					container.InstantiatePrefab(x.CharacterData.prefab, pos, rot, null);
+				});
+			}
+			else if (settings.spawnType == SpawnType.Companion)
+			{
+				container.InstantiatePrefab(settings.model, pos, rot, null);
+			}
 
 			GameObject.DestroyImmediate(gameObject);
 
-			yield return null;
+			yield return new WaitForSeconds(1f);
 
-			spawnManager.UnRegistrate(this);
 			spawnCoroutine = null;
 		}
 
 		private void Draw()
 		{
-			if (GlobalDatabase.Instance.HumanoidMesh && GlobalDatabase.Instance.GreenMaterial)
+			bool isValid = GlobalDatabase.Instance.HumanoidMesh && GlobalDatabase.Instance.Stand && GlobalDatabase.Instance.Material;
+
+			if (isValid)
 			{
-				Graphics.DrawMesh(GlobalDatabase.Instance.HumanoidMesh, transform.position, transform.rotation * Quaternion.Euler(-90f, 0, 0), GlobalDatabase.Instance.GreenMaterial, gameObject.layer);
+				var material = new Material(GlobalDatabase.Instance.Material);
+
+				if (settings.spawnType == SpawnType.Party)
+				{
+					var color = Color.green;
+					color.a = 0.5f;
+					material.SetColor("_BaseColor", color);
+
+					DrawCharacter(material, new Vector3(0, 0, 0.5f));
+					DrawCharacter(material, new Vector3(0.5f, 0, 0));
+					DrawCharacter(material, new Vector3(-0.5f, 0, 0));
+				}
+				else if(settings.spawnType == SpawnType.Companion)
+				{
+					var color = Color.blue;
+					color.a = 0.5f;
+					material.SetColor("_BaseColor", color);
+
+					DrawCharacter(material, Vector3.zero);
+				}
+			}
+
+			void DrawCharacter(Material material, Vector3 offset)
+			{
+				Graphics.DrawMesh(GlobalDatabase.Instance.Stand, transform.position + offset, transform.rotation * Quaternion.Euler(-90f, 0, 0), material, gameObject.layer);
+				Graphics.DrawMesh(GlobalDatabase.Instance.HumanoidMesh, transform.position + new Vector3(0, 0.05f, 0) + offset, transform.rotation * Quaternion.Euler(-90f, 0, 0), material, gameObject.layer);
 			}
 		}
+
+		[System.Serializable]
+		public class Settings
+		{
+			public SpawnType spawnType;
+
+			[ShowIf("spawnType", SpawnType.Companion)]
+			public CharacterModel model;
+		}
+	}
+
+	public enum SpawnType
+	{
+		Party,
+		Companion,
+		Prefab,
 	}
 }

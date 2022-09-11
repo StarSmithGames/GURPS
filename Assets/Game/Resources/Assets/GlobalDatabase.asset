@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b9277f0594a8dd48a0f97b01dc09ca4, type: 3}
   m_Name: GlobalDatabase
   m_EditorClassIdentifier: 
-  HumanoidMesh: {fileID: 2959467708922500008, guid: fd56313c710324a4a8ac2e098912804b, type: 3}
-  GreenMaterial: {fileID: 2100000, guid: 7e4210c989ecd8f41800c2251ea26312, type: 2}
   player: {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
   allCharacters: []
   allModels: []
   allContainers: []
+  HumanoidMesh: {fileID: 2959467708922500008, guid: fd56313c710324a4a8ac2e098912804b, type: 3}
+  Stand: {fileID: -2124705421725058983, guid: ef5dc5a6583e8594b9e25edc274826e3, type: 3}
+  Material: {fileID: 2100000, guid: 4c19ff0c854abe241af6a43c056a7724, type: 2}
