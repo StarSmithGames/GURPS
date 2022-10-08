@@ -1,6 +1,7 @@
 using Game.Managers.PartyManager;
 using Game.Systems.BattleSystem;
 using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
@@ -20,9 +21,10 @@ namespace Game.UI.CanvasSystem
 		[Header("Battle")]
 		public UITurn turnPrefab;
 		public GameObject turnSeparatePrefab;
-		[Space]
+		[Header("Sheet")]
+		public UIActionPoint actionPointPrefab;
 		public UIAction actionPrefab;
-		
+
 
 		public override void InstallBindings()
 		{
@@ -33,6 +35,7 @@ namespace Game.UI.CanvasSystem
 
 			BindBattleSystem();
 
+			BindActionPoints();
 			BindActions();
 		}
 
@@ -63,10 +66,17 @@ namespace Game.UI.CanvasSystem
 			Container.BindInstance(Container.InstantiatePrefab(turnSeparatePrefab)).WithId("TurnSeparate");
 		}
 
+		private void BindActionPoints()
+		{
+			Container.BindFactory<UIActionPoint, UIActionPoint.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(7)
+				.FromComponentInNewPrefab(actionPointPrefab));
+		}
+
 		private void BindActions()
 		{
 			Container.BindFactory<UIAction, UIAction.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(7)
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(15)
 				.FromComponentInNewPrefab(actionPrefab));
 		}
 	}

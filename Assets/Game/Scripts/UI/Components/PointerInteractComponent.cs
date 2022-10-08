@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 namespace Game.UI
 {
-	public class PointerInteractComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
+	public sealed class PointerInteractComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler
 	{
 		public bool IsInteractable { get => isInteractable; set => isInteractable = value; }
 		private bool isInteractable = true;

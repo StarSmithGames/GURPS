@@ -1,18 +1,55 @@
+using Game.UI;
+
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
 using Zenject;
 
-public class UIAction : PoolableObject
+namespace Game.Systems.SheetSystem
 {
-	[field: SerializeField] public Image Active { get; private set; }
-	[field: SerializeField] public Image Inactive { get; private set; }
-
-	public void Enable(bool trigger)
+	public sealed class UIAction : PoolableObject
 	{
-		Active.gameObject.SetActive(trigger);
-		Inactive.gameObject.SetActive(!trigger);
+		public UnityAction<UIAction> onClicked;
+
+		[field: SerializeField] public PointerHandlerComponent Pointer { get; private set; }
+		[field: Space]
+		[field: SerializeField] public Image Background { get; private set; }
+		[field: SerializeField] public Image Icon { get; private set; }
+		[field: SerializeField] public Image Frame { get; private set; }
+		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
+		[field: SerializeField] public TMPro.TextMeshProUGUI Num { get; private set; }
+
+		private void Start()
+		{
+			Pointer.onPointerClick += OnClicked;
+		}
+
+		private void OnDestroy()
+		{
+			if(Pointer != null)
+			{
+				Pointer.onPointerClick -= OnClicked;
+			}
+		}
+
+		public void SetAction()
+		{
+			Icon.enabled = false;
+			Icon.sprite = null;
+
+			Count.enabled = false;
+			Count.text = "0";
+
+			Num.enabled = false;
+		}
+
+		private void OnClicked(PointerEventData data)
+		{
+			onClicked?.Invoke(this);
+		}
+
+		public class Factory : PlaceholderFactory<UIAction> { }
 	}
-
-
-	public class Factory : PlaceholderFactory<UIAction> { }
 }

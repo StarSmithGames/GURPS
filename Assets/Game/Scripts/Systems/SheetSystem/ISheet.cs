@@ -69,9 +69,9 @@ namespace Game.Systems.SheetSystem
         }
     }
 
-    public class CharacterSheet : EntitySheet
+    public sealed class CharacterSheet : EntitySheet
     {
-        public virtual IEquipment Equipment { get; private set; }
+        public IEquipment Equipment { get; private set; }
 
         public CharacterSheet(CharacterData data) : base(data.information, data.sheet)
         {
@@ -97,7 +97,7 @@ namespace Game.Systems.SheetSystem
 		public ModelSheet(ModelData data) : base(data.information, data.sheet) { }
 	}
 
-	public class ContainerSheet : ModelSheet
+	public sealed class ContainerSheet : ModelSheet
     {
 		public ContainerSheet(ContainerData data) : base(data) { }
 	}
@@ -105,7 +105,7 @@ namespace Game.Systems.SheetSystem
 
     [HideLabel]
     [System.Serializable]
-    public class SheetSettings
+    public sealed class SheetSettings
     {
         //Birthday
         [TabGroup("GroupA", "Info")]
@@ -132,7 +132,7 @@ namespace Game.Systems.SheetSystem
 
     [HideLabel]
     [System.Serializable]
-    public class SheetInfo
+    public sealed class SheetInfo
 	{
         public Identity identity = Identity.Humanoid;
 
