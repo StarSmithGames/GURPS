@@ -8,5 +8,6 @@ namespace Game.Systems.InteractionSystem
 		InteractionPoint InteractionPoint { get; }
 
 		bool InteractWith(IInteractable interactable);
+		bool ExecuteInteraction(IInteraction interaction);
 	}
 }

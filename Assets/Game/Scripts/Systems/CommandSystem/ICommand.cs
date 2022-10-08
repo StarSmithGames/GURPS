@@ -102,6 +102,22 @@ namespace Game.Systems.CommandCenter
 		}
 	}
 
+	public class CommandCrackingContainer : ContextCommand
+	{
+		private IInteractable initiator;
+		private IContainer container;
+
+		public CommandCrackingContainer(IInteractable initiator, IContainer container)
+		{
+			this.initiator = initiator;
+			this.container = container;
+		}
+
+		public override void Execute()
+		{
+			initiator.ExecuteInteraction(new BaseInteraction(container.InteractionPoint, container.UnLock));
+		}
+	}
 	public class CommandCloseContainer : ContextCommand
 	{
 		private IContainer container;

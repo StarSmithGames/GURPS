@@ -41,7 +41,7 @@ namespace Game.Systems.InventorySystem
 			{
 				if(interaction == null)
 				{
-					interaction = new ContainerInteraction(this);
+					interaction = new BaseInteraction(InteractionPoint, Open);
 				}
 
 				return interaction;
@@ -110,7 +110,15 @@ namespace Game.Systems.InventorySystem
 			gameObject.SetActive(false);
 		}
 
-		#region Open Close Dispose
+		#region UnLock Open Close Dispose
+		public void UnLock(IInteractable interactor)
+		{
+			data.isLocked = false;
+
+			var pos = transform.TransformPoint(DamagePosition);
+			floatingSystem.CreateText(pos, "UnLocked");
+		}
+
 		public void Open(IInteractable interactor)
 		{
 			if (window == null)
@@ -161,11 +169,6 @@ namespace Game.Systems.InventorySystem
 			window = null;
 		}
 		#endregion
-
-		private void UnLock()
-		{
-
-		}
 
 		private void OnTakeAll()
 		{

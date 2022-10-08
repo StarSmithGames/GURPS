@@ -1,6 +1,7 @@
 ﻿using Game.Entities.Models;
 using Game.Systems.InteractionSystem;
-using Game.Systems.InventorySystem;
+
+using System;
 
 namespace Game.Systems
 {
@@ -9,46 +10,33 @@ namespace Game.Systems
 		void Execute(IInteractable interactor);
 	}
 
-	public class ContainerInteraction : IInteraction
+	public class BaseInteraction : IInteraction
 	{
-		private IContainer container;
+		private InteractionPoint point;
+		private Action<IInteractable> callback;
 
-		public ContainerInteraction(IContainer container)
+		public BaseInteraction(InteractionPoint point, Action<IInteractable> callback = null)
 		{
-			this.container = container;
+			this.point = point;
+			this.callback = callback;
 		}
 
 		public void Execute(IInteractable interactor)
 		{
-			if (container.InteractionPoint.IsInRange(interactor.Transform.position))
+			if (point.IsInRange(interactor.Transform.position))
 			{
-				container.Open(interactor);
+				callback?.Invoke(interactor);
 			}
 			else
 			{
 				if (interactor is IEntityModel entity)
 				{
 					entity.TaskSequence
-						.Append(new GoToTaskAction(entity, container.InteractionPoint.GetIteractionPosition(entity)))
-						.Append(() => container.Open(interactor));
+						.Append(new GoToTaskAction(entity, point.GetIteractionPosition(entity)))
+						.Append(() => callback?.Invoke(interactor));
 					entity.TaskSequence.Execute();
 				}
 			}
 		}
 	}
-
-	//public class TalkInteraction : IInteraction
-	//{
-	//	private IActor initiator;
-
-	//	public TalkInteraction(IActor actor)
-	//	{
-	//		this.initiator = actor;
-	//	}
-
-	//	public void Execute(IInteractable interactor)
-	//	{
-	//		Talker.ABTalk(initiator, interactor as IActor);
-	//	}
-	//}
 }

@@ -46,6 +46,21 @@ namespace Game.Entities.Models
 			return false;
 		}
 
+		public virtual bool ExecuteInteraction(IInteraction interaction)
+		{
+			if (IsInteractable)
+			{
+				if (interaction != null)
+				{
+					interaction.Execute(this);
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		#region Observe
 		public virtual void StartObserve()
 		{

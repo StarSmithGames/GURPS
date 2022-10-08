@@ -77,7 +77,14 @@ namespace Game.Systems.ContextMenu
 			}
 			else
 			{
-				commands.Add(new CommandInteract(leader, container) { name = "Open" });
+				if (container.IsLocked)
+				{
+					commands.Add(new CommandCrackingContainer(leader, container) { name = "Use Lockpick" });
+				}
+				else
+				{
+					commands.Add(new CommandInteract(leader, container) { name = "Open" });
+				}
 			}
 
 			return commands;
