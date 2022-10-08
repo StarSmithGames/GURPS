@@ -2,6 +2,7 @@ using Game.Managers.GameManager;
 using Game.Managers.SceneManager;
 using Game.Managers.StorageManager;
 using Game.Systems.CommandCenter;
+using Game.Systems.LocalizationSystem;
 
 using UnityEngine;
 using Zenject;
@@ -23,12 +24,20 @@ namespace Game
 			Container.BindInstance(Container.InstantiateComponentOnNewGameObject<AsyncManager>());
 			Container.BindInstance(Container.InstantiateComponentOnNewGameObject<CommandCenter>());
 
+			BindLocalization();
+
 			BindSaveLoad();
 
 			GameManagerInstaller.Install(Container);
 			SceneManagerInstaller.Install(Container);
 
 			Container.BindInstance(globalSettings);
+		}
+
+		private void BindLocalization()
+		{
+			Container.DeclareSignal<SignalLocalizationChanged>();
+			Container.BindInterfacesAndSelfTo<LocalizationSystem>().AsSingle();
 		}
 
 		private void BindSaveLoad()
