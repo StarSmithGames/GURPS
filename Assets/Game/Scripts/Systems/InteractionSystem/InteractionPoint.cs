@@ -34,7 +34,7 @@ namespace Game.Systems.InteractionSystem
 		{
 			float distance = Vector3.Distance(transform.position, position);
 
-			return distance <= settings.maxRange + 0.1f;
+			return distance <= settings.maxRange;
 		}
 
 		private void OnDrawGizmos()

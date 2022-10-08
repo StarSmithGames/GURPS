@@ -15,6 +15,7 @@ namespace Game.Systems.InventorySystem
 	public class ContainerModel : DamageableModel, IContainer, IDestructible
 	{
 		public bool IsOpened => window?.IsShowing ?? false;
+		public bool IsLocked => data.isLocked;
 		public bool IsSearched => data.isSearched;
 
 		[field: SerializeField] public ContainerData ContainerData { get; private set; }
@@ -55,22 +56,24 @@ namespace Game.Systems.InventorySystem
 		private UISubCanvas subCanvas;
 		private UIContainerWindow.Factory containerWindowFactory;
 		private InputManager inputManager;
+		private FloatingTextSystem.FloatingSystem floatingSystem;
 
 		[Inject]
 		private void Construct(UISubCanvas subCanvas,
 			UIContainerWindow.Factory containerWindowFactory,
-			InputManager inputManager)
+			InputManager inputManager, FloatingTextSystem.FloatingSystem floatingSystem)
 		{
 			this.subCanvas = subCanvas;
 			this.containerWindowFactory = containerWindowFactory;
 			this.inputManager = inputManager;
+			this.floatingSystem = floatingSystem;
 		}
 
 		private void Start()
 		{
 			if (data == null)
 			{
-				data = new Data();
+				data = new Data() { isLocked = this.ContainerData.isLocked };
 			}
 		}
 
@@ -112,6 +115,13 @@ namespace Game.Systems.InventorySystem
 		{
 			if (window == null)
 			{
+				if (IsLocked)
+				{
+					var pos = transform.TransformPoint(DamagePosition);
+					floatingSystem.CreateText(pos, "Locked");
+					return;
+				}
+
 				lastInteractor = interactor;
 
 				window = containerWindowFactory.Create();
@@ -152,6 +162,11 @@ namespace Game.Systems.InventorySystem
 		}
 		#endregion
 
+		private void UnLock()
+		{
+
+		}
+
 		private void OnTakeAll()
 		{
 			Dispose();
@@ -165,6 +180,7 @@ namespace Game.Systems.InventorySystem
 
 		public class Data
 		{
+			public bool isLocked = false;
 			public bool isSearched = false;
 		}
 	}

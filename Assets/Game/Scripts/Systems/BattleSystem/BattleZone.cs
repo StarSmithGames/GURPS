@@ -1,3 +1,5 @@
+using Game.Entities;
+using Game.Entities.Models;
 using Game.Managers.FactionManager;
 
 using Sirenix.OdinInspector;
@@ -57,6 +59,11 @@ namespace Game.Systems.BattleSystem
 
 		private bool IsEnemyInZone(IBattlable battlable)
 		{
+			if (battlable is CharacterModel characterModel)
+			{
+				return characterModel.Character is PlayableCharacter;
+			}
+
 			if (battlable is IFactionable factionable)
 			{
 				for (int i = 0; i < battlables.Count; i++)

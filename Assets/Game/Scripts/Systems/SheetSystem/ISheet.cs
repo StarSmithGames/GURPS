@@ -1,5 +1,3 @@
-using FlowCanvas.Nodes;
-
 using Game.Entities;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
@@ -24,7 +22,7 @@ namespace Game.Systems.SheetSystem
         Conditions Conditions { get; }
         Abilities.Abilities Abilities { get; }
         Skills Skills { get; }
-        Traits Traits { get; }//?
+        Traits Traits { get; }
         Talents Talents { get; }
         //racial abilities
         //Personality Traits
