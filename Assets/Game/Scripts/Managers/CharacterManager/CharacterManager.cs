@@ -1,5 +1,7 @@
 using Game.Entities;
 
+using UnityEngine;
+
 namespace Game.Managers.CharacterManager
 {
 	public class CharacterManager : Registrator<ICharacter>
@@ -23,7 +25,7 @@ namespace Game.Managers.CharacterManager
 
 		public ICharacter CreateCharacter(CharacterData data)
 		{
-			ICharacter character = data is PlayableCharacter ? pcFactory.Create(data) : npcFactory.Create(data) as ICharacter;
+			ICharacter character = data is PlayableCharacterData ? pcFactory.Create(data) : npcFactory.Create(data) as ICharacter;
 			Registrate(character);
 			return character;
 		}
