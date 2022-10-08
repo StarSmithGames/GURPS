@@ -102,10 +102,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410057c28bbd3d847882337c4be72468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  model: {fileID: 83227379555027231}
   outline: {fileID: 7950189021051833653}
   interactionPoint: {fileID: 5532837674011213375}
-  entity: {fileID: 83227379555027231}
-  model: {fileID: 3500026711126116287}
+  modelRoot: {fileID: 3500026711126116287}
   animator: {fileID: 7382168809336004037}
   navMeshAgent: {fileID: 83227379555027218}
   characterController: {fileID: 83227379555027216}
@@ -131,9 +131,6 @@ MonoBehaviour:
   <DamagePosition>k__BackingField: {x: 0, y: 0, z: 0}
   <BattlePoint>k__BackingField: {fileID: 4081235290040901517}
   <OpportunityPoint>k__BackingField: {fileID: 6768427421072014803}
-  <Faction>k__BackingField:
-    faction: Player
-  data: {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
 --- !u!143 &83227379555027216
 CharacterController:
   m_ObjectHideFlags: 0

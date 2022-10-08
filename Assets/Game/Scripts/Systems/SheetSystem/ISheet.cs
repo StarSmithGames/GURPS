@@ -64,7 +64,7 @@ namespace Game.Systems.SheetSystem
             Inventory = new Inventory(Settings.inventory);
 
             Conditions = new Conditions();
-            Abilities = new Abilities.Abilities(Settings.abilities);
+            //Abilities = new Abilities.Abilities(Settings.abilities);
             Skills = new Skills();
             Traits = new Traits();
             Talents = new Talents();

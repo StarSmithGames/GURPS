@@ -13,9 +13,17 @@ MonoBehaviour:
   m_Name: GlobalDatabase
   m_EditorClassIdentifier: 
   player: {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
-  allCharacters: []
-  allModels: []
-  allContainers: []
+  allCharacters:
+  - {fileID: 11400000, guid: 4b4f6b172b0188c418c94fcc03e43afc, type: 2}
+  - {fileID: 11400000, guid: cfb8e78f85231eb4fab2bf87d164e5fb, type: 2}
+  - {fileID: 11400000, guid: 3d0965b4c2f5ded48a4313efa89b19ea, type: 2}
+  - {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
+  allModels:
+  - {fileID: 11400000, guid: ce9a2e14e38a0524bbe071b2238f3529, type: 2}
+  - {fileID: 11400000, guid: b0f6ad7a6bb1ce749b746081bfb299cf, type: 2}
+  - {fileID: 11400000, guid: 28e573d452c69444b9e739843eefe3ad, type: 2}
+  allContainers:
+  - {fileID: 11400000, guid: b0f6ad7a6bb1ce749b746081bfb299cf, type: 2}
   HumanoidMesh: {fileID: 2959467708922500008, guid: fd56313c710324a4a8ac2e098912804b, type: 3}
   Stand: {fileID: -2124705421725058983, guid: ef5dc5a6583e8594b9e25edc274826e3, type: 3}
   Material: {fileID: 2100000, guid: 4c19ff0c854abe241af6a43c056a7724, type: 2}

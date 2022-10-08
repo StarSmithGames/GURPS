@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c3f478ef69fbe04fa9ed3664a8a443e, type: 3}
+  m_Name: New Dialogue Tree
+  m_EditorClassIdentifier: 
+  _serializedGraph: '{"type":"NodeCanvas.DialogueTrees.DialogueTree","nodes":[{"statement":{"texts":[{"language":"Russian","value":"\u0422\u0435\u043a\u0441\u0442","isShowFoldout":true},{"language":"English","value":"This
+    is a text!","isShowFoldout":true}],"isShowFoldout":true},"_position":{"x":450.0,"y":165.0},"$type":"Game.Systems.DialogueSystem.I2StatementNode","$id":"0"},{"availableChoices":[{"requirements":[],"consequence":[],"actions":[],"statement":{"texts":[{"language":"Russian","value":"\u0427\u043e\u0439\u0441
+    1"},{"language":"English","value":"Choice 1"}]},"conditionBefore":{"alignmentRequired":0,"$type":"Game.Systems.DialogueSystem.Nodes.SheetAlignmentRequirement"},"isShowFoldout":true},{"requirements":[],"consequence":[],"actions":[],"statement":{"texts":[{"language":"Russian","value":"\u0427\u043e\u0439\u0441
+    2"},{"language":"English","value":"Choice2"}]}}],"_position":{"x":450.0,"y":285.0},"$type":"Game.Systems.DialogueSystem.Nodes.I2MultipleChoiceNode","$id":"1"}],"connections":[{"_sourceNode":{"$ref":"0"},"_targetNode":{"$ref":"1"},"$type":"NodeCanvas.DialogueTrees.DTConnection"}],"canvasGroups":[],"localBlackboard":{"_variables":{}},"derivedData":{"actorParameters":[],"$type":"NodeCanvas.DialogueTrees.DialogueTree+DerivedSerializationData"}}'
+  _objectReferences: []
+  _graphSource:
+    _version: 3.22
+    _category: 
+    _comments: 
+    _translation: {x: 85, y: 44}
+    _zoomFactor: 1
+  _haltSerialization: 0
+  actorParameters: []

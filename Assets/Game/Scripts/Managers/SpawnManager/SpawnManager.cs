@@ -25,7 +25,7 @@ namespace Game.Systems.SpawnManager
 				registers[i].Execute();
 			}
 
-			for (int i = 0; i < registers.Count; i++)
+			for (int i = registers.Count - 1 ; i >= 0 ; i--)
 			{
 				UnRegistrate(registers[i]);
 			}

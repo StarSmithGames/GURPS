@@ -1,3 +1,4 @@
+using Game.Entities.Models;
 using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
 using Game.Systems.DialogueSystem;
@@ -32,7 +33,12 @@ namespace Game.Entities
 			Container.BindInstance(outfit);
 			Container.BindInstance(barker);
 
-			Container.BindInterfacesTo<AbilityProvider>().AsSingle().NonLazy();
+			Container.BindInterfacesAndSelfTo<AbilityProvider>().AsSingle().NonLazy();
+		}
+
+		protected override void BindModel()
+		{
+			Container.BindInstance<ICharacterModel>(base.model as ICharacterModel);
 		}
 	}
 }

@@ -342,9 +342,9 @@ MonoBehaviour:
         currentDurability: 100
         isShowFoldout: 0
     abilities:
-      baseAbilities:
-      - {fileID: 11400000, guid: 7be1af33b58e994498a0c53de84c2689, type: 2}
-      abilities: []
+      abilities:
+      - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}
+      - {fileID: 734433591177738151, guid: d043023ebe202fc45821ca731b1cb220, type: 3}
     isImmortal: 0
   information:
     portrait: {fileID: 21300000, guid: 3f80cbec08daddb44bb5316bd40a3414, type: 3}

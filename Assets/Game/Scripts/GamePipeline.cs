@@ -53,9 +53,9 @@ namespace Game.Managers.GameManager
 
 		private IEnumerator Pipeline()
 		{
-			Debug.LogError("Pipeline Start");
+			Debug.Log("[GamePipeline] Pipeline Start");
 #if UNITY_EDITOR
-			//Profile == null
+			//Profile == null ? generate player
 			if (!saveLoad.GetStorage().IsHasProfile)
 			{
 				characterManager.CreatePlayer();
@@ -71,7 +71,7 @@ namespace Game.Managers.GameManager
 #endif
 			gameManager.ChangeState(GameState.Gameplay);
 
-			Debug.LogError("Pipeline End");
+			Debug.Log("[GamePipeline] Pipeline End");
 
 			yield return null;
 		}

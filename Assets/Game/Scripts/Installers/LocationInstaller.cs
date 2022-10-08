@@ -21,8 +21,6 @@ namespace Game
 
 		public override void InstallBindings()
 		{
-			Debug.LogError("LocationContext");
-
 			Container.BindInstance(subCanvas);
 			BindCameras();
 
@@ -45,7 +43,7 @@ namespace Game
 			Container.BindFactory<IAbility, CastActivation, CastActivation.Factory>().NonLazy();
 
 			Container
-				.BindFactory<IAbility, IActivation, ActivationFactory>()
+				.BindFactory<ActivationType, IAbility, IActivation, ActivationFactory>()
 				.FromFactory<CustomActivationFactory>()
 				.NonLazy();
 		}

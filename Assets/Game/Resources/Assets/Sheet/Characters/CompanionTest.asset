@@ -198,8 +198,8 @@ MonoBehaviour:
         currentDurability: 100
         isShowFoldout: 0
     abilities:
-      baseAbilities: []
-      abilities: []
+      abilities:
+      - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}
     isImmortal: 0
   information:
     portrait: {fileID: 21300000, guid: 79a6bf9b346654043986e14a258ad970, type: 3}
@@ -210,3 +210,4 @@ MonoBehaviour:
     - language: 30
       name: Monkey
     nameColor: {r: 0, g: 0.4811321, b: 0.3227848, a: 1}
+  prefab: {fileID: 0}

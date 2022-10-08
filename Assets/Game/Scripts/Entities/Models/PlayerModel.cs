@@ -1,4 +1,5 @@
 using Game.Managers.CharacterManager;
+
 using Zenject;
 
 namespace Game.Entities.Models
@@ -20,5 +21,6 @@ namespace Game.Entities.Models
 		}
 
 		protected override void CheckReplicas() { }
+
 	}
 }

@@ -1,5 +1,7 @@
 using Game.Managers.CharacterManager;
 
+using UnityEngine;
+
 using Zenject;
 
 namespace Game.Entities.Models

@@ -41,14 +41,14 @@ namespace Game.Systems.AnimatorController
 
 		protected SignalBus signalBus;
 		protected Animator animator;
-		protected IEntityModel entity;
+		protected ICharacterModel characterModel;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, Animator animator, IEntityModel entity)
+		private void Construct(SignalBus signalBus, Animator animator, ICharacterModel characterModel)
 		{
 			this.signalBus = signalBus;
 			this.animator = animator;
-			this.entity = entity;
+			this.characterModel = characterModel;
 		}
 
 		public virtual void Initialize()
@@ -68,26 +68,26 @@ namespace Game.Systems.AnimatorController
 			deathHash = Animator.StringToHash("Death");
 			deathTypeHash = Animator.StringToHash("DeathType");
 
-			entity.Controller.onReachedDestination += OnReachedDestination;
+			characterModel.Controller.onReachedDestination += OnReachedDestination;
 		}
 
 		protected virtual void OnDestroy()
 		{
-			if (entity != null)
+			if (characterModel != null)
 			{
-				entity.Controller.onReachedDestination -= OnReachedDestination;
+				characterModel.Controller.onReachedDestination -= OnReachedDestination;
 			}
 		}
 
 		protected virtual void Update()
 		{
 			//Movement
-			Vector3 velocity = entity.Controller.GetVelocity();
+			Vector3 velocity = characterModel.Controller.GetVelocity();
 
 			Vector3 horizontalVelocity = VectorMath.RemoveDotVector(velocity, transform.up);
 			Vector3 verticalVelocity = velocity - horizontalVelocity;
 
-			IsIdle = !entity.IsHasTarget && velocity.magnitude == 0;
+			IsIdle = !characterModel.IsHasTarget && velocity.magnitude == 0;
 
 			animator.applyRootMotion = IsRootMotion = IsIdle && !IsIdleTransaction;
 
@@ -96,12 +96,12 @@ namespace Game.Systems.AnimatorController
 			//animator.SetFloat("HorizontalSpeed", Mathf.Clamp(controller.CalculateAngleToDesination(), -90, 90) / 90);
 
 			animator.SetBool(isIdleHash, IsIdle);
-			animator.SetBool(isGroundedHash, entity.Controller.IsGrounded);
+			animator.SetBool(isGroundedHash, characterModel.Controller.IsGrounded);
 
 
 			if (animator.applyRootMotion == false)
 			{
-				entity.Navigation.NavMeshAgent.nextPosition = transform.root.position;
+				characterModel.Navigation.NavMeshAgent.nextPosition = transform.root.position;
 			}
 		}
 
@@ -126,7 +126,7 @@ namespace Game.Systems.AnimatorController
 
 		protected IEnumerator WaitWhileAnimation(string animation)
 		{
-			if (entity is IBattlable battlable)
+			if (characterModel is IBattlable battlable)
 			{
 				isWaitAnimationProccess = true;
 
@@ -145,7 +145,7 @@ namespace Game.Systems.AnimatorController
 
 		protected IEnumerator WaitWhileTransition(string transition)
 		{
-			if (entity is IBattlable battlable)
+			if (characterModel is IBattlable battlable)
 			{
 				isWaitTransitionProccess = true;
 
@@ -171,7 +171,7 @@ namespace Game.Systems.AnimatorController
 
 		private void OnReachedDestination()
 		{
-			if (entity is IBattlable battlable)
+			if (characterModel is IBattlable battlable)
 			{
 				if (battlable.InBattle)
 				{

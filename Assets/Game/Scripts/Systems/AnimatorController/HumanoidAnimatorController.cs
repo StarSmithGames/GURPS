@@ -35,13 +35,10 @@ namespace Game.Systems.AnimatorController
 
 		private string nodeIdleAction = "IdleAction";
 
-		private ICharacterModel humanoid;
 		private WeaponBehavior currentWeaponBehavior;
 
 		public override void Initialize()
 		{
-			humanoid = entity as ICharacterModel;
-
 			isAimingHash = Animator.StringToHash("IsAiming");
 
 			base.Initialize();
@@ -49,7 +46,7 @@ namespace Game.Systems.AnimatorController
 			signalBus?.Subscribe<SignalJoinBattleLocal>(OnJoinedBattle);
 			signalBus?.Subscribe<SignalLeaveBattleLocal>(OnLeavedBattle);
 
-			(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
+			(characterModel.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 			OnEquipWeaponChanged();
 		}
 
@@ -60,9 +57,9 @@ namespace Game.Systems.AnimatorController
 			signalBus?.Unsubscribe<SignalJoinBattleLocal>(OnJoinedBattle);
 			signalBus?.Unsubscribe<SignalLeaveBattleLocal>(OnLeavedBattle);
 
-			if (humanoid != null)
+			if (characterModel != null)
 			{
-				(humanoid.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
+				(characterModel.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
 			}
 		}
 
@@ -71,9 +68,9 @@ namespace Game.Systems.AnimatorController
 			base.Update();
 
 
-			if (humanoid.InBattle)
+			if (characterModel.InBattle)
 			{
-				//humanoid.Controller.IsWaitAnimation = IsAnimationProcess;
+				//characterModel.Controller.IsWaitAnimation = IsAnimationProcess;
 			}
 		}
 
@@ -113,7 +110,7 @@ namespace Game.Systems.AnimatorController
 
 		private IEnumerator EnterIdleAction()
 		{
-			if (!humanoid.InBattle)
+			if (!characterModel.InBattle)
 			{
 				EnableBattleMode(true);
 		
@@ -123,7 +120,7 @@ namespace Game.Systems.AnimatorController
 
 		private IEnumerator ExitIdleAction()
 		{
-			if (!humanoid.InBattle)
+			if (!characterModel.InBattle)
 			{
 				EnableBattleMode(false);
 			
@@ -189,12 +186,12 @@ namespace Game.Systems.AnimatorController
 	{
 		private void SetBehaviorToUnArmed()
 		{
-			currentWeaponBehavior = new UnArmedBehavior(humanoid);
+			currentWeaponBehavior = new UnArmedBehavior(characterModel);
 		}
 
 		private void OnEquipWeaponChanged()
 		{
-			CharacterSheet sheet = humanoid.Sheet as CharacterSheet;
+			CharacterSheet sheet = characterModel.Sheet as CharacterSheet;
 
 			Hands hands = sheet.Equipment.WeaponCurrent.Hands;
 
@@ -204,22 +201,22 @@ namespace Game.Systems.AnimatorController
 
 			if (hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
 			{
-				currentWeaponBehavior = new OneHandedBehavior(humanoid);
+				currentWeaponBehavior = new OneHandedBehavior(characterModel);
 			}
 			else if (hands == Hands.Both)
 			{
 				if (weaponMain is MeleeItemData)
 				{
-					currentWeaponBehavior = new TwoHandedBehavior(humanoid);
+					currentWeaponBehavior = new TwoHandedBehavior(characterModel);
 				}
 				else if (weaponMain is RangedItemData)
 				{
-					currentWeaponBehavior = new RangedBehavior(humanoid);
+					currentWeaponBehavior = new RangedBehavior(characterModel);
 				}
 			}
 			else
 			{
-				currentWeaponBehavior = new UnArmedBehavior(humanoid);
+				currentWeaponBehavior = new UnArmedBehavior(characterModel);
 			}
 
 
@@ -228,7 +225,7 @@ namespace Game.Systems.AnimatorController
 				lastBehavior.Dispose();
 			}
 
-			if (humanoid.InBattle)
+			if (characterModel.InBattle)
 			{
 				currentWeaponBehavior.UpdatePose();
 			}

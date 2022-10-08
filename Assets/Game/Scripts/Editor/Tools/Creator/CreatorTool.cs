@@ -21,6 +21,10 @@ namespace Game.Editor
         private static string ModelsPath = "Assets/Game/Resources/Assets/Sheet/Models";
         private static string ContainerPath = "Assets/Game/Resources/Assets/Sheet/Models/Containers";
 
+        private static string MenuAbilitiesPath = "Assets/Game/Resources/Assets/Sheet/Abilities";
+        private static string AbilitiesPath = "Assets/Sheet/Abilities";
+
+
         private Texture2D trash;
 
         private IEnumerable<OdinMenuItem> treeMenu;
@@ -54,16 +58,19 @@ namespace Game.Editor
 			tree.Add("Models",              new ModelDataTable(GlobalDatabase.Instance.allModels));
 			tree.Add("Models/Containers",   new ContainerDataTable(GlobalDatabase.Instance.allContainers));
 
-            treeMenu = tree.AddAllAssetsAtPath("Characters", CharactersPath, typeof(CharacterData), true);
-            treeMenu = tree.AddAllAssetsAtPath("Models", ModelsPath, typeof(ModelData), true);
+            tree.AddAllAssetsAtPath("Characters", CharactersPath, typeof(CharacterData), true);
+            tree.AddAllAssetsAtPath("Models", ModelsPath, typeof(ModelData), true);
+            tree.AddAllAssetsAtPath("Abilities", MenuAbilitiesPath, typeof(BaseAbility), true);
+
+            treeMenu = tree.EnumerateTree(true);
             treeMenu.SortMenuItemsByName();
 
             foreach (var item in treeMenu)
-            {
+			{
 				item.OnRightClick = (menuItem) => EditorGUIUtility.PingObject(menuItem.Value as ScriptableObject);
-            }
+			}
 
-            tree.MarkDirty();
+			tree.MarkDirty();
 
             return tree;
         }
@@ -148,13 +155,21 @@ namespace Game.Editor
         }
 
         private void RefreshData(EntityData data)
-		{
-            var baseAbilityies = data.sheet.abilities.baseAbilities;
-            //if(data.sheet.abilities.baseAbilities.Count == 0)
+        {
+            var abilities = data.sheet.abilities.abilities;
+            //remove null's
+            
+            for (int i = abilities.Count - 1; i >= 0; i--)
             {
-                baseAbilityies.Clear();
-                baseAbilityies.AddRange(GetAbilities().Where((x) => x.name.StartsWith("Base")).OrderBy((x) => x.name));
+                if (abilities[i] == null)
+                {
+                    abilities.RemoveAt(i);
+                }
             }
+
+            //cheack all base abilities
+            var baseAbilities = GetAbilities().Where((x) => x.name.StartsWith("Base")).OrderBy((x) => x.name);
+            data.sheet.abilities.abilities = abilities.Union(baseAbilities).OrderBy((x) => x.name).ToList();
         }
 
         private void ShowDialogue<T>(string path) where T : EntityData
@@ -167,11 +182,9 @@ namespace Game.Editor
             });
         }
 
-        public static AbilityData[] GetAbilities()
+        public static BaseAbility[] GetAbilities()
         {
-            return AssetDatabase.FindAssets("t: AbilityData")
-                .Select((x) => AssetDatabase.GUIDToAssetPath(x))
-                .Select((x) => AssetDatabase.LoadAssetAtPath<AbilityData>(x)).ToArray();
+            return Resources.LoadAll<BaseAbility>(AbilitiesPath);
         }
     }
 }

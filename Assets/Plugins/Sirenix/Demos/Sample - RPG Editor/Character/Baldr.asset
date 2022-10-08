@@ -911,7 +911,7 @@ MonoBehaviour:
     Stats:
       stats:
       - Type: 0
-        Value: 47.058823
+        Value: 24.193548
       - Type: 1
         Value: 64.51613
       - Type: 2

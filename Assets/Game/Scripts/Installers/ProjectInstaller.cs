@@ -18,7 +18,6 @@ namespace Game
 
 		public override void InstallBindings()
 		{
-			Debug.LogError("ProjectContext");
 			SignalBusInstaller.Install(Container);
 
 			Container.BindInstance(Container.InstantiateComponentOnNewGameObject<AsyncManager>());

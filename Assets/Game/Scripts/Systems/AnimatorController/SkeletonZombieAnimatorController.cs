@@ -13,7 +13,7 @@ namespace Game.Systems.AnimatorController
 
 		public override void Initialize()
 		{
-			humanoid = entity as IBattlable;
+			humanoid = characterModel as IBattlable;
 		}
 
 		protected override void Update()

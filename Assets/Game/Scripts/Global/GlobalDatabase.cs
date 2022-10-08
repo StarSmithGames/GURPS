@@ -27,28 +27,30 @@ namespace Game
 
 #if UNITY_EDITOR
 
-        [Button(ButtonSizes.Medium), PropertyOrder(-99)]
+        [Button(ButtonSizes.Medium, DirtyOnClick = true), PropertyOrder(-99)]
         public void UpdateAll()
         {
             UpdateCharacterOverview();
             UpdateModelOverview();
             UpdateContainerOverview();
+
+            AssetDatabase.SaveAssets();
         }
 
-        [Button(ButtonSizes.Small), PropertyOrder(-98)]
+        [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-98)]
         public void UpdateCharacterOverview()
         {
             allCharacters = LoadAssets<CharacterData>();
             player = allCharacters.Where((x) => x.name == "Player").FirstOrDefault() as PlayableCharacterData;
         }
 
-        [Button(ButtonSizes.Small), PropertyOrder(-97)]
+        [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-97)]
         public void UpdateModelOverview()
         {
             allModels = LoadAssets<ModelData>();
         }
 
-        [Button(ButtonSizes.Small), PropertyOrder(-96)]
+        [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-96)]
         public void UpdateContainerOverview()
         {
             allContainers = LoadAssets<ContainerData>();

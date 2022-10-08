@@ -16,8 +16,6 @@ namespace Game
 
 		public override void InstallBindings()
 		{
-			Debug.LogError("GameContext");
-
 			Container.BindInstance(gameCanvas);
 			Container.BindInstance(brainCamera);
 

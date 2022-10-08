@@ -12,16 +12,15 @@ namespace Game.Entities
 	public class EntityInstaller : ModelInstaller
 	{
 		[Title("Entity")]
-		[SerializeField] private EntityModel entity;
-		[SerializeField] private Transform model;
+		public Transform modelRoot;
 		[Space]
-		[SerializeField] private Animator animator;
-		[SerializeField] private NavMeshAgent navMeshAgent;
-		[SerializeField] private CharacterController characterController;
+		public Animator animator;
+		public NavMeshAgent navMeshAgent;
+		public CharacterController characterController;
 		[Space]
-		[SerializeField] private AnimatorController animatorControl;
-		[SerializeField] private CharacterController3D controller;
-		[SerializeField] private NavigationController navigationController;
+		public AnimatorController animatorControl;
+		public CharacterController3D controller;
+		public NavigationController navigationController;
 
 		public override void InstallBindings()
 		{
@@ -29,11 +28,15 @@ namespace Game.Entities
 			Container.BindInstance(animator);
 			Container.BindInstance(navMeshAgent);
 			Container.BindInstance(characterController);
-			Container.BindInstance(model).WithId("Model");
+			Container.BindInstance(modelRoot).WithId("Model");
 			Container.BindInstance(animatorControl);
 			Container.BindInstance<IController>(controller);
 			Container.BindInstance(navigationController);
-			Container.BindInstance<IEntityModel>(entity);
+		}
+
+		protected override void BindModel()
+		{
+			Container.BindInstance<IEntityModel>(base.model as IEntityModel);
 		}
 	}
 }

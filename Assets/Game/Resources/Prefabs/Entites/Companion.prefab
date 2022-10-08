@@ -102,10 +102,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 410057c28bbd3d847882337c4be72468, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  model: {fileID: 5468961598750850960}
   outline: {fileID: 7707879391142115215}
   interactionPoint: {fileID: 5067109585629635533}
-  entity: {fileID: 5468961598750850960}
-  model: {fileID: 3761009277470784773}
+  modelRoot: {fileID: 3761009277470784773}
   animator: {fileID: 7120726294155093887}
   navMeshAgent: {fileID: 397710266938422184}
   characterController: {fileID: 397710266938422186}

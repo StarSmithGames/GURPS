@@ -43,7 +43,7 @@ namespace Game.Systems.SpawnManager
 		{
 			if (Application.isPlaying)
 			{
-				//spawnManager.UnRegistrate(this);
+				spawnManager.UnRegistrate(this);
 			}
 		}
 
@@ -80,9 +80,9 @@ namespace Game.Systems.SpawnManager
 				container.InstantiatePrefab(settings.model, pos, rot, null);
 			}
 
-			GameObject.DestroyImmediate(gameObject);
+			gameObject.SetActive(false);
 
-			yield return new WaitForSeconds(1f);
+			yield return null;
 
 			spawnCoroutine = null;
 		}

@@ -40,6 +40,7 @@ namespace Game.Systems.DialogueSystem.Nodes
 					Assert.IsNotNull(model, "Party Add Companion model == null");
 
 					companion = model.Character as PlayableCharacter;
+
 					Assert.IsNotNull(companion, "Party Add Companion companion == null");
 
 					executor = CommandCenter.CommandCenter.Instance.Registrator.GetAs<ICommandExecutor<IPartyManagerCommand>>();

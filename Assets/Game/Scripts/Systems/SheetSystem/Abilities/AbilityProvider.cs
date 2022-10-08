@@ -1,5 +1,4 @@
 using Game.Entities.Models;
-using System;
 
 using UnityEngine;
 
@@ -7,31 +6,40 @@ using Zenject;
 
 namespace Game.Systems.SheetSystem.Abilities
 {
-	public class AbilityProvider : IInitializable, IDisposable
+	public class AbilityProvider : Registrator<IAbility>
 	{
-		private ICharacterModel model;
 		private Abilities abilities => model.Sheet.Abilities;
+		private ICharacterModel model;
 
-		public AbilityProvider(IEntityModel entityModel)
+		private DiContainer container;
+
+		public AbilityProvider(DiContainer container, ICharacterModel characterModel)
 		{
-			model = entityModel as ICharacterModel;
+			this.container = container;
+
+			model = characterModel;
+
+			var abilities = model.Sheet.Settings.abilities.abilities;
+
+			for (int i = 0; i < abilities.Count; i++)
+			{
+				var ability = container.InstantiatePrefab(abilities[i], Vector3.zero, Quaternion.identity, model.Transform).GetComponent<IAbility>();
+
+				Registrate(ability);
+			}
 		}
 
-		public void Initialize()
+		public void Activate(IAbility ability)
 		{
-			//abilities.onCollectionChanged += OnAbilitiesChanged;
+			//var activation = activationFactory.Create(ability);
+			//activation.Activate();
 		}
 
-		public void Dispose()
+		public override void Registrate(IAbility ability)
 		{
-			abilities.onCollectionChanged -= OnAbilitiesChanged;
-		}
+			base.Registrate(ability);
 
-
-
-		private void OnAbilitiesChanged()
-		{
-			Debug.LogError("Update " + (model as MonoBehaviour).name);
+			ability.Activate();
 		}
 	}
 }

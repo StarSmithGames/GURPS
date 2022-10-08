@@ -2108,6 +2108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6803bcbd31d29e241bdfda10c96f73fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  model: {fileID: 8730467907109418137}
   outline: {fileID: 5196470597843648056}
   interactionPoint: {fileID: 5565656274219243614}
 --- !u!114 &8730467907109418137
@@ -2122,6 +2123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dfa4c39f69fdac46858a73ee44d4bfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <DamagePosition>k__BackingField: {x: 0, y: 0, z: 0}
   <Faction>k__BackingField:
     faction: Dummy
   <CameraPivot>k__BackingField: {fileID: 6295092740642339252}
