@@ -75,9 +75,10 @@ namespace NodeCanvas.Framework
         protected override void OnValidate() {
             base.OnValidate();
 
-#if UNITY_EDITOR
-            if ( UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null ) { return; }
-#endif
+//#if UNITY_EDITOR
+            //return EditorUtility.IsPersistent(go);
+            //if ( UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage() != null ) { return; }
+//#endif
 
             if ( Application.isPlaying || IsPrefabAsset() ) { return; }
             if ( !_allGlobals.Contains(this) ) { _allGlobals.Add(this); }

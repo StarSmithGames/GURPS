@@ -169,10 +169,10 @@ namespace NodeCanvas.Editor
             EditorApplication.playModeStateChanged -= OnPlayModeChange;
             EditorApplication.playModeStateChanged += OnPlayModeChange;
 
-#if UNITY_2018_3_OR_NEWER
-            UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing -= OnPrefabStageClosing;
-            UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing += OnPrefabStageClosing;
-#endif
+//#if UNITY_2018_3_OR_NEWER
+//            UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing -= OnPrefabStageClosing;
+//            UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing += OnPrefabStageClosing;
+//#endif
 
             Selection.selectionChanged -= OnUnityObjectSelectionChange;
             Selection.selectionChanged += OnUnityObjectSelectionChange;
@@ -195,9 +195,9 @@ namespace NodeCanvas.Editor
 
             EditorApplication.playModeStateChanged -= OnPlayModeChange;
 
-#if UNITY_2018_3_OR_NEWER
-            UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing -= OnPrefabStageClosing;
-#endif
+//#if UNITY_2018_3_OR_NEWER
+//            UnityEditor.Experimental.SceneManagement.PrefabStage.prefabStageClosing -= OnPrefabStageClosing;
+//#endif
 
             Selection.selectionChanged -= OnUnityObjectSelectionChange;
             Logger.RemoveListener(OnLogMessageReceived);
@@ -231,12 +231,12 @@ namespace NodeCanvas.Editor
             fullDrawPass = true;
         }
 
-#if UNITY_2018_3_OR_NEWER
-        void OnPrefabStageClosing(UnityEditor.Experimental.SceneManagement.PrefabStage stage) {
-            //when exiting prefab state we are left with a floating graph instance which can creat confusion
-            SetReferences(null, null, null);
-        }
-#endif
+//#if UNITY_2018_3_OR_NEWER
+//        void OnPrefabStageClosing(UnityEditor.Experimental.SceneManagement.PrefabStage stage) {
+//            //when exiting prefab state we are left with a floating graph instance which can creat confusion
+//            SetReferences(null, null, null);
+//        }
+//#endif
 
         //Change viewing graph based on Graph or GraphOwner
         void OnUnityObjectSelectionChange() {

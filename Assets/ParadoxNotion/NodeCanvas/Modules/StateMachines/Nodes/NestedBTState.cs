@@ -3,6 +3,7 @@ using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using UnityEngine;
 
+using IconAttribute = ParadoxNotion.Design.IconAttribute;
 
 namespace NodeCanvas.StateMachines
 {

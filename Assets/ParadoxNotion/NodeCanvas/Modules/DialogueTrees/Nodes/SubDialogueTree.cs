@@ -4,6 +4,7 @@ using System.Linq;
 using NodeCanvas.Framework;
 using ParadoxNotion.Design;
 using ParadoxNotion.Serialization.FullSerializer;
+using IconAttribute = ParadoxNotion.Design.IconAttribute;
 
 namespace NodeCanvas.DialogueTrees
 {
