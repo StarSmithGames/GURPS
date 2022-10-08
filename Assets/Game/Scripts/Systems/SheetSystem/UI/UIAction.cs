@@ -34,10 +34,10 @@ namespace Game.Systems.SheetSystem
 			}
 		}
 
-		public void SetAction()
+		public void SetAction(Actions.IAction action)
 		{
-			Icon.enabled = false;
-			Icon.sprite = null;
+			Icon.enabled = action != null;
+			Icon.sprite = action?.Information.icon;
 
 			Count.enabled = false;
 			Count.text = "0";
