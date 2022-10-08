@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game.Systems.CombatDamageSystem
 {
-	public interface IDamageable
+	public interface IDamageable : ITransform
 	{
 		Vector3 DamagePosition { get; }
 		InteractionPoint BattlePoint { get; }

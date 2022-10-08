@@ -60,16 +60,19 @@ namespace Game.Systems
 
 	public class RotateToTaskAction : TaskAction
 	{
+		private IEntityModel entity;
 		private Vector3 point;
 		private float duration;
 
 		public RotateToTaskAction(IEntityModel entity, Vector3 point, float duration = 0.25f)
 		{
+			this.entity = entity;
 			this.point = point;
 			this.duration = duration;
 		}
 		public RotateToTaskAction(IEntityModel entity, Transform lookAt, float duration = 0.25f)
 		{
+			this.entity = entity;
 			point = lookAt.position;
 			this.duration = duration;
 		}
@@ -78,7 +81,7 @@ namespace Game.Systems
 		{
 			status = TaskActionStatus.Running;
 
-			//yield return entity.Controller.RotateAnimatedTo(point, duration);
+			yield return (entity.Controller as CharacterController3D).RotateAnimatedTo(point, duration);
 			yield return null;
 			status = TaskActionStatus.Done;
 		}

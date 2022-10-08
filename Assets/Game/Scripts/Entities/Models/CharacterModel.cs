@@ -582,61 +582,40 @@ namespace Game.Entities.Models
 		{
 			if (InBattle)
 			{
-				if (damageable.BattlePoint.IsInRange(Transform.position))
+				bool isCanReach = (Sheet.Stats.Move.CurrentValue - Navigation.FullPath.Distance) >= 0 && Sheet.Stats.Move.CurrentValue != 0;
+
+				if (isCanReach)
 				{
-					currentCombat = combatFactory.Create(this, damageable);
-
-					TaskSequence
-						.Append(currentCombat.AttackAnimation)
-						.Append(new TaskWaitAttack(AnimatorController))
-						.Execute();
-
-					return true;
-				}
-				else
-				{
-					bool isCanReach = (Sheet.Stats.Move.CurrentValue - Navigation.FullPath.Distance) >= 0 && Sheet.Stats.Move.CurrentValue != 0;
-
-					if (isCanReach)
-					{
-						currentCombat = combatFactory.Create(this, damageable);
-
-						TaskSequence
-							.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
-							.Append(currentCombat.AttackAnimation)
-							.Append(new TaskWaitAttack(AnimatorController))
-							.Execute();
-
-						return true;
-					}
+					Combat(damageable.BattlePoint.IsInRange(Transform.position));
 				}
 			}
 			else
 			{
-				if (damageable.BattlePoint.IsInRange(Transform.position))
-				{
-					currentCombat = combatFactory.Create(this, damageable);
-
-					TaskSequence
-						.Append(currentCombat.AttackAnimation)
-						.Append(new TaskWaitAttack(AnimatorController));
-				}
-				else
-				{
-					currentCombat = combatFactory.Create(this, damageable);
-
-					TaskSequence
-						.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)))
-						.Append(currentCombat.AttackAnimation)
-						.Append(new TaskWaitAttack(AnimatorController));
-				}
-
-				TaskSequence.Execute();
-
-				return true;
+				Combat(damageable.BattlePoint.IsInRange(Transform.position));
 			}
 
-			return false;
+			return true;
+
+			void Combat(bool isInRange = false)
+			{
+				currentCombat = combatFactory.Create(this, damageable);
+
+				if (!isInRange)
+				{
+					//Move
+					TaskSequence
+						.Append(new GoToTaskAction(this, damageable.BattlePoint.GetIteractionPosition(this)));
+				}
+				//Rotate
+				TaskSequence
+					.Append(new RotateToTaskAction(this, damageable.Transform));
+
+				//Attack
+				TaskSequence
+					.Append(currentCombat.AttackAnimation)
+					.Append(new TaskWaitAttack(AnimatorController))
+					.Execute();
+			}
 		}
 
 		public virtual Damage GetDamage()
