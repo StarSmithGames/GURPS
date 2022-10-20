@@ -103,12 +103,6 @@ namespace Game.Managers.PartyManager
 			return false;
 		}
 
-
-		public bool ContainsByData(PlayableCharacterData data)
-		{
-			return false;//Characters.Any((x) => (x is ICompanion) ? x. == data : false);
-		}
-
 		public class Factory : PlaceholderFactory<ICharacter, PlayerParty> { }
 	}
 }

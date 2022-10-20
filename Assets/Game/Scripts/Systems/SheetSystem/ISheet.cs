@@ -21,7 +21,6 @@ namespace Game.Systems.SheetSystem
         IInventory Inventory { get; }
 
         Conditions Conditions { get; }
-        Effects Effects { get; }
 
         Abilities.Abilities Abilities { get; }
         Skills Skills { get; }
@@ -46,7 +45,6 @@ namespace Game.Systems.SheetSystem
         public virtual IInventory Inventory { get; private set; }
 
         public virtual Conditions Conditions { get; private set; }
-        public virtual Effects Effects { get; private set; }
 
         public virtual Abilities.Abilities Abilities { get; private set; }
         public virtual Skills Skills { get; private set; }
@@ -69,7 +67,6 @@ namespace Game.Systems.SheetSystem
             Inventory = new Inventory(Settings.inventory);
 
             Conditions = new Conditions();
-            Effects = new Effects(this);
             //Abilities = new Abilities.Abilities(Settings.abilities);
             Skills = new Skills();
             Traits = new Traits();

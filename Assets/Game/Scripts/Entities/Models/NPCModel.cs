@@ -11,7 +11,7 @@ namespace Game.Entities.Models
 
 	public class NPCModel : CharacterModel, INPCModel
 	{
-		public NonPlayableCharacterData data;
+		public CharacterData data;
 
 		public override ICharacter Character
 		{

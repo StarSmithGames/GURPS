@@ -13,7 +13,7 @@ namespace Game.Entities.Models
 
     public class CompanionModel : CharacterModel, ICompanionModel
     {
-		public PlayableCharacterData data;
+		public CharacterData data;
 
 		[Inject]
 		private void Construct(CharacterManager characterManager)

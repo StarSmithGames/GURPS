@@ -9,17 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2e3ee21257d94d9448f5689240889e27, type: 3}
+  m_Script: {fileID: 11500000, guid: ba86368128d77fc4c82779c236aae39d, type: 3}
   m_Name: CompanionTest
   m_EditorClassIdentifier: 
   sheet:
-    info:
-      identity: 0
-      race: 0
-      gender: 0
-      age: 0
     stats:
-      level: 1
       strength: 10
       dexterity: 10
       intelligence: 10
@@ -31,10 +25,15 @@ MonoBehaviour:
       addWill: 0
       addPerception: 0
     characteristics:
+      identity: 0
+      age: 0
+      race: 0
+      gender: 0
       alignment: 4
       deity: 0
       handed: 1
     actor:
+      actorId: 
       useBarks: 0
       useBarksInWorld: 0
       barksInWorld: {fileID: 0}
@@ -201,13 +200,12 @@ MonoBehaviour:
       abilities:
       - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}
     isImmortal: 0
+  isNPC: 1
   information:
     portrait: {fileID: 21300000, guid: 79a6bf9b346654043986e14a258ad970, type: 3}
-    nameId: Actor
-    localizations:
-    - language: 10
-      name: Monkey
-    - language: 30
-      name: Monkey
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
     nameColor: {r: 0, g: 0.4811321, b: 0.3227848, a: 1}
   prefab: {fileID: 0}

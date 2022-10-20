@@ -7,8 +7,7 @@ namespace Game.Managers.CharacterManager
 	{
 		public override void InstallBindings()
 		{
-			Container.BindFactory<CharacterData, PlayableCharacter, PlayableCharacter.Factory>().WhenInjectedInto<CharacterManager>();
-			Container.BindFactory<CharacterData, NonPlayableCharacter, NonPlayableCharacter.Factory>().WhenInjectedInto<CharacterManager>();
+			Container.BindFactory<CharacterData, Character, Character.Factory>().WhenInjectedInto<CharacterManager>();
 
 			Container.BindInterfacesAndSelfTo<CharacterManager>().AsSingle();
 		}

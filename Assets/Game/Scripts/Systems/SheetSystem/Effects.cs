@@ -1,17 +1,24 @@
+using Game.Entities;
+
 namespace Game.Systems.SheetSystem
 {
 	public sealed class Effects : Registrator<Effect>
 	{
-		public Effects(ISheet sheet)
-		{
+		private ISheet sheet;
+		private AsyncManager asyncManager;
 
+		public Effects(ICharacter character, AsyncManager asyncManager)
+		{
+			this.sheet = character.Sheet;
+			this.asyncManager = asyncManager;
 		}
 
 		public override bool Registrate(Effect register)
 		{
-			if (base.Registrate(register))
+			var copy = register.Copy();
+			if (base.Registrate(copy))
 			{
-				register.Activate();
+				copy.Activate(sheet);
 				return true;
 			}
 
@@ -31,27 +38,52 @@ namespace Game.Systems.SheetSystem
 	}
 
 	[System.Serializable]
-	public abstract class Effect : IEffect
+	public abstract class Effect : IEffect, ICopyable<Effect>
 	{
 		public bool IsActive { get; private set; }
 
 		public EffectData data;
 
-		public virtual void Activate()
+		private ISheet sheet;
+
+		public virtual void Activate(ISheet sheet)
 		{
 			IsActive = true;
+
+			this.sheet = sheet;
 		}
 
 		public virtual void Deactivate()
 		{
 			IsActive = false;
+
+			sheet = null;
 		}
+
+		public abstract Effect Copy();
 	}
 
-	[SearchPath("★Effects/HP Effect")]
 	[System.Serializable]
 	public class HPEffect : Effect
 	{
 		public float healAmmount;
+
+		public override void Activate(ISheet sheet)
+		{
+			base.Activate(sheet);
+
+			sheet.Stats.HitPoints.CurrentValue += healAmmount;
+
+			Deactivate();
+		}
+
+		public override Effect Copy()
+		{
+			return new HPEffect()
+			{
+				data = data,
+				healAmmount = healAmmount,
+			};
+		}
 	}
 }

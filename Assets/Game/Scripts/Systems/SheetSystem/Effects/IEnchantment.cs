@@ -6,7 +6,7 @@ namespace Game.Systems.SheetSystem
 {
 	public interface IEnchantment : IActivation { }
 
-	public interface IEffect : IActivation { }
+	public interface IEffect : IActivation<ISheet> { }
 
 	public interface IBuff : IActivation
 	{

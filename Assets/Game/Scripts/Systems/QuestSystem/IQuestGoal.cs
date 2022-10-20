@@ -53,7 +53,7 @@ namespace Game.Systems.QuestSystem
 
 		public class Target
 		{
-			public NonPlayableCharacterData data;
+			public CharacterData data;
 			public int count = 1;//min 1
 		}
 	}

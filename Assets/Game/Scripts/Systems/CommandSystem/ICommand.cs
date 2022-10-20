@@ -154,7 +154,7 @@ namespace Game.Systems.CommandCenter
 		{
 			if(data != null)
 			{
-				character.Sheet.Effects.Registrate(data.effects);
+				//character.Sheet.Effects.Registrate(data.effects);
 			}
 		}
 	}
@@ -295,9 +295,9 @@ namespace Game.Systems.CommandCenter
 
 	public class CommandAddCompanionInPlayerParty : IPartyManagerCommand
 	{
-		private PlayableCharacter companion;
+		private Character companion;
 
-		public CommandAddCompanionInPlayerParty(PlayableCharacter companion)
+		public CommandAddCompanionInPlayerParty(Character companion)
 		{
 			this.companion = companion;
 		}

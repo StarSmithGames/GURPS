@@ -15,7 +15,7 @@ namespace Game
     [GlobalConfig("Game/Resources/Assets")]
     public class GlobalDatabase : GlobalConfig<GlobalDatabase>
     {
-        [ReadOnly] public PlayableCharacterData player;
+        [ReadOnly] public CharacterData player;
         [ReadOnly] public CharacterData[] allCharacters;
         [ReadOnly] public ModelData[] allModels;
         [Header("Inventory")]
@@ -41,7 +41,7 @@ namespace Game
         public void UpdateCharacterOverview()
         {
             allCharacters = LoadAssets<CharacterData>();
-            player = allCharacters.Where((x) => x.name == "Player").FirstOrDefault() as PlayableCharacterData;
+            player = allCharacters.Where((x) => x.name == "Player").FirstOrDefault() as CharacterData;
         }
 
         [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-97)]

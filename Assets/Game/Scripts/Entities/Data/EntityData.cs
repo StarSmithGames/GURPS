@@ -1,6 +1,4 @@
-﻿using Game.Entities.Models;
-using Game.Systems.SheetSystem;
-using Sirenix.OdinInspector;
+﻿using Game.Systems.SheetSystem;
 
 using UnityEngine;
 
@@ -10,14 +8,4 @@ namespace Game.Entities
     {
         public SheetSettings sheet;
     }
-
-	public abstract class CharacterData : EntityData
-	{
-		[PropertyOrder(-1)]
-		[HideLabel]
-		public HumanoidInformation information;
-
-		[AssetSelector]
-		public CharacterModel prefab;
-	}
 }

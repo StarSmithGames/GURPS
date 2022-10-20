@@ -1,4 +1,0 @@
-namespace Game.Systems.SheetSystem
-{
-	
-}

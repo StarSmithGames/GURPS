@@ -61,7 +61,7 @@ namespace Game.Systems.BattleSystem
 		{
 			if (battlable is CharacterModel characterModel)
 			{
-				return characterModel.Character is PlayableCharacter;
+				return characterModel.Character is Character;
 			}
 
 			if (battlable is IFactionable factionable)

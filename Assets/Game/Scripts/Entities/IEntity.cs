@@ -14,27 +14,26 @@ namespace Game.Entities
 	public interface ICharacter : IEntity<ICharacterModel>, ISheetable
 	{
 		CharacterData CharacterData { get; }
+		Effects Effects { get; }
 
 		void SetModel(ICharacterModel model);
 
 		public Character.Data GetData();
 	}
 
-	public abstract class Character : ICharacter
+	public class Character : ICharacter
 	{
 		public CharacterData CharacterData { get; protected set; }
 		public virtual ISheet Sheet { get; protected set; }
 		public virtual ICharacterModel Model { get; protected set; }
 
-		public Character(CharacterData data)
+		public virtual Effects Effects { get; private set; }
+
+		public Character(CharacterData data, AsyncManager asyncManager)
 		{
 			CharacterData = data;
 			Sheet = new CharacterSheet(data);
-		}
-
-		public Character(Data data)
-		{
-
+			Effects = new Effects(this, asyncManager);
 		}
 
 		public void SetModel(ICharacterModel model)
@@ -56,19 +55,7 @@ namespace Game.Entities
 			public CharacterData data;
 			public CharacterSheet.Data sheet;
 		}
-	}
 
-	public class PlayableCharacter : Character
-	{
-		public PlayableCharacter(CharacterData data) : base(data) { }
-
-		public class Factory : PlaceholderFactory<CharacterData, PlayableCharacter> { }
-	}
-
-	public class NonPlayableCharacter : Character
-	{
-		public NonPlayableCharacter(CharacterData data) : base(data) { }
-
-		public class Factory : PlaceholderFactory<CharacterData, NonPlayableCharacter> { }
+		public class Factory : PlaceholderFactory<CharacterData, Character> { }
 	}
 }
