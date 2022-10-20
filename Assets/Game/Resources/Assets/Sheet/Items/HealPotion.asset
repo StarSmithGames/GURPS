@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 685784c8481116346bf1f0f127ff7332, type: 3}
   m_Name: HealPotion
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: faac39635d4413c4f9ed12868907c37b, type: 3}
-  nameId: 
-  descriptionId: 
+  information:
+    portrait: {fileID: 21300000, guid: faac39635d4413c4f9ed12868907c37b, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 0}
   isStackable: 0
   isInfinityStack: 0

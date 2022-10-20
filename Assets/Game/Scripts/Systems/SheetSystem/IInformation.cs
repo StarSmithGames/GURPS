@@ -1,5 +1,7 @@
 using Sirenix.OdinInspector;
 
+using System;
+
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem
@@ -15,15 +17,30 @@ namespace Game.Systems.SheetSystem
         public Sprite portrait;
 
         [VerticalGroup("Information/Split/Right")]
-        public string nameId;
+        [HorizontalGroup("Information/Split/Right/SplitName")]
+        [LabelText("@NameLabel")]
+        public string name;
+        [VerticalGroup("Information/Split/Right")]
+        [HorizontalGroup("Information/Split/Right/SplitName")]
+        [HideLabel]
+        public bool isNameId = true;
 
         [VerticalGroup("Information/Split/Right")]
-        public string descriptionId;
+        [HorizontalGroup("Information/Split/Right/SplitDescription")]
+        [LabelText("@DescriptionLabel")]
+        public string description;
+        [VerticalGroup("Information/Split/Right")]
+        [HorizontalGroup("Information/Split/Right/SplitDescription")]
+        [HideLabel]
+        public bool isDescriptionId = true;
 
-        public virtual string GetName() => !nameId.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(nameId, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "";
-        public virtual string GetDescription() => !descriptionId.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(descriptionId, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Description";
+        public virtual string GetName() => isNameId ? (!name.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(name, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "") : name;
+        public virtual string GetDescription() => isDescriptionId ? (!description.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(description, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Description") : description;
 
         public bool IsHasPortrait => portrait != null;
+
+        private string NameLabel => isNameId ? "Name Id" : "Name";
+        private string DescriptionLabel => isDescriptionId ? "Description Id" : "Description";
     }
 
     [System.Serializable]
@@ -42,7 +59,7 @@ namespace Game.Systems.SheetSystem
 
         [VerticalGroup("Information/Split/Right")]
         public Color nameColor = Color.white;
-    }
+	}
 
 	[System.Serializable]
     public class HumanoidInformation : EntityInformation { }

@@ -42,9 +42,10 @@ namespace Game.Editor
         [ShowInInspector, PreviewField(45, ObjectFieldAlignment.Center)]
         public Sprite Portrait { get => Data.information.portrait; set { Data.information.portrait = value; EditorUtility.SetDirty(Data); } }
 
-        [TableColumnWidth(120)]
-        [ShowInInspector]
-        public string NameId { get => Data.information.nameId; set { Data.information.nameId = value; EditorUtility.SetDirty(Data); } }
+        //[TableColumnWidth(120)]
+        //[ShowInInspector]
+        //public string NameId { get => Data.information.name; set { Data.information.name = value; EditorUtility.SetDirty(Data); } }
+
 
         //[ShowInInspector, ProgressBar(0, 100)]
         //public float Shooting { get { return this.character.Skills.Shooting; } set { this.character.Skills.Shooting = value; EditorUtility.SetDirty(this.character); } }
@@ -76,9 +77,9 @@ namespace Game.Editor
         [ShowInInspector, PreviewField(45, ObjectFieldAlignment.Center)]
         public Sprite Portrait { get => Data.information.portrait; set { Data.information.portrait = value; EditorUtility.SetDirty(Data); } }
 
-        [TableColumnWidth(120)]
-        [ShowInInspector]
-        public string NameId { get => Data.information.nameId; set { Data.information.nameId = value; EditorUtility.SetDirty(Data); } }
+        //[TableColumnWidth(120)]
+        //[ShowInInspector]
+        //public string NameId { get => Data.information.name; set { Data.information.name = value; EditorUtility.SetDirty(Data); } }
     }
 
 	public class ContainerDataWrapper : DataWrapper<ContainerData>
@@ -92,9 +93,9 @@ namespace Game.Editor
         [ShowInInspector, PreviewField(45, ObjectFieldAlignment.Center)]
         public Sprite Portrait { get => Data.information.portrait; set { Data.information.portrait = value; EditorUtility.SetDirty(Data); } }
 
-        [TableColumnWidth(120)]
-        [ShowInInspector]
-        public string NameId { get => Data.information.nameId; set { Data.information.nameId = value; EditorUtility.SetDirty(Data); } }
+        //[TableColumnWidth(120)]
+        //[ShowInInspector]
+        //public string NameId { get => Data.information.name; set { Data.information.name = value; EditorUtility.SetDirty(Data); } }
     }
 
 	#endregion

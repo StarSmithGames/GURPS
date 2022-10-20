@@ -64,7 +64,7 @@ namespace Game.Systems.DialogueSystem
 		public void JoinToDialogue(IActor actor)
 		{
 			actor.IsInDialogue = true;
-			actorsDictionary.Add(actor.GetSheet().Information.nameId, actor);
+			actorsDictionary.Add(actor.GetSheet().Settings.actor.actorId, actor);
 		}
 
 		private IEnumerator Dialogue()

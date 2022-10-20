@@ -23,6 +23,8 @@ namespace Game.Systems.DialogueSystem
     [System.Serializable]
 	public class ActorSettings
     {
+        public string actorId;
+
         public bool useBarks = false;
         [ShowIf("@useBarks")]
         public bool useBarksInWorld = false;
