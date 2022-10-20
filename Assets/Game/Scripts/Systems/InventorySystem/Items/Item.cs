@@ -171,10 +171,10 @@ namespace Game.Systems.InventorySystem
 		{
 			Assert.IsNotNull(data);
 
-			return $"{data.ItemName}{(data.isStackable ? $" x{CurrentStackSize}" : "")}";
+			return $"{data.GetName()} {(data.isStackable ? $" x{CurrentStackSize}" : "")}";
 		}
 
-		private string Title => data?.ItemName ?? "NULL";
+		private string Title => data.GetName();
 
 #if UNITY_EDITOR
 		public bool isShowFoldout = false;

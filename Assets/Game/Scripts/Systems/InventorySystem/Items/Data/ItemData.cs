@@ -8,39 +8,18 @@ namespace Game.Systems.InventorySystem
 {
 	public abstract class ItemData : ScriptableObject
 	{
-		public string ItemName
-		{
-			get
-			{
-				if (localizations.Count > 0)
-				{
-					string n = GetLocalization().itemName;
-					return string.IsNullOrEmpty(n) ? name : n;
-				}
-
-				return name;
-			}
-		}
-
-		public string ItemDescription
-		{
-			get
-			{
-				if (localizations.Count > 0)
-				{
-					return GetLocalization().itemDescription;
-				}
-
-				return "";
-			}
-		}
-
-		[PreviewField]
+		[TitleGroup("Information")]
+		[HorizontalGroup("Information/Split", LabelWidth = 100)]
+		[VerticalGroup("Information/Split/Left")]
+		[PreviewField(ObjectFieldAlignment.Left, Height = 64)]
+		[HideLabel]
 		public Sprite itemSprite;
 
-		[ListDrawerSettings(ListElementLabelName = "Tittle")]
-		[InfoBox("@LocalizationInfo", InfoMessageType.Warning)]
-		public List<Localization> localizations = new List<Localization>();
+		[VerticalGroup("Information/Split/Right")]
+		public string nameId;
+
+		[VerticalGroup("Information/Split/Right")]
+		public string descriptionId;
 
 		[Space]
 		[AssetList]
@@ -66,23 +45,8 @@ namespace Game.Systems.InventorySystem
 		[Space]
 		public ItemRarity rarity;
 
-		public Localization GetLocalization(SystemLanguage language = SystemLanguage.English)
-		{
-			return localizations.Find((x) => x.language == language) ?? localizations[0];
-		}
-
-		private string LocalizationInfo => "Required :\n" + SystemLanguage.English.ToString();
-		[System.Serializable]
-		public class Localization
-		{
-			public SystemLanguage language = SystemLanguage.English;
-
-			public string itemName;
-			[TextArea(5, 5)]
-			public string itemDescription;
-
-			private string Tittle => language.ToString() + " " + (!(string.IsNullOrEmpty(itemName) || string.IsNullOrWhiteSpace(itemName))) + " " + (!(string.IsNullOrEmpty(itemDescription) || string.IsNullOrWhiteSpace(itemDescription)));
-		}
+		public string GetName() => !nameId.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(nameId, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Name";
+		public string GetDescription() => !descriptionId.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(descriptionId, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Description";
 	}
 
 	[InlineProperty]
