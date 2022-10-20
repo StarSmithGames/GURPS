@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   information:
-    icon: {fileID: 21300000, guid: 534705136547ee144a9af33867a6f03c, type: 3}
+    portrait: {fileID: 21300000, guid: 534705136547ee144a9af33867a6f03c, type: 3}
     nameId: 
     descriptionId: 

@@ -201,7 +201,7 @@ namespace Game.Systems.InventorySystem
 
 			//equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
 
-			itemCursor.SetIcon(item.ItemData.itemSprite);
+			itemCursor.SetIcon(item.ItemData.information.portrait);
 			//itemCursor.transform.parent = uiManager.transform.root;
 
 

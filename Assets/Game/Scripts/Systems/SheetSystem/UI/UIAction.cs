@@ -37,7 +37,7 @@ namespace Game.Systems.SheetSystem
 		public void SetAction(Actions.IAction action)
 		{
 			Icon.enabled = action != null;
-			Icon.sprite = action?.Information.icon;
+			Icon.sprite = action?.Information.portrait;
 
 			Count.enabled = false;
 			Count.text = "0";

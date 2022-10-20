@@ -1,3 +1,5 @@
+using Game.Systems.SheetSystem;
+
 using Sirenix.OdinInspector;
 
 using System.Collections.Generic;
@@ -8,18 +10,8 @@ namespace Game.Systems.InventorySystem
 {
 	public abstract class ItemData : ScriptableObject
 	{
-		[TitleGroup("Information")]
-		[HorizontalGroup("Information/Split", LabelWidth = 100)]
-		[VerticalGroup("Information/Split/Left")]
-		[PreviewField(ObjectFieldAlignment.Left, Height = 64)]
 		[HideLabel]
-		public Sprite itemSprite;
-
-		[VerticalGroup("Information/Split/Right")]
-		public string nameId;
-
-		[VerticalGroup("Information/Split/Right")]
-		public string descriptionId;
+		public Information information;
 
 		[Space]
 		[AssetList]
@@ -45,8 +37,10 @@ namespace Game.Systems.InventorySystem
 		[Space]
 		public ItemRarity rarity;
 
-		public string GetName() => !nameId.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(nameId, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Name";
-		public string GetDescription() => !descriptionId.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(descriptionId, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Description";
+		public string GetName()
+		{
+			return information.GetName().IsEmpty() ? name : information.GetName();//можно оставить name, что бы не обращатся к бд
+		}
 	}
 
 	[InlineProperty]

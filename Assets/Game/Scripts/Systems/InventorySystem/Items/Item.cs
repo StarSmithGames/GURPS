@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
+using Sirenix.OdinInspector;
+using Game.Managers.StorageManager;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -10,7 +12,7 @@ using UnityEditor;
 namespace Game.Systems.InventorySystem
 {
 	[System.Serializable]
-	public partial class Item : ICopyable<Item>
+	public class Item : ICopyable<Item>
 	{
 		public UnityAction OnItemChanged;
 
@@ -43,7 +45,9 @@ namespace Game.Systems.InventorySystem
 		public bool IsStackable => data?.isStackable ?? false;
 		public bool IsInfinityStack => data?.isInfinityStack ?? false;
 
+		[ShowIf("useRandom")]
 		[SerializeField] private float minimumStackSizeRandom;
+		[ShowIf("useRandom")]
 		[SerializeField] private float maximumStackSizeRandom;
 		#endregion
 
@@ -171,12 +175,15 @@ namespace Game.Systems.InventorySystem
 		{
 			Assert.IsNotNull(data);
 
-			return $"{data.GetName()} {(data.isStackable ? $" x{CurrentStackSize}" : "")}";
-		}
+			return $"{data?.information.GetName() ?? "NULL Data"} {(data != null ? (data.isStackable ? $" x{CurrentStackSize}" : "") : "")}";
+}
 
-		private string Title => data.GetName();
+		private string Title => data?.GetName() ?? "NULL Data";
 
+
+		/// GUI use in Nodes
 #if UNITY_EDITOR
+		[HideInInspector]
 		public bool isShowFoldout = false;
 
 		public void OnGUI()
@@ -225,15 +232,15 @@ namespace Game.Systems.InventorySystem
 			}
 			else
 			{
-				if(oldRandom != useRandom)
+				if (oldRandom != useRandom)
 				{
 					minimumStackSizeRandom = Mathf.Clamp(MaximumStackSize / 2, MinimumStackSize, MaximumStackSize);
 					maximumStackSizeRandom = MaximumStackSize;
 				}
 
-				if(data != null)
+				if (data != null)
 				{
-					if(data.isStackable)
+					if (data.isStackable)
 					{
 						GUILayout.Label($"StackSize: {MinimumStackSize} - {MaximumStackSize}");
 						GUILayout.BeginHorizontal();
@@ -293,17 +300,4 @@ namespace Game.Systems.InventorySystem
 		}
 #endif
 	}
-
-
-//#if UNITY_EDITOR
-//	[CustomEditor(typeof(Test))]
-//	public class ItemEditor : Editor
-//	{
-//		public override void OnInspectorGUI()
-//		{
-//			((Test)target).item.OnGUI();
-//			Item.OnGUIList(((Test)target).items);
-//		}
-//	}
-//#endif
 }

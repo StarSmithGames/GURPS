@@ -1,35 +1,12 @@
 using Sirenix.OdinInspector;
-using System.Collections.Generic;
 
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
-	[System.Serializable]
-	public class EntityInformation
-    {
-        public virtual string Name
-        {
-            get
-            {
-                if (localizations.Count > 0)
-                {
-                    return GetLocalization().name;
-                }
-
-                return "";
-            }
-        }
-
-        public string NameColored
-		{
-			get
-			{
-                string name = string.IsNullOrEmpty(Name) ? "EMPTY" : Name;
-                return $"<color=#{ColorUtility.ToHtmlStringRGBA(nameColor)}>{name}</color>";
-            }
-		}
-
+    [System.Serializable]
+    public class Information
+	{
         [TitleGroup("Information")]
         [HorizontalGroup("Information/Split", LabelWidth = 100)]
         [VerticalGroup("Information/Split/Left")]
@@ -41,32 +18,30 @@ namespace Game.Systems.SheetSystem
         public string nameId;
 
         [VerticalGroup("Information/Split/Right")]
-        [ListDrawerSettings(ListElementLabelName = "Tittle")]
-        [InfoBox("@LocalizationInfo", InfoMessageType.Warning)]
-        public List<Localization> localizations = new List<Localization>();
+        public string descriptionId;
+
+        public virtual string GetName() => !nameId.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(nameId, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "";
+        public virtual string GetDescription() => !descriptionId.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(descriptionId, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Description";
+
+        public bool IsHasPortrait => portrait != null;
+    }
+
+    [System.Serializable]
+	public class EntityInformation : Information
+    {
+        public virtual string Name => GetName();
+
+        public string NameColored
+		{
+			get
+			{
+                string name = string.IsNullOrEmpty(Name) ? "EMPTY" : Name;
+                return $"<color=#{ColorUtility.ToHtmlStringRGBA(nameColor)}>{name}</color>";
+            }
+		}
 
         [VerticalGroup("Information/Split/Right")]
         public Color nameColor = Color.white;
-
-        public Localization GetLocalization(SystemLanguage language = SystemLanguage.English)
-        {
-            return localizations.Find((x) => x.language == language) ?? localizations[0];
-        }
-
-        public bool IsHasPortrait => portrait != null;
-
-        private string LocalizationInfo => "Required :\n" + SystemLanguage.English.ToString();
-
-
-		[System.Serializable]
-        public class Localization
-        {
-            public SystemLanguage language = SystemLanguage.English;
-
-            public string name;
-
-            private string Tittle => language.ToString() + " " + (!(string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name)));
-        }
     }
 
 	[System.Serializable]

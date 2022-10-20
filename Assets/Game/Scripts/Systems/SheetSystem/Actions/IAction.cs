@@ -14,6 +14,7 @@ namespace Game.Systems.SheetSystem.Actions
 	public abstract class Action : MonoBehaviour, IAction
 	{
 		public ActionInformation Information => information;
+		[HideLabel]
 		[SerializeField] private ActionInformation information;
 
 		public abstract void Execute(object target);
@@ -22,19 +23,7 @@ namespace Game.Systems.SheetSystem.Actions
 	}
 
 	[System.Serializable]
-	public sealed class ActionInformation
+	public sealed class ActionInformation : Information
 	{
-		[TitleGroup("Information")]
-		[HorizontalGroup("Information/Split", LabelWidth = 100)]
-		[VerticalGroup("Information/Split/Left")]
-		[PreviewField(ObjectFieldAlignment.Left, Height = 64)]
-		[HideLabel]
-		public Sprite icon;
-
-		[VerticalGroup("Information/Split/Right")]
-		public string nameId;
-
-		[VerticalGroup("Information/Split/Right")]
-		public string descriptionId;
 	}
 }

@@ -24,7 +24,7 @@ namespace Game.Systems.InventorySystem
 		private void UpdateUI()
 		{
 			Icon.enabled = CurrentItem != null;
-			Icon.sprite = CurrentItem?.ItemData.itemSprite;
+			Icon.sprite = CurrentItem?.ItemData.information?.portrait;
 
 			Count.enabled = CurrentItem != null && !CurrentItem.IsArmor && !CurrentItem.IsWeapon;
 			Count.text = CurrentItem?.CurrentStackSize.ToString() ?? "";
