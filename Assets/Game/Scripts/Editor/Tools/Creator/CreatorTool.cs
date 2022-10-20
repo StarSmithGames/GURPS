@@ -113,32 +113,32 @@ namespace Game.Editor
 
         private void CreateCharacterButton()
 		{
-            SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)), new SearchProvider(Search.EntitiesCreation, (x) =>
-			{
-                if(x is Type t)
-				{
-                    if (t == typeof(PlayableCharacterData))
-                    {
-                        ShowDialogue<PlayableCharacterData>(CharactersPath);
-                    }
-                    else if (t == typeof(NonPlayableCharacterData))
-                    {
-                        ShowDialogue<NonPlayableCharacterData>(CharactersPath);
-                    }
-                    else if (t == typeof(ModelData))
-                    {
-                        ShowDialogue<ModelData>(ModelsPath);
-					}
-                    else if(t == typeof(ContainerData))
-					{
-                        ShowDialogue<ContainerData>(ContainerPath);
-                    }
-                    else
-					{
-                        Debug.LogError($"Can't create type: {t}");
-					}
-				}
-            }));
+   //         SearchWindow.Open(new SearchWindowContext(GUIUtility.GUIToScreenPoint(Event.current.mousePosition)), new SearchProvider(Search.EntitiesCreation, (x) =>
+			//{
+   //             if(x is Type t)
+			//	{
+   //                 if (t == typeof(PlayableCharacterData))
+   //                 {
+   //                     ShowDialogue<PlayableCharacterData>(CharactersPath);
+   //                 }
+   //                 else if (t == typeof(NonPlayableCharacterData))
+   //                 {
+   //                     ShowDialogue<NonPlayableCharacterData>(CharactersPath);
+   //                 }
+   //                 else if (t == typeof(ModelData))
+   //                 {
+   //                     ShowDialogue<ModelData>(ModelsPath);
+			//		}
+   //                 else if(t == typeof(ContainerData))
+			//		{
+   //                     ShowDialogue<ContainerData>(ContainerPath);
+   //                 }
+   //                 else
+			//		{
+   //                     Debug.LogError($"Can't create type: {t}");
+			//		}
+			//	}
+   //         }));
         }
 
         private void RefreshButton()

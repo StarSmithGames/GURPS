@@ -1,8 +1,5 @@
-using Game.UI;
 using Game.UI.CanvasSystem;
-
 using UnityEngine;
-
 using Zenject;
 
 namespace Game.Systems.ContextMenu
@@ -17,7 +14,8 @@ namespace Game.Systems.ContextMenu
 		{
 			Container.BindFactory<UIContextAction, UIContextAction.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
-				.FromComponentInNewPrefab(contextActionPrefab))
+				.FromComponentInNewPrefab(contextActionPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform))
 				.WhenInjectedInto<WindowContextMenu>();
 
 			Container.Bind<WindowContextMenu>()

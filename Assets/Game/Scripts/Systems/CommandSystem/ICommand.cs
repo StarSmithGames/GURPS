@@ -80,6 +80,11 @@ namespace Game.Systems.CommandCenter
 
 		}
 
+		public CommandExamine(Item observable)
+		{
+
+		}
+
 		public override void Execute()
 		{
 		}
@@ -134,10 +139,20 @@ namespace Game.Systems.CommandCenter
 	}
 
 
-	public class CommandUse : ContextCommand//eat, drink, use spells
+	public class CommandConsume : ContextCommand
 	{
+		private ICharacter character;
+		private Item item;
+
+		public CommandConsume(ICharacter character, Item item)
+		{
+			this.character = character;
+			this.item = item;
+		}
+
 		public override void Execute()
 		{
+			//character.
 		}
 	}
 	public class CommandPickUp : ContextCommand

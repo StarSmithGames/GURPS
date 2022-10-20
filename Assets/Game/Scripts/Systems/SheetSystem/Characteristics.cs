@@ -1,28 +1,16 @@
-using Game.Systems.SheetSystem;
-
 using Sirenix.OdinInspector;
 
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
-	public interface ICharacteristics
-	{
-		ICharacteristic<int> Level { get; }
-		ICharacteristic<int> Experience { get; }
-		ICharacteristic<Vector2> Alignment { get; }
-		ICharacteristic<Deity> Deity { get; }
-		ICharacteristic<Handed> Handed { get; }
-	}
-
-	public class Characteristics : ICharacteristics
+	public sealed class Characteristics
 	{
 		public ICharacteristic<int> Level { get; }
 		public ICharacteristic<int> Experience { get; }
 		public ICharacteristic<Vector2> Alignment { get; }
 		public ICharacteristic<Deity> Deity { get; }
 		public ICharacteristic<Handed> Handed { get; }
-
 
 		public Characteristics(CharacteristicsSettings settings)
 		{

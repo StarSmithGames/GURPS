@@ -1,5 +1,7 @@
 using Game.Managers.CharacterManager;
 using Game.Managers.InputManager;
+using Game.Managers.PartyManager;
+using Game.Systems.ContextMenu;
 using Game.Systems.SheetSystem;
 
 using System;
@@ -11,11 +13,9 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class InventoryContainerHandler : ITickable, IInitializable, IDisposable
+	public class InventoryContainerHandler
 	{
 		public bool IsDraging { get; private set; }
-
-		public bool IsInventoryOpened { get; private set; }
 
 		private Item item;
 		private IInventory from;
@@ -26,38 +26,19 @@ namespace Game.Systems.InventorySystem
 
 		private UIItemCursor itemCursor;
 		private UIContainerWindow.Factory containerFactory;
-		private InputManager inputManager;
+		private PartyManager partyManager;
+		private ContextMenuSystem contextMenuSystem;
 
 		public InventoryContainerHandler(
 			UIItemCursor itemCursor,
 			UIContainerWindow.Factory containerFactory,
-			InputManager inputManager)
+			PartyManager partyManager,
+			ContextMenuSystem contextMenuSystem)
 		{
 			this.itemCursor = itemCursor;
 			this.containerFactory = containerFactory;
-			this.inputManager = inputManager;
-		}
-
-
-		public void Initialize()
-		{
-			//IsInventoryOpened = uiManager.CharacterSheet.gameObject.activeSelf;
-			CloseCharacterStatus();
-
-			//uiManager.CharacterSheet.onClose += CloseCharacterStatus;
-		}
-
-		public void Dispose()
-		{
-			//uiManager.CharacterSheet.onClose -= CloseCharacterStatus;
-		}
-
-		public void Tick()
-		{
-			if (inputManager.GetKeyDown(KeyAction.Inventory))
-			{
-				CharacterStatusEnable();
-			}
+			this.partyManager = partyManager;
+			this.contextMenuSystem = contextMenuSystem;
 		}
 
 		public void Subscribe(UISlot[] slots)
@@ -135,42 +116,49 @@ namespace Game.Systems.InventorySystem
 
 			item = slot.CurrentItem;
 
-			//equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
+			equipment = (partyManager.PlayerParty.LeaderParty.Sheet as CharacterSheet).Equipment;
 
 			if (slot is UISlotInventory inventorySlot)
 			{
 				from = inventorySlot.Owner.CurrentInventory;
-				//to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
+				to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
-				if (eventData.clickCount > 1)
+				if (eventData.button == PointerEventData.InputButton.Left)
 				{
-					if (from == to)
+					if (eventData.clickCount > 1)
 					{
-						if (item.IsEquippable)
+						if (from == to)
 						{
-							equipment.Add(item);
+							if (item.IsEquippable)
+							{
+								equipment.Add(item);
+								from.Remove(item);
+							}
+						}
+						else
+						{
+							to.Add(item);
 							from.Remove(item);
 						}
 					}
 					else
 					{
+						if (from == to) return;
+
 						to.Add(item);
 						from.Remove(item);
 					}
 				}
-				else
+				else if(eventData.button == PointerEventData.InputButton.Right)
 				{
-					if (from == to) return;
-
-					to.Add(item);
-					from.Remove(item);
+					contextMenuSystem.SetTarget(item);
 				}
 			}
 			else if (slot is UISlotEquipment equipmentSlot)
 			{
 				if (eventData.clickCount > 1)
 				{
-					//to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
+					to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
 					to.Add(item);
 					equipment.RemoveFrom(equipmentSlot.CurrentEquip);
@@ -275,21 +263,6 @@ namespace Game.Systems.InventorySystem
 			equipment = null;
 
 			beginSlot = null;
-		}
-
-
-		private void CharacterStatusEnable()
-		{
-			IsInventoryOpened = !IsInventoryOpened;
-			//uiManager.CharacterSheet.gameObject.SetActive(IsInventoryOpened);
-		}
-		private void CloseCharacterStatus()
-		{
-			if (IsInventoryOpened)
-			{
-				IsInventoryOpened = false;
-				//uiManager.CharacterSheet.gameObject.SetActive(false);
-			}
 		}
 	}
 }

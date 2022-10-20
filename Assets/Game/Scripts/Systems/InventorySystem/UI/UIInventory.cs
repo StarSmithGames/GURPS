@@ -28,7 +28,7 @@ namespace Game.Systems.InventorySystem
 				slots[i].SetOwner(this);
 			}
 
-			containerHandler.Subscribe(slots);
+			containerHandler?.Subscribe(slots);
 		}
 
 		private void OnDestroy()

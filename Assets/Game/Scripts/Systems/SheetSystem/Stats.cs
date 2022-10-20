@@ -5,30 +5,7 @@ using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
-	public interface IStats
-	{
-        IStat Level { get; }
-
-        IStat Strength { get; }
-        IStat Dexterity { get; }
-        IStat Intelligence { get; }
-        IStat Health { get; }
-
-        IStatBar HitPoints { get; }
-        IStatBar FatiguePoints { get; }
-        IStatBar Move { get; }
-        IStatBar Speed { get; }
-        IStatBar Will { get; }
-        IStatBar Perception { get; }
-
-        IStatBar ActionPoints { get; }
-
-        IStatBar Lift { get; }
-
-        void RecoveMove();
-    }
-
-	public class Stats : IStats
+	public sealed class Stats
 	{
         public IStat Level { get; }
 

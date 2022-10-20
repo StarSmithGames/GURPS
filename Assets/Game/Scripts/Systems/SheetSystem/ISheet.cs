@@ -14,8 +14,8 @@ namespace Game.Systems.SheetSystem
     {
         EntityInformation Information { get; }
 
-        IStats Stats { get; }
-        ICharacteristics Characteristics { get; }
+        Stats Stats { get; }
+        Characteristics Characteristics { get; }
 
         IInventory Inventory { get; }
 
@@ -36,8 +36,8 @@ namespace Game.Systems.SheetSystem
     {
         public virtual EntityInformation Information { get; protected set; }
 
-        public virtual IStats Stats { get; private set; }
-		public virtual ICharacteristics Characteristics { get; private set; }
+        public virtual Stats Stats { get; private set; }
+		public virtual Characteristics Characteristics { get; private set; }
 
         public virtual IInventory Inventory { get; private set; }
 

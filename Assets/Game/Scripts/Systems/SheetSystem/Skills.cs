@@ -4,12 +4,8 @@ using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
-	public interface IEffects
+	public sealed class Skills : Registrator<ISkill>
 	{
-		List<IEffect> Effects { get; }
-	}
 
-	public interface IEffect
-	{
 	}
 }

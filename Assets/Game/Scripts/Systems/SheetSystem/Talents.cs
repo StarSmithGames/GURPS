@@ -1,6 +1,6 @@
 namespace Game.Systems.SheetSystem
 {
-	public class Talents : Registrator<ITalent>
+	public sealed class Talents : Registrator<ITalent>
 	{
 
 	}

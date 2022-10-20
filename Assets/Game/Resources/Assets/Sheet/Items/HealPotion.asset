@@ -30,3 +30,12 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
+  effects:
+  - rid: 2676847281495867394
+  references:
+    version: 2
+    RefIds:
+    - rid: 2676847281495867394
+      type: {class: HPEffect, ns: Game.Systems.SheetSystem, asm: Assembly-CSharp}
+      data:
+        test: 13

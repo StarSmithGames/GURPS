@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 namespace Game.Systems.SheetSystem
 {
-	public class Conditions : Registrator<ICondition>
+	public sealed class Conditions : Registrator<ICondition>
 	{
 		public event UnityAction onConditionsChanged;
 

@@ -8,6 +8,7 @@ using Game.Systems.CombatDamageSystem;
 using Game.Systems.CommandCenter;
 using Game.Systems.SheetSystem.Abilities;
 using Game.UI.CanvasSystem;
+using System;
 
 namespace Game.Systems.ContextMenu
 {
@@ -60,6 +61,34 @@ namespace Game.Systems.ContextMenu
 			}
 
 			commands.Add(new CommandExamine(observable) { name = "Examine" });
+
+			contextMenu.SetCommands(commands);
+		}
+
+		public void SetTarget(Item item)
+		{
+			if (contextMenu == null)
+			{
+				contextMenu = subCanvas.WindowsRegistrator.GetAs<WindowContextMenu>();
+			}
+
+			List<ContextCommand> commands = new List<ContextCommand>();
+
+			var user = partyManager.PlayerParty.LeaderParty;
+
+			if (item.IsConsumable)
+			{
+				if (item.IsEatable)
+				{
+					commands.Add(new CommandConsume(user, item) { name = "Eat" });
+				}
+				else if (item.IsDrinkable)
+				{
+					commands.Add(new CommandConsume(user, item) { name = "Drink" });
+				}
+			}
+
+			commands.Add(new CommandExamine(item) { name = "Examine" });
 
 			contextMenu.SetCommands(commands);
 		}

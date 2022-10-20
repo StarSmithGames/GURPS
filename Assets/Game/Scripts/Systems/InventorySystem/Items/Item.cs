@@ -89,6 +89,10 @@ namespace Game.Systems.InventorySystem
 		public bool IsBreakable => data?.isBreakable ?? false;
 		#endregion
 
+		public bool IsConsumable => data != null && data is ConsumableItemData;
+		public bool IsEatable => data != null && data is FoodItemData;
+		public bool IsDrinkable => data != null && data is DrinkItemData;
+
 		public bool IsEquippable => data != null && data is EquippableItemData;
 		public bool IsArmor => data != null && data is ArmorItemData;
 		public bool IsWeapon => data != null && data is WeaponItemData;
@@ -176,7 +180,7 @@ namespace Game.Systems.InventorySystem
 			Assert.IsNotNull(data);
 
 			return $"{data?.information.GetName() ?? "NULL Data"} {(data != null ? (data.isStackable ? $" x{CurrentStackSize}" : "") : "")}";
-}
+		}
 
 		private string Title => data?.GetName() ?? "NULL Data";
 
