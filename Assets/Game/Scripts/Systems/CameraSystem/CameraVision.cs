@@ -2,6 +2,7 @@ using Cinemachine;
 
 using Game.Managers.GameManager;
 using Game.Managers.InputManager;
+using Game.Systems.InteractionSystem;
 
 using System;
 

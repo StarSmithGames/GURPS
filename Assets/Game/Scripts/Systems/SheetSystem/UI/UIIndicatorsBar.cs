@@ -35,7 +35,7 @@ namespace Game.Systems.SheetSystem
 
 			if (actionStat != null)
 			{
-				actionStat.onStatChanged -= OnStatChanged;
+				actionStat.onChanged -= OnStatChanged;
 			}
 		}
 
@@ -50,7 +50,7 @@ namespace Game.Systems.SheetSystem
 		{
 			if (actionStat != null)
 			{
-				actionStat.onStatChanged -= OnStatChanged;
+				actionStat.onChanged -= OnStatChanged;
 			}
 
 			HealthBar.SetStat(sheetable?.Sheet.Stats.HitPoints);
@@ -60,7 +60,7 @@ namespace Game.Systems.SheetSystem
 
 			if (actionStat != null)
 			{
-				actionStat.onStatChanged += OnStatChanged;
+				actionStat.onChanged += OnStatChanged;
 			}
 
 			if (actionStat != null)

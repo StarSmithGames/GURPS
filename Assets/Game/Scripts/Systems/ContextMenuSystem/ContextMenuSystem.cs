@@ -9,6 +9,7 @@ using Game.Systems.CommandCenter;
 using Game.Systems.SheetSystem.Abilities;
 using Game.UI.CanvasSystem;
 using System;
+using Game.Systems.InteractionSystem;
 
 namespace Game.Systems.ContextMenu
 {
@@ -74,17 +75,17 @@ namespace Game.Systems.ContextMenu
 
 			List<ContextCommand> commands = new List<ContextCommand>();
 
-			var user = partyManager.PlayerParty.LeaderParty;
+			var leader = partyManager.PlayerParty.LeaderParty;
 
 			if (item.IsConsumable)
 			{
 				if (item.IsEatable)
 				{
-					commands.Add(new CommandConsume(user, item) { name = "Eat" });
+					commands.Add(new CommandConsume(leader, item) { name = "Eat" });
 				}
 				else if (item.IsDrinkable)
 				{
-					commands.Add(new CommandConsume(user, item) { name = "Drink" });
+					commands.Add(new CommandConsume(leader, item) { name = "Drink" });
 				}
 			}
 

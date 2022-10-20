@@ -35,11 +35,16 @@ namespace Game.Systems.SheetSystem.Abilities
 			//activation.Activate();
 		}
 
-		public override void Registrate(IAbility ability)
+		public override bool Registrate(IAbility ability)
 		{
-			base.Registrate(ability);
+			if (base.Registrate(ability))
+			{
+				ability.Activate();
 
-			ability.Activate();
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

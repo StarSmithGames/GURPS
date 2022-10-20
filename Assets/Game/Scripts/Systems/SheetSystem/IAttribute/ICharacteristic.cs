@@ -1,109 +1,228 @@
-using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Game.Systems.SheetSystem
 {
-	public interface ICharacteristic<T> : IAttribute where T : struct
+	public interface ICharacteristic<T> : IValue<T>
 	{
-		event UnityAction onCharacteristicChanged;
+		string Output { get; }
 
-		T CurrentValue { get; set; }
+		string LocalizationKey { get; }
 	}
 
-	public interface ICharacteristicModifiable<T> : ICharacteristic<T> , IModifiable<T> where T : struct
-	{
 
-	}
-
-	public abstract class Characteristic<T> : Attribute, ICharacteristic<T> where T : struct
+	#region Characteristics
+	public class LevelCharacteristic : ICharacteristic<int>
 	{
-		public virtual T CurrentValue
+		public event UnityAction onChanged;
+
+		public string Output => $"Level {CurrentValue}";
+		public string LocalizationKey => "sheet.characteristics.level";
+
+		public int CurrentValue
 		{
 			get => currentValue;
 			set
 			{
 				currentValue = value;
-
-				ValueChanged();
+				onChanged?.Invoke();
 			}
 		}
-		protected T currentValue;
+		private int currentValue;
 
-		public event UnityAction onCharacteristicChanged;
+		public LevelCharacteristic(int value)
+		{
+			currentValue = value;
+		}
+	}
 
-		protected Characteristic(T currentValue)
+	public class ExperienceCharacteristic : ICharacteristic<float>
+	{
+		public event UnityAction onChanged;
+
+		public float CurrentValue { get; set; }
+
+		public string LocalizationKey { get; }
+		public string Output { get; }
+
+		public ExperienceCharacteristic(float currentValue)
 		{
 			CurrentValue = currentValue;
 		}
 	}
 
-	public abstract class CharacteristicVector2Modifiable : AttributeVecto2Modifiable, ICharacteristicModifiable<Vector2>
+	public class NameCharacteristic : ICharacteristic<string>
 	{
-		public event UnityAction onCharacteristicChanged;
+		public event UnityAction onChanged;
 
-		public virtual Vector2 CurrentValue
+		public string Output => CurrentValue;
+		public string LocalizationKey => "sheet.characteristics.name";
+
+		public string CurrentValue
 		{
 			get => currentValue;
 			set
 			{
 				currentValue = value;
-
-				ValueChanged();
+				onChanged?.Invoke();
 			}
 		}
-		protected Vector2 currentValue;
+		private string currentValue;
 
-		public CharacteristicVector2Modifiable(Vector2 currentValue) : base()
+		public NameCharacteristic(string value)
 		{
-			this.currentValue = currentValue;
-		}
-
-		protected override void ValueChanged()
-		{
-			base.ValueChanged();
-
-			onCharacteristicChanged?.Invoke();
-		}
-
-		public override string ToString()
-		{
-			return CurrentValue.ToString();
+			currentValue = value;
 		}
 	}
 
-	#region Characteristics
-	public class ExperienceCharacteristic : Characteristic<int>
+	public class PortraitCharacteristic : ICharacteristic<Sprite>
 	{
-		public ExperienceCharacteristic(int currentValue) : base(currentValue) { }
+		public event UnityAction onChanged;
+
+		public string Output => "";
+		public string LocalizationKey => "sheet.characteristics.portrait";
+
+		public Sprite CurrentValue
+		{
+			get => sprite;
+			set
+			{
+				sprite = value;
+				onChanged?.Invoke();
+			}
+		}
+		private Sprite sprite;
+
+		public PortraitCharacteristic(Sprite value)
+		{
+			sprite = value;
+		}
 	}
 
-	public class LevelCharacteristic : Characteristic<int>
+	public class IdentityCharacteristic : ICharacteristic<Identity>
 	{
-		public LevelCharacteristic(int currentValue) : base(currentValue) { }
+		public event UnityAction onChanged;
+
+		public string Output => CurrentValue.ToString();
+		public string LocalizationKey => "sheet.characteristics.level";
+
+		public Identity CurrentValue
+		{
+			get => currentValue;
+			set
+			{
+				currentValue = value;
+				onChanged?.Invoke();
+			}
+		}
+		private Identity currentValue;
+
+		public IdentityCharacteristic(Identity value)
+		{
+			currentValue = value;
+		}
 	}
 
-	public class AlignmentCharacteristic : Characteristic<Vector2>
+	public class AgeCharacteristic : ICharacteristic<float>
 	{
+		public event UnityAction onChanged;
+
+		public string Output => CurrentValue.ToString();
+		public string LocalizationKey => "sheet.characteristics.level";
+
+		public float CurrentValue
+		{
+			get => currentValue;
+			set
+			{
+				currentValue = value;
+				onChanged?.Invoke();
+			}
+		}
+		private float currentValue;
+
+		public AgeCharacteristic(float value)
+		{
+			currentValue = value;
+		}
+	}
+
+	public class RaceCharacteristic : ICharacteristic<RaceType>
+	{
+		public event UnityAction onChanged;
+
+		public string Output => CurrentValue.ToString();
+		public string LocalizationKey => "sheet.characteristics.race";
+
+		public RaceType CurrentValue
+		{
+			get => currentValue;
+			set
+			{
+				currentValue = value;
+				onChanged?.Invoke();
+			}
+		}
+		private RaceType currentValue;
+
+		public RaceCharacteristic(RaceType race)
+		{
+			currentValue = race;
+		}
+	}
+
+	public class GenderCharacteristic : ICharacteristic<GenderType>
+	{
+		public event UnityAction onChanged;
+
+		public string Output => CurrentValue.ToString();
+		public string LocalizationKey => "sheet.characteristics.gender";
+
+		public GenderType CurrentValue
+		{
+			get => currentValue;
+			set
+			{
+				currentValue = value;
+				onChanged?.Invoke();
+			}
+		}
+		private GenderType currentValue;
+
+		public GenderCharacteristic(GenderType gender)
+		{
+			currentValue = gender;
+		}
+	}
+
+	public class AlignmentCharacteristic : ICharacteristic<Vector2>
+	{
+		public event UnityAction onChanged;
+
 		public AlignmentType AlignmentType { get; private set; }
-		public override Vector2 CurrentValue
+		public Vector2 CurrentValue
 		{
-			get => base.CurrentValue;
+			get => currentValue;
 			set
 			{
 				AlignmentType = Alignment.ConvertVector2ToAlignment(value);
-				base.CurrentValue = value;
+				currentValue = value;
 			}
 		}
+		private Vector2 currentValue;
 
-		public AlignmentCharacteristic(Vector2 currentValue) : base(currentValue)
+		public string LocalizationKey { get; }
+		
+		public string Output { get; }
+
+		public AlignmentCharacteristic(Vector2 currentValue)
 		{
 			AlignmentType = Alignment.ConvertVector2ToAlignment(currentValue);
 		}
-		public AlignmentCharacteristic(AlignmentType aligment) : base(Alignment.ConvertAlignmentToVector2(aligment))
+		public AlignmentCharacteristic(AlignmentType aligment)
 		{
 			AlignmentType = aligment;
+			currentValue = Alignment.ConvertAlignmentToVector2(aligment);
 		}
 	}
 	#endregion

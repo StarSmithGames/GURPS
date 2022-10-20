@@ -34,16 +34,16 @@ namespace Game.Systems.SheetSystem
 			}
 		}
 
-		public void SetAction(Actions.IAction action)
-		{
-			Icon.enabled = action != null;
-			Icon.sprite = action?.Information.portrait;
+		//public void SetAction(Actions.IAction action)
+		//{
+		//	Icon.enabled = action != null;
+		//	Icon.sprite = action?.Information.portrait;
 
-			Count.enabled = false;
-			Count.text = "0";
+		//	Count.enabled = false;
+		//	Count.text = "0";
 
-			Num.enabled = false;
-		}
+		//	Num.enabled = false;
+		//}
 
 		private void OnClicked(PointerEventData data)
 		{

@@ -2,13 +2,10 @@ using Zenject;
 
 namespace Game.Systems.SheetSystem.Abilities
 {
-	public interface IActivation
-	{
-		void Activate();
-	}
-
 	public abstract class Activation : IActivation
 	{
+		public bool IsActive { get; }
+
 		protected IAbility ability;
 
 		public Activation(IAbility ability)
@@ -17,6 +14,11 @@ namespace Game.Systems.SheetSystem.Abilities
 		}
 
 		public abstract void Activate();
+
+		public void Deactivate()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 
 	public class InstantActivation : Activation

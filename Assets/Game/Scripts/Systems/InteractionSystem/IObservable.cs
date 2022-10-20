@@ -1,6 +1,9 @@
-public interface IObservable
+namespace Game.Systems.InteractionSystem
 {
-	void StartObserve();
-	void Observe();
-	void EndObserve();
+	public interface IObservable
+	{
+		void StartObserve();
+		void Observe();
+		void EndObserve();
+	}
 }

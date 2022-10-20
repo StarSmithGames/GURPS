@@ -5,99 +5,151 @@ using UnityEngine.Events;
 
 namespace Game.Systems.SheetSystem
 {
-	public interface IAttribute
+	public interface IAttribute : IValue<float>, IModifiable<AttributeModifier>
 	{
-		event UnityAction onAttributeChanged;
-		string ToString();
+		string Output { get; }
+
+		string LocalizationKey { get; }
 	}
 
-	public abstract class Attribute : IAttribute
+	#region Attribute
+	public abstract partial class Attribute : IAttribute
 	{
-		public event UnityAction onAttributeChanged;
+		public event UnityAction onChanged;
 
-		protected virtual void ValueChanged()
+		public virtual string Output => TotalValue.ToString();
+
+		public virtual string LocalizationKey => "sheet.";
+
+		public virtual float CurrentValue
 		{
-			onAttributeChanged?.Invoke();
+			get => currentValue;
+			set
+			{
+				currentValue = value;
+				onChanged?.Invoke();
+			}
+		}
+		protected float currentValue;
+
+		public Attribute(float currentValue)
+		{
+			this.currentValue = currentValue;
+
+			Modifiers = new List<AttributeModifier>();
 		}
 	}
 
-	public abstract class AttributeFloatModifiable : Attribute, IModifiable<float>
+	//IModifiable Implementation
+	public abstract partial class Attribute
 	{
-		public List<IModifier<float>> Modifiers { get; private set; }
-		public float ModifyValue
+		public event UnityAction onModifiersChanged;
+
+		public virtual float TotalValue => (CurrentValue + ModifyAddValue) * (1 + ModifyPercentValue);
+
+		public virtual float ModifyAddValue
 		{
 			get
 			{
-				float modifyValue = 0;
-				for (int i = 0; i < Modifiers.Count; i++)
+				float value = 0;
+
+				Modifiers.ForEach((modifier) =>
 				{
-					modifyValue += Modifiers[i].Value;
-				}
-				return modifyValue;
+					if (modifier is AddModifier)
+					{
+						value += modifier.CurrentValue;
+					}
+				});
+
+				return value;
 			}
 		}
 
-		public AttributeFloatModifiable()
-		{
-			Modifiers = new List<IModifier<float>>();
-		}
-		
-
-		public void AddModifier(IModifier<float> modifier)
-		{
-			if (!Modifiers.Contains(modifier))
-			{
-				Modifiers.Add(modifier);
-				ValueChanged();
-			}
-		}
-		public void RemoveModifier(IModifier<float> modifier)
-		{
-			if (Modifiers.Contains(modifier))
-			{
-				Modifiers.Remove(modifier);
-				ValueChanged();
-			}
-		}
-	}
-
-	public abstract class AttributeVecto2Modifiable : Attribute, IModifiable<Vector2>
-	{
-		public List<IModifier<Vector2>> Modifiers { get; private set; }
-		public Vector2 ModifyValue
+		public virtual float ModifyPercentValue
 		{
 			get
 			{
-				Vector2 modifyValue = Vector2.zero;
-				for (int i = 0; i < Modifiers.Count; i++)
+				float value = 0;
+
+				Modifiers.ForEach((modifier) =>
 				{
-					modifyValue += Modifiers[i].Value;
-				}
-				return modifyValue;
+					if (modifier is PercentModifier)
+					{
+						value += modifier.CurrentValue;
+					}
+				});
+
+				return value;
 			}
 		}
 
-		public AttributeVecto2Modifiable()
-		{
-			Modifiers = new List<IModifier<Vector2>>();
-		}
+		public List<AttributeModifier> Modifiers { get; }
 
-
-		public void AddModifier(IModifier<Vector2> modifier)
+		public void AddModifier(AttributeModifier modifier)
 		{
-			if (!Modifiers.Contains(modifier))
+			if (!Contains(modifier))
 			{
 				Modifiers.Add(modifier);
-				ValueChanged();
+
+				onModifiersChanged?.Invoke();
 			}
 		}
-		public void RemoveModifier(IModifier<Vector2> modifier)
+
+		public void RemoveModifier(AttributeModifier modifier)
 		{
-			if (Modifiers.Contains(modifier))
+			if (Contains(modifier))
 			{
 				Modifiers.Remove(modifier);
-				ValueChanged();
+
+				onModifiersChanged?.Invoke();
 			}
 		}
+
+		public bool Contains(AttributeModifier modifier) => Modifiers.Contains(modifier);
 	}
+	#endregion
+
+	#region AttributeBar
+	public abstract partial class AttributeBar : Attribute, IBar
+	{
+		public override string Output => $"{CurrentValue} / {TotalValue}";
+
+		public override float CurrentValue
+		{
+			get => currentValue;
+			set
+			{
+				base.CurrentValue = Mathf.Clamp(value, MinValue, TotalValue);
+			}
+		}
+
+		public virtual float MaxValue
+		{
+			get => maxValue;
+			set
+			{
+				maxValue = value;
+				base.CurrentValue = Mathf.Clamp(currentValue, MinValue, TotalValue);
+			}
+		}
+		protected float maxValue;
+
+		public virtual float MinValue { get; protected set; }
+
+		public float PercentValue => CurrentValue / TotalValue;
+
+		protected AttributeBar(float value, float min, float max) : base(value)
+		{
+			this.maxValue = max;
+			this.MinValue = min;
+			this.CurrentValue = value;
+		}
+	}
+
+	//IModifiable Implementation
+	public abstract partial class AttributeBar
+	{
+		public override float TotalValue => (MaxValue + ModifyAddValue) * (1 + ModifyPercentValue);
+	}
+	#endregion
 }

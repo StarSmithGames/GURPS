@@ -27,7 +27,7 @@ public class UIBar : MonoBehaviour
 	{
         if (CurrentStat != null)
         {
-            CurrentStat.onStatChanged -= UpdateUI;
+            CurrentStat.onChanged -= UpdateUI;
         }
     }
 
@@ -35,14 +35,14 @@ public class UIBar : MonoBehaviour
 	{
         if (CurrentStat != null)
         {
-            CurrentStat.onStatChanged -= UpdateUI;
+            CurrentStat.onChanged -= UpdateUI;
         }
         CurrentStat = stat;
         IsImmortal = isImmortal;
 
         if (CurrentStat != null)
         {
-            CurrentStat.onStatChanged += UpdateUI;
+            CurrentStat.onChanged += UpdateUI;
         }
 
         UpdateUI();
@@ -54,7 +54,7 @@ public class UIBar : MonoBehaviour
 
         if (IsHasText)
         {
-            BarText.text = IsImmortal ? SymbolCollector.INFINITY.ToString() : CurrentStat?.ToString();
+            BarText.text = IsImmortal ? SymbolCollector.INFINITY.ToString() : CurrentStat?.Output;
         }
     }
 }

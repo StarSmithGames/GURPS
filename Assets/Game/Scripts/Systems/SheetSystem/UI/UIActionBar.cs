@@ -35,7 +35,7 @@ namespace Game.Systems.SheetSystem
 		{
 			var action = actionFactory.Create();
 
-			action.SetAction(null);
+			//action.SetAction(null);
 
 			action.transform.SetParent(ActionsContent);
 			action.transform.localScale = Vector3.one;

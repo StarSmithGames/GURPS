@@ -13,11 +13,6 @@ MonoBehaviour:
   m_Name: Player
   m_EditorClassIdentifier: 
   sheet:
-    info:
-      identity: 0
-      race: 0
-      gender: 0
-      age: 0
     stats:
       level: 1
       strength: 10
@@ -31,6 +26,10 @@ MonoBehaviour:
       addWill: 0
       addPerception: 0
     characteristics:
+      identity: 0
+      age: 0
+      race: 0
+      gender: 0
       alignment: 4
       deity: 0
       handed: 1

@@ -7,8 +7,6 @@ namespace Game.Systems.SheetSystem
 {
 	public sealed class Stats
 	{
-        public IStat Level { get; }
-
         public IStat Strength { get; }
 		public IStat Dexterity { get; }
 		public IStat Intelligence { get; }
@@ -27,23 +25,21 @@ namespace Game.Systems.SheetSystem
 
 		public Stats(StatsSettigns settigns)
         {
-            Level = new LevelStat(settigns.level);
-
             Strength = new StrengthStat(settigns.strength);
             Dexterity = new DexterityStat(settigns.dexterity);
             Intelligence = new IntelligenceStat(settigns.intelligence);
             Health = new HealthStat(settigns.health);
 
-            HitPoints = new HitPointsStat(settigns.HitPoints, 10);
-            FatiguePoints = new FatiguePointsStat(settigns.FatiguePoints, 10);
-            Move = new MoveStat(settigns.Move, settigns.Move);
-            Speed = new SpeedStat(settigns.Speed, 10);
-            Will = new WillStat(settigns.Will, 10);
-            Perception = new PerceptionStat(settigns.Perception, 10);
+            HitPoints = new HitPointsStat(settigns.HitPoints, 0, 10);
+            FatiguePoints = new FatiguePointsStat(settigns.FatiguePoints, 0, 10);
+            Move = new MoveStat(settigns.Move, 0, settigns.Move);
+            Speed = new SpeedStat(settigns.Speed, 0, 10);
+            Will = new WillStat(settigns.Will, 0, 10);
+            Perception = new PerceptionStat(settigns.Perception, 0, 10);
 
-            ActionPoints = new ActionPointsStat(1, 1);
+            ActionPoints = new ActionPointsStat(1, 0, 1);
 
-            Lift = new LiftStat(0, settigns.LiftMax);
+            Lift = new LiftStat(0, 0, settigns.LiftMax);
         }
 
         public Stats(Data data)
@@ -53,14 +49,14 @@ namespace Game.Systems.SheetSystem
             Intelligence = new IntelligenceStat(data.intelligence);
             Health = new HealthStat(data.health);
 
-            HitPoints = new HitPointsStat(data.hitPoints, 10);
-            FatiguePoints = new FatiguePointsStat(data.fatiguePoints, 10);
-            Move = new MoveStat(data.move, 10);
-            Speed = new SpeedStat(data.speed, 10);
-            Will = new WillStat(data.will, 10);
-            Perception = new PerceptionStat(data.perception, 10);
+            HitPoints = new HitPointsStat(data.hitPoints, 0, 10);
+            FatiguePoints = new FatiguePointsStat(data.fatiguePoints, 0, 10);
+            Move = new MoveStat(data.move, 0, 10);
+            Speed = new SpeedStat(data.speed, 0, 10);
+            Will = new WillStat(data.will, 0, 10);
+            Perception = new PerceptionStat(data.perception, 0, 10);
 
-            Lift = new LiftStat(data.lift, 10);
+            Lift = new LiftStat(data.lift, 0, 10);
         }
 
         public void RecoveMove()
@@ -109,8 +105,6 @@ namespace Game.Systems.SheetSystem
 	[System.Serializable]
     public class StatsSettigns
     {
-        [Min(1)]
-        public int level = 1;
         [HorizontalGroup("Stats", LabelWidth = 100)]
         [VerticalGroup("Stats/Primary")]
         [RangeStep(0, 20, 1)]

@@ -15,25 +15,40 @@ public class Registrator<T>
 		registers = new List<T>();
 	}
 
-
-	public virtual void Registrate(T register)
+	public virtual bool Registrate(T register)
 	{
 		if (!registers.Contains(register))
 		{
 			registers.Add(register);
 
 			onCollectionChanged?.Invoke();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public virtual void Registrate(IEnumerable<T> registers)
+	{
+		foreach (var register in registers)
+		{
+			Registrate(register);
 		}
 	}
 
-	public virtual void UnRegistrate(T register)
+	public virtual bool UnRegistrate(T register)
 	{
 		if (registers.Contains(register))
 		{
 			registers.Remove(register);
 
 			onCollectionChanged?.Invoke();
+
+			return true;
 		}
+
+		return false;
 	}
 
 

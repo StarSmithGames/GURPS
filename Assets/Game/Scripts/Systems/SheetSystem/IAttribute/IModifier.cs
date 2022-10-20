@@ -1,17 +1,33 @@
+using UnityEngine.Events;
+
 namespace Game.Systems.SheetSystem
 {
-	public interface IModifier<T> where T : struct
-	{
-		T Value { get; }
-	}
+    public abstract class Modifier<T> : IReadOnlyValue<T>
+    {
+        public event UnityAction onChanged;
 
-	public class Modifier<T> : IModifier<T> where T : struct
-	{
-		public T Value { get; set; }
+        public T CurrentValue { get; }
 
-		public Modifier(T value)
-		{
-			Value = value;
-		}
-	}
+        public Modifier(T value)
+        {
+            CurrentValue = value;
+        }
+    }
+
+    public abstract class AttributeModifier : Modifier<float>
+    {
+        protected AttributeModifier(float value) : base(value) { }
+    }
+
+    #region Modifiiers
+    public class AddModifier : AttributeModifier
+    {
+        public AddModifier(float value) : base(value) { }
+    }
+
+    public class PercentModifier : AttributeModifier
+    {
+        public PercentModifier(float value) : base(value) { }
+    }
+    #endregion
 }

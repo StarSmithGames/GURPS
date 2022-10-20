@@ -1,14 +1,22 @@
 using System.Collections.Generic;
 
+using UnityEngine.Events;
+
 namespace Game.Systems.SheetSystem
 {
-	public interface IModifiable<T> where T : struct
-	{
-		List<IModifier<T>> Modifiers { get; }
+    public interface IModifiable<M> where M : Modifier<float>
+    {
+        event UnityAction onModifiersChanged;
 
-		T ModifyValue { get; }
+        float TotalValue { get; }
+        float ModifyAddValue { get; }
+        float ModifyPercentValue { get; }
 
-		void AddModifier(IModifier<T> modifier);
-		void RemoveModifier(IModifier<T> modifier);
-	}
+        List<M> Modifiers { get; }
+
+        void AddModifier(M modifier);
+        void RemoveModifier(M modifier);
+
+        bool Contains(M modifier);
+    }
 }

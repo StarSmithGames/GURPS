@@ -142,17 +142,20 @@ namespace Game.Systems.CommandCenter
 	public class CommandConsume : ContextCommand
 	{
 		private ICharacter character;
-		private Item item;
+		private ConsumableItemData data;
 
 		public CommandConsume(ICharacter character, Item item)
 		{
 			this.character = character;
-			this.item = item;
+			data = item.GetItemData<ConsumableItemData>();
 		}
 
 		public override void Execute()
 		{
-			//character.
+			if(data != null)
+			{
+				character.Sheet.Effects.Registrate(data.effects);
+			}
 		}
 	}
 	public class CommandPickUp : ContextCommand
