@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ffaed84006443a64d9e7d91b40d15fcf, type: 3}
-  m_Name: PoisonEffect
+  m_Script: {fileID: 11500000, guid: 50ce7e40eba316b499c71295edbdbc60, type: 3}
+  m_Name: PoisonInstantEffect
   m_EditorClassIdentifier: 
   information:
     portrait: {fileID: 0}
@@ -18,3 +18,12 @@ MonoBehaviour:
     isNameId: 1
     description: 
     isDescriptionId: 1
+  enchantments:
+  - rid: 2676847311101362180
+  references:
+    version: 2
+    RefIds:
+    - rid: 2676847311101362180
+      type: {class: AddHealthPoints, ns: Game.Systems.SheetSystem, asm: Assembly-CSharp}
+      data:
+        add: -2

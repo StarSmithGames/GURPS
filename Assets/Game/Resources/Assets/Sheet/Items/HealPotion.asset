@@ -31,12 +31,4 @@ MonoBehaviour:
     decayOutsie: 0
   rarity: 0
   effects:
-  - rid: 2676847281495867394
-  references:
-    version: 2
-    RefIds:
-    - rid: 2676847281495867394
-      type: {class: HPEffect, ns: Game.Systems.SheetSystem, asm: Assembly-CSharp}
-      data:
-        data: {fileID: 11400000, guid: a24a150bd4f818c488d6489b196844a4, type: 2}
-        healAmmount: 2.01
+  - {fileID: 11400000, guid: a24a150bd4f818c488d6489b196844a4, type: 2}

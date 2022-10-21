@@ -29,11 +29,11 @@ namespace Game.Entities
 
 		public virtual Effects Effects { get; private set; }
 
-		public Character(CharacterData data, AsyncManager asyncManager)
+		public Character(CharacterData data, EffectFactory effectFactory)
 		{
 			CharacterData = data;
 			Sheet = new CharacterSheet(data);
-			Effects = new Effects(this, asyncManager);
+			Effects = new Effects(this, effectFactory);
 		}
 
 		public void SetModel(ICharacterModel model)

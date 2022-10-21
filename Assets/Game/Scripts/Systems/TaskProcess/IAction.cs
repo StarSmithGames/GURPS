@@ -4,10 +4,7 @@ using UnityEngine.Events;
 
 namespace Game.Systems
 {
-	public interface IAction
-	{
-		void Execute();
-	}
+	public interface IAction : IExecutable { }
 
 	public class GoToPointAction : IAction
 	{

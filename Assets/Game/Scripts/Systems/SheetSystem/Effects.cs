@@ -1,89 +1,198 @@
 using Game.Entities;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+using UnityEngine.Events;
+
+using Zenject;
 
 namespace Game.Systems.SheetSystem
 {
-	public sealed class Effects : Registrator<Effect>
+	public sealed class Effects
 	{
-		private ISheet sheet;
-		private AsyncManager asyncManager;
+		private Registrator<IEffect> registrator;
 
-		public Effects(ICharacter character, AsyncManager asyncManager)
+		private ISheet sheet;
+		private EffectFactory effectFactory;
+
+		public Effects(ICharacter character, EffectFactory effectFactory)
 		{
 			this.sheet = character.Sheet;
-			this.asyncManager = asyncManager;
+			this.effectFactory = effectFactory;
+
+			registrator = new Registrator<IEffect>();
 		}
 
-		public override bool Registrate(Effect register)
+		public void Apply(EffectData data)
 		{
-			var copy = register.Copy();
-			if (base.Registrate(copy))
-			{
-				copy.Activate(sheet);
-				return true;
-			}
+			var effect = effectFactory.Create(data, sheet);
+			registrator.Registrate(effect);
 
-			return false;
+			effect.onActivationChanged += OnActivationChanged;
+			effect.Activate();
 		}
 
-		public override bool UnRegistrate(Effect register)
+		public void Apply(IEnumerable<EffectData> datas)
 		{
-			if (base.UnRegistrate(register))
+			foreach (var data in datas)
 			{
-				register.Deactivate();
-				return true;
+				Apply(data);
 			}
+		}
 
-			return false;
+		public void Remove(IEffect effect)
+		{
+			if (registrator.UnRegistrate(effect))
+			{
+				effect.onActivationChanged -= OnActivationChanged;
+
+				effect.Deactivate();
+			}
+		}
+
+		private void OnActivationChanged(IEffect effect)
+		{
+			Remove(effect);
 		}
 	}
 
-	[System.Serializable]
-	public abstract class Effect : IEffect, ICopyable<Effect>
+	public interface IEffect : IActivation
 	{
+		event UnityAction<IEffect> onActivationChanged;
+	}
+
+	public abstract class Effect : IEffect
+	{
+		public event UnityAction<IEffect> onActivationChanged;
+
 		public bool IsActive { get; private set; }
 
-		public EffectData data;
+		protected ISheet sheet;
 
-		private ISheet sheet;
+		public Effect(ISheet sheet)
+		{
+			this.sheet = sheet;
+		}
 
-		public virtual void Activate(ISheet sheet)
+		public virtual void Activate()
 		{
 			IsActive = true;
 
-			this.sheet = sheet;
+			onActivationChanged?.Invoke(this);
 		}
 
 		public virtual void Deactivate()
 		{
 			IsActive = false;
 
-			sheet = null;
+			onActivationChanged?.Invoke(this);
 		}
 
-		public abstract Effect Copy();
+		protected ExecutableEnchantment GetEnchantment(EffectType type)//>:c
+		{
+			switch (type)
+			{
+				case AddHealthPoints addHealthPoints:
+				{
+					return new AddStatEnchantment(sheet.Stats.HitPoints, addHealthPoints.add);
+				}
+			}
+
+			throw new NotImplementedException();
+		}
 	}
 
-	[System.Serializable]
-	public class HPEffect : Effect
+	public sealed class InstantEffect : Effect
 	{
-		public float healAmmount;
+		private List<ExecutableEnchantment> enchantments;
 
-		public override void Activate(ISheet sheet)
+		private InstantEffectData data;
+
+		public InstantEffect(InstantEffectData data, ISheet sheet) : base(sheet)
 		{
-			base.Activate(sheet);
+			this.data = data;
 
-			sheet.Stats.HitPoints.CurrentValue += healAmmount;
+			enchantments = data.enchantments.Select((x) => GetEnchantment(x)).ToList();
+		}
+
+		public override void Activate()
+		{
+			base.Activate();
+
+			for (int i = 0; i < enchantments.Count; i++)
+			{
+				enchantments[i].Execute();
+			}
 
 			Deactivate();
 		}
 
-		public override Effect Copy()
+		public class Factory : PlaceholderFactory<InstantEffectData, ISheet, InstantEffect> { }
+	}
+
+	public sealed class ProcessEffect : Effect
+	{
+		private List<ExecutableEnchantment> enchantments;
+
+		private ProcessEffectData data;
+		private AsyncManager asyncManager;
+
+		public ProcessEffect(ProcessEffectData data, ISheet sheet, AsyncManager asyncManager) : base(sheet)
 		{
-			return new HPEffect()
+			this.data = data;
+			this.asyncManager = asyncManager;
+
+			enchantments = data.enchantments.Select((x) => GetEnchantment(x)).ToList();
+		}
+
+		public override void Activate()
+		{
+			base.Activate();
+
+			asyncManager.StartCoroutine(Process());
+		}
+
+		private IEnumerator Process()
+		{
+			for (int i = 0; i < enchantments.Count; i++)
 			{
-				data = data,
-				healAmmount = healAmmount,
-			};
+				enchantments[i].Execute();
+			}
+
+			yield return null;
+		}
+
+		public class Factory : PlaceholderFactory<ProcessEffectData, ISheet, ProcessEffect> { }
+	}
+
+
+	public sealed class EffectFactory : PlaceholderFactory<EffectData, ISheet, IEffect> { }
+
+	public sealed class CustomEffectFactory : IFactory<EffectData, ISheet, IEffect>
+	{
+		private InstantEffect.Factory instantFactory;
+		private ProcessEffect.Factory processFactory;
+
+		public CustomEffectFactory(InstantEffect.Factory instantFactory, ProcessEffect.Factory processFactory)
+		{
+			this.instantFactory = instantFactory;
+			this.processFactory = processFactory;
+		}
+
+		public IEffect Create(EffectData data, ISheet sheet)
+		{
+			if(data is InstantEffectData instantData)
+			{
+				return instantFactory.Create(instantData, sheet);
+			}
+			else if(data is ProcessEffectData processData)
+			{
+				return processFactory.Create(processData, sheet);
+			}
+
+			throw new NotImplementedException();
 		}
 	}
 }

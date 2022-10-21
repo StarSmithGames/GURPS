@@ -154,7 +154,7 @@ namespace Game.Systems.CommandCenter
 		{
 			if(data != null)
 			{
-				//character.Sheet.Effects.Registrate(data.effects);
+				character.Effects.Apply(data.effects);
 			}
 		}
 	}

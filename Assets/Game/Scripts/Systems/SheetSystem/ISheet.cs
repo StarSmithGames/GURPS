@@ -71,6 +71,8 @@ namespace Game.Systems.SheetSystem
             Skills = new Skills();
             Traits = new Traits();
             Talents = new Talents();
+
+            Race.Activate();
         }
     }
 

@@ -1,83 +1,120 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
-	public interface IEnchantment : IActivation { }
+	public abstract class Enchantment { }
 
-	public interface IEffect : IActivation<ISheet> { }
-
-	public interface IBuff : IActivation
-	{
-		List<IEnchantment> Enchantments { get; }
-	}
-
-	public interface ITrait : IActivation { }
-
-
-	#region Enchantment
-	public class AddStatEnchantment : IEnchantment
+	public abstract class ActivationEnchantment : Enchantment, IActivation
 	{
 		public bool IsActive { get; private set; }
 
+		public virtual void Activate()
+		{
+			IsActive = true;
+		}
+
+		public virtual void Deactivate()
+		{
+			IsActive = false;
+		}
+	}
+
+	public abstract class ExecutableEnchantment : Enchantment, IExecutable
+	{
+		public abstract void Execute();
+	}
+
+	public interface IBuff : IActivation
+	{
+		List<ActivationEnchantment> Enchantments { get; }
+	}
+
+	public interface ITrait : IActivation
+	{
+		List<ActivationEnchantment> Enchantments { get; }
+	}
+
+	public interface ITalent : IActivation { }
+
+
+	#region Enchantment
+	public class AddStatModifierEnchantment : ActivationEnchantment
+	{
 		private AttributeModifier modifier;
 
 		private IStat stat;
 
-		public AddStatEnchantment(IStat stat, int add)
+		public AddStatModifierEnchantment(IStat stat, int add)
 		{
 			this.stat = stat;
 
 			modifier = new AddModifier(add);
 		}
 
-		public void Activate()
+		public override void Activate()
 		{
+			base.Activate();
 			stat.AddModifier(modifier);
 		}
 
-		public void Deactivate()
+		public override void Deactivate()
 		{
+			base.Deactivate();
 			stat.RemoveModifier(modifier);
 		}
 	}
 
-	public class AddPercentStatEnchantment : IEnchantment
+	public class AddPercentStatModifierEnchantment : ActivationEnchantment
 	{
-		public bool IsActive { get; private set; }
-
 		private AttributeModifier modifier;
 
 		private IStat stat;
 
-		public AddPercentStatEnchantment(IStat stat, float percent)
+		public AddPercentStatModifierEnchantment(IStat stat, float percent)
 		{
 			this.stat = stat;
 
 			modifier = new PercentModifier(percent);
 		}
 
-		public void Activate()
+		public override void Activate()
 		{
+			base.Activate();
 			stat.AddModifier(modifier);
 		}
 
-		public void Deactivate()
+		public override void Deactivate()
 		{
+			base.Deactivate();
 			stat.RemoveModifier(modifier);
 		}
 	}
+
+
+	public class AddStatEnchantment : ExecutableEnchantment
+	{
+		private IStat stat;
+		private float add;
+
+		public AddStatEnchantment(IStat stat, float add)
+		{
+			this.stat = stat;
+			this.add = add;
+		}
+
+		public override void Execute()
+		{
+			stat.CurrentValue += add;
+		}
+	}
 	#endregion
-
-
 
 	#region Trait
 	public abstract class Trait : ITrait
 	{
 		public bool IsActive { get; private set; }
 
-		public List<IEnchantment> Enchantments { get; }
+		public List<ActivationEnchantment> Enchantments { get; }
 
 		protected ISheet sheet;
 
@@ -85,7 +122,7 @@ namespace Game.Systems.SheetSystem
 		{
 			this.sheet = sheet;
 
-			Enchantments = new List<IEnchantment>();
+			Enchantments = new List<ActivationEnchantment>();
 		}
 
 		public void Activate()
@@ -113,11 +150,11 @@ namespace Game.Systems.SheetSystem
 	{
 		public HumanRaceTrait(ISheet sheet) : base(sheet)
 		{
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Strength, 1));
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Dexterity, 1));
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Intelligence, 1));
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Will, 1));
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Perception, 1));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Strength, 1));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Dexterity, 1));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Intelligence, 1));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Will, 1));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Perception, 1));
 		}
 	}
 
@@ -125,9 +162,9 @@ namespace Game.Systems.SheetSystem
 	{
 		public DwarfRaceTrait(ISheet sheet) : base(sheet)
 		{
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Strength, 2));
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Intelligence, -1));
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Perception, -1));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Strength, 2));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Intelligence, -1));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Perception, -1));
 		}
 	}
 
@@ -135,8 +172,8 @@ namespace Game.Systems.SheetSystem
 	{
 		public ElfRaceTrait(ISheet sheet) : base(sheet)
 		{
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Dexterity, 2));
-			Enchantments.Add(new AddStatEnchantment(sheet.Stats.Intelligence, 2));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Dexterity, 2));
+			Enchantments.Add(new AddStatModifierEnchantment(sheet.Stats.Intelligence, 2));
 		}
 	}
 	#endregion
