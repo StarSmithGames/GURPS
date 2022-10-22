@@ -32,20 +32,75 @@ public static class CollectionExtensions
         }
     }
 
-    /// <summary>
-    /// https://stackoverflow.com/questions/1287567/is-using-random-and-orderby-a-good-shuffle-algorithm
-    /// </summary>
-    //public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random rng)
-    //{
-    //    T[] elements = source.ToArray();
-    //    for (int i = elements.Length - 1; i >= 0; i--)
-    //    {
-    //        // Swap element "i" with a random earlier element it (or itself)
-    //        // ... except we don't really need to swap it fully, as we can
-    //        // return it immediately, and afterwards it's irrelevant.
-    //        int swapIndex = rng.Next(i + 1);
-    //        yield return elements[swapIndex];
-    //        elements[swapIndex] = elements[i];
-    //    }
-    //}
+
+	/// <summary>
+	/// Resize for listB by listA
+	/// </summary>
+	public static void Resize<FIRST, SECOND>(IList<FIRST> listA, IList<SECOND> listB, Func<SECOND> onCreate, Func<SECOND> onRemove)
+	{
+		Resize(listA.Count, listB, onCreate, onRemove);
+	}
+
+	/// <summary>
+	/// Resize list by size
+	/// </summary>
+	public static void Resize<T>(int size, IList<T> list, Func<T> onCreate, Func<T> onRemove)
+	{
+		int diff = size - list.Count;
+
+		if (diff != 0)
+		{
+			if (diff > 0)//add
+			{
+				for (int i = 0; i < diff; i++)
+				{
+					Add();
+				}
+			}
+			else//rm
+			{
+				for (int i = 0; i < -diff; i++)
+				{
+					Remove();
+				}
+			}
+		}
+
+		void Add()
+		{
+			if (onCreate != null)
+			{
+				T item = onCreate.Invoke();
+				list.Add(item);
+			}
+		}
+
+		void Remove()
+		{
+			if (onRemove != null)
+			{
+				T item = onRemove.Invoke();
+				list.Remove(item);
+			}
+		}
+	}
+
+
+
+	/// <summary>
+	/// https://stackoverflow.com/questions/1287567/is-using-random-and-orderby-a-good-shuffle-algorithm
+	/// </summary>
+	//public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source, Random rng)
+	//{
+	//    T[] elements = source.ToArray();
+	//    for (int i = elements.Length - 1; i >= 0; i--)
+	//    {
+	//        // Swap element "i" with a random earlier element it (or itself)
+	//        // ... except we don't really need to swap it fully, as we can
+	//        // return it immediately, and afterwards it's irrelevant.
+	//        int swapIndex = rng.Next(i + 1);
+	//        yield return elements[swapIndex];
+	//        elements[swapIndex] = elements[i];
+	//    }
+	//}
 }

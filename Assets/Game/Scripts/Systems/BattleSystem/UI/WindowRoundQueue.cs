@@ -50,7 +50,24 @@ namespace Game.Systems.BattleSystem
 				return result;
 			}
 
-			ResizeTurnsTo(TurnCount());
+			CollectionExtensions.Resize(TurnCount(), turns,
+			() =>
+			{
+				var element = turnFactory.Create();
+
+				element.onDoubleCick += OnTurnClickChanged;
+				element.transform.SetParent(transform);
+				element.transform.localScale = Vector3.one;
+				return element;
+			},
+			() =>
+			{
+				var element = turns.Last();
+
+				element.onDoubleCick -= OnTurnClickChanged;
+				element.DespawnIt();
+				return element;
+			});
 
 			int count = 0;
 			for (int i = 0; i < rounds.Count; i++)
@@ -73,50 +90,6 @@ namespace Game.Systems.BattleSystem
 			}
 
 			turnSeparate.transform.SetSiblingIndex(rounds.First().Turns.Count);//rounds need to be 2 or need factory for turnSeparate
-		}
-
-		private void ResizeTurnsTo(int size)
-		{
-			int diff = size - turns.Count;
-			if (diff != 0)
-			{
-				if (diff > 0)//need spawn
-				{
-					for (int i = 0; i < diff; i++)
-					{
-						turns.Add(CreateElement());
-					}
-				}
-				else//need despawn
-				{
-					diff += turns.Count;
-
-					for (int i = turns.Count - 1; i >= diff; i--)
-					{
-						RemoveElement(i);
-					}
-				}
-
-				UITurn CreateElement()
-				{
-					UITurn element = turnFactory.Create();
-
-					element.onDoubleCick += OnTurnClickChanged;
-
-					element.transform.SetParent(transform);
-					element.transform.localScale = Vector3.one;
-
-					return element;
-				}
-
-				void RemoveElement(int index)
-				{
-					turns[index].onDoubleCick -= OnTurnClickChanged;
-
-					turns[index].DespawnIt();
-					turns.RemoveAt(index);
-				}
-			}
 		}
 
 		private void OnTurnClickChanged(UITurn turn)

@@ -69,46 +69,27 @@ namespace Game.Managers.PartyManager
 		private void UpdateAvatars()
 		{
 			var characters = partyManager.PlayerParty.Characters;
-			int diff = characters.Count - avatars.Count;
 
-			if (diff != 0)
+			CollectionExtensions.Resize(characters, avatars,
+			() =>
 			{
-				if(diff > 0)//add
-				{
-					for (int i = 0; i < diff; i++)
-					{
-						CreateAvatar();
-					}
-				}
-				else//rm
-				{
-					for (int i = 0; i < -diff; i++)
-					{
-						RemoveLastAvatar();
-					}
-				}
+				var avatar = avatarFactory.Create();
 
-				void CreateAvatar()
-				{
-					var avatar = avatarFactory.Create();
+				avatar.onClicked += OnAvatarClicked;
+				avatar.onDoubleClicked += OnAvatarDoubleClicked;
+				avatar.transform.SetParent(Content);
+				avatar.transform.localScale = Vector3.one;
+				return avatar;
+			},
+			() =>
+			{
+				var avatar = avatars.Last();
 
-					avatar.onClicked += OnAvatarClicked;
-					avatar.onDoubleClicked += OnAvatarDoubleClicked;
-					avatar.transform.SetParent(Content);
-					avatar.transform.localScale = Vector3.one;
-					avatars.Add(avatar);
-				}
-
-				void RemoveLastAvatar()
-				{
-					var avatar = avatars.Last();
-
-					avatar.onClicked -= OnAvatarClicked;
-					avatar.onDoubleClicked -= OnAvatarDoubleClicked;
-					avatars.Remove(avatar);
-					avatar.DespawnIt();
-				}
-			}
+				avatar.onClicked -= OnAvatarClicked;
+				avatar.onDoubleClicked -= OnAvatarDoubleClicked;
+				avatar.DespawnIt();
+				return avatar;
+			});
 
 			for (int i = 0; i < avatars.Count; i++)
 			{

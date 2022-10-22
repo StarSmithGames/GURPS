@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using UnityEngine;
 using UnityEngine.Events;
 
 using Zenject;
@@ -12,6 +13,10 @@ namespace Game.Systems.SheetSystem
 {
 	public sealed class Effects
 	{
+		public event UnityAction onRegistratorChanged;
+
+		public List<IEffect> CurrentEffects => registrator.registers;
+
 		private Registrator<IEffect> registrator;
 
 		private ISheet sheet;
@@ -30,6 +35,8 @@ namespace Game.Systems.SheetSystem
 			var effect = effectFactory.Create(data, sheet);
 			registrator.Registrate(effect);
 
+			onRegistratorChanged?.Invoke();
+
 			effect.onActivationChanged += OnActivationChanged;
 			effect.Activate();
 		}
@@ -47,6 +54,8 @@ namespace Game.Systems.SheetSystem
 			if (registrator.UnRegistrate(effect))
 			{
 				effect.onActivationChanged -= OnActivationChanged;
+
+				onRegistratorChanged?.Invoke();
 
 				effect.Deactivate();
 			}
@@ -156,12 +165,33 @@ namespace Game.Systems.SheetSystem
 
 		private IEnumerator Process()
 		{
-			for (int i = 0; i < enchantments.Count; i++)
-			{
-				enchantments[i].Execute();
-			}
+			float t = 0;
+			int key = 0;
+			float precision = 1e-2f;//maybe need 1e-1f
 
-			yield return null;
+			while (t <= data.duration)
+			{
+				float keyTime = data.curve.keys[key].time;
+
+				if(Mathf.Abs(t - keyTime) <= precision)
+				{
+					for (int i = 0; i < enchantments.Count; i++)
+					{
+						enchantments[i].Execute();
+					}
+
+					if (key + 1 >= data.curve.keys.Length)
+					{
+						yield break;
+					}
+
+					key++;
+				}
+
+				t += Time.deltaTime;
+
+				yield return null;
+			}
 		}
 
 		public class Factory : PlaceholderFactory<ProcessEffectData, ISheet, ProcessEffect> { }

@@ -31,4 +31,4 @@ MonoBehaviour:
     decayOutsie: 0
   rarity: 0
   effects:
-  - {fileID: 11400000, guid: a24a150bd4f818c488d6489b196844a4, type: 2}
+  - {fileID: 11400000, guid: 8c73ffde180ab8344ab2f77c48a21d26, type: 2}

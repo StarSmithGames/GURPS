@@ -69,41 +69,25 @@ namespace Game.Systems.ContextMenu
 
 		public void SetCommands(List<ContextCommand> commands)
 		{
-			int diff = commands.Count - actions.Count;
-
-			if(diff != 0)
+			CollectionExtensions.Resize(commands, actions,
+			() =>
 			{
-				if (diff > 0)
-				{
-					for (int i = 0; i < diff; i++)
-					{
-						AddCommand();
-					}
-				}
-				else
-				{
-					for (int i = 0; i < -diff; i++)
-					{
-						RemoveLastCommand();
-					}
-				}
+				var action = contextMenuFactory.Create();
 
-				void AddCommand()
-				{
-					var action = contextMenuFactory.Create();
-					action.onClicked += OnActionClicked;
-					action.transform.SetParent(transform);
-					actions.Add(action);
-				}
+				action.onClicked += OnActionClicked;
+				action.transform.SetParent(transform);
+				return action;
+			},
+			() =>
+			{
+				var action = actions.Last();
 
-				void RemoveLastCommand()
-				{
-					var action = actions.Last();
-					action.onClicked -= OnActionClicked;
-					actions.Remove(action);
-					action.DespawnIt();
-				}
-			}
+				action.onClicked -= OnActionClicked;
+				action.DespawnIt();
+				return action;
+			});
+
+			int diff = commands.Count - actions.Count;
 
 			for (int i = 0; i < actions.Count; i++)
 			{

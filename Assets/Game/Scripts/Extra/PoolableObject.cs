@@ -18,12 +18,12 @@ public class PoolableObject : MonoBehaviour, IPoolable, IPoolable<IMemoryPool>
 		pool?.Despawn(this);
 	}
 
-	public void OnSpawned(IMemoryPool pool)
+	public virtual void OnSpawned(IMemoryPool pool)
 	{
 		this.pool = pool;
 	}
 
-	public void OnDespawned()
+	public virtual void OnDespawned()
 	{
 		pool = null;
 	}

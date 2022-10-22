@@ -5,9 +5,14 @@ using Game.Systems.SheetSystem;
 using Game.UI;
 using Game.UI.CanvasSystem;
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 using Zenject;
@@ -19,8 +24,7 @@ namespace Game.Managers.PartyManager
 		public UnityAction<UIAvatar> onClicked;
 		public UnityAction<UIAvatar> onDoubleClicked;
 
-		[field: SerializeField] public UIButtonPointer BackgroundButton { get; private set; }
-		[field: SerializeField] public PointerHoverComponent PointerHover { get; private set; }
+		[field: SerializeField] public PointerHandlerComponent PointerHandler { get; private set; }
 		[field: Space]
 		[field: SerializeField] public Image Avatar { get; private set; }
 		[field: Space]
@@ -29,10 +33,14 @@ namespace Game.Managers.PartyManager
 		[field: SerializeField] public Image IconInBattle { get; private set; }
 		[field: Space]
 		[field: SerializeField] public UIBar HPBar { get; private set; }
+		[field: Space]
+		[field: SerializeField] public Transform EffectsContent { get; private set; }
 
-		public ICharacterModel CurrentModel { get; private set; }
+		public ICharacter CurrentCharacter { get; private set; }
 
+		private bool isInitialized = false;
 		private IStatBar stat;
+		private List<UIEffect> effects = new List<UIEffect>();
 
 		private WindowEntityInformation EntityInformation
 		{
@@ -49,34 +57,26 @@ namespace Game.Managers.PartyManager
 		private WindowEntityInformation entityInformation;
 
 		private UISubCanvas subCanvas;
+		private UIEffect.Factory effectFactory;
 
 		[Inject]
-		private void Construct(UISubCanvas subCanvas)
+		private void Construct(UISubCanvas subCanvas, UIEffect.Factory effectFactory)
 		{
 			this.subCanvas = subCanvas;
-		}
-
-		private void Start()
-		{
-			BackgroundButton.onClickChanged += OnClick;
-
-			PointerHover.onPointerEnter += OnPointerEnter;
-			PointerHover.onPointerExit += OnPointerExit;
+			this.effectFactory = effectFactory;
 		}
 
 		private void OnDestroy()
 		{
-			if (BackgroundButton != null)
+			if (isInitialized)
 			{
-				BackgroundButton.onClickChanged -= OnClick;
+				if (PointerHandler != null)
+				{
+					PointerHandler.onPointerClick -= OnPointerClick;
+					PointerHandler.onPointerEnter -= OnPointerEnter;
+					PointerHandler.onPointerExit -= OnPointerExit;
+				}
 			}
-
-			if (PointerHover != null)
-			{
-				PointerHover.onPointerEnter -= OnPointerEnter;
-				PointerHover.onPointerExit -= OnPointerExit;
-			}
-
 			//if (CurrentModel != null)
 			//{
 			//	CurrentModel.onBattleChanged -= UpdateBattleUI;
@@ -85,20 +85,22 @@ namespace Game.Managers.PartyManager
 
 		public void SetCharacter(ICharacter character)
 		{
-			//if (CurrentModel != null)
-			//{
-			//	CurrentModel.onBattleChanged -= UpdateBattleUI;
-			//}
+			if (CurrentCharacter != null)
+			{
+				CurrentCharacter.Effects.onRegistratorChanged -= UpdateEffectsUI;
+				//character.Model.JoinBattle -= UpdateBattleUI;
+			}
 
-			CurrentModel = character.Model;
-			HPBar.SetStat(CurrentModel.Sheet.Stats.HitPoints, CurrentModel.Sheet.Settings.isImmortal);
+			CurrentCharacter = character;
+			HPBar.SetStat(CurrentCharacter.Sheet.Stats.HitPoints, CurrentCharacter.Sheet.Settings.isImmortal);
 
 			UpdateUI();
 
-			//if (CurrentModel != null)
-			//{
-			//	CurrentModel.onBattleChanged += UpdateBattleUI;
-			//}
+			if (CurrentCharacter != null)
+			{
+				CurrentCharacter.Effects.onRegistratorChanged += UpdateEffectsUI;
+				//CurrentModel.onBattleChanged += UpdateBattleUI;
+			}
 		}
 
 		public void SetFrame(bool isLeader)
@@ -109,25 +111,71 @@ namespace Game.Managers.PartyManager
 
 		private void UpdateUI()
 		{
-			Avatar.sprite = CurrentModel.Sheet.Information.portrait;
+			Avatar.sprite = CurrentCharacter.Sheet.Information.portrait;
 			UpdateBattleUI();
 		}
 
 		private void UpdateBattleUI()
 		{
-			IconInBattle.enabled = CurrentModel.InBattle;
+			var isInBattle = CurrentCharacter.Model.InBattle;
 
-			FrameLeader.color = CurrentModel.InBattle ? Color.grey : Color.white;
-			FrameSpare.color = CurrentModel.InBattle ? Color.grey : Color.white;
+			IconInBattle.enabled = isInBattle;
+
+			FrameLeader.color = isInBattle ? Color.grey : Color.white;
+			FrameSpare.color = isInBattle ? Color.grey : Color.white;
 		}
 
-		private void OnClick(int count)
+		private void UpdateEffectsUI()
 		{
-			if (count == 1)
+			var characterEffects = CurrentCharacter.Effects.CurrentEffects;
+
+			CollectionExtensions.Resize(characterEffects, effects,
+			() =>
+			{
+				var effect = effectFactory.Create();
+
+				effect.transform.SetParent(EffectsContent);
+				effect.transform.localScale = Vector3.one;
+				return effect;
+			},
+			() =>
+			{
+				var effect = effects.Last();
+
+				effect.DespawnIt();
+				return effect;
+			});
+
+			for (int i = 0; i < effects.Count; i++)
+			{
+				effects[i].SetEffect(characterEffects[i]);
+			}
+		}
+
+
+		public override void OnSpawned(IMemoryPool pool)
+		{
+			if (!isInitialized)
+			{
+				PointerHandler.onPointerEnter += OnPointerEnter;
+				PointerHandler.onPointerExit += OnPointerExit;
+				PointerHandler.onPointerClick += OnPointerClick;
+
+				EffectsContent.DestroyChildren();
+			}
+
+			isInitialized = true;
+
+			base.OnSpawned(pool);
+		}
+
+		private void OnPointerClick(PointerEventData eventData)
+		{
+			if (eventData.clickCount == 1)
 			{
 				onClicked?.Invoke(this);
 			}
-			else if (count > 1)
+			else if (eventData.clickCount > 1)
 			{
 				onDoubleClicked?.Invoke(this);
 			}
@@ -135,9 +183,9 @@ namespace Game.Managers.PartyManager
 
 		private void OnPointerEnter(PointerEventData eventData)
 		{
-			if (CurrentModel != null)
+			if (CurrentCharacter != null)
 			{
-				EntityInformation.SetSheet(CurrentModel.Sheet);
+				EntityInformation.SetSheet(CurrentCharacter.Sheet);
 
 				if (!EntityInformation.IsShowing)
 				{
