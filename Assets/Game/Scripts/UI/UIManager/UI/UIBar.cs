@@ -1,60 +1,55 @@
-using Game;
-using Game.Systems.SheetSystem;
-
 using Sirenix.OdinInspector;
-
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIBar : MonoBehaviour
+namespace Game.UI
 {
-    public float FillAmount
+    public class UIBar : MonoBehaviour
     {
-        get => Bar.fillAmount;
-        set => Bar.fillAmount = value;
-    }
-
-    [field: SerializeField] public bool IsHasText = false;
-
-    [field: SerializeField] public Image Bar { get; private set; }
-    [field: ShowIf("IsHasText")]
-    [field: SerializeField] public TMPro.TextMeshProUGUI BarText { get; private set; }
-
-    public IStatBar CurrentStat { get; private set; }
-    public bool IsImmortal { get; private set; }
-
-	private void OnDestroy()
-	{
-        if (CurrentStat != null)
+        public float FillAmount
         {
-            CurrentStat.onChanged -= UpdateUI;
-        }
-    }
-
-	public void SetStat(IStatBar stat, bool isImmortal = false)
-	{
-        if (CurrentStat != null)
-        {
-            CurrentStat.onChanged -= UpdateUI;
-        }
-        CurrentStat = stat;
-        IsImmortal = isImmortal;
-
-        if (CurrentStat != null)
-        {
-            CurrentStat.onChanged += UpdateUI;
+            get => Bar.fillAmount;
+            set => Bar.fillAmount = value;
         }
 
-        UpdateUI();
-    }
+        public bool isHasText = false;
+        [field: ShowIf("isHasText")]
+        public bool isTextShowOnHover = false;
 
-    private void UpdateUI()
-	{
-        FillAmount = CurrentStat?.PercentValue ?? 1f;
+        [field: SerializeField] public PointerHandlerComponent PointerHandler { get; private set; }
+        [field: SerializeField] public Image Bar { get; private set; }
+        [field: ShowIf("isHasText")]
+        [field: SerializeField] public TMPro.TextMeshProUGUI BarText { get; private set; }
 
-        if (IsHasText)
+		private void Start()
+		{
+            if(isHasText && isTextShowOnHover)
+			{
+                PointerHandler.onPointerEnter += OnPointerEnter;
+                PointerHandler.onPointerExit += onPointerExit;
+
+                BarText.enabled = false;
+            }
+        }
+
+		private void OnDestroy()
+		{
+            if (isHasText && isTextShowOnHover)
+            {
+                PointerHandler.onPointerEnter -= OnPointerEnter;
+                PointerHandler.onPointerExit -= onPointerExit;
+            }
+        }
+
+		protected virtual void OnPointerEnter(PointerEventData data)
+		{
+            BarText.enabled = true;
+        }
+
+        protected virtual void onPointerExit(PointerEventData data)
         {
-            BarText.text = IsImmortal ? SymbolCollector.INFINITY.ToString() : CurrentStat?.Output;
+            BarText.enabled = false;
         }
     }
 }

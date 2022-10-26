@@ -50,7 +50,7 @@ namespace Game.Systems.CameraSystem
 
 		private CharacterManager characterManager;
 		private PartyManager partyManager;
-		private TooltipSystem.TooltipSystem tooltipSystem;
+		private TooltipSystem.BattleTooltip tooltipSystem;
 		private ContextMenuSystem contextMenuSystem;
 		private UISubCanvas subCanvas;
 		private BattleSystem.BattleSystem battleSystem;
@@ -62,7 +62,7 @@ namespace Game.Systems.CameraSystem
 			CharacterManager characterManager,
 			PartyManager partyManager,
 			GlobalSettings settings,
-			TooltipSystem.TooltipSystem tooltipSystem,
+			TooltipSystem.BattleTooltip tooltipSystem,
 			ContextMenuSystem contextMenuSystem,
 			BattleSystem.BattleSystem battleSystem) : base(signalBus, brain, inputManager)
 		{

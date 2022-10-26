@@ -14,8 +14,8 @@ namespace Game.Systems.SheetSystem
 
         List<M> Modifiers { get; }
 
-        void AddModifier(M modifier);
-        void RemoveModifier(M modifier);
+        bool AddModifier(M modifier);
+        bool RemoveModifier(M modifier);
 
         bool Contains(M modifier);
     }

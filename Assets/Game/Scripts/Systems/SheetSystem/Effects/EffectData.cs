@@ -9,16 +9,6 @@ namespace Game.Systems.SheetSystem
 		[HideLabel]
 		public Information information;
 
-		[SerializeReference] public List<EffectType> enchantments = new List<EffectType>();
-	}
-
-
-	[System.Serializable]
-	public abstract class EffectType { }
-
-	[System.Serializable]
-	public sealed class AddHealthPoints : EffectType
-	{
-		public float add;
+		[SerializeReference] public List<EnchantmentType> enchantments = new List<EnchantmentType>();
 	}
 }

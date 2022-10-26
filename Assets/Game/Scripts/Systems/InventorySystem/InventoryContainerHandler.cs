@@ -1,6 +1,8 @@
+using Game.Entities;
 using Game.Managers.CharacterManager;
 using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
+using Game.Systems.CommandCenter;
 using Game.Systems.ContextMenu;
 using Game.Systems.SheetSystem;
 
@@ -21,6 +23,7 @@ namespace Game.Systems.InventorySystem
 		private IInventory from;
 		private IInventory to;
 
+		private ICharacter initiator;
 		private IEquipment equipment;
 		private Equip slotEquip;
 
@@ -116,7 +119,8 @@ namespace Game.Systems.InventorySystem
 
 			item = slot.CurrentItem;
 
-			equipment = (partyManager.PlayerParty.LeaderParty.Sheet as CharacterSheet).Equipment;
+			initiator = partyManager.PlayerParty.LeaderParty;
+			equipment = (initiator.Sheet as CharacterSheet).Equipment;
 
 			if (slot is UISlotInventory inventorySlot)
 			{
@@ -132,6 +136,11 @@ namespace Game.Systems.InventorySystem
 							if (item.IsEquippable)
 							{
 								equipment.Add(item);
+								from.Remove(item);
+							}
+							else if (item.IsConsumable)
+							{
+								CommandConsume.Execute(initiator, item);
 								from.Remove(item);
 							}
 						}

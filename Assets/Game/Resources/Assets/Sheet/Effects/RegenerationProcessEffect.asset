@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RegenerationProcessEffect
   m_EditorClassIdentifier: 
   information:
-    portrait: {fileID: 0}
+    portrait: {fileID: 21300000, guid: 842281ec2c3d4fe4b9d9fb6d7dc410ae, type: 3}
     name: 
     isNameId: 1
     description: 
@@ -47,6 +47,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  isBlinkOnEnd: 0
   references:
     version: 2
     RefIds:

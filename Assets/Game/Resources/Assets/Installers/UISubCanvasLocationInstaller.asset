@@ -19,3 +19,4 @@ MonoBehaviour:
   turnSeparatePrefab: {fileID: 522465427650173922, guid: 78aab5a83e252f3458ff3a9bdbff30ca, type: 3}
   actionPointPrefab: {fileID: 5209587169930084388, guid: 7d63075b03f63fa46934720002e80a54, type: 3}
   actionPrefab: {fileID: 4197280894364802723, guid: 0a451a48c6213e6449c032c2b25df89e, type: 3}
+  effectPrefab: {fileID: 8370480063244130010, guid: 22d1105a070f36048b14890df4b15a9c, type: 3}

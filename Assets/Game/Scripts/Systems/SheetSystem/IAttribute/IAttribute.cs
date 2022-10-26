@@ -85,24 +85,32 @@ namespace Game.Systems.SheetSystem
 
 		public List<AttributeModifier> Modifiers { get; }
 
-		public void AddModifier(AttributeModifier modifier)
+		public virtual bool AddModifier(AttributeModifier modifier)
 		{
 			if (!Contains(modifier))
 			{
 				Modifiers.Add(modifier);
 
 				onModifiersChanged?.Invoke();
+
+				return true;
 			}
+
+			return false;
 		}
 
-		public void RemoveModifier(AttributeModifier modifier)
+		public virtual bool RemoveModifier(AttributeModifier modifier)
 		{
 			if (Contains(modifier))
 			{
 				Modifiers.Remove(modifier);
 
 				onModifiersChanged?.Invoke();
+
+				return true;
 			}
+
+			return false;
 		}
 
 		public bool Contains(AttributeModifier modifier) => Modifiers.Contains(modifier);
@@ -150,6 +158,28 @@ namespace Game.Systems.SheetSystem
 	public abstract partial class AttributeBar
 	{
 		public override float TotalValue => (MaxValue + ModifyAddValue) * (1 + ModifyPercentValue);
+
+		public override bool AddModifier(AttributeModifier modifier)
+		{
+			if (base.AddModifier(modifier))
+			{
+				CurrentValue = currentValue;//upd
+				return true;
+			}
+
+			return false;
+		}
+
+		public override bool RemoveModifier(AttributeModifier modifier)
+		{
+			if (base.RemoveModifier(modifier))
+			{
+				CurrentValue = currentValue;//upd
+				return true;
+			}
+
+			return false;
+		}
 	}
 	#endregion
 }

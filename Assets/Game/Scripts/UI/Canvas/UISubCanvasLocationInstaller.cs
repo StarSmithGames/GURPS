@@ -12,7 +12,6 @@ namespace Game.UI.CanvasSystem
 	[CreateAssetMenu(fileName = "UISubCanvasLocationInstaller", menuName = "Installers/UISubCanvasLocationInstaller")]
 	public class UISubCanvasLocationInstaller : ScriptableObjectInstaller<UISubCanvasLocationInstaller>
 	{
-
 		[Header("Character")]
 		public UIAvatar avatarPrefab;
 		[Header("Inventory")]
@@ -24,7 +23,7 @@ namespace Game.UI.CanvasSystem
 		[Header("Sheet")]
 		public UIActionPoint actionPointPrefab;
 		public UIAction actionPrefab;
-
+		public UIEffect effectPrefab;
 
 		public override void InstallBindings()
 		{
@@ -37,20 +36,23 @@ namespace Game.UI.CanvasSystem
 
 			BindActionPoints();
 			BindActions();
+			BindEffects();
 		}
 
 		private void BindCharacterWindows()
 		{
 			Container.BindFactory<UIAvatar, UIAvatar.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
-				.FromComponentInNewPrefab(avatarPrefab));
+				.FromComponentInNewPrefab(avatarPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 		}
 
 		private void BindInventory()
 		{
 			Container.BindFactory<UIContainerWindow, UIContainerWindow.Factory>()
 			   .FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
-			   .FromComponentInNewPrefab(chestPopupWindowPrefab));
+			   .FromComponentInNewPrefab(chestPopupWindowPrefab)
+			   .UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 
 			Container.BindInstance(Container.InstantiatePrefabForComponent<UIItemCursor>(itemCursorPrefab));
 
@@ -61,7 +63,8 @@ namespace Game.UI.CanvasSystem
 		{
 			Container.BindFactory<UITurn, UITurn.Factory>()
 					.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(6)
-					.FromComponentInNewPrefab(turnPrefab));
+					.FromComponentInNewPrefab(turnPrefab)
+					.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 
 			Container.BindInstance(Container.InstantiatePrefab(turnSeparatePrefab)).WithId("TurnSeparate");
 		}
@@ -70,14 +73,24 @@ namespace Game.UI.CanvasSystem
 		{
 			Container.BindFactory<UIActionPoint, UIActionPoint.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(7)
-				.FromComponentInNewPrefab(actionPointPrefab));
+				.FromComponentInNewPrefab(actionPointPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 		}
 
 		private void BindActions()
 		{
 			Container.BindFactory<UIAction, UIAction.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(15)
-				.FromComponentInNewPrefab(actionPrefab));
+				.FromComponentInNewPrefab(actionPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
+		}
+
+		private void BindEffects()
+		{
+			Container.BindFactory<UIEffect, UIEffect.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
+				.FromComponentInNewPrefab(effectPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 		}
 	}
 }

@@ -32,7 +32,7 @@ namespace Game.Managers.PartyManager
 		[field: SerializeField] public Image FrameSpare { get; private set; }
 		[field: SerializeField] public Image IconInBattle { get; private set; }
 		[field: Space]
-		[field: SerializeField] public UIBar HPBar { get; private set; }
+		[field: SerializeField] public UIStatBar HPBar { get; private set; }
 		[field: Space]
 		[field: SerializeField] public Transform EffectsContent { get; private set; }
 
@@ -87,7 +87,8 @@ namespace Game.Managers.PartyManager
 		{
 			if (CurrentCharacter != null)
 			{
-				CurrentCharacter.Effects.onRegistratorChanged -= UpdateEffectsUI;
+				CurrentCharacter.Effects.onRegistratorApplied -= OnEffectApplied;
+				CurrentCharacter.Effects.onRegistratorRemoved -= OnEffectRemoved;
 				//character.Model.JoinBattle -= UpdateBattleUI;
 			}
 
@@ -98,7 +99,8 @@ namespace Game.Managers.PartyManager
 
 			if (CurrentCharacter != null)
 			{
-				CurrentCharacter.Effects.onRegistratorChanged += UpdateEffectsUI;
+				CurrentCharacter.Effects.onRegistratorApplied += OnEffectApplied;
+				CurrentCharacter.Effects.onRegistratorRemoved += OnEffectRemoved;
 				//CurrentModel.onBattleChanged += UpdateBattleUI;
 			}
 		}
@@ -125,33 +127,25 @@ namespace Game.Managers.PartyManager
 			FrameSpare.color = isInBattle ? Color.grey : Color.white;
 		}
 
-		private void UpdateEffectsUI()
+		private void OnEffectApplied(IEffect effect)
 		{
-			var characterEffects = CurrentCharacter.Effects.CurrentEffects;
+			var uieffect = effectFactory.Create();
 
-			CollectionExtensions.Resize(characterEffects, effects,
-			() =>
-			{
-				var effect = effectFactory.Create();
+			uieffect.transform.SetParent(EffectsContent);
+			uieffect.transform.localScale = Vector3.one;
 
-				effect.transform.SetParent(EffectsContent);
-				effect.transform.localScale = Vector3.one;
-				return effect;
-			},
-			() =>
-			{
-				var effect = effects.Last();
+			uieffect.SetEffect(effect);
 
-				effect.DespawnIt();
-				return effect;
-			});
-
-			for (int i = 0; i < effects.Count; i++)
-			{
-				effects[i].SetEffect(characterEffects[i]);
-			}
+			effects.Add(uieffect);
 		}
 
+		private void OnEffectRemoved(IEffect effect)
+		{
+			var uieffect = effects.Find((x) => x.CurrentEffect == effect);
+
+			effects.Remove(uieffect);
+			uieffect.Hide();
+		}
 
 		public override void OnSpawned(IMemoryPool pool)
 		{

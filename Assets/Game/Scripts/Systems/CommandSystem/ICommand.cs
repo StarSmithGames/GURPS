@@ -157,6 +157,11 @@ namespace Game.Systems.CommandCenter
 				character.Effects.Apply(data.effects);
 			}
 		}
+
+		public static void Execute(ICharacter character, Item item)
+		{
+			character.Effects.Apply(item.GetItemData<ConsumableItemData>().effects);
+		}
 	}
 	public class CommandPickUp : ContextCommand
 	{

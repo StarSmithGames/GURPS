@@ -1,9 +1,6 @@
-using Game.Entities;
 using Game.Systems.SheetSystem;
-using Game.UI;
 using Game.UI.CanvasSystem;
 using Game.UI.Windows;
-
 using UnityEngine;
 
 using Zenject;
@@ -13,7 +10,7 @@ namespace Game.Systems.BattleSystem
     public class WindowEntityInformation : WindowBase
     {
         [field: SerializeField] public TMPro.TextMeshProUGUI Name { get; private set; }
-        [field: SerializeField] public UIBar HealthBar { get; private set; }
+        [field: SerializeField] public UIStatBar HealthBar { get; private set; }
         [field: SerializeField] public TMPro.TextMeshProUGUI Level { get; private set; }
 
         private ISheet sheet;

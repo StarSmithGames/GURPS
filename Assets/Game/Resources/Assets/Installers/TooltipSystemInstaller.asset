@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d62e7caaef9737d4bb5c9a250e389293, type: 3}
   m_Name: TooltipSystemInstaller
   m_EditorClassIdentifier: 
-  tooltip: {fileID: 5306858300160290653, guid: a03dc698bbc92fc4ca05ba49785735ba, type: 3}
+  battleTooltip: {fileID: 3342265926531099160, guid: a03dc698bbc92fc4ca05ba49785735ba, type: 3}
+  uiTooltip: {fileID: 3022416949413785044, guid: 08e8fef9a55a20647ab6918e22350a85, type: 3}

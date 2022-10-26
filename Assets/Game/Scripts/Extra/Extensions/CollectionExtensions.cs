@@ -36,7 +36,7 @@ public static class CollectionExtensions
 	/// <summary>
 	/// Resize for listB by listA
 	/// </summary>
-	public static void Resize<FIRST, SECOND>(IList<FIRST> listA, IList<SECOND> listB, Func<SECOND> onCreate, Func<SECOND> onRemove)
+	public static void Resize<FIRST, SECOND>(IList<FIRST> listA, IList<SECOND> listB, Func<SECOND> onCreate, Func<SECOND> onRemove = null)
 	{
 		Resize(listA.Count, listB, onCreate, onRemove);
 	}
@@ -44,7 +44,7 @@ public static class CollectionExtensions
 	/// <summary>
 	/// Resize list by size
 	/// </summary>
-	public static void Resize<T>(int size, IList<T> list, Func<T> onCreate, Func<T> onRemove)
+	public static void Resize<T>(int size, IList<T> list, Func<T> onCreate, Func<T> onRemove = null)
 	{
 		int diff = size - list.Count;
 

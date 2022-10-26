@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace Game.Systems.SheetSystem
 {
-	public abstract class Enchantment { }
-
-	public abstract class ActivationEnchantment : Enchantment, IActivation
+	public abstract class Enchantment : IActivation
 	{
 		public bool IsActive { get; private set; }
+
+		public virtual bool IsReversible => true;
 
 		public virtual void Activate()
 		{
@@ -19,32 +19,58 @@ namespace Game.Systems.SheetSystem
 		}
 	}
 
-	public abstract class ExecutableEnchantment : Enchantment, IExecutable
-	{
-		public abstract void Execute();
-	}
-
 	public interface IBuff : IActivation
 	{
-		List<ActivationEnchantment> Enchantments { get; }
+		List<Enchantment> Enchantments { get; }
 	}
 
 	public interface ITrait : IActivation
 	{
-		List<ActivationEnchantment> Enchantments { get; }
+		List<Enchantment> Enchantments { get; }
 	}
 
 	public interface ITalent : IActivation { }
 
 
+	[System.Serializable]
+	public abstract class EnchantmentType
+	{
+		public abstract Enchantment GetEnchantment(object obj);
+	}
+
+	[System.Serializable]
+	public sealed class AddHealthPoints : EnchantmentType
+	{
+		public float add;
+
+		public override Enchantment GetEnchantment(object obj)
+		{
+			var sheet = (ISheet)obj;
+			return new AddStatEnchantment(sheet.Stats.HitPoints, add);
+		}
+	}
+
+	[System.Serializable]
+	public sealed class AddHealthPointsModifier : EnchantmentType
+	{
+		public float add;
+
+		public override Enchantment GetEnchantment(object obj)
+		{
+			var sheet = (ISheet)obj;
+			return new AddStatModifierEnchantment(sheet.Stats.HitPoints, add);
+		}
+	}
+
+
 	#region Enchantment
-	public class AddStatModifierEnchantment : ActivationEnchantment
+	public class AddStatModifierEnchantment : Enchantment
 	{
 		private AttributeModifier modifier;
 
 		private IStat stat;
 
-		public AddStatModifierEnchantment(IStat stat, int add)
+		public AddStatModifierEnchantment(IStat stat, float add)
 		{
 			this.stat = stat;
 
@@ -64,7 +90,7 @@ namespace Game.Systems.SheetSystem
 		}
 	}
 
-	public class AddPercentStatModifierEnchantment : ActivationEnchantment
+	public class AddPercentStatModifierEnchantment : Enchantment
 	{
 		private AttributeModifier modifier;
 
@@ -91,8 +117,10 @@ namespace Game.Systems.SheetSystem
 	}
 
 
-	public class AddStatEnchantment : ExecutableEnchantment
+	public class AddStatEnchantment : Enchantment
 	{
+		public override bool IsReversible => false;
+
 		private IStat stat;
 		private float add;
 
@@ -102,10 +130,12 @@ namespace Game.Systems.SheetSystem
 			this.add = add;
 		}
 
-		public override void Execute()
+		public override void Activate()
 		{
 			stat.CurrentValue += add;
 		}
+
+		public override void Deactivate() { }
 	}
 	#endregion
 
@@ -114,7 +144,7 @@ namespace Game.Systems.SheetSystem
 	{
 		public bool IsActive { get; private set; }
 
-		public List<ActivationEnchantment> Enchantments { get; }
+		public List<Enchantment> Enchantments { get; }
 
 		protected ISheet sheet;
 
@@ -122,7 +152,7 @@ namespace Game.Systems.SheetSystem
 		{
 			this.sheet = sheet;
 
-			Enchantments = new List<ActivationEnchantment>();
+			Enchantments = new List<Enchantment>();
 		}
 
 		public void Activate()

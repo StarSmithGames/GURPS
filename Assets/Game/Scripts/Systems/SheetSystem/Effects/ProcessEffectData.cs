@@ -22,7 +22,10 @@ namespace Game.Systems.SheetSystem
         public int amount = 2;
         
         public AnimationCurve curve = AnimationCurve.Linear(0, 0.5f, 1, 0.5f);
-    
+
+        [Space]
+        public bool isBlinkOnEnd = true;
+
         private void OnCurve()
 		{
             Keyframe[] keyframes = new Keyframe[amount];

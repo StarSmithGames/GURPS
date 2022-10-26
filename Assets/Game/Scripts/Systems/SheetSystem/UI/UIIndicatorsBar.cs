@@ -7,10 +7,10 @@ namespace Game.Systems.SheetSystem
 {
 	public class UIIndicatorsBar : MonoBehaviour
 	{
-		[field: SerializeField] public UIBar HealthBar { get; private set; }
-		[field: SerializeField] public UIBar MagicBar { get; private set; }
-		[field: SerializeField] public UIBar ArmorBar { get; private set; }
-		[field: SerializeField] public UIBar EnergyBar { get; private set; }
+		[field: SerializeField] public UIStatBar HealthBar { get; private set; }
+		[field: SerializeField] public UIStatBar MagicBar { get; private set; }
+		[field: SerializeField] public UIStatBar ArmorBar { get; private set; }
+		[field: SerializeField] public UIStatBar EnergyBar { get; private set; }
 		[field: Space]
 		[field: SerializeField] public Transform ActionPointsContent { get; private set; }
 

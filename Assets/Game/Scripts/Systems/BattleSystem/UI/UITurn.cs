@@ -25,7 +25,7 @@ namespace Game.Systems.BattleSystem
         [field: SerializeField] public Image Frame { get; private set; }
         [field: SerializeField] public TMPro.TextMeshProUGUI Name { get; private set; }
         [field: Space]
-        [field: SerializeField] public UIBar HPBar { get; private set; }
+        [field: SerializeField] public UIStatBar HPBar { get; private set; }
 
         [Space]
         [SerializeField] private Vector2 defaultSize = new Vector2(80, 80);
