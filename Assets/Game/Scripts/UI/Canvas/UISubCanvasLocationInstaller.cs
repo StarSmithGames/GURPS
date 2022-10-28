@@ -25,28 +25,21 @@ namespace Game.UI.CanvasSystem
 		public UIActionPoint actionPointPrefab;
 		public UIAction actionPrefab;
 		public UIEffect effectPrefab;
+		public UISkill skillPrefab;
 
 		public override void InstallBindings()
 		{
-			//Windows
-			BindCharacterWindows();
-
 			BindInventory();
 
 			BindBattleSystem();
 
+			BindAvatars();
 			BindActionPoints();
 			BindActions();
 			BindEffects();
+			BindSkills();
 		}
 
-		private void BindCharacterWindows()
-		{
-			Container.BindFactory<UIAvatar, UIAvatar.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
-				.FromComponentInNewPrefab(avatarPrefab)
-				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
-		}
 
 		private void BindInventory()
 		{
@@ -70,6 +63,14 @@ namespace Game.UI.CanvasSystem
 			Container.BindInstance(Container.InstantiatePrefab(turnSeparatePrefab)).WithId("TurnSeparate");
 		}
 
+		private void BindAvatars()
+		{
+			Container.BindFactory<UIAvatar, UIAvatar.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(2)
+				.FromComponentInNewPrefab(avatarPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
+		}
+
 		private void BindActionPoints()
 		{
 			Container.BindFactory<UIActionPoint, UIActionPoint.Factory>()
@@ -91,6 +92,14 @@ namespace Game.UI.CanvasSystem
 			Container.BindFactory<UIEffect, UIEffect.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
 				.FromComponentInNewPrefab(effectPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
+		}
+
+		private void BindSkills()
+		{
+			Container.BindFactory<UISkill, UISkill.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
+				.FromComponentInNewPrefab(skillPrefab)
 				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 		}
 	}

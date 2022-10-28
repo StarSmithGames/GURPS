@@ -12,12 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be0b6a26e024f104cab992e39ab1fe72, type: 3}
   m_Name: Back0
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: 13d05a0249a01654f8689047ab8486ff, type: 3}
-  localizations: []
+  information:
+    portrait: {fileID: 21300000, guid: 2551579138e25df43aabf79576d64e56, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 0}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
+  isWeighty: 1
   weight: 0.01
   isBreakable: 0
   decay:
@@ -25,3 +30,4 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
+  baseMaterial: {fileID: 0}

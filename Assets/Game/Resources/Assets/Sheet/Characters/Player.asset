@@ -33,7 +33,7 @@ MonoBehaviour:
       deity: 0
       handed: 1
     actor:
-      actorId: 
+      actorId: Player
       useBarks: 0
       useBarksInWorld: 0
       barksInWorld: {fileID: 0}

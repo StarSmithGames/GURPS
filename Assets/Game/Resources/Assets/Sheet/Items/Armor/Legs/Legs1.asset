@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64c6d4de6ea28f24b895967b8009eafa, type: 3}
   m_Name: Legs1
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: b32ced07c5f444b429e48cbb9cec5a72, type: 3}
-  localizations:
-  - language: 10
-    itemName: LegsRed
-    itemDescription: 
+  information:
+    portrait: {fileID: 21300000, guid: b32ced07c5f444b429e48cbb9cec5a72, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 3099327998246346679, guid: 2f5d66044e0fa104f922812575ad9c24, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
+  isWeighty: 1
   weight: 0.01
   isBreakable: 0
   decay:

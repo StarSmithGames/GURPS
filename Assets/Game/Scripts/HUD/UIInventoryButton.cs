@@ -9,6 +9,18 @@ namespace Game.HUD
 {
 	public class UIInventoryButton : UIButton
 	{
+		private WindowCharacterSheet WindowCharacterSheet
+		{
+			get
+			{
+				if(windowCharacterSheet == null)
+				{
+					windowCharacterSheet = subCanvas.WindowsRegistrator.GetAs<WindowCharacterSheet>();
+				}
+
+				return windowCharacterSheet;
+			}
+		}
 		private WindowCharacterSheet windowCharacterSheet;
 
 		private UISubCanvas subCanvas;
@@ -25,8 +37,6 @@ namespace Game.HUD
 
 		private void Start()
 		{
-			windowCharacterSheet = subCanvas.WindowsRegistrator.GetAs<WindowCharacterSheet>();
-
 			Button.onClick.AddListener(OnClick);
 		}
 
@@ -45,14 +55,14 @@ namespace Game.HUD
 
 		private void OnClick()
 		{
-			if (windowCharacterSheet.IsShowing)
+			if (WindowCharacterSheet.IsShowing)
 			{
-				windowCharacterSheet.Hide();
+				WindowCharacterSheet.Hide();
 			}
 			else
 			{
-				windowCharacterSheet.SetSheet(partyManager.PlayerParty.LeaderParty.Sheet as CharacterSheet);
-				windowCharacterSheet.Show();
+				WindowCharacterSheet.SetSheet(partyManager.PlayerParty.LeaderParty.Sheet as CharacterSheet);
+				WindowCharacterSheet.Show();
 			}
 		}
 	}

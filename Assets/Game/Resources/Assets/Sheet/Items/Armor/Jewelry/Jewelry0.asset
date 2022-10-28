@@ -12,12 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eac0290ef1bccce488d63352298a083f, type: 3}
   m_Name: Jewelry0
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: 147e45f399449c34c8aae78ad031572c, type: 3}
-  localizations: []
+  information:
+    portrait: {fileID: 21300000, guid: 147e45f399449c34c8aae78ad031572c, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 0}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
+  isWeighty: 1
   weight: 0.01
   isBreakable: 0
   decay:
@@ -25,3 +30,4 @@ MonoBehaviour:
     decayInside: 0
     decayOutsie: 0
   rarity: 0
+  baseMaterial: {fileID: 0}

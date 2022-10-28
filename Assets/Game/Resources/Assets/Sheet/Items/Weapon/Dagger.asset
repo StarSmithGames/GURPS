@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d3c52bfe70718e4694ab27e5a395281, type: 3}
   m_Name: Dagger
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: eb81ca6ebb2b3724b92d4509ab0cc25f, type: 3}
-  localizations:
-  - language: 10
-    itemName: Dagger
-    itemDescription: 
+  information:
+    portrait: {fileID: 21300000, guid: 07661544b89893b4992b38f0e6bfc20b, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 8406547672855151443, guid: 5cc8643f011a3094aa4b45fedd25b4ca, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
+  isWeighty: 1
   weight: 0.5
   isBreakable: 0
   decay:
@@ -29,11 +31,7 @@ MonoBehaviour:
     decayOutsie: 0
   rarity: 0
   weaponDamage:
-    mainDamage:
-      amount: {x: 2, y: 6}
-      damageType: 1
     isHasSideDamages: 0
-    sideDamages: []
     criticalDamage: 150
     criticalChance: 0
   weaponRange: 0.8

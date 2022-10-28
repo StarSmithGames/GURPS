@@ -41,3 +41,5 @@ MonoBehaviour:
     keyCode: 100
   - keyAction: 50
     keyCode: 105
+  - keyAction: 51
+    keyCode: 117

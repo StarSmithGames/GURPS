@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d3c52bfe70718e4694ab27e5a395281, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: 350e6007c8bc09a47a7e5fdbf3873cc3, type: 3}
-  localizations:
-  - language: 10
-    itemName: Sword
-    itemDescription: 
+  information:
+    portrait: {fileID: 21300000, guid: 24ba95b71fa6aff40884ac79326165f0, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 2827429483417660502, guid: dbfc23a4c52fa454d99c4cb00fcf8826, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
+  isWeighty: 1
   weight: 2.5
   isBreakable: 0
   decay:
@@ -29,11 +31,7 @@ MonoBehaviour:
     decayOutsie: 0
   rarity: 0
   weaponDamage:
-    mainDamage:
-      amount: {x: 2, y: 8}
-      damageType: 1
     isHasSideDamages: 0
-    sideDamages: []
     criticalDamage: 150
     criticalChance: 0
   weaponRange: 1.2

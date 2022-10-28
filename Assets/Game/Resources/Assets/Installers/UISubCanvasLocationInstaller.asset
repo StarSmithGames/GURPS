@@ -20,3 +20,4 @@ MonoBehaviour:
   actionPointPrefab: {fileID: 5209587169930084388, guid: 7d63075b03f63fa46934720002e80a54, type: 3}
   actionPrefab: {fileID: 4197280894364802723, guid: 0a451a48c6213e6449c032c2b25df89e, type: 3}
   effectPrefab: {fileID: 8370480063244130010, guid: 22d1105a070f36048b14890df4b15a9c, type: 3}
+  skillPrefab: {fileID: 3084469315291806151, guid: 04bc94ac648b7dc4baaae25ce7a1c7c8, type: 3}

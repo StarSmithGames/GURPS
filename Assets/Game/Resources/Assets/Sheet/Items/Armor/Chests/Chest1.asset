@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3dd1fe21afa69145853ea9ce73c273c, type: 3}
   m_Name: Chest1
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: a5c5631be234d72409b342f021000f52, type: 3}
-  localizations:
-  - language: 10
-    itemName: Chest
-    itemDescription: 
+  information:
+    portrait: {fileID: 21300000, guid: a5c5631be234d72409b342f021000f52, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 6620961997215693809, guid: 8b941bf8d20c9b64e88d203fcc23e8c1, type: 3}
   isStackable: 0
   isInfinityStack: 0
   stackSize: 1
+  isWeighty: 1
   weight: 0.01
   isBreakable: 0
   decay:

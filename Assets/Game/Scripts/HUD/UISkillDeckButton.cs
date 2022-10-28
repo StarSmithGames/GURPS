@@ -1,5 +1,6 @@
 using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
+using Game.Systems.SheetSystem;
 using Game.UI;
 using Game.UI.CanvasSystem;
 using Zenject;
@@ -8,6 +9,20 @@ namespace Game.HUD
 {
     public class UISkillDeckButton : UIButton
     {
+		private WindowSkillDeck WindowSkillDeck
+		{
+			get
+			{
+				if (windowSkillDeck == null)
+				{
+					windowSkillDeck = subCanvas.WindowsRegistrator.GetAs<WindowSkillDeck>();
+				}
+
+				return windowSkillDeck;
+			}
+		}
+		private WindowSkillDeck windowSkillDeck;
+
 		private UISubCanvas subCanvas;
 		private InputManager inputManager;
 		private PartyManager partyManager;
@@ -40,7 +55,15 @@ namespace Game.HUD
 
 		private void OnClick()
 		{
-
+			if (WindowSkillDeck.IsShowing)
+			{
+				WindowSkillDeck.Hide();
+			}
+			else
+			{
+				WindowSkillDeck.SetSkills(partyManager.PlayerParty.LeaderParty.Sheet.Skills);
+				WindowSkillDeck.Show();
+			}
 		}
 	}
 }

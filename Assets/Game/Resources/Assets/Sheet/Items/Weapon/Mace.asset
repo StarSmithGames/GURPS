@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d3c52bfe70718e4694ab27e5a395281, type: 3}
   m_Name: Mace
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: 7a4de8aacba14d6438b7bd041ad05837, type: 3}
-  localizations:
-  - language: 10
-    itemName: Mace
-    itemDescription: 
+  information:
+    portrait: {fileID: 21300000, guid: 7a4de8aacba14d6438b7bd041ad05837, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 6698384417341463856, guid: fe815f44e5fc4ae40a26df9d2f470aab, type: 3}
   isStackable: 0
   isInfinityStack: 0
@@ -30,11 +31,7 @@ MonoBehaviour:
     decayOutsie: 0
   rarity: 0
   weaponDamage:
-    mainDamage:
-      amount: {x: 0, y: 10}
-      damageType: 2
     isHasSideDamages: 0
-    sideDamages: []
     criticalDamage: 150
     criticalChance: 0
   weaponRange: 1.5
