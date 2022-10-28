@@ -3,10 +3,8 @@ using UnityEngine.UI;
 
 namespace Game.UI
 {
-	public class UIButtonExitGame : MonoBehaviour
+	public class UIButtonExitGame : UIButton
 	{
-		[field: SerializeField] public Button Button { get; private set; }
-
 		private void Start()
 		{
 			Button.onClick.AddListener(OnClick);

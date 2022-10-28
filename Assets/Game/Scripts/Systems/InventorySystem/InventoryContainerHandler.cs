@@ -5,6 +5,7 @@ using Game.Managers.PartyManager;
 using Game.Systems.CommandCenter;
 using Game.Systems.ContextMenu;
 using Game.Systems.SheetSystem;
+using Game.Systems.TooltipSystem;
 
 using System;
 
@@ -28,17 +29,20 @@ namespace Game.Systems.InventorySystem
 		private Equip slotEquip;
 
 		private UIItemCursor itemCursor;
+		private UITooltip tooltip;
 		private UIContainerWindow.Factory containerFactory;
 		private PartyManager partyManager;
 		private ContextMenuSystem contextMenuSystem;
 
 		public InventoryContainerHandler(
 			UIItemCursor itemCursor,
+			UITooltip tooltip,
 			UIContainerWindow.Factory containerFactory,
 			PartyManager partyManager,
 			ContextMenuSystem contextMenuSystem)
 		{
 			this.itemCursor = itemCursor;
+			this.tooltip = tooltip;
 			this.containerFactory = containerFactory;
 			this.partyManager = partyManager;
 			this.contextMenuSystem = contextMenuSystem;
@@ -107,10 +111,18 @@ namespace Game.Systems.InventorySystem
 		public void OnPointerEnter(UISlot slot, PointerEventData eventData)
 		{
 			if (IsDraging) return;
+
+			if (!slot.IsEmpty)
+			{
+				tooltip.SetTarget(slot.CurrentItem);
+				tooltip.Show();
+			}
 		}
 		public void OnPointerExit(UISlot slot, PointerEventData eventData)
 		{
 			if (IsDraging) return;
+
+			HideTooltip();
 		}
 
 		public void OnPointerClick(UISlot slot, PointerEventData eventData)
@@ -157,10 +169,14 @@ namespace Game.Systems.InventorySystem
 						to.Add(item);
 						from.Remove(item);
 					}
+
+					HideTooltip();
 				}
 				else if(eventData.button == PointerEventData.InputButton.Right)
 				{
 					contextMenuSystem.SetTarget(item);
+
+					HideTooltip();
 				}
 			}
 			else if (slot is UISlotEquipment equipmentSlot)
@@ -171,6 +187,8 @@ namespace Game.Systems.InventorySystem
 
 					to.Add(item);
 					equipment.RemoveFrom(equipmentSlot.CurrentEquip);
+
+					HideTooltip();
 				}
 			}
 
@@ -260,6 +278,14 @@ namespace Game.Systems.InventorySystem
 			Clear();
 		
 			//characterManager.CurrentParty.LeaderParty.Freeze(false);
+		}
+
+		private void HideTooltip()
+		{
+			if (tooltip.IsShowing)
+			{
+				tooltip.Hide();
+			}
 		}
 
 		private void Clear()

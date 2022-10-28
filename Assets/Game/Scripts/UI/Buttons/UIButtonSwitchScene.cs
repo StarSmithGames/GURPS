@@ -12,15 +12,13 @@ using Zenject;
 
 namespace Game.UI
 {
-	public class UIButtonSwitchScene : MonoBehaviour
+	public class UIButtonSwitchScene : UIButton
 	{
 		[HideLabel]
 		public SceneName sceneName;
 
 		[field: SerializeField] public Transitions In { get; private set; }
 		[field: SerializeField] public Transitions Out { get; private set; }
-
-		[field: SerializeField] public Button Button { get; private set; }
 
 		private UIGlobalCanvas globalCanvas;
 
@@ -37,7 +35,7 @@ namespace Game.UI
 
 		private void OnDestroy()
 		{
-			Button.onClick.RemoveAllListeners();
+			Button?.onClick.RemoveAllListeners();
 		}
 
 		private void Click()

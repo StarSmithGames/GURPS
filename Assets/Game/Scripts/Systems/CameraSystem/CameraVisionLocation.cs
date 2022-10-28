@@ -2,6 +2,7 @@ using Cinemachine;
 
 using Game.Entities;
 using Game.Entities.Models;
+using Game.HUD;
 using Game.Managers.CharacterManager;
 using Game.Managers.GameManager;
 using Game.Managers.InputManager;

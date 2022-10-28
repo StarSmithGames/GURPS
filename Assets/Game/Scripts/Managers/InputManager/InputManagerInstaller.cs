@@ -55,6 +55,7 @@ namespace Game.Managers.InputManager
 		WorldTooltips = 45,
 
 		Inventory = 50,
+		SkillDeck = 51,
 		InGameMenu = 55,
 
 		QuickSave = 65,
