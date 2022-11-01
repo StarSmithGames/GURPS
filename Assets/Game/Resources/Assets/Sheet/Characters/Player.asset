@@ -111,7 +111,7 @@ MonoBehaviour:
           currentDurability: 100
           isShowFoldout: 0
       - Item:
-          data: {fileID: 0}
+          data: {fileID: 11400000, guid: 31d913388cddaa146a1d1be9f3d9cea6, type: 2}
           useRandom: 0
           currentStackSize: 1
           minimumStackSizeRandom: 0
@@ -120,7 +120,7 @@ MonoBehaviour:
           currentDurability: 100
           isShowFoldout: 0
       - Item:
-          data: {fileID: 0}
+          data: {fileID: 11400000, guid: 1df41a94055db20439681071554e5aa3, type: 2}
           useRandom: 0
           currentStackSize: 1
           minimumStackSizeRandom: 0
