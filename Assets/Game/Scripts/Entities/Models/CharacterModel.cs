@@ -40,7 +40,7 @@ namespace Game.Entities.Models
 	{
 		public bool InAction => AnimatorController.IsAnimationProcess || IsHasTarget;
 
-		public float CharacterRange => equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>().weaponRange ?? 0f;
+		public float CharacterRange => /*equipment.WeaponCurrent.Main.CurrentItem?.GetItemData<WeaponItemData>().weaponRange ??*/ 0f;
 		public bool IsWithRangedWeapon { get; private set; }
 
 		public virtual ICharacter Character { get; protected set; }
@@ -52,7 +52,7 @@ namespace Game.Entities.Models
 
 		public Transform DialogueTransform => Transform;//rm
 
-		private IEquipment equipment;
+		//private IEquipment equipment;
 
 		[Inject]
 		private void Construct(
@@ -86,10 +86,10 @@ namespace Game.Entities.Models
 			
 			yield return null;
 
-			equipment = (Sheet as CharacterSheet).Equipment;
+			//equipment = (Sheet as CharacterSheet).Equipment;
 
 			Controller.onReachedDestination += OnReachedDestination;
-			equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
+			//equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 
 			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
 			signalBus?.Subscribe<SignalEndDialogue>(OnDialogueEnded);
@@ -171,7 +171,7 @@ namespace Game.Entities.Models
 
 		private void OnEquipWeaponChanged()
 		{
-			IsWithRangedWeapon = equipment.WeaponCurrent.Main.Item?.IsRangedWeapon ?? false;
+			//IsWithRangedWeapon = equipment.WeaponCurrent.Main.CurrentItem?.IsRangedWeapon ?? false;
 		}
 
 		public Data GetData()

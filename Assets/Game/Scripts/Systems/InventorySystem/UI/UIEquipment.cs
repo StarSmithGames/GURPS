@@ -35,8 +35,8 @@ namespace Game.Systems.InventorySystem
 
 		public UISlotEquipment[] slots;
 
-		public IEquipment CurrentEquipment => currentEquipment;
-		private IEquipment currentEquipment;
+		//public IEquipment CurrentEquipment => currentEquipment;
+		//private IEquipment currentEquipment;
 
 		private InventoryContainerHandler containerHandler;
 
@@ -45,41 +45,41 @@ namespace Game.Systems.InventorySystem
 		{
 			this.containerHandler = containerHandler;
 
-			for (int i = 0; i < slots.Length; i++)
-			{
-				slots[i].SetOwner(this);
-			}
+			//for (int i = 0; i < slots.Length; i++)
+			//{
+			//	slots[i].SetOwner(this);
+			//}
 
-			containerHandler.Subscribe(slots);
+			//containerHandler.Subscribe(slots);
 		}
 
 		private void OnDestroy()
 		{
-			containerHandler.UnSubscribe(slots);
+			//containerHandler.UnSubscribe(slots);
 		}
 
-		public void SetEquipment(IEquipment equipment)
-		{
-			currentEquipment = equipment;
+		//public void SetEquipment(IEquipment equipment)
+		//{
+		//	currentEquipment = equipment;
 
-			Head.SetEquip(currentEquipment.Head);
-			Sholders.SetEquip(currentEquipment.Sholders);
-			Chest.SetEquip(currentEquipment.Chest);
-			Forearms.SetEquip(currentEquipment.Forearms);
-			Legs.SetEquip(currentEquipment.Legs);
-			Feet.SetEquip(currentEquipment.Feet);
+		//	Head.SetSlot(currentEquipment.Head);
+		//	Sholders.SetSlot(currentEquipment.Sholders);
+		//	Chest.SetSlot(currentEquipment.Chest);
+		//	Forearms.SetSlot(currentEquipment.Forearms);
+		//	Legs.SetSlot(currentEquipment.Legs);
+		//	Feet.SetSlot(currentEquipment.Feet);
 
-			Weapon00.SetEquip(currentEquipment.WeaponMain.Main);
-			Weapon01.SetEquip(currentEquipment.WeaponMain.Spare);
-			Weapon10.SetEquip(currentEquipment.WeaponSpare.Main);
-			Weapon11.SetEquip(currentEquipment.WeaponSpare.Spare);
+		//	Weapon00.SetSlot(currentEquipment.WeaponMain.Main);
+		//	Weapon01.SetSlot(currentEquipment.WeaponMain.Spare);
+		//	Weapon10.SetSlot(currentEquipment.WeaponSpare.Main);
+		//	Weapon11.SetSlot(currentEquipment.WeaponSpare.Spare);
 
-			Cloak.SetEquip(currentEquipment.Cloak);
-			Jewelry.SetEquip(currentEquipment.Jewelry);
-			Ring0.SetEquip(currentEquipment.Ring0);
-			Ring1.SetEquip(currentEquipment.Ring1);
-			Trinket.SetEquip(currentEquipment.Trinket);
-		}
+		//	Cloak.SetSlot(currentEquipment.Cloak);
+		//	Jewelry.SetSlot(currentEquipment.Jewelry);
+		//	Ring0.SetSlot(currentEquipment.Ring0);
+		//	Ring1.SetSlot(currentEquipment.Ring1);
+		//	Trinket.SetSlot(currentEquipment.Trinket);
+		//}
 
 		[Button]
 		private void GetAllSlots()

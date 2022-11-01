@@ -46,7 +46,7 @@ namespace Game.Systems.AnimatorController
 			signalBus?.Subscribe<SignalJoinBattleLocal>(OnJoinedBattle);
 			signalBus?.Subscribe<SignalLeaveBattleLocal>(OnLeavedBattle);
 
-			(characterModel.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
+			//(characterModel.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 			OnEquipWeaponChanged();
 		}
 
@@ -59,7 +59,7 @@ namespace Game.Systems.AnimatorController
 
 			if (characterModel != null)
 			{
-				(characterModel.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
+				//(characterModel.Sheet as CharacterSheet).Equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
 			}
 		}
 
@@ -191,44 +191,44 @@ namespace Game.Systems.AnimatorController
 
 		private void OnEquipWeaponChanged()
 		{
-			CharacterSheet sheet = characterModel.Sheet as CharacterSheet;
+			//CharacterSheet sheet = characterModel.Sheet as CharacterSheet;
 
-			Hands hands = sheet.Equipment.WeaponCurrent.Hands;
+			//Hands hands = sheet.Equipment.WeaponCurrent.Hands;
 
-			var weaponMain = sheet.Equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>();
+			//var weaponMain = sheet.Equipment.WeaponCurrent.Main.CurrentItem?.GetItemData<WeaponItemData>();
 
-			var lastBehavior = currentWeaponBehavior;
+			//var lastBehavior = currentWeaponBehavior;
 
-			if (hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
-			{
-				currentWeaponBehavior = new OneHandedBehavior(characterModel);
-			}
-			else if (hands == Hands.Both)
-			{
-				if (weaponMain is MeleeItemData)
-				{
-					currentWeaponBehavior = new TwoHandedBehavior(characterModel);
-				}
-				else if (weaponMain is RangedItemData)
-				{
-					currentWeaponBehavior = new RangedBehavior(characterModel);
-				}
-			}
-			else
-			{
-				currentWeaponBehavior = new UnArmedBehavior(characterModel);
-			}
+			//if (hands == Hands.Main || hands == Hands.Spare || (hands == Hands.Both && weaponMain is MeleeItemData melee && melee.melleType == MelleType.OneHanded))
+			//{
+			//	currentWeaponBehavior = new OneHandedBehavior(characterModel);
+			//}
+			//else if (hands == Hands.Both)
+			//{
+			//	if (weaponMain is MeleeItemData)
+			//	{
+			//		currentWeaponBehavior = new TwoHandedBehavior(characterModel);
+			//	}
+			//	else if (weaponMain is RangedItemData)
+			//	{
+			//		currentWeaponBehavior = new RangedBehavior(characterModel);
+			//	}
+			//}
+			//else
+			//{
+			//	currentWeaponBehavior = new UnArmedBehavior(characterModel);
+			//}
 
 
-			if (lastBehavior != null && lastBehavior != currentWeaponBehavior)
-			{
-				lastBehavior.Dispose();
-			}
+			//if (lastBehavior != null && lastBehavior != currentWeaponBehavior)
+			//{
+			//	lastBehavior.Dispose();
+			//}
 
-			if (characterModel.InBattle)
-			{
-				currentWeaponBehavior.UpdatePose();
-			}
+			//if (characterModel.InBattle)
+			//{
+			//	currentWeaponBehavior.UpdatePose();
+			//}
 		}
 
 		public abstract class WeaponBehavior
@@ -236,7 +236,7 @@ namespace Game.Systems.AnimatorController
 			protected int weaponTypeHash;
 			protected int attackTypeHash;
 
-			protected IEquipment equipment;
+			//protected IEquipment equipment;
 			protected Animator animator;
 			protected HumanoidAnimatorController animatorController;
 			protected CharacterOutfit outfit;
@@ -246,13 +246,13 @@ namespace Game.Systems.AnimatorController
 			public WeaponBehavior(ICharacterModel owner)
 			{
 				this.owner = owner;
-				equipment = (owner.Sheet as CharacterSheet).Equipment;
-				outfit = (owner as CharacterModel).Outfit;
-				animatorController = owner.AnimatorController as HumanoidAnimatorController;
-				animator = animatorController.animator;
+				//equipment = (owner.Sheet as CharacterSheet).Equipment;
+				//outfit = (owner as CharacterModel).Outfit;
+				//animatorController = owner.AnimatorController as HumanoidAnimatorController;
+				//animator = animatorController.animator;
 
-				weaponTypeHash = Animator.StringToHash("WeaponType");
-				attackTypeHash = Animator.StringToHash("AttackType");
+				//weaponTypeHash = Animator.StringToHash("WeaponType");
+				//attackTypeHash = Animator.StringToHash("AttackType");
 			}
 
 			public virtual void Dispose() { }
@@ -446,8 +446,8 @@ namespace Game.Systems.AnimatorController
 			{
 				useAnimationDraw = false;
 
-				right = equipment.WeaponCurrent.Main.Item?.GetItemData<WeaponItemData>();
-				left = equipment.WeaponCurrent.Spare.Item?.GetItemData<WeaponItemData>();
+				//right = equipment.WeaponCurrent.Main.CurrentItem?.GetItemData<WeaponItemData>();
+				//left = equipment.WeaponCurrent.Spare.CurrentItem?.GetItemData<WeaponItemData>();
 
 				UpdatePose();
 			}
@@ -550,7 +550,7 @@ namespace Game.Systems.AnimatorController
 
 			public TwoHandedBehavior(ICharacterModel owner) : base(owner)
 			{
-				data = equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>();
+				//data = equipment.WeaponCurrent.Main.CurrentItem.GetItemData<WeaponItemData>();
 
 				UpdatePose();
 			}
@@ -613,7 +613,7 @@ namespace Game.Systems.AnimatorController
 
 			public RangedBehavior(ICharacterModel owner) : base(owner)
 			{
-				data = equipment.WeaponCurrent.Main.Item.GetItemData<WeaponItemData>();
+				//data = equipment.WeaponCurrent.Main.CurrentItem.GetItemData<WeaponItemData>();
 
 				outfit.Slots.Clear();
 

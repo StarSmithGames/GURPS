@@ -1,79 +1,39 @@
 using Sirenix.OdinInspector;
-
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
-
 using Zenject;
+using UnityEngine.Assertions;
 
 namespace Game.Systems.InventorySystem
 {
 	public class UIInventory : MonoBehaviour
 	{
-		[field: SerializeField] public Transform content;
-		[field: SerializeField] public UISlotInventory[] slots;
+		[field: SerializeField] public Transform Content { get; private set; }
+		[field: SerializeField] public List<UISlot> Slots { get; private set; }
 
 		public IInventory CurrentInventory { get; private set; }
 
-		private InventoryContainerHandler containerHandler;
-
-		[Inject]
-		private void Construct(InventoryContainerHandler containerHandler)
-		{
-			this.containerHandler = containerHandler;
-
-			for (int i = 0; i < slots.Length; i++)
-			{
-				slots[i].SetOwner(this);
-			}
-
-			containerHandler?.Subscribe(slots);
-		}
-
-		private void OnDestroy()
-		{
-			containerHandler?.UnSubscribe(slots);
-		}
-
 		public void SetInventory(IInventory inventory)
 		{
-			if(CurrentInventory != null)
-			{
-				CurrentInventory.OnInventoryChanged -= OnInventoryChanged;
-			}
 			CurrentInventory = inventory;
 
-			UpdateSlots();
+			CurrentInventory.Slots = new List<Slot>();
 
-			CurrentInventory.OnInventoryChanged += OnInventoryChanged;
-		}
-
-		private void UpdateSlots()
-		{
-			for (int i = 0; i < slots.Length; i++)
+			for (int i = 0; i < Slots.Count; i++)
 			{
-				if (i < CurrentInventory.Items.Count)
-				{
-					slots[i].SetItem(CurrentInventory.Items[i]);
-				}
-				else
-				{
-					slots[i].SetItem(null);
-				}
+				Slot slot = new Slot();
+				slot.SetOwner(CurrentInventory);
+				Slots[i].SetSlot(slot);
+				
+				CurrentInventory.Slots.Add(slot);
 			}
 		}
 
-		private void OnInventoryChanged()
-		{
-			UpdateSlots();
-		}
-
-
-		[Button]
+		[Button(DirtyOnClick = true)]
 		private void GetAllSlots()
 		{
-			slots = GetComponentsInChildren<UISlotInventory>();
+			Slots = Content.GetComponentsInChildren<UISlot>().ToList();
 		}
 	}
 }

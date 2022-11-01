@@ -19,6 +19,7 @@ namespace Game.Systems.SheetSystem
         Characteristics Characteristics { get; }
 
         IInventory Inventory { get; }
+        IInventory Actions { get; }
 
         Conditions Conditions { get; }
 
@@ -43,6 +44,7 @@ namespace Game.Systems.SheetSystem
 		public virtual Characteristics Characteristics { get; private set; }
 
         public virtual IInventory Inventory { get; private set; }
+        public virtual IInventory Actions { get; private set; }
 
         public virtual Conditions Conditions { get; private set; }
 
@@ -65,6 +67,7 @@ namespace Game.Systems.SheetSystem
             Characteristics = new Characteristics(Settings.characteristics);
             
             Inventory = new Inventory(Settings.inventory);
+            Actions = new Inventory(Settings.actions);
 
             Conditions = new Conditions();
             //Abilities = new Abilities.Abilities(Settings.abilities);
@@ -78,11 +81,11 @@ namespace Game.Systems.SheetSystem
 
     public sealed class CharacterSheet : EntitySheet
     {
-        public IEquipment Equipment { get; private set; }
+        //public IEquipment Equipment { get; private set; }
 
         public CharacterSheet(CharacterData data) : base(data.information, data.sheet)
         {
-            Equipment = new Equipment(data.sheet.equipment, Inventory);
+            //Equipment = new Equipment(data.sheet.equipment, Inventory);
         }
 
         public Data GetData()
@@ -123,8 +126,10 @@ namespace Game.Systems.SheetSystem
 
         [TabGroup("GroupB", "Inventory")]
         public InventorySettings inventory;
-        [TabGroup("GroupB", "Equipment")]
-        public EquipmentSettings equipment;
+        [TabGroup("GroupB", "Actions")]
+        public InventorySettings actions;
+        //[TabGroup("GroupB", "Equipment")]
+        //public EquipmentSettings equipment;
 
         [TabGroup("GroupC", "Abilities")]
         public AbilitiesSettings abilities;

@@ -3179,8 +3179,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3031152c3158f894ebf83cbd8506b676, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  content: {fileID: 6345719344224159201}
-  slots:
+  <Content>k__BackingField: {fileID: 6345719344224159201}
+  <Slots>k__BackingField:
   - {fileID: 8111069770428552747}
   - {fileID: 517206202114744359}
   - {fileID: 6744047394056416053}
@@ -3242,7 +3242,7 @@ GameObject:
   - component: {fileID: 6345719344224159203}
   - component: {fileID: 6345719344224159202}
   m_Layer: 5
-  m_Name: Content
+  m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

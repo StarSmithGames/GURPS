@@ -1,11 +1,16 @@
+using Game.Systems.InventorySystem;
+
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Systems.InventorySystem
 {
-	public class UISlotInventory : UISlot
+	public class UISlotAction : UISlot
 	{
 		[field: Space]
 		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
+		[field: SerializeField] public TMPro.TextMeshProUGUI Num { get; private set; }
 
 		protected override void UpdateUI()
 		{

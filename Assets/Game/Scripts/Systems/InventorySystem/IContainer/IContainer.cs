@@ -1,8 +1,9 @@
 using Game.Systems.InteractionSystem;
+using Game.Systems.SheetSystem;
 
 namespace Game.Systems.InventorySystem
 {
-    public interface IContainer : IInteractable, IObservable
+    public interface IContainer : ISheetable, IInteractable, IObservable
     {
         bool IsOpened { get; }
 

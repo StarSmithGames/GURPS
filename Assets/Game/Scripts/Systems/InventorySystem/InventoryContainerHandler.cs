@@ -6,6 +6,7 @@ using Game.Systems.CommandCenter;
 using Game.Systems.ContextMenu;
 using Game.Systems.SheetSystem;
 using Game.Systems.TooltipSystem;
+using Game.UI.CanvasSystem;
 
 using System;
 
@@ -25,60 +26,54 @@ namespace Game.Systems.InventorySystem
 		private IInventory to;
 
 		private ICharacter initiator;
-		private IEquipment equipment;
-		private Equip slotEquip;
+		//private EquipSlot slotEquip;
 
-		private UIItemCursor itemCursor;
+		private UISubCanvas canvas;
+		private UIDragItem dragItem;
 		private UITooltip tooltip;
 		private UIContainerWindow.Factory containerFactory;
 		private PartyManager partyManager;
 		private ContextMenuSystem contextMenuSystem;
 
 		public InventoryContainerHandler(
-			UIItemCursor itemCursor,
+			UISubCanvas canvas,
+			UIDragItem itemCursor,
 			UITooltip tooltip,
 			UIContainerWindow.Factory containerFactory,
 			PartyManager partyManager,
 			ContextMenuSystem contextMenuSystem)
 		{
-			this.itemCursor = itemCursor;
+			this.canvas = canvas;
+			this.dragItem = itemCursor;
 			this.tooltip = tooltip;
 			this.containerFactory = containerFactory;
 			this.partyManager = partyManager;
 			this.contextMenuSystem = contextMenuSystem;
 		}
 
-		public void Subscribe(UISlot[] slots)
+		public void Subscribe(UISlot slot)
 		{
-			for (int i = 0; i < slots.Length; i++)
-			{
-				UISlot slot = slots[i];
-				slot.DragAndDrop.onPointerEnter += OnPointerEnter;
-				slot.DragAndDrop.onPointerEXit += OnPointerExit;
+			slot.DragAndDrop.onPointerEnter += OnPointerEnter;
+			slot.DragAndDrop.onPointerEXit += OnPointerExit;
 
-				slot.DragAndDrop.onPointerClick += OnPointerClick;
+			slot.DragAndDrop.onPointerClick += OnPointerClick;
 
-				slot.DragAndDrop.onBeginDrag += OnBeginDrag;
-				slot.DragAndDrop.onDrag += OnDrag;
-				slot.DragAndDrop.onEndDrag += OnEndDrag;
-				slot.DragAndDrop.onDrop += OnDrop;
-			}
+			slot.DragAndDrop.onBeginDrag += OnBeginDrag;
+			slot.DragAndDrop.onDrag += OnDrag;
+			slot.DragAndDrop.onEndDrag += OnEndDrag;
+			slot.DragAndDrop.onDrop += OnDrop;
 		}
-		public void UnSubscribe(UISlot[] slots)
+		public void Unsubscribe(UISlot slot)
 		{
-			for (int i = 0; i < slots.Length; i++)
-			{
-				UISlot slot = slots[i];
-				slot.DragAndDrop.onPointerEnter -= OnPointerEnter;
-				slot.DragAndDrop.onPointerEXit -= OnPointerExit;
+			slot.DragAndDrop.onPointerEnter -= OnPointerEnter;
+			slot.DragAndDrop.onPointerEXit -= OnPointerExit;
 
-				slot.DragAndDrop.onPointerClick -= OnPointerClick;
+			slot.DragAndDrop.onPointerClick -= OnPointerClick;
 
-				slot.DragAndDrop.onBeginDrag -= OnBeginDrag;
-				slot.DragAndDrop.onDrag -= OnDrag;
-				slot.DragAndDrop.onEndDrag -= OnEndDrag;
-				slot.DragAndDrop.onDrop -= OnDrop;
-			}
+			slot.DragAndDrop.onBeginDrag -= OnBeginDrag;
+			slot.DragAndDrop.onDrag -= OnDrag;
+			slot.DragAndDrop.onEndDrag -= OnEndDrag;
+			slot.DragAndDrop.onDrop -= OnDrop;
 		}
 
 		public UIContainerWindow SpawnContainerWindow(IInventory inventory)
@@ -90,21 +85,6 @@ namespace Game.Systems.InventorySystem
 			(containerWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
 
 			return containerWindow;
-		}
-
-
-		public void CharacterTakeAllFrom(IInventory inventory)
-		{
-			from = inventory;
-			//to = characterManager.CurrentParty.LeaderParty.Sheet.Inventory;
-
-			for (int i = 0; i < from.Items.Count; i++)
-			{
-				to.Add(from.Items[i]);
-			}
-			from.Clear();
-
-			Clear();
 		}
 
 
@@ -129,14 +109,14 @@ namespace Game.Systems.InventorySystem
 		{
 			if (slot.IsEmpty) return;
 
-			item = slot.CurrentItem;
+			Item item = slot.CurrentItem;
 
 			initiator = partyManager.PlayerParty.LeaderParty;
-			equipment = (initiator.Sheet as CharacterSheet).Equipment;
+			//var equipment = (initiator.Sheet as CharacterSheet).Equipment;
 
 			if (slot is UISlotInventory inventorySlot)
 			{
-				from = inventorySlot.Owner.CurrentInventory;
+				from = inventorySlot.Slot.CurrentInventory;
 				to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
 				if (eventData.button == PointerEventData.InputButton.Left)
@@ -147,7 +127,7 @@ namespace Game.Systems.InventorySystem
 						{
 							if (item.IsEquippable)
 							{
-								equipment.Add(item);
+								//equipment.Add(item);
 								from.Remove(item);
 							}
 							else if (item.IsConsumable)
@@ -172,7 +152,7 @@ namespace Game.Systems.InventorySystem
 
 					HideTooltip();
 				}
-				else if(eventData.button == PointerEventData.InputButton.Right)
+				else if (eventData.button == PointerEventData.InputButton.Right)
 				{
 					contextMenuSystem.SetTarget(item);
 
@@ -186,7 +166,7 @@ namespace Game.Systems.InventorySystem
 					to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
 					to.Add(item);
-					equipment.RemoveFrom(equipmentSlot.CurrentEquip);
+					//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
 
 					HideTooltip();
 				}
@@ -202,23 +182,16 @@ namespace Game.Systems.InventorySystem
 			if (slot.IsEmpty) return;
 			if (eventData.clickCount > 1) return;
 
+			HideTooltip();
 
 			beginSlot = slot;
-
-			//characterManager.CurrentParty.LeaderParty.Freeze(true);
-
 			item = slot.CurrentItem;
+			from = GetInventoryFromSlot(beginSlot);
 
-			if (slot is UISlotInventory inventorySlot)
-			{
-				from = inventorySlot.Owner.CurrentInventory;
-			}
+			dragItem.SetIcon(item.ItemData.information.portrait);
+			dragItem.transform.parent = canvas.transform;
 
-			//equipment = (characterManager.CurrentParty.LeaderParty.Sheet as CharacterSheet).Equipment;
-
-			itemCursor.SetIcon(item.ItemData.information.portrait);
-			//itemCursor.transform.parent = uiManager.transform.root;
-
+			partyManager.PlayerParty.LeaderParty.Model.Freeze(true);
 
 			IsDraging = true;
 		}
@@ -226,58 +199,81 @@ namespace Game.Systems.InventorySystem
 		{
 			if (IsDraging)
 			{
-				itemCursor.transform.position = eventData.position;
+				dragItem.transform.position = eventData.position;
 			}
 		}
 		public void OnEndDrag(UISlot slot, PointerEventData eventData)
 		{
+			//drop in world
+			if (!EventSystem.current.IsPointerOverGameObject() && to == null)
+			{
+				beginSlot.Slot.SetItem(null);
+			}
+
+			Debug.LogError("Clear");
 			Clear();
 
-			//characterManager.CurrentParty.LeaderParty.Freeze(false);
+			partyManager.PlayerParty.LeaderParty.Model.Freeze(false);
 
 			IsDraging = false;
 		}
 		public void OnDrop(UISlot slot, PointerEventData eventData)
 		{
 			if (item == null) return;
-			if (slot == beginSlot) return;
+			if (from == null) return;
+			if (beginSlot == slot) return;
 
-			if (slot is UISlotInventory inventorySlot)
-			{
-				to = inventorySlot.Owner.CurrentInventory;
+			to = GetInventoryFromSlot(slot);
 
-				if (from != null && from != to)
-				{
-					to.Add(item);
-					from.Remove(item);
-				}
-				else if(beginSlot is UISlotEquipment equipmentSlot)
-				{
-					to.Add(item);
-					equipment.RemoveFrom(equipmentSlot.CurrentEquip);
-				}
-			}
-			else if (slot is UISlotEquipment equipmentSlot)
+			switch (slot)
 			{
-				if (beginSlot is UISlotEquipment neiborSlot)//UISlotEquipment on UISlotEquipment
+				case UISlotInventory inventorySlot:
 				{
-					equipment.Swap(neiborSlot.CurrentEquip, equipmentSlot.CurrentEquip);
-				}
-				else//UISlotInventory on UISlotEquipment
-				{
-					if (from != null)
+					if (to != null)
 					{
-						if(equipment.AddTo(item, equipmentSlot.CurrentEquip))
+						if (inventorySlot.IsEmpty)
 						{
-							from.Remove(item);
+							beginSlot.Slot.SetItem(null);
+							inventorySlot.SetItem(item);
+						}
+						else
+						{
+							if (inventorySlot.CurrentItem.IsStackable)
+							{
+								inventorySlot.CurrentItem.TryAdd(item);
+							}
+							else
+							{
+								beginSlot.Swap(inventorySlot);
+							}
 						}
 					}
+					break;
+				}
+
+				case UISlotEquipment equipmentSlot:
+				{
+					//to.Add(item);
+					//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
+
+					//if (beginSlot is UISlotEquipment neiborSlot)//UISlotEquipment on UISlotEquipment
+					//{
+					//	equipment.Swap(neiborSlot.CurrentEquip, equipmentSlot.CurrentEquip);
+					//}
+					//else//UISlotInventory on UISlotEquipment
+					//{
+					//	if (from != null)
+					//	{
+					//		if (equipment.AddTo(item, equipmentSlot.CurrentEquip))
+					//		{
+					//			from.Remove(item);
+					//		}
+					//	}
+					//}
+
+					break;
 				}
 			}
-
-			Clear();
-		
-			//characterManager.CurrentParty.LeaderParty.Freeze(false);
 		}
 
 		private void HideTooltip()
@@ -290,14 +286,32 @@ namespace Game.Systems.InventorySystem
 
 		private void Clear()
 		{
-			itemCursor.Dispose();
+			dragItem.Dispose();
 
 			item = null;
 			from = null;
 			to = null;
-			equipment = null;
 
 			beginSlot = null;
+		}
+
+
+		private IInventory GetInventoryFromSlot(UISlot slot)
+		{
+			switch (slot)
+			{
+				case UISlotInventory inventorySlot:
+				{
+					return inventorySlot.Slot.CurrentInventory;
+				}
+
+				case UISlotEquipment equipmentSlot:
+				{
+					return equipmentSlot.Slot.CurrentInventory;
+				}
+			}
+
+			throw new NotImplementedException();
 		}
 	}
 }

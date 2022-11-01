@@ -40,7 +40,7 @@ namespace Game.HUD
 		public void SetSheet(CharacterSheet sheet)
 		{
 			Inventory.SetInventory(sheet.Inventory);
-			Equipment.SetEquipment(sheet.Equipment);
+			//Equipment.SetEquipment(sheet.Equipment);
 		}
 
 		private void OnClose()

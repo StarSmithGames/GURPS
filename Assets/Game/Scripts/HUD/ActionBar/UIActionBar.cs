@@ -1,4 +1,9 @@
-using System.Collections.Generic;
+using Game.Managers.InputManager;
+using Game.Managers.PartyManager;
+using Game.Systems.InventorySystem;
+using Game.Systems.SheetSystem;
+using Game.UI.CanvasSystem;
+
 using UnityEngine;
 
 using Zenject;
@@ -7,38 +12,19 @@ namespace Game.HUD
 {
 	public sealed class UIActionBar : MonoBehaviour
 	{
-		[field: SerializeField] public Transform ActionsContent { get; private set; }
+		[field: SerializeField] public UIInventory Inventory { get; private set; }
 
-		private List<UIAction> actions = new List<UIAction>();
-
-		private UIAction.Factory actionFactory;
+		private PartyManager partyManager;
 
 		[Inject]
-		private void Construct(UIAction.Factory actionFactory)
+		private void Construct(PartyManager partyManager)
 		{
-			this.actionFactory = actionFactory;
+			this.partyManager = partyManager;
 		}
 
 		private void Start()
 		{
-			ActionsContent.DestroyChildren();
-
-			for (int i = 0; i < 15; i++)
-			{
-				AddAction();
-			}
-		}
-
-		private void AddAction()
-		{
-			var action = actionFactory.Create();
-
-			//action.SetAction(null);
-
-			action.transform.SetParent(ActionsContent);
-			action.transform.localScale = Vector3.one;
-
-			actions.Add(action);
+			Inventory.SetInventory(partyManager.PlayerParty.LeaderParty.Sheet.Actions);
 		}
 	}
 }

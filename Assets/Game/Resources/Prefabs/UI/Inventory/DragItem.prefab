@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4875044641302866101}
   - component: {fileID: 4875044641302866099}
   m_Layer: 5
-  m_Name: ItemCursor
+  m_Name: DragItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

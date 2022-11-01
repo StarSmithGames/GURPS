@@ -16,14 +16,13 @@ namespace Game.UI.CanvasSystem
 		[Header("Character")]
 		public UIAvatar avatarPrefab;
 		[Header("Inventory")]
-		public UIItemCursor itemCursorPrefab;
+		public Systems.InventorySystem.UIDragItem itemCursorPrefab;
 		public UIContainerWindow chestPopupWindowPrefab;
 		[Header("Battle")]
 		public UITurn turnPrefab;
 		public GameObject turnSeparatePrefab;
 		[Header("Sheet")]
 		public UIActionPoint actionPointPrefab;
-		public UIAction actionPrefab;
 		public UIEffect effectPrefab;
 		public UISkill skillPrefab;
 
@@ -35,7 +34,6 @@ namespace Game.UI.CanvasSystem
 
 			BindAvatars();
 			BindActionPoints();
-			BindActions();
 			BindEffects();
 			BindSkills();
 		}
@@ -48,7 +46,7 @@ namespace Game.UI.CanvasSystem
 			   .FromComponentInNewPrefab(chestPopupWindowPrefab)
 			   .UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 
-			Container.BindInstance(Container.InstantiatePrefabForComponent<UIItemCursor>(itemCursorPrefab));
+			Container.BindInstance(Container.InstantiatePrefabForComponent<Systems.InventorySystem.UIDragItem>(itemCursorPrefab));
 
 			Container.BindInterfacesAndSelfTo<InventoryContainerHandler>().AsSingle();
 		}
@@ -76,14 +74,6 @@ namespace Game.UI.CanvasSystem
 			Container.BindFactory<UIActionPoint, UIActionPoint.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(7)
 				.FromComponentInNewPrefab(actionPointPrefab)
-				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
-		}
-
-		private void BindActions()
-		{
-			Container.BindFactory<UIAction, UIAction.Factory>()
-				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(15)
-				.FromComponentInNewPrefab(actionPrefab)
 				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 		}
 

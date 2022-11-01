@@ -49,6 +49,23 @@ namespace Game.Systems.InventorySystem
 		[SerializeField] private float minimumStackSizeRandom;
 		[ShowIf("useRandom")]
 		[SerializeField] private float maximumStackSizeRandom;
+
+		public int TryAdd(Item item)
+		{
+			if (IsStackable)
+			{
+				if(item.ItemData == data)
+				{
+					if (!IsStackSizeFull)
+					{
+
+					}
+				}
+			}
+
+			return 0;
+		}
+
 		#endregion
 
 		#region Weight
@@ -182,7 +199,7 @@ namespace Game.Systems.InventorySystem
 			return $"{data?.information.GetName() ?? "NULL Data"} {(data != null ? (data.isStackable ? $" x{CurrentStackSize}" : "") : "")}";
 		}
 
-		private string Title => data?.GetName() ?? "NULL Data";
+		public string Title => data?.GetName() ?? "NULL Data";
 
 
 		/// GUI use in Nodes

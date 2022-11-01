@@ -26,7 +26,7 @@ namespace Game.Entities
 		private Transform legs;
 		private Transform feet;
 
-		private IEquipment equipment;
+		//private IEquipment equipment;
 
 		[Inject]
 		private void Construct()
@@ -79,12 +79,12 @@ namespace Game.Entities
 
 		private void OnEquipmentChanged()
 		{
-			SetArmor(head, equipment.Head.Item);
-			SetArmor(sholders, equipment.Sholders.Item);
-			SetArmor(chest, equipment.Chest.Item);
-			SetArmor(forearms, equipment.Forearms.Item);
-			SetArmor(legs, equipment.Legs.Item);
-			SetArmor(feet, equipment.Feet.Item);
+			//SetArmor(head, equipment.Head.CurrentItem);
+			//SetArmor(sholders, equipment.Sholders.CurrentItem);
+			//SetArmor(chest, equipment.Chest.CurrentItem);
+			//SetArmor(forearms, equipment.Forearms.CurrentItem);
+			//SetArmor(legs, equipment.Legs.CurrentItem);
+			//SetArmor(feet, equipment.Feet.CurrentItem);
 		}
 	}
 
