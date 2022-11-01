@@ -18,15 +18,11 @@ namespace Game.Systems.InventorySystem
 		{
 			CurrentInventory = inventory;
 
-			CurrentInventory.Slots = new List<Slot>();
+			Assert.AreEqual(CurrentInventory.Slots.Count, Slots.Count, "Slots length not equal!");
 
-			for (int i = 0; i < Slots.Count; i++)
+			for (int i = 0; i < CurrentInventory.Slots.Count; i++)
 			{
-				Slot slot = new Slot();
-				slot.SetOwner(CurrentInventory);
-				Slots[i].SetSlot(slot);
-				
-				CurrentInventory.Slots.Add(slot);
+				Slots[i].SetSlot(CurrentInventory.Slots[i]);
 			}
 		}
 

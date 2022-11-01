@@ -1,14 +1,9 @@
 using Sirenix.OdinInspector;
-
 using System.Collections.Generic;
-
 using UnityEngine;
 using System.Linq;
-
 using UnityEngine.Events;
-using System;
-using Game.Systems.SheetSystem;
-using UnityEngine.Assertions;
+using Array2DEditor;
 
 namespace Game.Systems.InventorySystem
 {
@@ -39,7 +34,15 @@ namespace Game.Systems.InventorySystem
 
         public Inventory(InventorySettings settings)
         {
+            Slots = new List<Slot>();
 
+            for (int i = 0; i < settings.slots.Count; i++)
+            {
+                Slot slot = settings.slots[i].Copy();
+                slot.SetOwner(this);
+
+                Slots.Add(slot);
+            }
         }
 
         public List<Item> GetItems()
@@ -170,8 +173,10 @@ namespace Game.Systems.InventorySystem
 	{
         public event UnityAction onChanged;
 
-        public Item Item;
         public bool IsEmpty => Item?.ItemData == null;
+
+        [HideLabel]
+        public Item Item;
 
         public IInventory CurrentInventory { get; private set; }
 
@@ -205,21 +210,23 @@ namespace Game.Systems.InventorySystem
             };
 		}
 
-		private string Title => $"Slot {Item.Title}";
-    }
+		private string Title => $"Slot with {Item.Title}";
+	}
 
 	[System.Serializable]
     public class InventorySettings
     {
         public bool useRandomItems = false;
-        public bool shuffleList = true;
 
-        public int[,] slots;
+        [ReadOnly] public bool isDynamicRows = false;
+
+        [InfoBox("Toggle NOT work, use only for size.")]
+        public Array2DBool grid;
 
         //sort by
         [HideIf("useRandomItems")]
         [ListDrawerSettings(ShowIndexLabels = true, ListElementLabelName = "Title")]
-        public List<Item> items = new List<Item>();
+        public List<Slot> slots = new List<Slot>();
 
         [ShowIf("useRandomItems")]
         [InlineProperty]
@@ -235,25 +242,44 @@ namespace Game.Systems.InventorySystem
             }
             else
             {
-                for (int i = 0; i < items.Count; i++)
-                {
-                    if (items[i].useRandom)
-                    {
-                        result.Add(items[i].GenerateItem());
-                    }
-                    else
-                    {
-                        result.Add(items[i].Copy());
-                    }
-                }
+                //for (int i = 0; i < items.Count; i++)
+                //{
+                //    if (items[i].useRandom)
+                //    {
+                //        result.Add(items[i].GenerateItem());
+                //    }
+                //    else
+                //    {
+                //        result.Add(items[i].Copy());
+                //    }
+                //}
             }
 
-            if (shuffleList)
-            {
-                result = result.OrderBy(x => Guid.NewGuid()).ToList();
-            }
+            //if (shuffleList)
+            //{
+            //    result = result.OrderBy(x => Guid.NewGuid()).ToList();
+            //}
 
             return result;
+        }
+        
+        [Button("Update Slots", DirtyOnClick = true)]
+        private void UpdateSlots()
+		{
+            int size = grid.GridSize.x * grid.GridSize.y;
+            CollectionExtensions.Resize(size, slots,
+            () =>
+			{
+                return new Slot();
+            },
+            () =>
+			{
+				if (slots.Any((x) => x.Item.ItemData == null))
+				{
+                    return slots.First((x) => x.Item.ItemData == null);
+				}
+                return slots.Last();
+			});
         }
     }
 

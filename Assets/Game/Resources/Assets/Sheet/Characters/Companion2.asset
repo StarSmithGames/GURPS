@@ -43,8 +43,14 @@ MonoBehaviour:
       dialogues: {fileID: 0}
     inventory:
       useRandomItems: 1
-      shuffleList: 1
-      items: []
+      grid:
+        gridSize: {x: 3, y: 3}
+        cellSize: {x: 128, y: 32}
+        cells:
+        - row: 000000
+        - row: 000000
+        - row: 000000
+      slots: []
       randomSettings:
         isUnique: 0
         useRandomCount: 1
@@ -60,142 +66,31 @@ MonoBehaviour:
         useToolItems: 1
         useMaterialItems: 1
         ignoreList: []
-    equipment:
-      head:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      sholders:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      chest:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      forearms:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      legs:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      feet:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      weapon00:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      weapon01:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      weapon10:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      weapon11:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      cloak:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      jewelry:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      ring0:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      ring1:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
-      trinket:
-        data: {fileID: 0}
-        useRandom: 0
-        currentStackSize: 1
-        minimumStackSizeRandom: 0
-        maximumStackSizeRandom: 0
-        currentWeight: 0.01
-        currentDurability: 100
-        isShowFoldout: 0
+    actions:
+      useRandomItems: 0
+      grid:
+        gridSize: {x: 3, y: 3}
+        cellSize: {x: 0, y: 0}
+        cells:
+        - row: 000000
+        - row: 000000
+        - row: 000000
+      slots: []
+      randomSettings:
+        isUnique: 0
+        useRandomCount: 1
+        itemsCount: 1
+        itemsMinMaxCount: {x: 1, y: 5}
+        staticItems: []
+        useConsumableItems: 1
+        useFireItems: 1
+        useAccelerantItems: 1
+        useFuelItems: 1
+        useStarterItems: 1
+        useTinderItems: 1
+        useToolItems: 1
+        useMaterialItems: 1
+        ignoreList: []
     abilities:
       abilities: []
     isImmortal: 1

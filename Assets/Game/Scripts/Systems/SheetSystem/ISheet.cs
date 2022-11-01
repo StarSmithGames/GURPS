@@ -4,6 +4,9 @@ using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem.Abilities;
 
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
+
+using System;
 
 using UnityEngine;
 
@@ -136,5 +139,5 @@ namespace Game.Systems.SheetSystem
 
         [TabGroup("GroupA", "Custom")]
         public bool isImmortal = false;
-    }
+	}
 }

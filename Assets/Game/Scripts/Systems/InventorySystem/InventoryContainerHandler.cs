@@ -172,7 +172,7 @@ namespace Game.Systems.InventorySystem
 				}
 			}
 
-			Clear();
+			Dispose();
 		}
 
 
@@ -186,7 +186,7 @@ namespace Game.Systems.InventorySystem
 
 			beginSlot = slot;
 			item = slot.CurrentItem;
-			from = GetInventoryFromSlot(beginSlot);
+			from = beginSlot.Slot.CurrentInventory;
 
 			dragItem.SetIcon(item.ItemData.information.portrait);
 			dragItem.transform.parent = canvas.transform;
@@ -210,8 +210,7 @@ namespace Game.Systems.InventorySystem
 				beginSlot.Slot.SetItem(null);
 			}
 
-			Debug.LogError("Clear");
-			Clear();
+			Dispose();
 
 			partyManager.PlayerParty.LeaderParty.Model.Freeze(false);
 
@@ -223,12 +222,14 @@ namespace Game.Systems.InventorySystem
 			if (from == null) return;
 			if (beginSlot == slot) return;
 
-			to = GetInventoryFromSlot(slot);
+			to = slot.Slot.CurrentInventory;
 
 			switch (slot)
 			{
 				case UISlotInventory inventorySlot:
 				{
+					if (beginSlot is UISlotAction) return;
+
 					if (to != null)
 					{
 						if (inventorySlot.IsEmpty)
@@ -253,6 +254,8 @@ namespace Game.Systems.InventorySystem
 
 				case UISlotEquipment equipmentSlot:
 				{
+					if (beginSlot is UISlotAction) return;
+
 					//to.Add(item);
 					//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
 
@@ -273,6 +276,22 @@ namespace Game.Systems.InventorySystem
 
 					break;
 				}
+
+				case UISlotAction actionSlot:
+				{
+					if (beginSlot is UISlotEquipment) return;
+
+					if (to != null)
+					{
+						if (beginSlot is UISlotAction)
+						{
+							beginSlot.SetItem(null);
+						}
+
+						actionSlot.SetItem(item);
+					}
+					break;
+				}
 			}
 		}
 
@@ -284,7 +303,7 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-		private void Clear()
+		private void Dispose()
 		{
 			dragItem.Dispose();
 
@@ -293,25 +312,6 @@ namespace Game.Systems.InventorySystem
 			to = null;
 
 			beginSlot = null;
-		}
-
-
-		private IInventory GetInventoryFromSlot(UISlot slot)
-		{
-			switch (slot)
-			{
-				case UISlotInventory inventorySlot:
-				{
-					return inventorySlot.Slot.CurrentInventory;
-				}
-
-				case UISlotEquipment equipmentSlot:
-				{
-					return equipmentSlot.Slot.CurrentInventory;
-				}
-			}
-
-			throw new NotImplementedException();
 		}
 	}
 }

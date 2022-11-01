@@ -129,8 +129,10 @@ namespace Game.HUD
 
 		private void OnEffectApplied(IEffect effect)
 		{
-			var uieffect = effectFactory.Create();
+			if (effect is InstantEffect) return;
 
+			var uieffect = effectFactory.Create();
+		
 			uieffect.transform.SetParent(EffectsContent);
 			uieffect.transform.localScale = Vector3.one;
 
