@@ -51,7 +51,7 @@ namespace Game.UI.Windows
 			IsShowing = trigger;
 		}
 
-		[Button]
+		[Button(DirtyOnClick = true)]
 		private void OpenClose()
 		{
 			Enable(CanvasGroup.alpha == 0f ? true : false);

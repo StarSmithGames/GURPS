@@ -33,13 +33,15 @@ namespace Game.Systems.InventorySystem
 			Background.sprite = IsEmpty ? SwapBackground : BaseBackground;
 		}
 
-		[Button]
+		[Button(DirtyOnClick = true)]
 		private void Swap()
 		{
 			Background.sprite = Background.sprite == BaseBackground ? SwapBackground : BaseBackground;
-#if UNITY_EDITOR
-			UnityEditor.EditorUtility.SetDirty(gameObject);
-#endif
+		}
+
+		public override void Drop(UISlot slot)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

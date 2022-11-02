@@ -21,11 +21,6 @@ namespace Game.Systems.InventorySystem
 	{
 		public bool IsDraging { get; private set; }
 
-		private Item item;
-		private IInventory from;
-		private IInventory to;
-
-		private ICharacter initiator;
 		//private EquipSlot slotEquip;
 
 		private UISubCanvas canvas;
@@ -110,8 +105,6 @@ namespace Game.Systems.InventorySystem
 			if (slot.IsEmpty) return;
 
 			Item item = slot.CurrentItem;
-
-			initiator = partyManager.PlayerParty.LeaderParty;
 			//var equipment = (initiator.Sheet as CharacterSheet).Equipment;
 
 			switch (slot)
@@ -134,6 +127,8 @@ namespace Game.Systems.InventorySystem
 								}
 								else if (item.IsConsumable)
 								{
+									var initiator = partyManager.PlayerParty.LeaderParty;
+
 									CommandConsume.Execute(initiator, item);
 									from.Remove(item);
 								}
@@ -167,7 +162,7 @@ namespace Game.Systems.InventorySystem
 				{
 					if (eventData.clickCount > 1)
 					{
-						to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
+						var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
 						to.Add(item);
 						//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
@@ -179,7 +174,27 @@ namespace Game.Systems.InventorySystem
 				}
 				case UISlotAction actionSlot:
 				{
+					if (eventData.button == PointerEventData.InputButton.Left)
+					{
+						if (eventData.clickCount > 1)
+						{
+							var initiator = partyManager.PlayerParty.LeaderParty;
+							var inventory = initiator.Sheet.Inventory;
 
+							if (item.IsConsumable)
+							{
+								CommandConsume.Execute(initiator, item);
+								inventory.Remove(item);
+								actionSlot.SetItem(null);
+							}
+						}
+					}
+					else if (eventData.button == PointerEventData.InputButton.Right)
+					{
+						contextMenuSystem.SetTarget(item);
+
+						HideTooltip();
+					}
 					break;
 				}
 			}
@@ -187,24 +202,22 @@ namespace Game.Systems.InventorySystem
 		#endregion
 
 		#region Drag & Drop
-		private UISlot beginSlot = null;
+		private DragAndDropProvider provider = null;
 		public void OnBeginDrag(UISlot slot, PointerEventData eventData)
 		{
 			if (slot.IsEmpty) return;
 			if (eventData.clickCount > 1) return;
 
-			HideTooltip();
-
-			beginSlot = slot;
-			item = slot.CurrentItem;
-			from = beginSlot.Slot.CurrentInventory;
-
-			dragItem.SetIcon(item.ItemData.information.portrait);
+			dragItem.SetIcon(slot.CurrentItem.ItemData.information.portrait);
 			dragItem.transform.parent = canvas.transform;
 
+			IsDraging = true;
+
+			HideTooltip();
 			partyManager.PlayerParty.LeaderParty.Model.Freeze(true);
 
-			IsDraging = true;
+			provider = new DragAndDropProvider();
+			provider.OnBeginDrag(slot);
 		}
 		public void OnDrag(UISlot slot, PointerEventData eventData)
 		{
@@ -215,13 +228,9 @@ namespace Game.Systems.InventorySystem
 		}
 		public void OnEndDrag(UISlot slot, PointerEventData eventData)
 		{
-			//drop in world
-			if (!EventSystem.current.IsPointerOverGameObject() && to == null)
-			{
-				beginSlot.Slot.SetItem(null);
-			}
+			provider?.OnEndDrag(slot);
 
-			Dispose();
+			dragItem.Dispose();
 
 			partyManager.PlayerParty.LeaderParty.Model.Freeze(false);
 
@@ -229,35 +238,73 @@ namespace Game.Systems.InventorySystem
 		}
 		public void OnDrop(UISlot slot, PointerEventData eventData)
 		{
-			if (item == null) return;
-			if (from == null) return;
+			if (provider == null) return;
+
+			provider.OnDrop(slot);
+		}
+		#endregion
+
+		private void HideTooltip()
+		{
+			if (tooltip.IsShowing)
+			{
+				tooltip.Hide();
+			}
+		}
+	}
+
+	public class DragAndDropProvider
+	{
+		private UISlot beginSlot = null;
+		private IInventory to;
+
+		public void OnBeginDrag(UISlot slot)
+		{
+			beginSlot = slot;
+		}
+
+		public void OnDrop(UISlot slot)
+		{
+			if (beginSlot == null) return;
 			if (beginSlot == slot) return;
 
 			to = slot.Slot.CurrentInventory;
 
-			switch (slot)
+			beginSlot.Drop(slot);
+		}
+
+		public void OnEndDrag(UISlot slot)
+		{
+			//drop in world
+			if (!EventSystem.current.IsPointerOverGameObject() && to == null)
+			{
+				beginSlot.Slot.SetItem(null);
+			}
+		}
+	}
+
+	public static class InventoryDrop
+	{
+		public static void Process(UISlot begin, UISlot end)
+		{
+			switch (end)
 			{
 				case UISlotInventory inventorySlot:
 				{
-					if (beginSlot is UISlotAction) return;
-
-					if (to != null)
+					if (inventorySlot.IsEmpty)
 					{
-						if (inventorySlot.IsEmpty)
+						inventorySlot.SetItem(begin.CurrentItem);
+						begin.Slot.SetItem(null);
+					}
+					else
+					{
+						if (inventorySlot.CurrentItem.IsStackable)
 						{
-							beginSlot.Slot.SetItem(null);
-							inventorySlot.SetItem(item);
+							inventorySlot.CurrentItem.TryAdd(begin.CurrentItem);
 						}
 						else
 						{
-							if (inventorySlot.CurrentItem.IsStackable)
-							{
-								inventorySlot.CurrentItem.TryAdd(item);
-							}
-							else
-							{
-								beginSlot.Swap(inventorySlot);
-							}
+							begin.Swap(inventorySlot);
 						}
 					}
 					break;
@@ -265,8 +312,6 @@ namespace Game.Systems.InventorySystem
 
 				case UISlotEquipment equipmentSlot:
 				{
-					if (beginSlot is UISlotAction) return;
-
 					//to.Add(item);
 					//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
 
@@ -290,40 +335,29 @@ namespace Game.Systems.InventorySystem
 
 				case UISlotAction actionSlot:
 				{
-					if (beginSlot is UISlotEquipment) return;
-
-					if (to != null)
-					{
-						if (beginSlot is UISlotAction)
-						{
-							beginSlot.SetItem(null);
-						}
-
-						actionSlot.SetItem(item);
-					}
+					actionSlot.SetItem(begin.CurrentItem);
 					break;
 				}
 			}
 		}
-		#endregion
+	}
 
-		private void HideTooltip()
+	public static class ActionsDrop
+	{
+		public static void Process(UISlot begin, UISlot end)
 		{
-			if (tooltip.IsShowing)
+			switch (end)
 			{
-				tooltip.Hide();
+				case UISlotAction actionSlot:
+				{
+					if (!begin.CurrentItem.IsConsumable) return;
+
+					actionSlot.SetItem(begin.CurrentItem);
+					begin.Slot.SetItem(null);
+
+					break;
+				}
 			}
-		}
-
-		private void Dispose()
-		{
-			dragItem.Dispose();
-
-			item = null;
-			from = null;
-			to = null;
-
-			beginSlot = null;
 		}
 	}
 }

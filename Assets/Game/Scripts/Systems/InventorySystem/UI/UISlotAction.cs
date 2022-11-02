@@ -27,5 +27,10 @@ namespace Game.Systems.InventorySystem
 			Count.enabled = !isEmpty && !CurrentItem.IsArmor && !CurrentItem.IsWeapon;
 			Count.text = !isEmpty ? CurrentItem.CurrentStackSize.ToString() : "";
 		}
+
+		public override void Drop(UISlot slot)
+		{
+			ActionsDrop.Process(this, slot);
+		}
 	}
 }

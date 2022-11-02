@@ -51,6 +51,8 @@ namespace Game.Systems.InventorySystem
 			SetItem(item);
 		}
 
+		public abstract void Drop(UISlot slot);
+
 		protected virtual void UpdateUI() { }
 	}
 }

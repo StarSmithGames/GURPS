@@ -17,6 +17,11 @@ namespace Game.Systems.InventorySystem
 			containerHandler.Unsubscribe(this);
 		}
 
+		public override void Drop(UISlot slot)
+		{
+			InventoryDrop.Process(this, slot);
+		}
+
 		protected override void UpdateUI()
 		{
 			bool isEmpty = IsEmpty;
