@@ -12,7 +12,7 @@ using UnityEditor;
 namespace Game.Systems.InventorySystem
 {
 	[System.Serializable]
-	public class Item : ICopyable<Item>
+	public class Item : SlotItem, ICopyable<Item>
 	{
 		public UnityAction OnItemChanged;
 

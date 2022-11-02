@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4cef91422b5e8464596482b42d590d17, type: 3}
-  m_Name: RegenerationProcessEffect
+  m_Name: ProcessRegenerationEffect
   m_EditorClassIdentifier: 
   information:
     portrait: {fileID: 21300000, guid: 842281ec2c3d4fe4b9d9fb6d7dc410ae, type: 3}

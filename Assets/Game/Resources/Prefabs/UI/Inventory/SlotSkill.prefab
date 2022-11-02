@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4876927568712218864}
   - component: {fileID: 6245341575898851599}
   - component: {fileID: 4161337081781843772}
-  - component: {fileID: 4828480855725603572}
+  - component: {fileID: 3758514010276198790}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -77,7 +77,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4828480855725603572
+--- !u!114 &3758514010276198790
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,9 +86,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1579628811399694244}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89d060923adb6784ca3f1de6774e58b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 02c73453910d95243b80c34be96a38c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  owner: {fileID: 0}
 --- !u!1 &2258302551391388068
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,9 +100,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8644402204188540320}
   - component: {fileID: 8020658018481144223}
-  - component: {fileID: 3084469315291806151}
+  - component: {fileID: 2298636301327227474}
   m_Layer: 5
-  m_Name: Skill
+  m_Name: SlotSkill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,7 +139,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2258302551391388068}
   m_CullTransparentMesh: 1
---- !u!114 &3084469315291806151
+--- !u!114 &2298636301327227474
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -147,10 +148,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2258302551391388068}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db2715e6edda5474e9b6b1e74a70f13d, type: 3}
+  m_Script: {fileID: 11500000, guid: 1e29015c06745e247b77d7522db340d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <PointerHandler>k__BackingField: {fileID: 4828480855725603572}
+  <DragAndDrop>k__BackingField: {fileID: 3758514010276198790}
+  <Background>k__BackingField: {fileID: 4161337081781843772}
   <Icon>k__BackingField: {fileID: 8400045283031093593}
 --- !u!1 &4981505388553963443
 GameObject:

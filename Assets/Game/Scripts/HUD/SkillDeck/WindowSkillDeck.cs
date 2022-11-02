@@ -1,3 +1,4 @@
+using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 using Game.UI.CanvasSystem;
 using Game.UI.Windows;
@@ -16,17 +17,17 @@ namespace Game.HUD
 	{
 		[field: SerializeField] public Button Close { get; private set; }
 
-		private List<UISkill> skills = new List<UISkill>();
+		private List<UISlotSkill> skills = new List<UISlotSkill>();
 		private Skills currentSkills;
 
 		private UISubCanvas subCanvas;
-		private UISkill.Factory skillFactory;
+		private UISlotSkill.Factory skillSlotFactory;
 
 		[Inject]
-		private void Construct(UISubCanvas subCanvas, UISkill.Factory skillFactory)
+		private void Construct(UISubCanvas subCanvas, UISlotSkill.Factory skillSlotFactory)
 		{
 			this.subCanvas = subCanvas;
-			this.skillFactory = skillFactory;
+			this.skillSlotFactory = skillSlotFactory;
 		}
 
 		private void Start()

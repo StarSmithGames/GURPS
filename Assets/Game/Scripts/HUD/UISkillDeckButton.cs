@@ -1,3 +1,4 @@
+using Game.Entities;
 using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
 using Game.Systems.SheetSystem;
@@ -55,14 +56,21 @@ namespace Game.HUD
 
 		private void OnClick()
 		{
+			ICharacter leader = partyManager.PlayerParty.LeaderParty;
+
 			if (WindowSkillDeck.IsShowing)
 			{
 				WindowSkillDeck.Hide();
 			}
 			else
 			{
-				WindowSkillDeck.SetSkills(partyManager.PlayerParty.LeaderParty.Sheet.Skills);
+				WindowSkillDeck.SetSkills(leader.Sheet.Skills);
 				WindowSkillDeck.Show();
+
+				if (leader.Model.IsHasTarget)
+				{
+					leader.Model.Stop();
+				}
 			}
 		}
 	}

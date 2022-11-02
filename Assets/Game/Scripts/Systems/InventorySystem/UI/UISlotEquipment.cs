@@ -14,6 +14,16 @@ namespace Game.Systems.InventorySystem
 		private Color one = Color.white;
 		private Color oneHalfAlpha = new Color(1, 1, 1, 0.5f);
 
+		private void Start()
+		{
+			containerHandler.Subscribe(this);
+		}
+
+		private void OnDestroy()
+		{
+			containerHandler.Unsubscribe(this);
+		}
+
 		protected override void UpdateUI()
 		{
 			Icon.enabled = !IsEmpty;

@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public abstract class UISlot : MonoBehaviour
+	public abstract class UISlot : PoolableObject
 	{
 		[field: SerializeField] public DragAndDropUISlotComponent DragAndDrop { get; private set; }
 
@@ -17,19 +17,12 @@ namespace Game.Systems.InventorySystem
 		public virtual bool IsEmpty => Slot.IsEmpty;
 		public Item CurrentItem => Slot.Item;
 
-		private InventoryContainerHandler containerHandler;
+		protected InventoryContainerHandler containerHandler;
 
 		[Inject]
 		private void Construct(InventoryContainerHandler containerHandler)
 		{
 			this.containerHandler = containerHandler;
-
-			containerHandler.Subscribe(this);
-		}
-
-		private void OnDestroy()
-		{
-			containerHandler.Unsubscribe(this);
 		}
 
 		public void SetSlot(Slot slot)

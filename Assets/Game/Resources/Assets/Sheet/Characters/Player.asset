@@ -672,7 +672,9 @@ MonoBehaviour:
         useMaterialItems: 1
         ignoreList: []
     abilities:
-      abilities: []
+      abilities:
+      - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}
+      - {fileID: 734433591177738151, guid: d043023ebe202fc45821ca731b1cb220, type: 3}
     isImmortal: 0
   isNPC: 1
   information:

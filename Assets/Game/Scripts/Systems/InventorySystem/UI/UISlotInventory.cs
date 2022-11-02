@@ -7,6 +7,16 @@ namespace Game.Systems.InventorySystem
 		[field: Space]
 		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
 
+		private void Start()
+		{
+			containerHandler.Subscribe(this);
+		}
+
+		private void OnDestroy()
+		{
+			containerHandler.Unsubscribe(this);
+		}
+
 		protected override void UpdateUI()
 		{
 			bool isEmpty = IsEmpty;

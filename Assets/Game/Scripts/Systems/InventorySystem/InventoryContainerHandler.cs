@@ -76,18 +76,18 @@ namespace Game.Systems.InventorySystem
 			slot.DragAndDrop.onDrop -= OnDrop;
 		}
 
-		public UIContainerWindow SpawnContainerWindow(IInventory inventory)
-		{
-			var containerWindow = containerFactory.Create();
-			containerWindow.Hide();
-			containerWindow.Inventory.SetInventory(inventory);
-			//containerWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
-			(containerWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
+		//public UIContainerWindow SpawnContainerWindow(IInventory inventory)
+		//{
+		//	var containerWindow = containerFactory.Create();
+		//	containerWindow.Hide();
+		//	containerWindow.Inventory.SetInventory(inventory);
+		//	//containerWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
+		//	(containerWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
 
-			return containerWindow;
-		}
+		//	return containerWindow;
+		//}
 
-
+		#region Pointer
 		public void OnPointerEnter(UISlot slot, PointerEventData eventData)
 		{
 			if (IsDraging) return;
@@ -114,68 +114,79 @@ namespace Game.Systems.InventorySystem
 			initiator = partyManager.PlayerParty.LeaderParty;
 			//var equipment = (initiator.Sheet as CharacterSheet).Equipment;
 
-			if (slot is UISlotInventory inventorySlot)
+			switch (slot)
 			{
-				from = inventorySlot.Slot.CurrentInventory;
-				to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
-
-				if (eventData.button == PointerEventData.InputButton.Left)
+				case UISlotInventory inventorySlot:
 				{
-					if (eventData.clickCount > 1)
+					var from = inventorySlot.Slot.CurrentInventory;
+					var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
+
+					if (eventData.button == PointerEventData.InputButton.Left)
 					{
-						if (from == to)
+						if (eventData.clickCount > 1)
 						{
-							if (item.IsEquippable)
+							if (from == to)
 							{
-								//equipment.Add(item);
-								from.Remove(item);
+								if (item.IsEquippable)
+								{
+									//equipment.Add(item);
+									from.Remove(item);
+								}
+								else if (item.IsConsumable)
+								{
+									CommandConsume.Execute(initiator, item);
+									from.Remove(item);
+								}
 							}
-							else if (item.IsConsumable)
+							else
 							{
-								CommandConsume.Execute(initiator, item);
+								to.Add(item);
 								from.Remove(item);
 							}
 						}
 						else
 						{
+							if (from == to) return;
+
 							to.Add(item);
 							from.Remove(item);
 						}
+
+						HideTooltip();
 					}
-					else
+					else if (eventData.button == PointerEventData.InputButton.Right)
 					{
-						if (from == to) return;
+						contextMenuSystem.SetTarget(item);
+
+						HideTooltip();
+					}
+
+					break;
+				}
+				case UISlotEquipment equipmentSlot:
+				{
+					if (eventData.clickCount > 1)
+					{
+						to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
 						to.Add(item);
-						from.Remove(item);
+						//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
+
+						HideTooltip();
 					}
 
-					HideTooltip();
+					break;
 				}
-				else if (eventData.button == PointerEventData.InputButton.Right)
+				case UISlotAction actionSlot:
 				{
-					contextMenuSystem.SetTarget(item);
 
-					HideTooltip();
+					break;
 				}
 			}
-			else if (slot is UISlotEquipment equipmentSlot)
-			{
-				if (eventData.clickCount > 1)
-				{
-					to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
-
-					to.Add(item);
-					//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
-
-					HideTooltip();
-				}
-			}
-
-			Dispose();
 		}
+		#endregion
 
-
+		#region Drag & Drop
 		private UISlot beginSlot = null;
 		public void OnBeginDrag(UISlot slot, PointerEventData eventData)
 		{
@@ -294,6 +305,7 @@ namespace Game.Systems.InventorySystem
 				}
 			}
 		}
+		#endregion
 
 		private void HideTooltip()
 		{

@@ -24,7 +24,7 @@ namespace Game.UI.CanvasSystem
 		[Header("Sheet")]
 		public UIActionPoint actionPointPrefab;
 		public UIEffect effectPrefab;
-		public UISkill skillPrefab;
+		public UISlotSkill skillSlotPrefab;
 
 		public override void InstallBindings()
 		{
@@ -87,9 +87,9 @@ namespace Game.UI.CanvasSystem
 
 		private void BindSkills()
 		{
-			Container.BindFactory<UISkill, UISkill.Factory>()
+			Container.BindFactory<UISlotSkill, UISlotSkill.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
-				.FromComponentInNewPrefab(skillPrefab)
+				.FromComponentInNewPrefab(skillSlotPrefab)
 				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 		}
 	}

@@ -15,15 +15,8 @@ namespace Game.Systems.SheetSystem.Abilities
 
 	public abstract class BaseAbility : MonoBehaviour, IAbility
 	{
-		public bool isHasIcon = true;
 		[HideLabel]
-		[PreviewField(ObjectFieldAlignment.Left, Height = 64)]
-		[ShowIf("isHasIcon")]
-		public Sprite icon;
-
-		public string abilityName;
-		public string abilityDisplayName;
-		public string description;
+		public Information information;
 
 		public virtual IActivation Activation { get; protected set; }
 
