@@ -1,12 +1,8 @@
 using Game.Systems.InventorySystem;
-using Game.Systems.SheetSystem;
-
-using System.Collections;
+using Game.Systems.SheetSystem.Skills;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
-
 using Zenject;
 
 namespace Game.HUD
@@ -18,7 +14,7 @@ namespace Game.HUD
 
 		private bool isInitialized = false;
 		private List<UISlotSkill> slots = new List<UISlotSkill>();
-		private ISkill[] skills;
+		private Skill[] skills;
 
 		private UISlotSkill.Factory slotFactory;
 
@@ -28,19 +24,10 @@ namespace Game.HUD
 			this.slotFactory = slotFactory;
 		}
 
-		public void SetSkills(ISkill[] skills)
+		public void SetGroup(SkillGroup group)
 		{
-			this.skills = skills;
-		}
-
-		public override void OnSpawned(IMemoryPool pool)
-		{
-			if (!isInitialized)
-			{
-				Content.DestroyChildren();
-			}
-
-			isInitialized = true;
+			Level.text = $"Level {group.level}";
+			skills = group.skills;
 
 			CollectionExtensions.Resize(skills, slots,
 			() =>
@@ -63,6 +50,16 @@ namespace Game.HUD
 			{
 				//slots[i].SetItem();
 			}
+		}
+
+		public override void OnSpawned(IMemoryPool pool)
+		{
+			if (!isInitialized)
+			{
+				Content.DestroyChildren();
+			}
+
+			isInitialized = true;
 
 			base.OnSpawned(pool);
 		}

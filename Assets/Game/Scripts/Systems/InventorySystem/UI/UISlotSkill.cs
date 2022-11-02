@@ -32,9 +32,7 @@ namespace Game.Systems.InventorySystem
 			base.OnSpawned(pool);
 		}
 
-		public override void Drop(UISlot slot)
-		{
-		}
+		public override void Drop(UISlot slot) { }
 
 		public class Factory : PlaceholderFactory<UISlotSkill> { }
     }

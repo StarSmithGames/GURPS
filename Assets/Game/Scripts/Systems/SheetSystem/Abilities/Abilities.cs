@@ -28,13 +28,15 @@ namespace Game.Systems.SheetSystem.Abilities
 
 		private void EndDrawListElement(int index)
 		{
-			if (abilities[index].name.StartsWith("Base"))
+			if (abilities[index] != null)
 			{
-				GUIStyle style = new GUIStyle();
-				style.normal.textColor = Color.cyan;
-				GUILayout.Label("Base", style);
+				if (abilities[index].name.StartsWith("Base"))
+				{
+					GUIStyle style = new GUIStyle();
+					style.normal.textColor = Color.cyan;
+					GUILayout.Label("Base", style);
+				}
 			}
-
 			GUILayout.EndHorizontal();
 		}
 	}

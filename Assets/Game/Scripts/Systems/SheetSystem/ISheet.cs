@@ -2,6 +2,7 @@ using Game.Entities;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem.Abilities;
+using Game.Systems.SheetSystem.Skills;
 
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
@@ -26,8 +27,7 @@ namespace Game.Systems.SheetSystem
 
         Conditions Conditions { get; }
 
-        Abilities.Abilities Abilities { get; }
-        Skills Skills { get; }
+        Skills.Skills Skills { get; }
         Traits Traits { get; }
         Talents Talents { get; }
         //racial abilities
@@ -51,8 +51,7 @@ namespace Game.Systems.SheetSystem
 
         public virtual Conditions Conditions { get; private set; }
 
-        public virtual Abilities.Abilities Abilities { get; private set; }
-        public virtual Skills Skills { get; private set; }
+        public virtual Skills.Skills Skills { get; private set; }
         public virtual Traits Traits { get; private set; }
         public virtual Talents Talents { get; private set; }
 
@@ -73,8 +72,7 @@ namespace Game.Systems.SheetSystem
             Actions = new Inventory(Settings.actions);
 
             Conditions = new Conditions();
-            //Abilities = new Abilities.Abilities(Settings.abilities);
-            Skills = new Skills();
+            Skills = new Skills.Skills(Settings.skills);
             Traits = new Traits();
             Talents = new Talents();
 
@@ -131,6 +129,9 @@ namespace Game.Systems.SheetSystem
         public InventorySettings inventory;
         [TabGroup("GroupB", "Actions")]
         public InventorySettings actions;
+        [TabGroup("GroupB", "Skills")]
+        public SkillsSettings skills;
+
         //[TabGroup("GroupB", "Equipment")]
         //public EquipmentSettings equipment;
 

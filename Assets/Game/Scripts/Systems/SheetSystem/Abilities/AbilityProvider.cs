@@ -8,7 +8,7 @@ namespace Game.Systems.SheetSystem.Abilities
 {
 	public class AbilityProvider : Registrator<IAbility>
 	{
-		private Abilities abilities => model.Sheet.Abilities;
+		private Abilities abilities => null;//model.Sheet.Abilities;
 		private ICharacterModel model;
 
 		private DiContainer container;

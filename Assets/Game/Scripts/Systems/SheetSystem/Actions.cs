@@ -4,8 +4,7 @@ using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
-	public sealed class Skills : Registrator<ISkill>
+	public class Actions
 	{
-
 	}
 }
