@@ -15,4 +15,10 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public string Title => $"{(information.name.IsEmpty() ? name : information.name)}";
 	}
+
+	public enum SkillType
+	{
+		Action,
+		BonusAction,
+	}
 }

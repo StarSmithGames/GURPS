@@ -674,6 +674,7 @@ MonoBehaviour:
     skills:
       skills:
       - {fileID: -3500706701960549768, guid: 35dd00ecc4b03e7438c93179dbc22104, type: 3}
+      - {fileID: -8479967310570108433, guid: 4d0d23b317b011c4ebef0e11f3a8bab6, type: 3}
     abilities:
       abilities:
       - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}

@@ -36,7 +36,7 @@ namespace Game.Systems.SheetSystem.Skills
 		{
 			List<SkillGroup> groups = new List<SkillGroup>();
 
-			var levels = Skills.Select((x) => x.skill.level).Distinct().ToArray();
+			var levels = Skills.Select((x) => x.skill.level).Distinct().OrderBy((y) => y).ToArray();
 
 			for (int i = 0; i < levels.Length; i++)
 			{
