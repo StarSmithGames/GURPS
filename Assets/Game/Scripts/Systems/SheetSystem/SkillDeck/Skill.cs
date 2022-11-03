@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public abstract class Skill : MonoBehaviour, ISlotable, ICopyable<Skill>
+	public abstract class Skill : MonoBehaviour, IAction, ICopyable<Skill>
 	{
 		[HideLabel]
 		public Information information;

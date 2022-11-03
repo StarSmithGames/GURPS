@@ -17,7 +17,8 @@ MonoBehaviour:
   chestPopupWindowPrefab: {fileID: 8388637833920730225, guid: de440f16446d4734b9acc39af6942dfb, type: 3}
   turnPrefab: {fileID: 5483355968189638841, guid: e7b6dd26e311b8e4cbe5edf7a9488794, type: 3}
   turnSeparatePrefab: {fileID: 522465427650173922, guid: 78aab5a83e252f3458ff3a9bdbff30ca, type: 3}
-  actionPointPrefab: {fileID: 5209587169930084388, guid: 7d63075b03f63fa46934720002e80a54, type: 3}
   effectPrefab: {fileID: 8370480063244130010, guid: 22d1105a070f36048b14890df4b15a9c, type: 3}
+  actionSlotPrefab: {fileID: 3325466728184173451, guid: 0a451a48c6213e6449c032c2b25df89e, type: 3}
+  actionPointPrefab: {fileID: 5209587169930084388, guid: 7d63075b03f63fa46934720002e80a54, type: 3}
   skillSlotPrefab: {fileID: 2298636301327227474, guid: 04bc94ac648b7dc4baaae25ce7a1c7c8, type: 3}
   skillPackPrefab: {fileID: 6260682607686597364, guid: e663792286231e14ab862d4f0d4ed57e, type: 3}

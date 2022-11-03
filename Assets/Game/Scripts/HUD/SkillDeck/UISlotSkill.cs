@@ -1,7 +1,7 @@
 using Game.Systems.InventorySystem;
 using Zenject;
 
-namespace Game.Systems.SheetSystem.Skills
+namespace Game.HUD
 {
     public class UISlotSkill : UISlot<SlotSkill>
     {
@@ -22,7 +22,10 @@ namespace Game.Systems.SheetSystem.Skills
 			Icon.sprite = !isEmpty ? Slot.skill.information.portrait : null;
 		}
 
-		public override void Drop(UISlot slot) { }
+		public override void Drop(UISlot slot)
+		{
+			SkillDeckDrop.Process(this, slot);
+		}
 
 		public override void OnSpawned(IMemoryPool pool)
 		{

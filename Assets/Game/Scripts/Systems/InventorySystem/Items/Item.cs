@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.Assertions;
 using Sirenix.OdinInspector;
 using Game.Managers.StorageManager;
+using Game.Systems.SheetSystem;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,7 +13,7 @@ using UnityEditor;
 namespace Game.Systems.InventorySystem
 {
 	[System.Serializable]
-	public class Item : ICopyable<Item>
+	public class Item : IAction, ICopyable<Item>
 	{
 		public UnityAction OnItemChanged;
 

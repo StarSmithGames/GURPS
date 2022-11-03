@@ -10,6 +10,7 @@ using Game.Systems.SheetSystem.Abilities;
 using Game.UI.CanvasSystem;
 using System;
 using Game.Systems.InteractionSystem;
+using Game.Systems.SheetSystem.Skills;
 
 namespace Game.Systems.ContextMenu
 {
@@ -90,6 +91,22 @@ namespace Game.Systems.ContextMenu
 			}
 
 			commands.Add(new CommandExamine(item) { name = "Examine" });
+
+			contextMenu.SetCommands(commands);
+		}
+
+		public void SetTarget(Skill skill)
+		{
+			if (contextMenu == null)
+			{
+				contextMenu = subCanvas.WindowsRegistrator.GetAs<WindowContextMenu>();
+			}
+
+			List<ContextCommand> commands = new List<ContextCommand>();
+
+			var leader = partyManager.PlayerParty.LeaderParty;
+
+			commands.Add(new CommandExamine(skill) { name = "Examine" });
 
 			contextMenu.SetCommands(commands);
 		}

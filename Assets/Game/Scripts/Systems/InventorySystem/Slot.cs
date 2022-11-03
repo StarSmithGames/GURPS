@@ -1,6 +1,9 @@
-﻿using Game.Systems.SheetSystem.Skills;
+﻿using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Skills;
 
 using Sirenix.OdinInspector;
+
+using UnityEditor.Experimental.GraphView;
 
 using UnityEngine.Events;
 
@@ -10,8 +13,10 @@ namespace Game.Systems.InventorySystem
 	{
         public UnityAction onChanged;
 
-        public virtual bool IsEmpty => false;
-	}
+        public abstract bool IsEmpty { get; }
+
+        public abstract void Dispose();
+    }
 
     [System.Serializable]
     public class SlotInventory : Slot, ICopyable<SlotInventory>
@@ -45,7 +50,15 @@ namespace Game.Systems.InventorySystem
             return true;
         }
 
-		public SlotInventory Copy()
+        public override void Dispose()
+        {
+            CurrentInventory.Remove(item);
+            item = null;
+
+            onChanged?.Invoke();
+        }
+
+        public SlotInventory Copy()
 		{
             return new SlotInventory()
             {
@@ -57,12 +70,62 @@ namespace Game.Systems.InventorySystem
     }
 
     [System.Serializable]
+    public class SlotAction : Slot, ICopyable<SlotAction>
+    {
+        public override bool IsEmpty => action == null;
+
+        public IAction action;
+
+        public bool SetAction(IAction action)
+		{
+            this.action = action;
+
+            onChanged?.Invoke();
+
+            return true;
+		}
+
+        public override void Dispose()
+        {
+            action = null;
+
+            onChanged?.Invoke();
+        }
+
+        public SlotAction Copy()
+        {
+            return new SlotAction()
+            {
+                action = action,
+            };
+        }
+
+		private string Title => $"Action Slot with {(action?.GetType().ToString() ?? "NULL")}";
+	}
+
+    [System.Serializable]
     public class SlotSkill : Slot, ICopyable<SlotSkill>
     {
         public override bool IsEmpty => skill == null;
 
         [HideLabel]
         public Skill skill;
+
+        public bool SetSkill(Skill skill)
+        {
+            this.skill = skill;
+
+            onChanged?.Invoke();
+
+            return true;
+        }
+
+        public override void Dispose()
+        {
+            skill = null;
+
+            onChanged?.Invoke();
+        }
 
         public SlotSkill Copy()
         {

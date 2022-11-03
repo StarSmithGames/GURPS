@@ -5,7 +5,7 @@ using System.Timers;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Game.Systems
+namespace Game.Systems.InteractionSystem
 {
 	public class TaskSequence
 	{

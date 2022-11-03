@@ -1,9 +1,6 @@
 using Game.HUD;
 using Game.Systems.InventorySystem;
-using Game.Systems.SheetSystem.Skills;
-
 using UnityEngine;
-
 using Zenject;
 
 namespace Game.UI.CanvasSystem
@@ -14,14 +11,20 @@ namespace Game.UI.CanvasSystem
 		[Header("Character")]
 		public UIAvatar avatarPrefab;
 		[Header("Inventory")]
-		public Systems.InventorySystem.UIDragItem itemCursorPrefab;
+		public UIDragItem itemCursorPrefab;
 		public UIContainerWindow chestPopupWindowPrefab;
 		[Header("Battle")]
 		public UITurn turnPrefab;
 		public GameObject turnSeparatePrefab;
-		[Header("Sheet")]
-		public UIActionPoint actionPointPrefab;
+
+		[Header("Effects")]
 		public UIEffect effectPrefab;
+
+		[Header("Actions")]
+		public UISlotAction actionSlotPrefab;
+		public UIActionPoint actionPointPrefab;
+
+		[Header("Skills")]
 		public UISlotSkill skillSlotPrefab;
 		public UISkillPack skillPackPrefab;
 
@@ -34,6 +37,7 @@ namespace Game.UI.CanvasSystem
 			BindAvatars();
 			BindActionPoints();
 			BindEffects();
+			BindActions();
 			BindSkills();
 		}
 
@@ -81,6 +85,14 @@ namespace Game.UI.CanvasSystem
 			Container.BindFactory<UIEffect, UIEffect.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(3)
 				.FromComponentInNewPrefab(effectPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
+		}
+
+		private void BindActions()
+		{
+			Container.BindFactory<UISlotAction, UISlotAction.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(15)
+				.FromComponentInNewPrefab(actionSlotPrefab)
 				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
 		}
 

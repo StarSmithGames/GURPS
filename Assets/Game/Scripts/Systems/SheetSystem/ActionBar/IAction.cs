@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
-	public class Actions
-	{
-	}
+    public interface IAction
+    {
+
+    }
 }

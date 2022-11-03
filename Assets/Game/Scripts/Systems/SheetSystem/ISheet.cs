@@ -23,7 +23,7 @@ namespace Game.Systems.SheetSystem
         Characteristics Characteristics { get; }
 
         Inventory Inventory { get; }
-        Inventory Actions { get; }
+        ActionBar ActionBar { get; }
 
         Conditions Conditions { get; }
 
@@ -47,7 +47,7 @@ namespace Game.Systems.SheetSystem
 		public virtual Characteristics Characteristics { get; private set; }
 
         public virtual Inventory Inventory { get; private set; }
-        public virtual Inventory Actions { get; private set; }
+        public virtual ActionBar ActionBar { get; private set; }
 
         public virtual Conditions Conditions { get; private set; }
 
@@ -69,7 +69,7 @@ namespace Game.Systems.SheetSystem
             Characteristics = new Characteristics(Settings.characteristics);
             
             Inventory = new Inventory(Settings.inventory);
-            Actions = new Inventory(Settings.actions);
+            ActionBar = new ActionBar(Settings.actionBar, this);
 
             Conditions = new Conditions();
             Skills = new SkillDeck(Settings.skills);
@@ -127,8 +127,8 @@ namespace Game.Systems.SheetSystem
 
         [TabGroup("GroupB", "Inventory")]
         public InventorySettings inventory;
-        [TabGroup("GroupB", "Actions")]
-        public InventorySettings actions;
+        [TabGroup("GroupB", "ActionBar")]
+        public ActionBarSettings actionBar;
         [TabGroup("GroupB", "Skills")]
         public SkillsSettings skills;
 

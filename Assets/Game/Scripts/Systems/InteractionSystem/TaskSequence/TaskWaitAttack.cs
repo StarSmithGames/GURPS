@@ -2,7 +2,7 @@ using System.Collections;
 
 using UnityEngine;
 
-namespace Game.Systems
+namespace Game.Systems.InteractionSystem
 {
 	public class TaskWaitAttack : TaskAction
 	{

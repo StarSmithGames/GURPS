@@ -13,6 +13,8 @@ namespace Game.Systems.InventorySystem
 		[field: SerializeField] public Image Icon { get; protected set; }
 
 		public virtual bool IsEmpty => true;
+
+		public abstract void Dispose();
 		public abstract void Drop(UISlot slot);
 	}
 
@@ -43,6 +45,11 @@ namespace Game.Systems.InventorySystem
 			UpdateUI();
 
 			Slot.onChanged += UpdateUI;
+		}
+
+		public override void Dispose()
+		{
+			Slot?.Dispose();
 		}
 
 		protected virtual void UpdateUI() { }

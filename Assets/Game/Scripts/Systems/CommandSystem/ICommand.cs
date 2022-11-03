@@ -5,10 +5,12 @@ using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Skills;
 
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Game.Systems.CommandCenter
 {
@@ -85,6 +87,11 @@ namespace Game.Systems.CommandCenter
 
 		}
 
+		public CommandExamine(Skill observable)
+		{
+
+		}
+
 		public override void Execute()
 		{
 		}
@@ -142,25 +149,28 @@ namespace Game.Systems.CommandCenter
 	public class CommandConsume : ContextCommand
 	{
 		private ICharacter character;
-		private ConsumableItemData data;
+		private Item item;
+		private UnityAction callback;
 
-		public CommandConsume(ICharacter character, Item item)
+		public CommandConsume(ICharacter character, Item item, UnityAction callback = null)
 		{
 			this.character = character;
-			data = item.GetItemData<ConsumableItemData>();
+			this.item = item;
+			this.callback = callback;
 		}
 
 		public override void Execute()
 		{
-			if(data != null)
-			{
-				character.Effects.Apply(data.effects);
-			}
+			character.Effects.Apply(item.GetItemData<ConsumableItemData>().effects);
+			character.Sheet.Inventory.Remove(item);
+			callback?.Invoke();
 		}
 
-		public static void Execute(ICharacter character, Item item)
+		public static void Execute(ICharacter character, Item item, UnityAction callback = null)
 		{
 			character.Effects.Apply(item.GetItemData<ConsumableItemData>().effects);
+			character.Sheet.Inventory.Remove(item);
+			callback?.Invoke();
 		}
 	}
 	public class CommandPickUp : ContextCommand

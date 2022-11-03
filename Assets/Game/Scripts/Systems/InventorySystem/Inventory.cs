@@ -9,7 +9,7 @@ namespace Game.Systems.InventorySystem
 {
     public class Inventory
     {
-        public event UnityAction OnInventoryChanged;
+        public event UnityAction onInventoryChanged;
 
         public bool IsEmpty => Slots.All((x) => x.IsEmpty);
 
@@ -61,7 +61,7 @@ namespace Game.Systems.InventorySystem
 								item.CurrentStackSize -= currentStackSize;
 								items[i].CurrentStackSize += currentStackSize;
 
-								OnInventoryChanged?.Invoke();
+								onInventoryChanged?.Invoke();
 
 								return true;
 							}
@@ -70,7 +70,7 @@ namespace Game.Systems.InventorySystem
 								items[i].CurrentStackSize += item.CurrentStackSize;
 								item.CurrentStackSize -= item.CurrentStackSize;
 
-								OnInventoryChanged?.Invoke();
+								onInventoryChanged?.Invoke();
 
 								return true;
 							}
@@ -91,7 +91,7 @@ namespace Game.Systems.InventorySystem
 
 			if (notify)
 			{
-                OnInventoryChanged?.Invoke();
+                onInventoryChanged?.Invoke();
             }
 
             void AddToFirstEmptySlot()
@@ -117,17 +117,22 @@ namespace Game.Systems.InventorySystem
 
 			if (notify)
 			{
-                OnInventoryChanged?.Invoke();
+                onInventoryChanged?.Invoke();
             }
             return true;
         }
+
+        public bool Contains(Item item)
+		{
+            return Slots.Any((x) => x.item == item);
+		}
 
         public void Clear(bool notify = true)
         {
             //Items.Clear();
             if (notify)
 			{
-                OnInventoryChanged?.Invoke();
+                onInventoryChanged?.Invoke();
             }
         }
 

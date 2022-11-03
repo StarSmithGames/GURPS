@@ -1,8 +1,7 @@
 using Game.Entities.Models;
-using Game.Systems.InteractionSystem;
 using UnityEngine.Events;
 
-namespace Game.Systems
+namespace Game.Systems.InteractionSystem
 {
 	public interface IAction : IExecutable { }
 
