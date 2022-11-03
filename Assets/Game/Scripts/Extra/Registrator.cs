@@ -61,7 +61,7 @@ public class Registrator<T>
 	{
 		if (ContainsType<REGISTR>())
 		{
-			return registers.Where((window) => window is REGISTR).FirstOrDefault();
+			return registers.Where((x) => x is REGISTR).FirstOrDefault();
 		}
 
 		throw new System.Exception($"REGISTRATOR DOESN'T CONTAINS {typeof(REGISTR)} ERROR");

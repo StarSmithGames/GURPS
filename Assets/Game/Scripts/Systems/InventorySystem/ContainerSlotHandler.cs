@@ -17,7 +17,7 @@ using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
-	public class InventoryContainerHandler
+	public class ContainerSlotHandler
 	{
 		public bool IsDraging { get; private set; }
 
@@ -30,7 +30,7 @@ namespace Game.Systems.InventorySystem
 		private PartyManager partyManager;
 		private ContextMenuSystem contextMenuSystem;
 
-		public InventoryContainerHandler(
+		public ContainerSlotHandler(
 			UISubCanvas canvas,
 			UIDragItem itemCursor,
 			UITooltip tooltip,
@@ -70,17 +70,6 @@ namespace Game.Systems.InventorySystem
 			slot.DragAndDrop.onEndDrag -= OnEndDrag;
 			slot.DragAndDrop.onDrop -= OnDrop;
 		}
-
-		//public UIContainerWindow SpawnContainerWindow(IInventory inventory)
-		//{
-		//	var containerWindow = containerFactory.Create();
-		//	containerWindow.Hide();
-		//	containerWindow.Inventory.SetInventory(inventory);
-		//	//containerWindow.transform.parent = uiManager.CurrentVirtualSpace.WindowsRoot;
-		//	(containerWindow.transform as RectTransform).anchoredPosition = Vector3.zero;
-
-		//	return containerWindow;
-		//}
 
 		#region Pointer
 		public void OnPointerEnter(UISlot slot, PointerEventData eventData)

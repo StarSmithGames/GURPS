@@ -17,10 +17,10 @@ namespace Game.Systems.InventorySystem
 		public virtual bool IsEmpty => Slot.IsEmpty;
 		public Item CurrentItem => Slot.Item;
 
-		protected InventoryContainerHandler containerHandler;
+		protected ContainerSlotHandler containerHandler;
 
 		[Inject]
-		private void Construct(InventoryContainerHandler containerHandler)
+		private void Construct(ContainerSlotHandler containerHandler)
 		{
 			this.containerHandler = containerHandler;
 		}

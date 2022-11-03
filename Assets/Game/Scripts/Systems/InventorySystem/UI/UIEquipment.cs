@@ -38,10 +38,10 @@ namespace Game.Systems.InventorySystem
 		//public IEquipment CurrentEquipment => currentEquipment;
 		//private IEquipment currentEquipment;
 
-		private InventoryContainerHandler containerHandler;
+		private ContainerSlotHandler containerHandler;
 
 		[Inject]
-		private void Construct(InventoryContainerHandler containerHandler)
+		private void Construct(ContainerSlotHandler containerHandler)
 		{
 			this.containerHandler = containerHandler;
 

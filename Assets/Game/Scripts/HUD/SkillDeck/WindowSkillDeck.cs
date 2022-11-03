@@ -8,6 +8,7 @@ using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 using Zenject;
@@ -21,7 +22,7 @@ namespace Game.HUD
 
 		private bool isInitialized = false;
 		private List<UISkillPack> skills = new List<UISkillPack>();
-		private Skills currentSkills;
+		private SkillDeck currentSkills;
 
 		private UISubCanvas subCanvas;
 		private UISkillPack.Factory skillPackFactory;
@@ -48,7 +49,7 @@ namespace Game.HUD
 			Close?.onClick.RemoveAllListeners();
 		}
 
-		public void SetSkills(Skills skills)
+		public void SetSkills(SkillDeck skills)
 		{
 			currentSkills = skills;
 
@@ -63,6 +64,7 @@ namespace Game.HUD
 			if (!isInitialized)
 			{
 				LeftContent.DestroyChildren();
+				isInitialized = true;
 			}
 
 			var groups = currentSkills.GetSkillGroupsByLevel();

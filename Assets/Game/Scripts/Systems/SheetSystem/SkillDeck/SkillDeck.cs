@@ -2,32 +2,41 @@ using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Linq;
 
-using UnityEditor.Experimental.GraphView;
-
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public sealed class Skills : Registrator<Skill>
+	public sealed class SkillDeck
 	{
-		public Skills(SkillsSettings settings)
+		public RegistratorSlotItem<SkillSlot, Skill> Skills { get; }
+		public RegistratorSlotItem<SkillSlot, Skill> MemorySkills { get; }
+		//public Registrator<SlotItemBind<SkillSlot, Skill>> s { get; }
+
+		public SkillDeck(SkillsSettings settings)
 		{
+			Skills = new RegistratorSlotItem<SkillSlot, Skill>();
+			MemorySkills = new RegistratorSlotItem<SkillSlot, Skill>();
+
 			for (int i = 0; i < settings.skills.Count; i++)
 			{
-				Registrate(settings.skills[i].Copy());
+				Skills.RegistrateBind(new SlotItemBind<SkillSlot, Skill>()
+				{
+					slot = new SkillSlot(),
+					item = settings.skills[i],
+				});
 			}
 		}
 
 		public Skill[] GetSkillsByLevel(int level)
 		{
-			return registers.Where((x) => x.level == level).ToArray();
+			return Skills.registers.Where((x) => x.item.level == level).Select((y) => y.item).ToArray();
 		}
 
 		public List<SkillGroup> GetSkillGroupsByLevel()
 		{
 			List<SkillGroup> groups = new List<SkillGroup>();
 
-			var levels = registers.Select((skill) => skill.level).Distinct().ToArray();
+			var levels = Skills.registers.Select((bind) => bind.item.level).Distinct().ToArray();
 
 			for (int i = 0; i < levels.Length; i++)
 			{
@@ -46,6 +55,21 @@ namespace Game.Systems.SheetSystem.Skills
 	{
 		public int level;
 		public Skill[] skills;
+	}
+
+	[System.Serializable]
+	public sealed class SkillSlot : ISlot
+	{
+		[HideLabel]
+		public Skill skill;
+
+		public ISlot Copy()
+		{
+			return new SkillSlot()
+			{
+				skill = skill,
+			};
+		}
 	}
 
 

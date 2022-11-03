@@ -57,9 +57,9 @@ namespace Game.HUD
 			if (!isInitialized)
 			{
 				Content.DestroyChildren();
-			}
 
-			isInitialized = true;
+				isInitialized = true;
+			}
 
 			base.OnSpawned(pool);
 		}

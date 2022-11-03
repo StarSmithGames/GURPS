@@ -49,7 +49,7 @@ namespace Game.UI.CanvasSystem
 
 			Container.BindInstance(Container.InstantiatePrefabForComponent<Systems.InventorySystem.UIDragItem>(itemCursorPrefab));
 
-			Container.BindInterfacesAndSelfTo<InventoryContainerHandler>().AsSingle();
+			Container.BindInterfacesAndSelfTo<ContainerSlotHandler>().AsSingle();
 		}
 
 		private void BindBattleSystem()
