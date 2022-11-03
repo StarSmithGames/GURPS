@@ -1,22 +1,29 @@
-﻿using Sirenix.OdinInspector;
+﻿using Game.Systems.SheetSystem.Skills;
+
+using Sirenix.OdinInspector;
 
 using UnityEngine.Events;
 
 namespace Game.Systems.InventorySystem
 {
-	[System.Serializable]
-    public class Slot : ICopyable<Slot>
+    public abstract class Slot
 	{
-        public event UnityAction onChanged;
+        public UnityAction onChanged;
 
-        public bool IsEmpty => Item?.ItemData == null;
+        public virtual bool IsEmpty => false;
+	}
 
-        [HideLabel]
-        public Item Item;
+    [System.Serializable]
+    public class SlotInventory : Slot, ICopyable<SlotInventory>
+	{
+        public override bool IsEmpty => item?.ItemData == null;
 
-        public IInventory CurrentInventory { get; private set; }
+		[HideLabel]
+        public Item item;
 
-        public void SetOwner(IInventory inventory)
+        public Inventory CurrentInventory { get; private set; }
+
+        public void SetOwner(Inventory inventory)
         {
             CurrentInventory = inventory;
         }
@@ -31,21 +38,40 @@ namespace Game.Systems.InventorySystem
                 }
             }
 
-            Item = item;
+            this.item = item;
 
             onChanged?.Invoke();
 
             return true;
         }
 
-		public Slot Copy()
+		public SlotInventory Copy()
 		{
-            return new Slot()
+            return new SlotInventory()
             {
-                Item = Item,
+                item = item,
             };
 		}
 
-		private string Title => $"Slot with {Item.Title}";
-	}
+		private string Title => $"Inventory Slot with {item.Title}";
+    }
+
+    [System.Serializable]
+    public class SlotSkill : Slot, ICopyable<SlotSkill>
+    {
+        public override bool IsEmpty => skill == null;
+
+        [HideLabel]
+        public Skill skill;
+
+        public SlotSkill Copy()
+        {
+            return new SlotSkill()
+            {
+                skill = skill,
+            };
+        }
+
+        private string Title => $"Skill Slot with {skill.Title}";
+    }
 }

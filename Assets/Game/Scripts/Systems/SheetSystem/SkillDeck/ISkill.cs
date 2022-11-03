@@ -1,5 +1,4 @@
 using Sirenix.OdinInspector;
-
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem.Skills
@@ -13,5 +12,7 @@ namespace Game.Systems.SheetSystem.Skills
 		public int level;
 
 		public abstract Skill Copy();
+
+		public string Title => $"{(information.name.IsEmpty() ? name : information.name)}";
 	}
 }

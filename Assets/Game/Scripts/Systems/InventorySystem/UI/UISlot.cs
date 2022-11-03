@@ -12,10 +12,16 @@ namespace Game.Systems.InventorySystem
 		[field: SerializeField] public Image Background { get; protected set; }
 		[field: SerializeField] public Image Icon { get; protected set; }
 
-		public Slot Slot { get; private set; }
+		public virtual bool IsEmpty => true;
+		public abstract void Drop(UISlot slot);
+	}
 
-		public virtual bool IsEmpty => Slot.IsEmpty;
-		public Item CurrentItem => Slot.Item;
+	public abstract class UISlot<SLOT> : UISlot
+		where SLOT : Slot
+	{
+		public SLOT Slot { get; private set; }
+
+		public override bool IsEmpty => Slot.IsEmpty;
 
 		protected ContainerSlotHandler containerHandler;
 
@@ -25,7 +31,7 @@ namespace Game.Systems.InventorySystem
 			this.containerHandler = containerHandler;
 		}
 
-		public void SetSlot(Slot slot)
+		public void SetSlot(SLOT slot)
 		{
 			if(Slot != null)
 			{
@@ -38,20 +44,6 @@ namespace Game.Systems.InventorySystem
 
 			Slot.onChanged += UpdateUI;
 		}
-
-		public bool SetItem(Item item)
-		{
-			return Slot.SetItem(item);
-		}
-
-		public void Swap(UISlot slot)
-		{
-			Item item = slot.CurrentItem;
-			slot.SetItem(CurrentItem);
-			SetItem(item);
-		}
-
-		public abstract void Drop(UISlot slot);
 
 		protected virtual void UpdateUI() { }
 	}

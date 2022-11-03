@@ -22,8 +22,8 @@ namespace Game.Systems.SheetSystem
         Stats Stats { get; }
         Characteristics Characteristics { get; }
 
-        IInventory Inventory { get; }
-        IInventory Actions { get; }
+        Inventory Inventory { get; }
+        Inventory Actions { get; }
 
         Conditions Conditions { get; }
 
@@ -46,8 +46,8 @@ namespace Game.Systems.SheetSystem
         public virtual Stats Stats { get; private set; }
 		public virtual Characteristics Characteristics { get; private set; }
 
-        public virtual IInventory Inventory { get; private set; }
-        public virtual IInventory Actions { get; private set; }
+        public virtual Inventory Inventory { get; private set; }
+        public virtual Inventory Actions { get; private set; }
 
         public virtual Conditions Conditions { get; private set; }
 

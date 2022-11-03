@@ -14,7 +14,7 @@ namespace Game.HUD
 
 		private bool isInitialized = false;
 		private List<UISlotSkill> slots = new List<UISlotSkill>();
-		private Skill[] skills;
+		private SlotSkill[] skillSlots;
 
 		private UISlotSkill.Factory slotFactory;
 
@@ -27,9 +27,9 @@ namespace Game.HUD
 		public void SetGroup(SkillGroup group)
 		{
 			Level.text = $"Level {group.level}";
-			skills = group.skills;
+			skillSlots = group.skills;
 
-			CollectionExtensions.Resize(skills, slots,
+			CollectionExtensions.Resize(skillSlots, slots,
 			() =>
 			{
 				var slot = slotFactory.Create();
@@ -48,7 +48,7 @@ namespace Game.HUD
 
 			for (int i = 0; i < slots.Count; i++)
 			{
-				//slots[i].SetItem();
+				slots[i].SetSlot(skillSlots[i]);
 			}
 		}
 

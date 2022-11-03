@@ -78,7 +78,7 @@ namespace Game.Systems.InventorySystem
 
 			if (!slot.IsEmpty)
 			{
-				tooltip.SetTarget(slot.CurrentItem);
+				tooltip.SetTarget(slot);
 				tooltip.Show();
 			}
 		}
@@ -93,13 +93,14 @@ namespace Game.Systems.InventorySystem
 		{
 			if (slot.IsEmpty) return;
 
-			Item item = slot.CurrentItem;
 			//var equipment = (initiator.Sheet as CharacterSheet).Equipment;
 
 			switch (slot)
 			{
 				case UISlotInventory inventorySlot:
 				{
+					Item item = (inventorySlot.Slot as SlotInventory).item;
+
 					var from = inventorySlot.Slot.CurrentInventory;
 					var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
@@ -153,7 +154,7 @@ namespace Game.Systems.InventorySystem
 					{
 						var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
-						to.Add(item);
+						//to.Add(item);
 						//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
 
 						HideTooltip();
@@ -170,17 +171,17 @@ namespace Game.Systems.InventorySystem
 							var initiator = partyManager.PlayerParty.LeaderParty;
 							var inventory = initiator.Sheet.Inventory;
 
-							if (item.IsConsumable)
-							{
-								CommandConsume.Execute(initiator, item);
-								inventory.Remove(item);
-								actionSlot.SetItem(null);
-							}
+							//if (item.IsConsumable)
+							//{
+							//	CommandConsume.Execute(initiator, item);
+							//	inventory.Remove(item);
+							//	actionSlot.SetItem(null);
+							//}
 						}
 					}
 					else if (eventData.button == PointerEventData.InputButton.Right)
 					{
-						contextMenuSystem.SetTarget(item);
+						//contextMenuSystem.SetTarget(item);
 
 						HideTooltip();
 					}
@@ -191,13 +192,13 @@ namespace Game.Systems.InventorySystem
 		#endregion
 
 		#region Drag & Drop
-		private DragAndDropProvider provider = null;
+		private InventoryDragAndDropProvider provider = null;
 		public void OnBeginDrag(UISlot slot, PointerEventData eventData)
 		{
 			if (slot.IsEmpty) return;
 			if (eventData.clickCount > 1) return;
 
-			dragItem.SetIcon(slot.CurrentItem.ItemData.information.portrait);
+			dragItem.SetIcon(slot.Icon.sprite);
 			dragItem.transform.parent = canvas.transform;
 
 			IsDraging = true;
@@ -205,8 +206,11 @@ namespace Game.Systems.InventorySystem
 			HideTooltip();
 			partyManager.PlayerParty.LeaderParty.Model.Freeze(true);
 
-			provider = new DragAndDropProvider();
-			provider.OnBeginDrag(slot);
+			if(slot is UISlotInventory inventorySlot)
+			{
+				provider = new InventoryDragAndDropProvider();
+				provider.OnBeginDrag(inventorySlot);
+			}
 		}
 		public void OnDrag(UISlot slot, PointerEventData eventData)
 		{
@@ -217,7 +221,10 @@ namespace Game.Systems.InventorySystem
 		}
 		public void OnEndDrag(UISlot slot, PointerEventData eventData)
 		{
-			provider?.OnEndDrag(slot);
+			if (slot is UISlotInventory inventorySlot)
+			{
+				provider?.OnEndDrag(inventorySlot);
+			}
 
 			dragItem.Dispose();
 
@@ -242,12 +249,12 @@ namespace Game.Systems.InventorySystem
 		}
 	}
 
-	public class DragAndDropProvider
+	public class InventoryDragAndDropProvider
 	{
-		private UISlot beginSlot = null;
-		private IInventory to;
+		private UISlotInventory beginSlot = null;
+		private Inventory to;
 
-		public void OnBeginDrag(UISlot slot)
+		public void OnBeginDrag(UISlotInventory slot)
 		{
 			beginSlot = slot;
 		}
@@ -257,12 +264,15 @@ namespace Game.Systems.InventorySystem
 			if (beginSlot == null) return;
 			if (beginSlot == slot) return;
 
-			to = slot.Slot.CurrentInventory;
+			if(slot is UISlotInventory inventorySlot)
+			{
+				to = inventorySlot.Slot.CurrentInventory;
+			}
 
 			beginSlot.Drop(slot);
 		}
 
-		public void OnEndDrag(UISlot slot)
+		public void OnEndDrag(UISlotInventory slot)
 		{
 			//drop in world
 			if (!EventSystem.current.IsPointerOverGameObject() && to == null)
@@ -274,7 +284,7 @@ namespace Game.Systems.InventorySystem
 
 	public static class InventoryDrop
 	{
-		public static void Process(UISlot begin, UISlot end)
+		public static void Process(UISlotInventory begin, UISlot end)
 		{
 			switch (end)
 			{
@@ -282,14 +292,14 @@ namespace Game.Systems.InventorySystem
 				{
 					if (inventorySlot.IsEmpty)
 					{
-						inventorySlot.SetItem(begin.CurrentItem);
+						inventorySlot.SetItem(begin.Item);
 						begin.Slot.SetItem(null);
 					}
 					else
 					{
-						if (inventorySlot.CurrentItem.IsStackable)
+						if (inventorySlot.Item.IsStackable)
 						{
-							inventorySlot.CurrentItem.TryAdd(begin.CurrentItem);
+							inventorySlot.Item.TryAdd(begin.Item);
 						}
 						else
 						{
@@ -324,7 +334,7 @@ namespace Game.Systems.InventorySystem
 
 				case UISlotAction actionSlot:
 				{
-					actionSlot.SetItem(begin.CurrentItem);
+					//actionSlot.SetItem(begin.CurrentItem);
 					break;
 				}
 			}
@@ -339,10 +349,10 @@ namespace Game.Systems.InventorySystem
 			{
 				case UISlotAction actionSlot:
 				{
-					if (!begin.CurrentItem.IsConsumable) return;
+					//if (!begin.CurrentItem.IsConsumable) return;
 
-					actionSlot.SetItem(begin.CurrentItem);
-					begin.Slot.SetItem(null);
+					//actionSlot.SetItem(begin.CurrentItem);
+					//begin.Slot.SetItem(null);
 
 					break;
 				}

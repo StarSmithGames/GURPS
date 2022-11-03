@@ -24,7 +24,7 @@ namespace Game.HUD
 
 		private void Start()
 		{
-			Inventory.SetInventory(partyManager.PlayerParty.LeaderParty.Sheet.Actions);
+			//Inventory.SetInventory(partyManager.PlayerParty.LeaderParty.Sheet.Actions);
 		}
 	}
 }

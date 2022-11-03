@@ -7,38 +7,21 @@ using Array2DEditor;
 
 namespace Game.Systems.InventorySystem
 {
-	public interface IInventory
-    {
-        event UnityAction OnInventoryChanged;
-
-        bool IsEmpty { get; }
-
-        List<Slot> Slots { get; set; }
-
-        List<Item> GetItems();
-
-        bool Add(Item item, bool notify = true);
-
-        bool Remove(Item item, bool notify = true);
-
-        void Clear(bool notify = true);
-    }
-
-    public class Inventory : IInventory
+    public class Inventory
     {
         public event UnityAction OnInventoryChanged;
 
         public bool IsEmpty => Slots.All((x) => x.IsEmpty);
 
-        public List<Slot> Slots { get; set; }
+        public List<SlotInventory> Slots { get; set; }
 
         public Inventory(InventorySettings settings)
         {
-            Slots = new List<Slot>();
+            Slots = new List<SlotInventory>();
 
             for (int i = 0; i < settings.slots.Count; i++)
             {
-                Slot slot = settings.slots[i].Copy();
+                SlotInventory slot = settings.slots[i].Copy();
                 slot.SetOwner(this);
 
                 Slots.Add(slot);
@@ -47,7 +30,7 @@ namespace Game.Systems.InventorySystem
 
         public List<Item> GetItems()
 		{
-            return Slots.Select((x) => x.Item).ToList();
+            return Slots.Select((x) => x.item).ToList();
         }
 
         public bool Add(Item item, bool notify = true)
@@ -114,7 +97,7 @@ namespace Game.Systems.InventorySystem
             void AddToFirstEmptySlot()
 			{
                 //find first empty slot
-                Slot emptySlot = Slots.First((x) => x.IsEmpty);
+                SlotInventory emptySlot = Slots.First((x) => x.IsEmpty);
                 if(emptySlot != null)
 				{
                     emptySlot.SetItem(item);
@@ -130,7 +113,7 @@ namespace Game.Systems.InventorySystem
 
         public bool Remove(Item item, bool notify = true)
         {
-			Slots.Find((x) => x.Item == item).SetItem(null);
+			Slots.Find((x) => x.item == item).SetItem(null);
 
 			if (notify)
 			{
@@ -150,7 +133,7 @@ namespace Game.Systems.InventorySystem
 
         public bool GetAllItemsByType(ItemData type, out List<Item> items)
         {
-            items = Slots.Where((slot) => !slot.IsEmpty ? slot.Item.ItemData == type : false).Select((x) => x.Item).ToList();
+            items = Slots.Where((slot) => !slot.IsEmpty ? slot.item.ItemData == type : false).Select((x) => x.item).ToList();
             return items.Count > 0;
         }
 
@@ -181,7 +164,7 @@ namespace Game.Systems.InventorySystem
         //sort by
         [HideIf("useRandomItems")]
         [ListDrawerSettings(ShowIndexLabels = true, ListElementLabelName = "Title")]
-        public List<Slot> slots = new List<Slot>();
+        public List<SlotInventory> slots = new List<SlotInventory>();
 
         [ShowIf("useRandomItems")]
         [InlineProperty]
@@ -225,13 +208,13 @@ namespace Game.Systems.InventorySystem
             CollectionExtensions.Resize(size, slots,
             () =>
 			{
-                return new Slot();
+                return new SlotInventory();
             },
             () =>
 			{
-				if (slots.Any((x) => x.Item.ItemData == null))
+				if (slots.Any((x) => x.item.ItemData == null))
 				{
-                    return slots.First((x) => x.Item.ItemData == null);
+                    return slots.First((x) => x.item.ItemData == null);
 				}
                 return slots.Last();
 			});

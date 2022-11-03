@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game.Systems.InventorySystem
 {
-	public class UISlotAction : UISlot
+	public class UISlotAction : UISlot<Slot>
 	{
 		[field: Space]
 		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
@@ -20,12 +20,12 @@ namespace Game.Systems.InventorySystem
 
 		protected override void UpdateUI()
 		{
-			bool isEmpty = IsEmpty;
-			Icon.enabled = !isEmpty;
-			Icon.sprite = !isEmpty ? CurrentItem.ItemData.information.portrait : null;
+			//bool isEmpty = IsEmpty;
+			//Icon.enabled = !isEmpty;
+			//Icon.sprite = !isEmpty ? CurrentItem.ItemData.information.portrait : null;
 
-			Count.enabled = !isEmpty && !CurrentItem.IsArmor && !CurrentItem.IsWeapon;
-			Count.text = !isEmpty ? CurrentItem.CurrentStackSize.ToString() : "";
+			//Count.enabled = !isEmpty && !CurrentItem.IsArmor && !CurrentItem.IsWeapon;
+			//Count.text = !isEmpty ? CurrentItem.CurrentStackSize.ToString() : "";
 		}
 
 		public override void Drop(UISlot slot)

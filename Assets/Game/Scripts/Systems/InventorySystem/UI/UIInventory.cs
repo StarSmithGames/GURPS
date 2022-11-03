@@ -10,11 +10,11 @@ namespace Game.Systems.InventorySystem
 	public class UIInventory : MonoBehaviour
 	{
 		[field: SerializeField] public Transform Content { get; private set; }
-		[field: SerializeField] public List<UISlot> Slots { get; private set; }
+		[field: SerializeField] public List<UISlotInventory> Slots { get; private set; }
 
-		public IInventory CurrentInventory { get; private set; }
+		public Inventory CurrentInventory { get; private set; }
 
-		public void SetInventory(IInventory inventory)
+		public void SetInventory(Inventory inventory)
 		{
 			CurrentInventory = inventory;
 
@@ -29,7 +29,7 @@ namespace Game.Systems.InventorySystem
 		[Button(DirtyOnClick = true)]
 		private void GetAllSlots()
 		{
-			Slots = Content.GetComponentsInChildren<UISlot>().ToList();
+			Slots = Content.GetComponentsInChildren<UISlotInventory>().ToList();
 		}
 	}
 }

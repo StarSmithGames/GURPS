@@ -51,7 +51,7 @@ namespace Game.Systems.TooltipSystem
 
 		}
 
-		public void SetTarget(Item item)
+		public void SetTarget(UISlot slot)
 		{
 
 		}

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game.Systems.InventorySystem
 {
-	public class UISlotEquipment : UISlot
+	public class UISlotEquipment : UISlot<Slot>
 	{
 		public bool Mark { get; set; }
 
@@ -26,11 +26,11 @@ namespace Game.Systems.InventorySystem
 
 		protected override void UpdateUI()
 		{
-			Icon.enabled = !IsEmpty;
-			Icon.sprite = CurrentItem?.ItemData.information?.portrait;
-			Icon.color = Mark ? oneHalfAlpha : one;
+			//Icon.enabled = !IsEmpty;
+			//Icon.sprite = CurrentItem?.ItemData.information?.portrait;
+			//Icon.color = Mark ? oneHalfAlpha : one;
 
-			Background.sprite = IsEmpty ? SwapBackground : BaseBackground;
+			//Background.sprite = IsEmpty ? SwapBackground : BaseBackground;
 		}
 
 		[Button(DirtyOnClick = true)]

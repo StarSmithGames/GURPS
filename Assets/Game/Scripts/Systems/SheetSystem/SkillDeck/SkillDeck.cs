@@ -1,3 +1,5 @@
+using Game.Systems.InventorySystem;
+
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,42 +10,40 @@ namespace Game.Systems.SheetSystem.Skills
 {
 	public sealed class SkillDeck
 	{
-		public RegistratorSlotItem<SkillSlot, Skill> Skills { get; }
-		public RegistratorSlotItem<SkillSlot, Skill> MemorySkills { get; }
-		//public Registrator<SlotItemBind<SkillSlot, Skill>> s { get; }
+		public List<SlotSkill> Skills { get; }
+		public List<SlotSkill> MemorySkills { get; }
 
 		public SkillDeck(SkillsSettings settings)
 		{
-			Skills = new RegistratorSlotItem<SkillSlot, Skill>();
-			MemorySkills = new RegistratorSlotItem<SkillSlot, Skill>();
+			Skills = new List<SlotSkill>();
+			MemorySkills = new List<SlotSkill>();
 
 			for (int i = 0; i < settings.skills.Count; i++)
 			{
-				Skills.RegistrateBind(new SlotItemBind<SkillSlot, Skill>()
+				Skills.Add(new SlotSkill()
 				{
-					slot = new SkillSlot(),
-					item = settings.skills[i],
+					skill = settings.skills[i].Copy(),
 				});
 			}
 		}
 
-		public Skill[] GetSkillsByLevel(int level)
+		public SlotSkill[] GetSkillSlotsByLevel(int level)
 		{
-			return Skills.registers.Where((x) => x.item.level == level).Select((y) => y.item).ToArray();
+			return Skills.Where((x) => x.skill.level == level).ToArray();
 		}
 
 		public List<SkillGroup> GetSkillGroupsByLevel()
 		{
 			List<SkillGroup> groups = new List<SkillGroup>();
 
-			var levels = Skills.registers.Select((bind) => bind.item.level).Distinct().ToArray();
+			var levels = Skills.Select((x) => x.skill.level).Distinct().ToArray();
 
 			for (int i = 0; i < levels.Length; i++)
 			{
 				groups.Add(new SkillGroup()
 				{
 					level = levels[i],
-					skills = GetSkillsByLevel(levels[i]),
+					skills = GetSkillSlotsByLevel(levels[i]),
 				});
 			}
 
@@ -54,24 +54,8 @@ namespace Game.Systems.SheetSystem.Skills
 	public struct SkillGroup
 	{
 		public int level;
-		public Skill[] skills;
+		public SlotSkill[] skills;
 	}
-
-	[System.Serializable]
-	public sealed class SkillSlot : ISlot
-	{
-		[HideLabel]
-		public Skill skill;
-
-		public ISlot Copy()
-		{
-			return new SkillSlot()
-			{
-				skill = skill,
-			};
-		}
-	}
-
 
 	[System.Serializable]
 	public sealed class SkillsSettings

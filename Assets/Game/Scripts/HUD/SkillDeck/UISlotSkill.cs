@@ -1,14 +1,9 @@
-using Game.HUD;
-
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+using Game.Systems.InventorySystem;
 using Zenject;
 
-namespace Game.Systems.InventorySystem
+namespace Game.Systems.SheetSystem.Skills
 {
-    public class UISlotSkill : UISlot
+    public class UISlotSkill : UISlot<SlotSkill>
     {
         private bool isInitialized = false;
 
@@ -20,19 +15,25 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
+		protected override void UpdateUI()
+		{
+			bool isEmpty = Slot.IsEmpty;
+			Icon.enabled = !isEmpty;
+			Icon.sprite = !isEmpty ? Slot.skill.information.portrait : null;
+		}
+
+		public override void Drop(UISlot slot) { }
+
 		public override void OnSpawned(IMemoryPool pool)
 		{
 			if (!isInitialized)
 			{
 				containerHandler.Subscribe(this);
+				isInitialized = true;
 			}
-
-			isInitialized = true;
 
 			base.OnSpawned(pool);
 		}
-
-		public override void Drop(UISlot slot) { }
 
 		public class Factory : PlaceholderFactory<UISlotSkill> { }
     }
