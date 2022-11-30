@@ -168,16 +168,12 @@ namespace Game.HUD
 
 		private void OnPointerEnter(PointerEventData data)
 		{
-			tooltip.SetTarget(CurrentEffect);
-			tooltip.Show();
+			tooltip.EnterTarget(CurrentEffect);
 		}
 
 		private void OnPointerExit(PointerEventData data)
 		{
-			if (tooltip.IsShowing)
-			{
-				tooltip.Hide();
-			}
+			tooltip.ExitTarget();
 		}
 
 		private void OnPointerClick(PointerEventData data)

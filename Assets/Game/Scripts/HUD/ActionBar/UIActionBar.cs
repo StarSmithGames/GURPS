@@ -1,13 +1,12 @@
-using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
-using Game.Systems.InventorySystem;
-using Game.Systems.SheetSystem;
-using Game.UI.CanvasSystem;
+
+using Sirenix.OdinInspector;
 
 using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.Assertions;
 
 using Zenject;
 
@@ -16,8 +15,7 @@ namespace Game.HUD
 	public sealed class UIActionBar : MonoBehaviour
 	{
 		[field: SerializeField] public Transform Content { get; private set; }
-
-		private List<UISlotAction> slots = new List<UISlotAction>();
+		[SerializeField] private List<UISlotAction> slots = new List<UISlotAction>();
 
 		private UISlotAction.Factory actionFactory;
 		private PartyManager partyManager;
@@ -31,26 +29,9 @@ namespace Game.HUD
 
 		private void Start()
 		{
-			Content.DestroyChildren();
-
 			var actionBar = partyManager.PlayerParty.LeaderParty.Sheet.ActionBar;
 
-			CollectionExtensions.Resize(actionBar.Slots, slots,
-			() =>
-			{
-				var action = actionFactory.Create();
-				action.transform.SetParent(Content);
-
-				return action;
-			},
-			() =>
-			{
-				var slot = slots.Last();
-
-				slot.DespawnIt();
-
-				return slot;
-			});
+			Assert.IsTrue(actionBar.Slots.Count == slots.Count);
 
 			for (int i = 0; i < slots.Count; i++)
 			{
@@ -60,6 +41,13 @@ namespace Game.HUD
 
 				slots[i].SetSlot(actionBar.Slots[i]);
 			}
+		}
+
+
+		[Button(DirtyOnClick = true)]
+		private void GetSlots()
+		{
+			slots = GetComponentsInChildren<UISlotAction>().ToList();
 		}
 	}
 }

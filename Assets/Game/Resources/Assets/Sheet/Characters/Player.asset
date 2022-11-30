@@ -44,459 +44,144 @@ MonoBehaviour:
     inventory:
       useRandomItems: 0
       isDynamicRows: 0
-      grid:
-        gridSize: {x: 7, y: 7}
-        cellSize: {x: 24, y: 24}
-        cells:
-        - row: 00000000000000
-        - row: 00000000000000
-        - row: 00000000000000
-        - row: 00000000000000
-        - row: 00000000000000
-        - row: 00000000000000
-        - row: 00000000000000
-      slots:
-      - item:
-          data: {fileID: 11400000, guid: 4d5f0c4e4c0630f48b3c33bac6232bc6, type: 2}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 11400000, guid: 31d913388cddaa146a1d1be9f3d9cea6, type: 2}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 11400000, guid: 1df41a94055db20439681071554e5aa3, type: 2}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 11400000, guid: 7cde3e219ee9ba4488fc4c572778a51b, type: 2}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      - item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
+      inventorySize: 49
+      items:
+      - data: {fileID: 11400000, guid: 4d5f0c4e4c0630f48b3c33bac6232bc6, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 30de1c84827915745ad9251b08a0cc3d, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: c32f9bbed9c011d4c8fdbb9ae912fddd, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 669af4225c959144ca54181b4059c7ed, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: e3f3989e83f8881498078c7fdbb24787, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: e3f3989e83f8881498078c7fdbb24787, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 12a0c06ab07214d4d99e94c683b71d09, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 31d913388cddaa146a1d1be9f3d9cea6, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 2458c1b0df8f4b54680153f505ca1dea, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 56e3432160368474fbcd08890e27ca6d, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 40ae7b9662b044e428f0ce5248a72da3, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 113dc4e5942078f45b446a71f767a818, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 1df41a94055db20439681071554e5aa3, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 4555076bacd44e94096e0834690e9ed5, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 509a6ce85bbe8a347a9400df4b9f9469, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 0954bdeaa3b351946a8fddf1ec1b7eb1, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 7cde3e219ee9ba4488fc4c572778a51b, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
       randomSettings:
         isUnique: 0
         useRandomCount: 1
@@ -512,13 +197,161 @@ MonoBehaviour:
         useToolItems: 1
         useMaterialItems: 1
         ignoreList: []
+    equipment:
+      head:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      sholders:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      chest:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      forearms:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      legs:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      feet:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      cloak:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      jewelry:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      ring0:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      ring1:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      trinket:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      main:
+        main:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+        spare:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+      spare:
+        main:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+        spare:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
     actionBar:
-      grid:
-        gridSize: {x: 15, y: 1}
-        cellSize: {x: 16, y: 16}
-        cells:
-        - row: 000000000000000000000000000000
-      slots: []
+      barSize: 15
     skills:
       skills:
       - {fileID: -3500706701960549768, guid: 35dd00ecc4b03e7438c93179dbc22104, type: 3}
@@ -527,7 +360,7 @@ MonoBehaviour:
       abilities:
       - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}
     isImmortal: 0
-  isNPC: 1
+  isNPC: 0
   information:
     portrait: {fileID: 21300000, guid: 3f80cbec08daddb44bb5316bd40a3414, type: 3}
     name: Player

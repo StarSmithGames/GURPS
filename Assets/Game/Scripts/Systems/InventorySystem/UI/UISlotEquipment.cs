@@ -3,16 +3,13 @@ using UnityEngine;
 
 namespace Game.Systems.InventorySystem
 {
-	public class UISlotEquipment : UISlot<Slot>
+	public class UISlotEquipment : UISlot<SlotEquipment>
 	{
 		public bool Mark { get; set; }
 
 		[field: Space]
 		[field: SerializeField] public Sprite BaseBackground { get; private set; }
 		[field: SerializeField] public Sprite SwapBackground { get; private set; }
-
-		private Color one = Color.white;
-		private Color oneHalfAlpha = new Color(1, 1, 1, 0.5f);
 
 		private void Start()
 		{
@@ -33,7 +30,6 @@ namespace Game.Systems.InventorySystem
 			//Background.sprite = IsEmpty ? SwapBackground : BaseBackground;
 		}
 
-		[Button(DirtyOnClick = true)]
 		private void Swap()
 		{
 			Background.sprite = Background.sprite == BaseBackground ? SwapBackground : BaseBackground;
@@ -41,7 +37,6 @@ namespace Game.Systems.InventorySystem
 
 		public override void Drop(UISlot slot)
 		{
-			throw new System.NotImplementedException();
 		}
 	}
 }

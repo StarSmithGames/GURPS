@@ -82,12 +82,12 @@ namespace Game.Systems.SheetSystem
 
     public sealed class CharacterSheet : EntitySheet
     {
-        //public IEquipment Equipment { get; private set; }
+		public Equipment Equipment { get; private set; }
 
-        public CharacterSheet(CharacterData data) : base(data.information, data.sheet)
+		public CharacterSheet(CharacterData data) : base(data.information, data.sheet)
         {
-            //Equipment = new Equipment(data.sheet.equipment, Inventory);
-        }
+			Equipment = new Equipment(data.sheet.equipment, this);
+		}
 
         public Data GetData()
 		{
@@ -127,14 +127,14 @@ namespace Game.Systems.SheetSystem
 
         [TabGroup("GroupB", "Inventory")]
         public InventorySettings inventory;
-        [TabGroup("GroupB", "ActionBar")]
+		[TabGroup("GroupB", "Equipment")]
+		public EquipmentSettings equipment;
+		[TabGroup("GroupB", "ActionBar")]
         public ActionBarSettings actionBar;
         [TabGroup("GroupB", "Skills")]
         public SkillsSettings skills;
 
-        //[TabGroup("GroupB", "Equipment")]
-        //public EquipmentSettings equipment;
-
+        
         [TabGroup("GroupC", "Abilities")]
         public AbilitiesSettings abilities;
 

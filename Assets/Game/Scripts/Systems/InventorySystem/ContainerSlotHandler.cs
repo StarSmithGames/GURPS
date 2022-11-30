@@ -28,7 +28,6 @@ namespace Game.Systems.InventorySystem
 		private UISubCanvas canvas;
 		private UIDragItem dragItem;
 		private UITooltip tooltip;
-		private UIContainerWindow.Factory containerFactory;
 		private PartyManager partyManager;
 		private ContextMenuSystem contextMenuSystem;
 
@@ -36,14 +35,12 @@ namespace Game.Systems.InventorySystem
 			UISubCanvas canvas,
 			UIDragItem itemCursor,
 			UITooltip tooltip,
-			UIContainerWindow.Factory containerFactory,
 			PartyManager partyManager,
 			ContextMenuSystem contextMenuSystem)
 		{
 			this.canvas = canvas;
 			this.dragItem = itemCursor;
 			this.tooltip = tooltip;
-			this.containerFactory = containerFactory;
 			this.partyManager = partyManager;
 			this.contextMenuSystem = contextMenuSystem;
 		}
@@ -78,17 +75,13 @@ namespace Game.Systems.InventorySystem
 		{
 			if (IsDraging) return;
 
-			if (!slot.IsEmpty)
-			{
-				tooltip.SetTarget(slot);
-				tooltip.Show();
-			}
+			tooltip.EnterTarget(slot);
 		}
 		public void OnPointerExit(UISlot slot, PointerEventData eventData)
 		{
 			if (IsDraging) return;
 
-			HideTooltip();
+			tooltip.ExitTarget(slot);
 		}
 
 		public void OnPointerClick(UISlot slot, PointerEventData eventData)
@@ -136,13 +129,13 @@ namespace Game.Systems.InventorySystem
 							from.Remove(item);
 						}
 
-						HideTooltip();
+						tooltip.ExitTarget(slot);
 					}
 					else if (eventData.button == PointerEventData.InputButton.Right)
 					{
 						contextMenuSystem.SetTarget(item);
 
-						HideTooltip();
+						tooltip.ExitTarget(slot);
 					}
 
 					break;
@@ -156,7 +149,7 @@ namespace Game.Systems.InventorySystem
 						//to.Add(item);
 						//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
 
-						HideTooltip();
+						tooltip.ExitTarget(slot);
 					}
 
 					break;
@@ -168,18 +161,18 @@ namespace Game.Systems.InventorySystem
 						if (eventData.clickCount > 0)
 						{
 							actionSlot.Use();
-							HideTooltip();
+							tooltip.ExitTarget(slot);
 						}
 					}
 					else if (eventData.button == PointerEventData.InputButton.Right)
 					{
 						actionSlot.ContextMenu();
-						HideTooltip();
+						tooltip.ExitTarget(slot);
 					}
 					else if(eventData.button == PointerEventData.InputButton.Middle)
 					{
 						actionSlot.Dispose();
-						HideTooltip();
+						tooltip.ExitTarget(slot);
 					}
 					break;
 				}
@@ -199,7 +192,7 @@ namespace Game.Systems.InventorySystem
 
 			IsDraging = true;
 
-			HideTooltip();
+			tooltip.ExitTarget(slot);
 			partyManager.PlayerParty.LeaderParty.Model.Freeze(true);
 
 			provider = new DragAndDropProvider();
@@ -230,14 +223,6 @@ namespace Game.Systems.InventorySystem
 			provider.OnDrop(slot);
 		}
 		#endregion
-
-		private void HideTooltip()
-		{
-			if (tooltip.IsShowing)
-			{
-				tooltip.Hide();
-			}
-		}
 	}
 
 	public class DragAndDropProvider

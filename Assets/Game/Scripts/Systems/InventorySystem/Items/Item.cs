@@ -5,6 +5,9 @@ using UnityEngine.Assertions;
 using Sirenix.OdinInspector;
 using Game.Managers.StorageManager;
 using Game.Systems.SheetSystem;
+using Sirenix.OdinInspector.Editor;
+using Sirenix.Utilities.Editor;
+using Sirenix.Utilities;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -200,7 +203,7 @@ namespace Game.Systems.InventorySystem
 			return $"{data?.information.GetName() ?? "NULL Data"} {(data != null ? (data.isStackable ? $" x{CurrentStackSize}" : "") : "")}";
 		}
 
-		public string Title => data?.GetName() ?? "NULL Data";
+		public string Title => useRandom ? "Random Item" : data?.GetName() ?? "NULL Data";
 
 
 		/// GUI use in Nodes
@@ -322,4 +325,36 @@ namespace Game.Systems.InventorySystem
 		}
 #endif
 	}
+
+#if UNITY_EDITOR
+	[CustomPropertyDrawer(typeof(Item))]
+	public class ItemDrawer : OdinValueDrawer<Item>
+	{
+		private bool isFoldout = false;
+
+		protected override void DrawPropertyLayout(GUIContent label)
+		{
+			Item item = this.ValueEntry.SmartValue;
+			if (item.useRandom)
+			{
+				isFoldout = SirenixEditorGUI.Foldout(isFoldout, label);
+				if (SirenixEditorGUI.BeginFadeGroup(this, isFoldout))
+				{
+					item.useRandom = GUILayout.Toggle(item.useRandom, "Use Random?");
+
+					if (GUILayout.Button("Test"))
+					{
+					}
+				}
+				SirenixEditorGUI.EndFadeGroup();
+
+				this.ValueEntry.SmartValue = item;
+			}
+			else
+			{
+				CallNextDrawer(label);
+			}
+		}
+	}
+#endif
 }

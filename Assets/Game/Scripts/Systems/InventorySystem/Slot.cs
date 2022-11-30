@@ -1,10 +1,6 @@
 ﻿using Game.Systems.SheetSystem;
 using Game.Systems.SheetSystem.Skills;
-
 using Sirenix.OdinInspector;
-
-using UnityEditor.Experimental.GraphView;
-
 using UnityEngine.Events;
 
 namespace Game.Systems.InventorySystem
@@ -69,7 +65,81 @@ namespace Game.Systems.InventorySystem
 		private string Title => $"Inventory Slot with {item.Title}";
     }
 
-    [System.Serializable]
+	[System.Serializable]
+	public class SlotEquipment : Slot, ICopyable<SlotEquipment>
+    {
+		public override bool IsEmpty => item?.ItemData == null;
+        public bool Mark { get; set; }
+        public Equipment CurrentEquipment { get; private set; }
+
+        [HideLabel]
+        public Item item;
+
+        public void SetOwner(Equipment equipment)
+        {
+            CurrentEquipment = equipment;
+        }
+
+        public bool SetItem(Item item)
+		{
+            if (item != null)
+            {
+                if (item.ItemData == null)
+                {
+                    item = null;
+                }
+            }
+
+            this.item = item;
+
+            onChanged?.Invoke();
+
+            return true;
+        }
+
+        public void Swap(SlotEquipment slot)
+		{
+            Item item = slot.item;
+            slot.SetItem(this.item);
+            SetItem(item);
+		}
+
+		public override void Dispose()
+		{
+            //CurrentEquipment.Remove(item);
+			item = null;
+
+            onChanged?.Invoke();
+        }
+
+		public SlotEquipment Copy()
+		{
+            return new SlotEquipment()
+            {
+                item = item,
+            };
+        }
+
+        private string Title => $"Equipment Slot with {item.Title}";
+    }
+
+	[System.Serializable]
+	public class SlotWeaponEquipment : ICopyable<SlotWeaponEquipment>
+	{
+        public SlotEquipment main;
+        public SlotEquipment spare;
+
+        public SlotWeaponEquipment Copy()
+		{
+            return new SlotWeaponEquipment()
+            {
+                main = main.Copy(),
+                spare = spare.Copy(),
+            };
+		}
+	}
+
+	[System.Serializable]
     public class SlotAction : Slot, ICopyable<SlotAction>
     {
         public override bool IsEmpty => action == null;

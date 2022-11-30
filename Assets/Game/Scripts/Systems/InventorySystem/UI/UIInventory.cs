@@ -27,7 +27,7 @@ namespace Game.Systems.InventorySystem
 		}
 
 		[Button(DirtyOnClick = true)]
-		private void GetAllSlots()
+		private void GetSlots()
 		{
 			Slots = Content.GetComponentsInChildren<UISlotInventory>().ToList();
 		}

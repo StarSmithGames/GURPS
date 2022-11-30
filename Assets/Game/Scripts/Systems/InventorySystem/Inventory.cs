@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
-using Array2DEditor;
 
 namespace Game.Systems.InventorySystem
 {
@@ -19,13 +18,18 @@ namespace Game.Systems.InventorySystem
         {
             Slots = new List<SlotInventory>();
 
-            for (int i = 0; i < settings.slots.Count; i++)
+            for (int i = 0; i < settings.inventorySize; i++)
             {
-                SlotInventory slot = settings.slots[i].Copy();
+                SlotInventory slot = new SlotInventory();
                 slot.SetOwner(this);
 
                 Slots.Add(slot);
             }
+
+			for (int i = 0; i < settings.items.Count; i++)
+			{
+                Slots[i].SetItem(settings.items[i]);
+			}
         }
 
         public List<Item> GetItems()
@@ -162,14 +166,12 @@ namespace Game.Systems.InventorySystem
         public bool useRandomItems = false;
 
         [ReadOnly] public bool isDynamicRows = false;
-
-        [InfoBox("Toggle NOT work, use only for size.")]
-        public Array2DBool grid;
+        [ReadOnly] public int inventorySize = 49;
 
         //sort by
         [HideIf("useRandomItems")]
         [ListDrawerSettings(ShowIndexLabels = true, ListElementLabelName = "Title")]
-        public List<SlotInventory> slots = new List<SlotInventory>();
+        public List<Item> items = new List<Item>();
 
         [ShowIf("useRandomItems")]
         [InlineProperty]
@@ -204,25 +206,6 @@ namespace Game.Systems.InventorySystem
             //}
 
             return result;
-        }
-        
-        [Button("Update Slots", DirtyOnClick = true)]
-        private void UpdateSlots()
-		{
-            int size = grid.GridSize.x * grid.GridSize.y;
-            CollectionExtensions.Resize(size, slots,
-            () =>
-			{
-                return new SlotInventory();
-            },
-            () =>
-			{
-				if (slots.Any((x) => x.item.ItemData == null))
-				{
-                    return slots.First((x) => x.item.ItemData == null);
-				}
-                return slots.Last();
-			});
         }
     }
 

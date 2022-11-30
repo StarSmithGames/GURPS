@@ -1,15 +1,8 @@
-using Game.Systems.CutomizationSystem;
-
 using Sirenix.OdinInspector;
-
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
-
-using Zenject;
+using UnityEngine.Assertions;
 
 namespace Game.Systems.InventorySystem
 {
@@ -21,70 +14,49 @@ namespace Game.Systems.InventorySystem
 		[field: SerializeField] public UISlotEquipment Forearms { get; private set; }
 		[field: SerializeField] public UISlotEquipment Legs { get; private set; }
 		[field: SerializeField] public UISlotEquipment Feet { get; private set; }
-		[field: Space]
-		[field: SerializeField] public UISlotEquipment Weapon00 { get; private set; }
-		[field: SerializeField] public UISlotEquipment Weapon01 { get; private set; }
-		[field: SerializeField] public UISlotEquipment Weapon10 { get; private set; }
-		[field: SerializeField] public UISlotEquipment Weapon11 { get; private set; }
-		[field: Space]
 		[field: SerializeField] public UISlotEquipment Cloak { get; private set; }
 		[field: SerializeField] public UISlotEquipment Jewelry { get; private set; }
 		[field: SerializeField] public UISlotEquipment Ring0 { get; private set; }
 		[field: SerializeField] public UISlotEquipment Ring1 { get; private set; }
 		[field: SerializeField] public UISlotEquipment Trinket { get; private set; }
+		[field: Space]
+		[field: SerializeField] public UISlotEquipment Weapon00 { get; private set; }
+		[field: SerializeField] public UISlotEquipment Weapon01 { get; private set; }
+		[field: SerializeField] public UISlotEquipment Weapon10 { get; private set; }
+		[field: SerializeField] public UISlotEquipment Weapon11 { get; private set; }
 
-		public UISlotEquipment[] slots;
+		[field: SerializeField] public List<UISlotEquipment> Slots { get; private set; }
 
-		//public IEquipment CurrentEquipment => currentEquipment;
-		//private IEquipment currentEquipment;
+		public Equipment CurrentEquipment { get; private set; }
 
-		private ContainerSlotHandler containerHandler;
-
-		[Inject]
-		private void Construct(ContainerSlotHandler containerHandler)
+		public void SetEquipment(Equipment equipment)
 		{
-			this.containerHandler = containerHandler;
+			CurrentEquipment = equipment;
 
-			//for (int i = 0; i < slots.Length; i++)
-			//{
-			//	slots[i].SetOwner(this);
-			//}
+			Assert.AreEqual(15, Slots.Count, "Slots length not equal!");
 
-			//containerHandler.Subscribe(slots);
+			Head.SetSlot(CurrentEquipment.Head);
+			Sholders.SetSlot(CurrentEquipment.Sholders);
+			Chest.SetSlot(CurrentEquipment.Chest);
+			Forearms.SetSlot(CurrentEquipment.Forearms);
+			Legs.SetSlot(CurrentEquipment.Legs);
+			Feet.SetSlot(CurrentEquipment.Feet);
+			Cloak.SetSlot(CurrentEquipment.Cloak);
+			Jewelry.SetSlot(CurrentEquipment.Jewelry);
+			Ring0.SetSlot(CurrentEquipment.Ring0);
+			Ring1.SetSlot(CurrentEquipment.Ring1);
+			Trinket.SetSlot(CurrentEquipment.Trinket);
+
+			Weapon00.SetSlot(CurrentEquipment.WeaponMain.main);
+			Weapon01.SetSlot(CurrentEquipment.WeaponMain.spare);
+			Weapon10.SetSlot(CurrentEquipment.WeaponSpare.main);
+			Weapon11.SetSlot(CurrentEquipment.WeaponSpare.spare);
 		}
 
-		private void OnDestroy()
+		[Button(DirtyOnClick = true)]
+		private void GetSlots()
 		{
-			//containerHandler.UnSubscribe(slots);
-		}
-
-		//public void SetEquipment(IEquipment equipment)
-		//{
-		//	currentEquipment = equipment;
-
-		//	Head.SetSlot(currentEquipment.Head);
-		//	Sholders.SetSlot(currentEquipment.Sholders);
-		//	Chest.SetSlot(currentEquipment.Chest);
-		//	Forearms.SetSlot(currentEquipment.Forearms);
-		//	Legs.SetSlot(currentEquipment.Legs);
-		//	Feet.SetSlot(currentEquipment.Feet);
-
-		//	Weapon00.SetSlot(currentEquipment.WeaponMain.Main);
-		//	Weapon01.SetSlot(currentEquipment.WeaponMain.Spare);
-		//	Weapon10.SetSlot(currentEquipment.WeaponSpare.Main);
-		//	Weapon11.SetSlot(currentEquipment.WeaponSpare.Spare);
-
-		//	Cloak.SetSlot(currentEquipment.Cloak);
-		//	Jewelry.SetSlot(currentEquipment.Jewelry);
-		//	Ring0.SetSlot(currentEquipment.Ring0);
-		//	Ring1.SetSlot(currentEquipment.Ring1);
-		//	Trinket.SetSlot(currentEquipment.Trinket);
-		//}
-
-		[Button]
-		private void GetAllSlots()
-		{
-			slots = GetComponentsInChildren<UISlotEquipment>();
+			Slots = GetComponentsInChildren<UISlotEquipment>().ToList();
 		}
 	}
 }

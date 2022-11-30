@@ -46,14 +46,33 @@ namespace Game.Systems.TooltipSystem
 			Enable(false);
 		}
 
-		public void SetTarget(IEffect effect)
+		public void EnterTarget(IEffect effect)
 		{
-
+			Show();
 		}
 
-		public void SetTarget(UISlot slot)
+		public void EnterTarget(UISlot slot)
 		{
+			if (!slot.IsEmpty)
+			{
+				Show();
+			}
+		}
 
+		public void ExitTarget()
+		{
+			if (IsShowing)
+			{
+				Hide();
+			}
+		}
+
+		public void ExitTarget(UISlot slot)
+		{
+			if (IsShowing)
+			{
+				Hide();
+			}
 		}
 
 		public void UpdatePositionFromMouse()

@@ -1,15 +1,15 @@
-using Array2DEditor;
 using Game.Systems.InventorySystem;
 
 using Sirenix.OdinInspector;
+
 using System.Collections.Generic;
 using System.Linq;
-
+using UnityEditor;
 using UnityEngine.Events;
 
 namespace Game.Systems.SheetSystem
 {
-    public class ActionBar
+    public sealed class ActionBar
     {
         public UnityAction onActionBarChanged;
 
@@ -21,9 +21,9 @@ namespace Game.Systems.SheetSystem
 		{
             Slots = new List<SlotAction>();
 
-			for (int i = 0; i < settings.slots.Count; i++)
+			for (int i = 0; i < settings.barSize; i++)
 			{
-                Slots.Add(settings.slots[i].Copy());
+                Slots.Add(new SlotAction());
 			}
 
             this.sheet = sheet;
@@ -74,31 +74,12 @@ namespace Game.Systems.SheetSystem
     }
 
     [System.Serializable]
-    public class ActionBarSettings
+    public sealed class ActionBarSettings
 	{
-        [InfoBox("Toggle NOT work, use only for size.")]
-        public Array2DBool grid;
-
-        [ListDrawerSettings(ShowIndexLabels = true, ListElementLabelName = "Title")]
-        public List<SlotAction> slots = new List<SlotAction>();
-
-        [Button("Update Slots", DirtyOnClick = true)]
-        private void UpdateSlots()
-        {
-            int size = grid.GridSize.x * grid.GridSize.y;
-            CollectionExtensions.Resize(size, slots,
-            () =>
-            {
-                return new SlotAction();
-            },
-            () =>
-            {
-                if (slots.Any((x) => x.action == null))
-                {
-                    return slots.First((x) => x.action == null);
-                }
-                return slots.Last();
-            });
-        }
+        [ReadOnly]
+        public int barSize = 15; 
+        //[MinValue(15)]
+        //[ListDrawerSettings(ShowIndexLabels = true, ListElementLabelName = "Title")]
+        //public List<SlotAction> slots = new List<SlotAction>();
     }
 }
