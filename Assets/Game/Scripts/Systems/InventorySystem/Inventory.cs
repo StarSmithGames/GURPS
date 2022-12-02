@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
+using Game.Systems.SheetSystem;
 
 namespace Game.Systems.InventorySystem
 {
@@ -14,14 +15,14 @@ namespace Game.Systems.InventorySystem
 
         public List<SlotInventory> Slots { get; set; }
 
-        public Inventory(InventorySettings settings)
+        public Inventory(InventorySettings settings, ISheet sheet)
         {
             Slots = new List<SlotInventory>();
 
             for (int i = 0; i < settings.inventorySize; i++)
             {
                 SlotInventory slot = new SlotInventory();
-                slot.SetOwner(this);
+                slot.SetOwner(sheet);
 
                 Slots.Add(slot);
             }
@@ -65,8 +66,10 @@ namespace Game.Systems.InventorySystem
 								item.CurrentStackSize -= currentStackSize;
 								items[i].CurrentStackSize += currentStackSize;
 
-								onInventoryChanged?.Invoke();
-
+                                if (notify)
+                                {
+                                    onInventoryChanged?.Invoke();
+                                }
 								return true;
 							}
 							else
@@ -74,8 +77,10 @@ namespace Game.Systems.InventorySystem
 								items[i].CurrentStackSize += item.CurrentStackSize;
 								item.CurrentStackSize -= item.CurrentStackSize;
 
-								onInventoryChanged?.Invoke();
-
+                                if (notify)
+                                {
+                                    onInventoryChanged?.Invoke();
+                                }
 								return true;
 							}
 						}
@@ -117,10 +122,21 @@ namespace Game.Systems.InventorySystem
 
         public bool Remove(Item item, bool notify = true)
         {
-			Slots.Find((x) => x.item == item).SetItem(null);
+			Slots.Find((x) => x.item == item).Dispose();
 
 			if (notify)
 			{
+                onInventoryChanged?.Invoke();
+            }
+            return true;
+        }
+
+        public bool RemoveFrom(SlotInventory slot, bool notify = true)
+		{
+            slot.SetItem(null);
+
+            if (notify)
+            {
                 onInventoryChanged?.Invoke();
             }
             return true;

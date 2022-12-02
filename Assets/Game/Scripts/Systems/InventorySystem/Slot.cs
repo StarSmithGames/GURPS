@@ -1,6 +1,10 @@
 ﻿using Game.Systems.SheetSystem;
 using Game.Systems.SheetSystem.Skills;
 using Sirenix.OdinInspector;
+
+using System;
+using System.Linq;
+
 using UnityEngine.Events;
 
 namespace Game.Systems.InventorySystem
@@ -9,7 +13,13 @@ namespace Game.Systems.InventorySystem
 	{
         public UnityAction onChanged;
 
+        public ISheet Sheet { get; private set; }
         public abstract bool IsEmpty { get; }
+
+        public void SetOwner(ISheet sheet)
+        {
+            Sheet = sheet;
+        }
 
         public abstract void Dispose();
     }
@@ -21,13 +31,6 @@ namespace Game.Systems.InventorySystem
 
 		[HideLabel]
         public Item item;
-
-        public Inventory CurrentInventory { get; private set; }
-
-        public void SetOwner(Inventory inventory)
-        {
-            CurrentInventory = inventory;
-        }
 
         public bool SetItem(Item item)
         {
@@ -48,10 +51,7 @@ namespace Game.Systems.InventorySystem
 
         public override void Dispose()
         {
-            CurrentInventory.Remove(item);
-            item = null;
-
-            onChanged?.Invoke();
+            Sheet.Inventory.RemoveFrom(this);
         }
 
         public SlotInventory Copy()
@@ -70,31 +70,19 @@ namespace Game.Systems.InventorySystem
     {
 		public override bool IsEmpty => item?.ItemData == null;
         public bool Mark { get; set; }
-        public Equipment CurrentEquipment { get; private set; }
 
         [HideLabel]
         public Item item;
 
-        public void SetOwner(Equipment equipment)
-        {
-            CurrentEquipment = equipment;
-        }
-
         public bool SetItem(Item item)
 		{
-            if (item != null)
-            {
-                if (item.ItemData == null)
-                {
-                    item = null;
-                }
-            }
+            if((Sheet as CharacterSheet).Equipment.AddTo(item, this))
+			{
+                onChanged?.Invoke();
+                return true;
+			}
 
-            this.item = item;
-
-            onChanged?.Invoke();
-
-            return true;
+            return false;
         }
 
         public void Swap(SlotEquipment slot)
@@ -106,10 +94,7 @@ namespace Game.Systems.InventorySystem
 
 		public override void Dispose()
 		{
-            //CurrentEquipment.Remove(item);
-			item = null;
-
-            onChanged?.Invoke();
+            (Sheet as CharacterSheet).Equipment.RemoveFrom(this);
         }
 
 		public SlotEquipment Copy()

@@ -25,20 +25,34 @@ namespace Game.Systems.InventorySystem
 	{
 		public bool IsDraging { get; private set; }
 
-		private UISubCanvas canvas;
+		private WindowCharacterSheet WindowCharacterSheet
+		{
+			get
+			{
+				if (windowCharacterSheet == null)
+				{
+					windowCharacterSheet = subCanvas.WindowsRegistrator.GetAs<WindowCharacterSheet>();
+				}
+
+				return windowCharacterSheet;
+			}
+		}
+		private WindowCharacterSheet windowCharacterSheet;
+
+		private UISubCanvas subCanvas;
 		private UIDragItem dragItem;
 		private UITooltip tooltip;
 		private PartyManager partyManager;
 		private ContextMenuSystem contextMenuSystem;
 
 		public ContainerSlotHandler(
-			UISubCanvas canvas,
+			UISubCanvas subCanvas,
 			UIDragItem itemCursor,
 			UITooltip tooltip,
 			PartyManager partyManager,
 			ContextMenuSystem contextMenuSystem)
 		{
-			this.canvas = canvas;
+			this.subCanvas = subCanvas;
 			this.dragItem = itemCursor;
 			this.tooltip = tooltip;
 			this.partyManager = partyManager;
@@ -88,15 +102,13 @@ namespace Game.Systems.InventorySystem
 		{
 			if (slot.IsEmpty) return;
 
-			//var equipment = (initiator.Sheet as CharacterSheet).Equipment;
-
 			switch (slot)
 			{
 				case UISlotInventory inventorySlot:
 				{
 					Item item = inventorySlot.Slot.item;
 
-					var from = inventorySlot.Slot.CurrentInventory;
+					var from = inventorySlot.Slot.Sheet.Inventory;
 					var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
 					if (eventData.button == PointerEventData.InputButton.Left)
@@ -107,8 +119,23 @@ namespace Game.Systems.InventorySystem
 							{
 								if (item.IsEquippable)
 								{
-									//equipment.Add(item);
-									from.Remove(item);
+									var equipment = (partyManager.PlayerParty.LeaderParty.Sheet as CharacterSheet).Equipment;
+									if (equipment.Add(item))
+									{
+										from.Remove(item);
+									}
+									else
+									{
+										//try swap with the first slot
+										var slotEquipment = equipment.GetSlotByType(item.ItemData.GetType());
+										if(slotEquipment != null)
+										{
+											Item temp = inventorySlot.Item;
+											inventorySlot.Dispose();
+											to.Add(slotEquipment.item);
+											slotEquipment.SetItem(temp);
+										}
+									}
 								}
 								else if (item.IsConsumable)
 								{
@@ -146,8 +173,8 @@ namespace Game.Systems.InventorySystem
 					{
 						var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
 
-						//to.Add(item);
-						//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
+						to.Add(equipmentSlot.Item);
+						equipmentSlot.Dispose();
 
 						tooltip.ExitTarget(slot);
 					}
@@ -188,7 +215,7 @@ namespace Game.Systems.InventorySystem
 			if (eventData.clickCount > 1) return;
 
 			dragItem.SetIcon(slot.Icon.sprite);
-			dragItem.transform.parent = canvas.transform;
+			dragItem.transform.parent = subCanvas.transform;
 
 			IsDraging = true;
 
@@ -197,6 +224,19 @@ namespace Game.Systems.InventorySystem
 
 			provider = new DragAndDropProvider();
 			provider.OnBeginDrag(slot);
+
+			if(slot is UISlotInventory slotInventory)
+			{
+				if (slotInventory.Item.IsEquippable)
+				{
+					var equipment = (partyManager.PlayerParty.LeaderParty.Sheet as CharacterSheet).Equipment;
+					var slots = equipment.GetSlotsByType(slotInventory.Item.ItemData.GetType());
+					WindowCharacterSheet.Equipment.Slots.ForEach((x) =>
+					{
+						x.EnableProhibition(!slots.Contains(x.Slot));
+					});
+				}
+			}
 		}
 		public void OnDrag(UISlot slot, PointerEventData eventData)
 		{
@@ -208,6 +248,11 @@ namespace Game.Systems.InventorySystem
 		public void OnEndDrag(UISlot slot, PointerEventData eventData)
 		{
 			provider?.OnEndDrag(slot);
+
+			WindowCharacterSheet.Equipment.Slots.ForEach((x) =>
+			{
+				x.EnableProhibition(false);
+			});
 
 			dragItem.Dispose();
 			provider = null;
@@ -272,13 +317,13 @@ namespace Game.Systems.InventorySystem
 					if (inventorySlot.IsEmpty)
 					{
 						inventorySlot.SetItem(begin.Item);
-						begin.Slot.SetItem(null);
+						begin.Dispose();
 					}
 					else
 					{
 						if (inventorySlot.Item.IsStackable)
 						{
-							inventorySlot.Item.TryAdd(begin.Item);
+							inventorySlot.Item.TryAdd(begin.Item);//
 						}
 						else
 						{
@@ -287,35 +332,77 @@ namespace Game.Systems.InventorySystem
 					}
 					break;
 				}
-
 				case UISlotEquipment equipmentSlot:
 				{
-					//to.Add(item);
-					//equipment.RemoveFrom(equipmentSlot.CurrentEquip);
-
-					//if (beginSlot is UISlotEquipment neiborSlot)//UISlotEquipment on UISlotEquipment
-					//{
-					//	equipment.Swap(neiborSlot.CurrentEquip, equipmentSlot.CurrentEquip);
-					//}
-					//else//UISlotInventory on UISlotEquipment
-					//{
-					//	if (from != null)
-					//	{
-					//		if (equipment.AddTo(item, equipmentSlot.CurrentEquip))
-					//		{
-					//			from.Remove(item);
-					//		}
-					//	}
-					//}
+					if (equipmentSlot.IsEmpty)
+					{
+						if (equipmentSlot.SetItem(begin.Item))
+						{
+							begin.Dispose();
+						}
+					}
+					else
+					{
+						Item from = begin.Item;
+						Item to = equipmentSlot.Item;
+						if (equipmentSlot.SetItem(from))
+						{
+							begin.SetItem(to);
+						}
+					}
 
 					break;
 				}
-
 				case UISlotAction actionSlot:
 				{
 					if (!begin.Item.IsConsumable) return;
 
 					actionSlot.SetAction(begin.Item);
+					break;
+				}
+			}
+		}
+	}
+
+	public static class EquipmentDrop
+	{
+		public static void Process(UISlotEquipment begin, UISlot end)
+		{
+			switch (end)
+			{
+				case UISlotInventory inventorySlot:
+				{
+					if (inventorySlot.IsEmpty)
+					{
+						inventorySlot.SetItem(begin.Item);
+						begin.Dispose();
+					}
+					else
+					{
+						inventorySlot.Slot.Sheet.Inventory.Add(begin.Item);
+						begin.Dispose();
+					}
+					break;
+				}
+				case UISlotEquipment equipmentSlot:
+				{
+					if (equipmentSlot.IsEmpty)
+					{
+						if (equipmentSlot.SetItem(begin.Item))
+						{
+							begin.Dispose();
+						}
+					}
+					else
+					{
+						//swap
+						Item from = begin.Item;
+						Item to = equipmentSlot.Item;
+						if (equipmentSlot.SetItem(from))
+						{
+							begin.SetItem(to);
+						}
+					}
 					break;
 				}
 			}

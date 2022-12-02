@@ -68,7 +68,7 @@ namespace Game.Systems.SheetSystem
             Stats = new Stats(Settings.stats);
             Characteristics = new Characteristics(Settings.characteristics);
             
-            Inventory = new Inventory(Settings.inventory);
+            Inventory = new Inventory(Settings.inventory, this);
             ActionBar = new ActionBar(Settings.actionBar, this);
 
             Conditions = new Conditions();

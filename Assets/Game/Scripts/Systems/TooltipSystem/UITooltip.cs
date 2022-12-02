@@ -69,10 +69,7 @@ namespace Game.Systems.TooltipSystem
 
 		public void ExitTarget(UISlot slot)
 		{
-			if (IsShowing)
-			{
-				Hide();
-			}
+			ExitTarget();
 		}
 
 		public void UpdatePositionFromMouse()

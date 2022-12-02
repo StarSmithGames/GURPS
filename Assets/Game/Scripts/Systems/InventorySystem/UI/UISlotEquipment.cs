@@ -1,15 +1,21 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.Systems.InventorySystem
 {
 	public class UISlotEquipment : UISlot<SlotEquipment>
 	{
-		public bool Mark { get; set; }
-
 		[field: Space]
 		[field: SerializeField] public Sprite BaseBackground { get; private set; }
 		[field: SerializeField] public Sprite SwapBackground { get; private set; }
+		[field: SerializeField] public Image Prohibition { get; private set; }
+
+		public bool Mark { get; set; }
+		public Item Item => Slot.item;
+
+		private Color one = Color.white;
+		private Color oneHalfAlpha = new Color(1, 1, 1, 0.5f);
 
 		private void Start()
 		{
@@ -21,13 +27,23 @@ namespace Game.Systems.InventorySystem
 			containerHandler.Unsubscribe(this);
 		}
 
+		public bool SetItem(Item item)
+		{
+			return Slot.SetItem(item);
+		}
+
 		protected override void UpdateUI()
 		{
-			//Icon.enabled = !IsEmpty;
-			//Icon.sprite = CurrentItem?.ItemData.information?.portrait;
-			//Icon.color = Mark ? oneHalfAlpha : one;
+			Icon.enabled = !IsEmpty;
+			Icon.sprite = Item?.ItemData?.information.portrait;
+			Icon.color = Mark ? oneHalfAlpha : one;
 
-			//Background.sprite = IsEmpty ? SwapBackground : BaseBackground;
+			Background.sprite = IsEmpty ? SwapBackground : BaseBackground;
+		}
+
+		public void EnableProhibition(bool trigger)
+		{
+			Prohibition.enabled = trigger;
 		}
 
 		private void Swap()
@@ -37,6 +53,7 @@ namespace Game.Systems.InventorySystem
 
 		public override void Drop(UISlot slot)
 		{
+			EquipmentDrop.Process(this, slot);
 		}
 	}
 }

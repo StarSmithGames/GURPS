@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -64,9 +65,14 @@ namespace Game.Systems.InventorySystem
 				{ Ring0,    new Type[]{typeof(RingItemData) } },
 				{ Ring1,    new Type[]{typeof(RingItemData) } },
 			};
+
+			foreach (var armor in ArmorsByTypes)
+			{
+				armor.Key.SetOwner(sheet);
+			}
 		}
 
-		public bool Add(Item item)
+		public bool Add(Item item, bool notify = true)
 		{
 			if (item.IsWeapon)
 			{
@@ -74,105 +80,82 @@ namespace Game.Systems.InventorySystem
 			}
 			else if (item.IsArmor)
 			{
-				return AddArmor(item);
-			}
-
-			return false;
-		}
-		public bool AddTo(Item item, UISlotEquipment equip)
-		{
-			if (item.IsWeapon)
-			{
-				//if (WeaponMain.Contains(equip))
-				//{
-				//	return WeaponMain.AddTo(equip, item);
-				//}
-				//else if (WeaponSpare.Contains(equip))
-				//{
-				//	return WeaponSpare.AddTo(equip, item);
-				//}
-			}
-			else if (item.IsArmor)
-			{
-				//if (AddArmorTo(item, equip))
-				//{
-				//	return true;
-				//}
-				return AddArmor(item);
-			}
-
-
-			return false;
-		}
-
-		public bool RemoveFrom(SlotEquipment equip)
-		{
-			if (!equip.IsEmpty)
-			{
-				if (equip.item.IsWeapon)
+				foreach (var armor in ArmorsByTypes)
 				{
-					//if (WeaponMain.Contains(equip))
-					//{
-					//	return WeaponMain.RemoveFrom(equip);
-					//}
-					//else if (WeaponSpare.Contains(equip))
-					//{
-					//	return WeaponSpare.RemoveFrom(equip);
-					//}
-				}
-				else if (equip.item.IsArmor)
-				{
-					equip.SetItem(null);
-					OnEquipmentChanged?.Invoke();
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-
-		private bool AddArmor(Item item)
-		{
-			foreach (var armor in ArmorsByTypes)
-			{
-				if (AddArmorTo(item, armor.Key))
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-		private bool AddArmorTo(Item item, SlotEquipment equip)
-		{
-			if (IsCanAddTo(item, equip))
-			{
-				if (!equip.IsEmpty)
-				{
-					//inventory.Add(equip.item);
-				}
-				equip.SetItem(item);
-				OnEquipmentChanged?.Invoke();
-				return true;
-			}
-
-			return false;
-		}
-		private bool IsCanAddTo(Item item, SlotEquipment equip)
-		{
-			if (ArmorsByTypes.TryGetValue(equip, out Type[] types))
-			{
-				for (int i = 0; i < types.Length; i++)
-				{
-					if (types[i].IsAssignableFrom(item.ItemData.GetType()))
+					if (armor.Key.IsEmpty)
 					{
-						return true;
+						if (armor.Key.SetItem(item))
+						{
+							if (notify)
+							{
+								OnEquipmentChanged?.Invoke();
+							}
+							return true;
+						}
+					}
+					else
+					{
+						continue;
 					}
 				}
 			}
 
 			return false;
+		}
+
+		public bool AddTo(Item item, SlotEquipment slot, bool notify = true)
+		{
+			if (item != null && !IsTypeValid(slot, item)) return false;
+
+			if (item != null)
+			{
+				if (item.ItemData == null)
+				{
+					item = null;
+				}
+			}
+
+			slot.item = item;
+
+			if (notify)
+			{
+				OnEquipmentChanged?.Invoke();
+			}
+
+			return true;
+		}
+
+		public bool RemoveFrom(SlotEquipment slot, bool notify = true)
+		{
+			slot.SetItem(null);
+
+			if (notify)
+			{
+				OnEquipmentChanged?.Invoke();
+			}
+
+			return true;
+
+			//if (!equip.IsEmpty)
+			//{
+			//	if (equip.item.IsWeapon)
+			//	{
+			//		//if (WeaponMain.Contains(equip))
+			//		//{
+			//		//	return WeaponMain.RemoveFrom(equip);
+			//		//}
+			//		//else if (WeaponSpare.Contains(equip))
+			//		//{
+			//		//	return WeaponSpare.RemoveFrom(equip);
+			//		//}
+			//	}
+			//	else if (equip.item.IsArmor)
+			//	{
+			//		equip.SetItem(null);
+			//		OnEquipmentChanged?.Invoke();
+			//		return true;
+			//	}
+			//}
 		}
 
 		public bool Swap(SlotEquipment from, SlotEquipment to)
@@ -182,12 +165,12 @@ namespace Game.Systems.InventorySystem
 
 			if (weaponFrom == null && weaponTo == null)//armor swap
 			{
-				if (IsCanAddTo(from.item, to))
-				{
-					from.Swap(to);
-					OnEquipmentChanged?.Invoke();
-					return true;
-				}
+				//if (IsCanAddTo(from.item, to))
+				//{
+				//	from.Swap(to);
+				//	OnEquipmentChanged?.Invoke();
+				//	return true;
+				//}
 			}
 			else if (weaponFrom != null && weaponTo != null)//weapon swap
 			{
@@ -293,6 +276,29 @@ namespace Game.Systems.InventorySystem
 		{
 			//if (WeaponMain.Contains(equip)) return WeaponMain;
 			return null;//WeaponSpare;
+		}
+
+		public SlotEquipment GetSlotByType(Type type)
+		{
+			return ArmorsByTypes.First((pars) => pars.Value.Any((t) => t.IsAssignableFrom(type))).Key;
+		}
+
+		public List<SlotEquipment> GetSlotsByType(Type type)
+		{
+			return ArmorsByTypes.Where((pars) => pars.Value.Any((t) => t.IsAssignableFrom(type))).Select((x) => x.Key).ToList();
+		}
+
+		private bool IsTypeValid(SlotEquipment slot, Item item)
+		{
+			if (ArmorsByTypes.TryGetValue(slot, out Type[] types))
+			{
+				if (types.Any((x) => x.IsAssignableFrom(item.ItemData.GetType())))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public Data GetData()

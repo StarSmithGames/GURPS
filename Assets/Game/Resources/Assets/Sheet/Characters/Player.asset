@@ -118,6 +118,14 @@ MonoBehaviour:
         currentWeight: 0.01
         currentDurability: 100
         isShowFoldout: 0
+      - data: {fileID: 11400000, guid: eb59ebc108b3b674585f466ff415c3db, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
       - data: {fileID: 11400000, guid: 56e3432160368474fbcd08890e27ca6d, type: 2}
         useRandom: 0
         currentStackSize: 1
@@ -175,6 +183,14 @@ MonoBehaviour:
         currentDurability: 100
         isShowFoldout: 0
       - data: {fileID: 11400000, guid: 7cde3e219ee9ba4488fc4c572778a51b, type: 2}
+        useRandom: 0
+        currentStackSize: 1
+        minimumStackSizeRandom: 0
+        maximumStackSizeRandom: 0
+        currentWeight: 0.01
+        currentDurability: 100
+        isShowFoldout: 0
+      - data: {fileID: 11400000, guid: 509a6ce85bbe8a347a9400df4b9f9469, type: 2}
         useRandom: 0
         currentStackSize: 1
         minimumStackSizeRandom: 0
