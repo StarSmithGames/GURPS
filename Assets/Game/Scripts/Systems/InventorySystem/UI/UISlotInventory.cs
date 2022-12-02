@@ -33,7 +33,7 @@ namespace Game.Systems.InventorySystem
 
 		public override void Drop(UISlot slot)
 		{
-			InventoryDrop.Process(this, slot);
+			InventoryPointer.Drop(this, slot);
 		}
 
 		protected override void UpdateUI()

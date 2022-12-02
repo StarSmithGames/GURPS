@@ -106,7 +106,7 @@ namespace Game.Systems.InventorySystem
 			{
 				case UISlotInventory inventorySlot:
 				{
-					Item item = inventorySlot.Slot.item;
+					Item item = inventorySlot.Item;
 
 					var from = inventorySlot.Slot.Sheet.Inventory;
 					var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
@@ -115,38 +115,7 @@ namespace Game.Systems.InventorySystem
 					{
 						if (eventData.clickCount > 1)
 						{
-							if (from == to)
-							{
-								if (item.IsEquippable)
-								{
-									var equipment = (partyManager.PlayerParty.LeaderParty.Sheet as CharacterSheet).Equipment;
-									if (equipment.Add(item))
-									{
-										from.Remove(item);
-									}
-									else
-									{
-										//try swap with the first slot
-										var slotEquipment = equipment.GetSlotByType(item.ItemData.GetType());
-										if(slotEquipment != null)
-										{
-											Item temp = inventorySlot.Item;
-											inventorySlot.Dispose();
-											to.Add(slotEquipment.item);
-											slotEquipment.SetItem(temp);
-										}
-									}
-								}
-								else if (item.IsConsumable)
-								{
-									CommandConsume.Execute(partyManager.PlayerParty.LeaderParty, item);
-								}
-							}
-							else
-							{
-								to.Add(item);
-								from.Remove(item);
-							}
+							InventoryPointer.DoubleClick(inventorySlot, partyManager.PlayerParty.LeaderParty);
 						}
 						else
 						{
@@ -171,10 +140,7 @@ namespace Game.Systems.InventorySystem
 				{
 					if (eventData.clickCount > 1)
 					{
-						var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
-
-						to.Add(equipmentSlot.Item);
-						equipmentSlot.Dispose();
+						EquipmentPointer.DoubleClick(equipmentSlot, partyManager.PlayerParty.LeaderParty);
 
 						tooltip.ExitTarget(slot);
 					}
@@ -306,9 +272,85 @@ namespace Game.Systems.InventorySystem
 	}
 
 
-	public static class InventoryDrop
+	public static class InventoryPointer
 	{
-		public static void Process(UISlotInventory begin, UISlot end)
+		public static void DoubleClick(UISlotInventory begin, ICharacter initiator)
+		{
+			Item item = begin.Item;
+
+			var from = begin.Slot.Sheet.Inventory;
+			var to = initiator.Sheet.Inventory;
+
+			if (from == to)
+			{
+				if (item.IsEquippable)
+				{
+					var equipment = (initiator.Sheet as CharacterSheet).Equipment;
+
+					if (item.IsArmor)
+					{
+						if (equipment.Add(item))
+						{
+							from.Remove(item);
+						}
+						else
+						{
+							//try swap with the first slot
+							var slotEquipment = equipment.GetSlotByType(item.ItemData.GetType());
+							if (slotEquipment != null)
+							{
+								begin.Dispose();
+								to.Add(slotEquipment.item);
+								slotEquipment.SetItem(item);
+							}
+						}
+					}
+					else if(item.IsWeapon)
+					{
+						var weaponSlot = equipment.CurrentWeapon;
+
+						from.Remove(item);//no care where
+
+						if (item.IsTwoHandedWeapon)
+						{
+							weaponSlot.PutOnTwoHandedWeaponFrom(item, from);
+						}
+						else
+						{
+							if (weaponSlot.main.IsEmpty)
+							{
+								weaponSlot.main.SetItem(item);
+							}
+							else if (weaponSlot.spare.IsEmpty)
+							{
+								weaponSlot.spare.SetItem(item);
+							}
+							else
+							{
+								weaponSlot.TakeOffTwoHandedWeaponTo(from);
+
+								if (!weaponSlot.main.IsEmpty)
+								{
+									from.Add(weaponSlot.main.item);
+								}
+								weaponSlot.main.SetItem(item);
+							}
+						}
+					}
+				}
+				else if (item.IsConsumable)
+				{
+					CommandConsume.Execute(initiator, item);
+				}
+			}
+			else
+			{
+				to.Add(item);
+				from.Remove(item);
+			}
+		}
+
+		public static void Drop(UISlotInventory begin, UISlot end)
 		{
 			switch (end)
 			{
@@ -334,20 +376,47 @@ namespace Game.Systems.InventorySystem
 				}
 				case UISlotEquipment equipmentSlot:
 				{
-					if (equipmentSlot.IsEmpty)
+					var from = begin.Slot.Sheet.Inventory;
+					Item item = begin.Item;
+
+					if (item.IsArmor)
 					{
-						if (equipmentSlot.SetItem(begin.Item))
+						if (equipmentSlot.IsEmpty)
 						{
-							begin.Dispose();
+							if (equipmentSlot.SetItem(item))
+							{
+								begin.Dispose();
+							}
+						}
+						else
+						{
+
+							Item to = equipmentSlot.Item;
+							if (equipmentSlot.SetItem(item))
+							{
+								begin.SetItem(to);
+							}
 						}
 					}
-					else
+					else if (item.IsWeapon)
 					{
-						Item from = begin.Item;
-						Item to = equipmentSlot.Item;
-						if (equipmentSlot.SetItem(from))
+						var weaponSlot = (equipmentSlot.Slot.Sheet as CharacterSheet).Equipment.GetWeaponSlot(equipmentSlot.Slot);
+						begin.Slot.Sheet.Inventory.Remove(item);//no care where
+
+						if (item.IsTwoHandedWeapon)
 						{
-							begin.SetItem(to);
+							weaponSlot.TakeOffWeaponTo(from);
+							weaponSlot.SetItem(item);
+						}
+						else
+						{
+							weaponSlot.TakeOffTwoHandedWeaponTo(from);
+
+							if (!equipmentSlot.IsEmpty)
+							{
+								from.Add(equipmentSlot.Item);
+							}
+							equipmentSlot.SetItem(item);
 						}
 					}
 
@@ -364,44 +433,65 @@ namespace Game.Systems.InventorySystem
 		}
 	}
 
-	public static class EquipmentDrop
+	public static class EquipmentPointer
 	{
-		public static void Process(UISlotEquipment begin, UISlot end)
+		public static void DoubleClick(UISlotEquipment begin, ICharacter initiator)
+		{
+			begin.Slot.TakeOffTo(initiator.Sheet.Inventory);
+		}
+
+		public static void Drop(UISlotEquipment begin, UISlot end)
 		{
 			switch (end)
 			{
 				case UISlotInventory inventorySlot:
 				{
-					if (inventorySlot.IsEmpty)
+					Item from = begin.Item;
+					if (from.IsArmor)
 					{
-						inventorySlot.SetItem(begin.Item);
-						begin.Dispose();
+						if (inventorySlot.IsEmpty)
+						{
+							inventorySlot.SetItem(from);
+							begin.Dispose();
+						}
+						else
+						{
+							inventorySlot.Slot.Sheet.Inventory.Add(from);
+							begin.Dispose();
+						}
 					}
-					else
+					else if (from.IsWeapon)
 					{
-						inventorySlot.Slot.Sheet.Inventory.Add(begin.Item);
-						begin.Dispose();
+						begin.Slot.TakeOffTo(inventorySlot.Slot);
 					}
 					break;
 				}
 				case UISlotEquipment equipmentSlot:
 				{
-					if (equipmentSlot.IsEmpty)
+					Item from = begin.Item;
+
+					if (from.IsArmor)
 					{
-						if (equipmentSlot.SetItem(begin.Item))
+						if (equipmentSlot.IsEmpty)
 						{
-							begin.Dispose();
+							if (equipmentSlot.SetItem(begin.Item))
+							{
+								begin.Dispose();
+							}
+						}
+						else
+						{
+							//swap
+							Item to = equipmentSlot.Item;
+							if (equipmentSlot.SetItem(from))
+							{
+								begin.SetItem(to);
+							}
 						}
 					}
-					else
+					else if(from.IsWeapon)
 					{
-						//swap
-						Item from = begin.Item;
-						Item to = equipmentSlot.Item;
-						if (equipmentSlot.SetItem(from))
-						{
-							begin.SetItem(to);
-						}
+						//
 					}
 					break;
 				}

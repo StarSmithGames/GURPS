@@ -53,7 +53,7 @@ namespace Game.Systems.InventorySystem
 
 		public override void Drop(UISlot slot)
 		{
-			EquipmentDrop.Process(this, slot);
+			EquipmentPointer.Drop(this, slot);
 		}
 	}
 }

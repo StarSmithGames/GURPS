@@ -31,9 +31,8 @@ namespace Game.Systems.InventorySystem
 		public SlotWeaponEquipment WeaponMain { get; private set; }
 		public SlotWeaponEquipment WeaponSpare { get; private set; }
 
-		public Dictionary<SlotEquipment, Type[]> ArmorsByTypes { get; private set; }
-
 		private bool isWeaponMain = true;
+		private Dictionary<SlotEquipment, Type[]> EquipByTypes { get; }
 
 		public Equipment(EquipmentSettings settings, ISheet sheet)
 		{
@@ -52,7 +51,7 @@ namespace Game.Systems.InventorySystem
 			WeaponMain = settings.main.Copy();
 			WeaponSpare = settings.spare.Copy();
 
-			ArmorsByTypes = new Dictionary<SlotEquipment, Type[]>()
+			EquipByTypes = new Dictionary<SlotEquipment, Type[]>()
 			{
 				{ Head,     new Type[]{typeof(HeadItemData)} },
 				{ Sholders, new Type[]{typeof(ShouldersItemData) } },
@@ -64,23 +63,39 @@ namespace Game.Systems.InventorySystem
 				{ Jewelry,  new Type[]{typeof(JewelryItemData) } },
 				{ Ring0,    new Type[]{typeof(RingItemData) } },
 				{ Ring1,    new Type[]{typeof(RingItemData) } },
+				//Trinket
+				
+				{ WeaponMain.main,    new Type[]{typeof(WeaponItemData) } },
+				{ WeaponMain.spare,    new Type[]{typeof(WeaponItemData) } },
+				{ WeaponSpare.main,    new Type[]{typeof(WeaponItemData) } },
+				{ WeaponSpare.spare,    new Type[]{typeof(WeaponItemData) } },
 			};
 
-			foreach (var armor in ArmorsByTypes)
+			foreach (var armor in EquipByTypes)
 			{
 				armor.Key.SetOwner(sheet);
 			}
+			WeaponMain.SetOwner(sheet);
+			WeaponSpare.SetOwner(sheet);
 		}
 
 		public bool Add(Item item, bool notify = true)
 		{
 			if (item.IsWeapon)
 			{
-				return false; //WeaponMain.Add(item);
+				if (isWeaponMain)
+				{
+					WeaponMain.SetItem(item);
+				}
+				if (notify)
+				{
+					OnEquipmentChanged?.Invoke();
+				}
+				return true;
 			}
 			else if (item.IsArmor)
 			{
-				foreach (var armor in ArmorsByTypes)
+				foreach (var armor in EquipByTypes)
 				{
 					if (armor.Key.IsEmpty)
 					{
@@ -178,6 +193,11 @@ namespace Game.Systems.InventorySystem
 			}
 
 			return false;
+		}
+
+		public SlotWeaponEquipment GetWeaponSlot(SlotEquipment slot)
+		{
+			return WeaponMain.main == slot || WeaponMain.spare == slot ? WeaponMain : WeaponSpare;
 		}
 
 
@@ -280,17 +300,17 @@ namespace Game.Systems.InventorySystem
 
 		public SlotEquipment GetSlotByType(Type type)
 		{
-			return ArmorsByTypes.First((pars) => pars.Value.Any((t) => t.IsAssignableFrom(type))).Key;
+			return EquipByTypes.First((pars) => pars.Value.Any((t) => t.IsAssignableFrom(type))).Key;
 		}
 
 		public List<SlotEquipment> GetSlotsByType(Type type)
 		{
-			return ArmorsByTypes.Where((pars) => pars.Value.Any((t) => t.IsAssignableFrom(type))).Select((x) => x.Key).ToList();
+			return EquipByTypes.Where((pars) => pars.Value.Any((t) => t.IsAssignableFrom(type))).Select((x) => x.Key).ToList();
 		}
 
 		private bool IsTypeValid(SlotEquipment slot, Item item)
 		{
-			if (ArmorsByTypes.TryGetValue(slot, out Type[] types))
+			if (EquipByTypes.TryGetValue(slot, out Type[] types))
 			{
 				if (types.Any((x) => x.IsAssignableFrom(item.ItemData.GetType())))
 				{

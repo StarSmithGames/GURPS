@@ -76,6 +76,8 @@ namespace Game.Systems.InventorySystem
 
         public bool SetItem(Item item)
 		{
+            if (Sheet == null) return false;
+
             if((Sheet as CharacterSheet).Equipment.AddTo(item, this))
 			{
                 onChanged?.Invoke();
@@ -91,6 +93,52 @@ namespace Game.Systems.InventorySystem
             slot.SetItem(this.item);
             SetItem(item);
 		}
+
+        public void TakeOffTo(SlotInventory inventorySlot)
+        {
+			Item temp = item;
+
+			if (temp.IsTwoHandedWeapon)
+			{
+				var weaponSlot = (Sheet as CharacterSheet).Equipment.GetWeaponSlot(this);
+
+				weaponSlot.SetItem(null);
+			}
+			else
+			{
+				Dispose();
+			}
+
+			if (inventorySlot.IsEmpty)
+			{
+				inventorySlot.SetItem(temp);
+			}
+			else
+			{
+				inventorySlot.Sheet.Inventory.Add(temp);
+			}
+		}
+
+        public void TakeOffTo(Inventory inventory)
+        {
+            if (!IsEmpty)
+            {
+				Item temp = item;
+
+				if (temp.IsTwoHandedWeapon)
+				{
+					var weaponSlot = (Sheet as CharacterSheet).Equipment.GetWeaponSlot(this);
+
+					weaponSlot.SetItem(null);
+                }
+                else
+                {
+                    Dispose();
+                }
+
+				inventory.Add(temp);
+			}
+        }
 
 		public override void Dispose()
 		{
@@ -114,7 +162,53 @@ namespace Game.Systems.InventorySystem
         public SlotEquipment main;
         public SlotEquipment spare;
 
-        public SlotWeaponEquipment Copy()
+        public void SetOwner(ISheet sheet)
+        {
+            main.SetOwner(sheet);
+            spare.SetOwner(sheet);
+        }
+
+        public void SetItem(Item item)
+        {
+            if(item == null)
+            {
+				main.Dispose();
+				spare.Dispose();
+			}
+            else
+            {
+				main.SetItem(item);
+				spare.SetItem(item);
+			}
+		}
+
+        public void PutOnTwoHandedWeaponFrom(Item item, Inventory inventory)
+        {
+            TakeOffWeaponTo(inventory);
+
+			if (item.IsTwoHandedWeapon)
+			{
+				SetItem(item);
+            }
+		}
+
+        public void TakeOffWeaponTo(Inventory inventory)
+        {
+			TakeOffTwoHandedWeaponTo(inventory);
+            main.TakeOffTo(inventory);
+			spare.TakeOffTo(inventory);
+		}
+
+		public void TakeOffTwoHandedWeaponTo(Inventory inventory)
+		{
+			if (!main.IsEmpty && main.item.IsTwoHandedWeapon)
+			{
+				inventory.Add(main.item);
+                SetItem(null);
+			}
+		}
+
+		public SlotWeaponEquipment Copy()
 		{
             return new SlotWeaponEquipment()
             {
