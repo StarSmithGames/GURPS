@@ -120,8 +120,6 @@ namespace Game.Systems.InventorySystem
 
 		public bool AddTo(Item item, SlotEquipment slot, bool notify = true)
 		{
-			if (item != null && !IsTypeValid(slot, item)) return false;
-
 			if (item != null)
 			{
 				if (item.ItemData == null)
@@ -129,6 +127,8 @@ namespace Game.Systems.InventorySystem
 					item = null;
 				}
 			}
+
+			if (item != null && !IsTypeValid(slot, item)) return false;
 
 			slot.item = item;
 
@@ -173,130 +173,101 @@ namespace Game.Systems.InventorySystem
 			//}
 		}
 
-		public bool Swap(SlotEquipment from, SlotEquipment to)
-		{
-			var weaponFrom = GetWeapon(from);
-			var weaponTo = GetWeapon(to);
-
-			if (weaponFrom == null && weaponTo == null)//armor swap
-			{
-				//if (IsCanAddTo(from.item, to))
-				//{
-				//	from.Swap(to);
-				//	OnEquipmentChanged?.Invoke();
-				//	return true;
-				//}
-			}
-			else if (weaponFrom != null && weaponTo != null)//weapon swap
-			{
-				return SwapWeapons(from, to);
-			}
-
-			return false;
-		}
-
 		public SlotWeaponEquipment GetWeaponSlot(SlotEquipment slot)
 		{
 			return WeaponMain.main == slot || WeaponMain.spare == slot ? WeaponMain : WeaponSpare;
 		}
 
 
-		private bool SwapWeapons(SlotEquipment from, SlotEquipment to)
-		{
-			var weaponFrom = GetWeapon(from);
-			var weaponTo = GetWeapon(to);
+		//private bool SwapWeapons(SlotEquipment from, SlotEquipment to)
+		//{
+		//	var weaponFrom = GetWeapon(from);
+		//	var weaponTo = GetWeapon(to);
 
-			if (weaponFrom == weaponTo)//one handeds
-			{
-				from.Swap(to);
-			}
-			else
-			{
-				if (weaponTo.IsEmpty)
-				{
-					if (from.item.IsTwoHandedWeapon)
-					{
-						weaponFrom.Swap(weaponTo);
-					}
-					else
-					{
-						to.SetItem(from.item);
-						from.SetItem(null);
-					}
-				}
-				else
-				{
-					if (to.IsEmpty)
-					{
-						if (from.item.IsTwoHandedWeapon)
-						{
-							Item item = from.item;
-							weaponFrom.SetItemBoth(null);
-							if (!weaponTo.Main.IsEmpty)
-							{
-								weaponFrom.Main.SetItem(weaponTo.Main.item);
-							}
-							if (!weaponTo.Spare.IsEmpty)
-							{
-								weaponFrom.Spare.SetItem(weaponTo.Spare.item);
-							}
+		//	if (weaponFrom == weaponTo)//one handeds
+		//	{
+		//		from.Swap(to);
+		//	}
+		//	else
+		//	{
+		//		if (weaponTo.IsEmpty)
+		//		{
+		//			if (from.item.IsTwoHandedWeapon)
+		//			{
+		//				weaponFrom.Swap(weaponTo);
+		//			}
+		//			else
+		//			{
+		//				to.SetItem(from.item);
+		//				from.SetItem(null);
+		//			}
+		//		}
+		//		else
+		//		{
+		//			if (to.IsEmpty)
+		//			{
+		//				if (from.item.IsTwoHandedWeapon)
+		//				{
+		//					Item item = from.item;
+		//					weaponFrom.SetItemBoth(null);
+		//					if (!weaponTo.Main.IsEmpty)
+		//					{
+		//						weaponFrom.Main.SetItem(weaponTo.Main.item);
+		//					}
+		//					if (!weaponTo.Spare.IsEmpty)
+		//					{
+		//						weaponFrom.Spare.SetItem(weaponTo.Spare.item);
+		//					}
 
-							weaponTo.SetItemBoth(item);
-						}
-						else
-						{
-							to.SetItem(from.item);
-							from.SetItem(null);
-						}
-					}
-					else
-					{
-						if (from.item.IsTwoHandedWeapon)
-						{
-							weaponFrom.Swap(weaponTo);
-						}
-						else
-						{
-							if (to.item.IsTwoHandedWeapon)//OneHanded x TwoHanded
-							{
-								Item item = to.item;
-								weaponTo.SetItemBoth(null);
+		//					weaponTo.SetItemBoth(item);
+		//				}
+		//				else
+		//				{
+		//					to.SetItem(from.item);
+		//					from.SetItem(null);
+		//				}
+		//			}
+		//			else
+		//			{
+		//				if (from.item.IsTwoHandedWeapon)
+		//				{
+		//					weaponFrom.Swap(weaponTo);
+		//				}
+		//				else
+		//				{
+		//					if (to.item.IsTwoHandedWeapon)//OneHanded x TwoHanded
+		//					{
+		//						Item item = to.item;
+		//						weaponTo.SetItemBoth(null);
 
-								to.SetItem(from.item);
-								from.SetItem(null);
+		//						to.SetItem(from.item);
+		//						from.SetItem(null);
 
-								if (!weaponFrom.Main.IsEmpty)
-								{
-									weaponTo.Add(weaponFrom.Main.item);
-								}
-								if (!weaponFrom.Spare.IsEmpty)
-								{
-									weaponTo.Add(weaponFrom.Spare.item);
-								}
+		//						if (!weaponFrom.Main.IsEmpty)
+		//						{
+		//							weaponTo.Add(weaponFrom.Main.item);
+		//						}
+		//						if (!weaponFrom.Spare.IsEmpty)
+		//						{
+		//							weaponTo.Add(weaponFrom.Spare.item);
+		//						}
 
-								weaponFrom.SetItemBoth(item);
-							}
-							else//OneHanded x OneHanded
-							{
-								from.Swap(to);
-							}
-						}
-					}
-				}
-			}
+		//						weaponFrom.SetItemBoth(item);
+		//					}
+		//					else//OneHanded x OneHanded
+		//					{
+		//						from.Swap(to);
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
 
-			weaponTo?.onEquipWeaponChanged();
-			weaponFrom?.onEquipWeaponChanged();
+		//	weaponTo?.onEquipWeaponChanged();
+		//	weaponFrom?.onEquipWeaponChanged();
 
-			return false;
-		}
-
-
-		private EquipWeapon GetWeapon(SlotEquipment equip)
-		{
-			//if (WeaponMain.Contains(equip)) return WeaponMain;
-			return null;//WeaponSpare;
-		}
+		//	return false;
+		//}
 
 		public SlotEquipment GetSlotByType(Type type)
 		{

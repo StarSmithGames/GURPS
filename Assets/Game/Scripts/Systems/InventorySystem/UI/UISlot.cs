@@ -14,8 +14,18 @@ namespace Game.Systems.InventorySystem
 
 		public virtual bool IsEmpty => true;
 
+		protected bool isHightlight = false;
+		private Color one = Color.white;
+		private Color oneHalfAlpha = new Color(1, 1, 1, 0.5f);
+
 		public abstract void Dispose();
 		public abstract void Drop(UISlot slot);
+
+		public virtual void EnableHightlight(bool trigger)
+		{
+			isHightlight = trigger;
+			Icon.color = isHightlight ? oneHalfAlpha : one;
+		}
 	}
 
 	public abstract class UISlot<SLOT> : UISlot
@@ -24,6 +34,7 @@ namespace Game.Systems.InventorySystem
 		public SLOT Slot { get; private set; }
 
 		public override bool IsEmpty => Slot.IsEmpty;
+
 
 		protected ContainerSlotHandler containerHandler;
 

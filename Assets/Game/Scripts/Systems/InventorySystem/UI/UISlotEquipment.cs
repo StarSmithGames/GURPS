@@ -11,11 +11,13 @@ namespace Game.Systems.InventorySystem
 		[field: SerializeField] public Sprite SwapBackground { get; private set; }
 		[field: SerializeField] public Image Prohibition { get; private set; }
 
-		public bool Mark { get; set; }
+		public bool isWeaponSlot = false;
+		[ShowIf("isWeaponSlot")]
+		public bool isMainWeaponSlot = true;
+
 		public Item Item => Slot.item;
 
-		private Color one = Color.white;
-		private Color oneHalfAlpha = new Color(1, 1, 1, 0.5f);
+		private bool IsWeaponSpareSlot => isWeaponSlot && !isMainWeaponSlot && !IsEmpty && Item.IsTwoHandedWeapon;
 
 		private void Start()
 		{
@@ -36,9 +38,9 @@ namespace Game.Systems.InventorySystem
 		{
 			Icon.enabled = !IsEmpty;
 			Icon.sprite = Item?.ItemData?.information.portrait;
-			Icon.color = Mark ? oneHalfAlpha : one;
-
 			Background.sprite = IsEmpty ? SwapBackground : BaseBackground;
+
+			base.EnableHightlight(IsWeaponSpareSlot);
 		}
 
 		public void EnableProhibition(bool trigger)
@@ -54,6 +56,14 @@ namespace Game.Systems.InventorySystem
 		public override void Drop(UISlot slot)
 		{
 			EquipmentPointer.Drop(this, slot);
+		}
+
+		public override void EnableHightlight(bool trigger)
+		{
+			if (!IsWeaponSpareSlot)
+			{
+				base.EnableHightlight(trigger);
+			}
 		}
 	}
 }

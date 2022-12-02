@@ -243,10 +243,7 @@ namespace Game.Systems.InventorySystem
 		public void OnBeginDrag(UISlot slot)
 		{
 			beginSlot = slot;
-
-			Color halfAlpha = beginSlot.Icon.color;
-			halfAlpha.a = 0.5f;
-			beginSlot.Icon.color = halfAlpha;
+			beginSlot.EnableHightlight(true);
 		}
 
 		public void OnDrop(UISlot slot)
@@ -265,9 +262,7 @@ namespace Game.Systems.InventorySystem
 				beginSlot.Dispose();
 			}
 
-			Color oneAlpha = beginSlot.Icon.color;
-			oneAlpha.a = 1f;
-			beginSlot.Icon.color = oneAlpha;
+			beginSlot.EnableHightlight(false);
 		}
 	}
 
@@ -469,6 +464,7 @@ namespace Game.Systems.InventorySystem
 				case UISlotEquipment equipmentSlot:
 				{
 					Item from = begin.Item;
+					Item to = equipmentSlot.Item;
 
 					if (from.IsArmor)
 					{
@@ -482,16 +478,61 @@ namespace Game.Systems.InventorySystem
 						else
 						{
 							//swap
-							Item to = equipmentSlot.Item;
 							if (equipmentSlot.SetItem(from))
 							{
 								begin.SetItem(to);
 							}
 						}
 					}
-					else if(from.IsWeapon)
+					else if(from.IsWeapon)//swap weapons
 					{
-						//
+						var weaponFrom = (begin.Slot.Sheet as CharacterSheet).Equipment.GetWeaponSlot(begin.Slot);
+						var weaponTo = (equipmentSlot.Slot.Sheet as CharacterSheet).Equipment.GetWeaponSlot(equipmentSlot.Slot);
+
+						if (weaponFrom == weaponTo)
+						{
+							weaponFrom.Swap();
+						}
+						else
+						{
+							if (from.IsTwoHandedWeapon)
+							{
+								weaponFrom.Swap(weaponTo);
+							}
+							else
+							{
+								if (equipmentSlot.IsEmpty)
+								{
+									begin.Slot.Swap(equipmentSlot.Slot);
+								}
+								else
+								{
+									if (to.IsTwoHandedWeapon)
+									{
+										weaponFrom.Swap(weaponTo);
+									}
+									else
+									{
+										begin.Slot.Swap(equipmentSlot.Slot);
+									}
+								}
+							}
+						}
+
+						if (from.IsTwoHandedWeapon)
+						{
+							if (equipmentSlot.IsEmpty)
+							{
+
+							}
+							else
+							{
+
+							}
+						}
+						else
+						{
+						}
 					}
 					break;
 				}

@@ -2037,15 +2037,15 @@ MonoBehaviour:
   <Forearms>k__BackingField: {fileID: 3182734004959047812}
   <Legs>k__BackingField: {fileID: 3182734003975407367}
   <Feet>k__BackingField: {fileID: 3182734004185143716}
-  <Weapon00>k__BackingField: {fileID: 3182734003199736242}
-  <Weapon01>k__BackingField: {fileID: 3182734003974819796}
-  <Weapon10>k__BackingField: {fileID: 3182734003042487591}
-  <Weapon11>k__BackingField: {fileID: 3182734003453664613}
   <Cloak>k__BackingField: {fileID: 3182734003697973100}
   <Jewelry>k__BackingField: {fileID: 3182734003188034986}
   <Ring0>k__BackingField: {fileID: 3182734004452296715}
   <Ring1>k__BackingField: {fileID: 3182734003371840161}
   <Trinket>k__BackingField: {fileID: 3182734003072117608}
+  <Weapon00>k__BackingField: {fileID: 3182734003199736242}
+  <Weapon01>k__BackingField: {fileID: 3182734003974819796}
+  <Weapon10>k__BackingField: {fileID: 3182734003042487591}
+  <Weapon11>k__BackingField: {fileID: 3182734003453664613}
   <Slots>k__BackingField: []
 --- !u!1 &4407661370243157379
 GameObject:
@@ -6952,6 +6952,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 84de0e53e4ebf0e42be94394945ba295, type: 3}
     - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
+      propertyPath: isWeaponSlot
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
+      propertyPath: isMainWeaponSlot
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
       propertyPath: <SlotType>k__BackingField
       value: 11
       objectReference: {fileID: 0}
@@ -9034,6 +9042,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 6c8415042e347434abf96e8edd2bd9bb, type: 3}
     - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
+      propertyPath: isWeaponSlot
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
+      propertyPath: isMainWeaponSlot
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
       propertyPath: <SlotType>k__BackingField
       value: 13
       objectReference: {fileID: 0}
@@ -9623,6 +9639,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 6c8415042e347434abf96e8edd2bd9bb, type: 3}
     - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
+      propertyPath: isWeaponSlot
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
       propertyPath: <SlotType>k__BackingField
       value: 12
       objectReference: {fileID: 0}
@@ -9747,6 +9767,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: ff8444197b8825b4e94c3ffc4c98f31a, type: 3}
+    - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
+      propertyPath: isWeaponSlot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1225118871705606481, guid: 0eada0b6f5041db4ba7ae00366eb487c, type: 3}
       propertyPath: <SlotType>k__BackingField
       value: 10

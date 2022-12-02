@@ -74,11 +74,11 @@ namespace Game.Systems.InventorySystem
         [HideLabel]
         public Item item;
 
-        public bool SetItem(Item item)
+        public bool SetItem(Item add)
 		{
             if (Sheet == null) return false;
 
-            if((Sheet as CharacterSheet).Equipment.AddTo(item, this))
+            if((Sheet as CharacterSheet).Equipment.AddTo(add, this))
 			{
                 onChanged?.Invoke();
                 return true;
@@ -89,12 +89,12 @@ namespace Game.Systems.InventorySystem
 
         public void Swap(SlotEquipment slot)
 		{
-            Item item = slot.item;
+            Item temp = slot.item;
             slot.SetItem(this.item);
-            SetItem(item);
+            SetItem(temp);
 		}
 
-        public void TakeOffTo(SlotInventory inventorySlot)
+		public void TakeOffTo(SlotInventory inventorySlot)
         {
 			Item temp = item;
 
@@ -182,6 +182,28 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
+        public void Swap()
+        {
+            Item temp = main.item;
+
+            if (!main.IsEmpty && temp.IsTwoHandedWeapon) return;
+
+            main.SetItem(spare.item);
+            spare.SetItem(temp);
+		}
+
+        public void Swap(SlotWeaponEquipment weaponSlot)
+        {
+			Item temp1 = main.item;
+			Item temp2 = spare.item;
+
+            main.SetItem(weaponSlot.main.item);
+			spare.SetItem(weaponSlot.spare.item);
+
+            weaponSlot.main.SetItem(temp1);
+            weaponSlot.spare.SetItem(temp2);
+		}
+
         public void PutOnTwoHandedWeaponFrom(Item item, Inventory inventory)
         {
             TakeOffWeaponTo(inventory);
@@ -203,7 +225,7 @@ namespace Game.Systems.InventorySystem
 		{
 			if (!main.IsEmpty && main.item.IsTwoHandedWeapon)
 			{
-				inventory.Add(main.item);
+				inventory?.Add(main.item);
                 SetItem(null);
 			}
 		}
