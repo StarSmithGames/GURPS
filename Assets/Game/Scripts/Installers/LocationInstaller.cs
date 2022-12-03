@@ -31,7 +31,7 @@ namespace Game
 		{
 			Container.BindInstance(characterCamers).WithId("Camers");
 
-			Container.BindInterfacesTo<CameraVisionLocation>().AsSingle().NonLazy();
+			Container.BindInterfacesAndSelfTo<CameraVisionLocation>().AsSingle().NonLazy();
 			Container.BindInterfacesAndSelfTo<CameraController>().AsSingle().NonLazy();
 		}
 	}

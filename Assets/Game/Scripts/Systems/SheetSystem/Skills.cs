@@ -19,7 +19,7 @@ namespace Game.Systems.SheetSystem.Skills
 		public List<ISkill> CurrentPassiveSkills => passiveRegistrator.registers;
 
 		private Registrator<ISkill> passiveRegistrator;
-		private ISkill preparedSkill;
+		private ActiveSkill preparedSkill;
 
 		private ICharacter character;
 		private SkillFactory skillFactory;
@@ -43,7 +43,8 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public void PrepareSkill(ActiveSkillData data)
 		{
-			preparedSkill = CreateSkill(data);
+			preparedSkill = CreateSkill(data) as ActiveSkill;
+			preparedSkill.BeginProcess();
 		}
 
 		public void CancelPreparation()

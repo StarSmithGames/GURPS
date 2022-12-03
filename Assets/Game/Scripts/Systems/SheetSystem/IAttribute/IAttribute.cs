@@ -45,7 +45,7 @@ namespace Game.Systems.SheetSystem
 	{
 		public event UnityAction onModifiersChanged;
 
-		public virtual float TotalValue => (CurrentValue + ModifyAddValue) * (1 + ModifyPercentValue);
+		public virtual float TotalValue => (CurrentValue + ModifyAddValue) * (1f + (ModifyPercentValue / 100f));
 
 		public virtual float ModifyAddValue
 		{
@@ -157,7 +157,7 @@ namespace Game.Systems.SheetSystem
 	//IModifiable Implementation
 	public abstract partial class AttributeBar
 	{
-		public override float TotalValue => (MaxValue + ModifyAddValue) * (1 + ModifyPercentValue);
+		public override float TotalValue => (MaxValue + ModifyAddValue) * (1f + (ModifyPercentValue / 100f));
 
 		public override bool AddModifier(AttributeModifier modifier)
 		{

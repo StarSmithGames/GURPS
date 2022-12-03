@@ -40,6 +40,8 @@ namespace Game.Entities
 			Sheet = new CharacterSheet(data);
 			Effects = new Effects(this, effectFactory);
 			Skills = new Skills(this, skillFactory, data.sheet.skills);
+
+			Sheet.Restore();
 		}
 
 		public void SetModel(ICharacterModel model)

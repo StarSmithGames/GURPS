@@ -30,12 +30,12 @@ namespace Game.Systems.SheetSystem
             Intelligence = new IntelligenceStat(settigns.intelligence);
             Health = new HealthStat(settigns.health);
 
-            HitPoints = new HitPointsStat(settigns.HitPoints, 0, 10);
-            FatiguePoints = new FatiguePointsStat(settigns.FatiguePoints, 0, 10);
+            HitPoints = new HitPointsStat(settigns.HitPoints, 0, settigns.HitPoints);
+            FatiguePoints = new FatiguePointsStat(settigns.FatiguePoints, 0, settigns.FatiguePoints);
             Move = new MoveStat(settigns.Move, 0, settigns.Move);
-            Speed = new SpeedStat(settigns.Speed, 0, 10);
-            Will = new WillStat(settigns.Will, 0, 10);
-            Perception = new PerceptionStat(settigns.Perception, 0, 10);
+            Speed = new SpeedStat(settigns.Speed, 0, settigns.Speed);
+            Will = new WillStat(settigns.Will, 0, settigns.Will);
+            Perception = new PerceptionStat(settigns.Perception, 0, settigns.Perception);
 
             ActionPoints = new ActionPointsStat(1, 0, 1);
 

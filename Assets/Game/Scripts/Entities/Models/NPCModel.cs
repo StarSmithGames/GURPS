@@ -68,16 +68,5 @@ namespace Game.Entities.Models
 			//	}
 			//}
 		//}
-
-		protected override void ResetMarkers()
-		{
-			Markers.FollowMarker.Enable(false);
-
-			Markers.TargetMarker.Enable(false);
-
-			Markers.AreaMarker.Enable(false);
-
-			Markers.LineMarker.Enable(false);
-		}
 	}
 }

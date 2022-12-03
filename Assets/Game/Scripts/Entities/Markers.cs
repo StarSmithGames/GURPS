@@ -22,7 +22,7 @@ namespace Game.Entities
 		[field: Space]
 		[field: SerializeField] public LineRendererLineVFX LineMarker { get; private set; }
 		[Space]
-		[SerializeField] private List<Material> markerColors = new List<Material>();
+		[SerializeField] private List<Material> markerColors = new List<Material>();//rm
 
 		[field: Space]
 		[field: SerializeField] public IndicatorVFX Exclamation { get; private set; }
@@ -39,10 +39,33 @@ namespace Game.Entities
 		{
 			FollowMarker.Line.material = markerColors[(int)type];
 		}
-
-		
 	}
 
+	public static class MarkersUsage
+	{
+		public static void Reset(this Markers markers)
+		{
+			markers.FollowMarker.Enable(false);
+
+			markers.TargetMarker.transform.parent = null;
+			markers.TargetMarker.Enable(false);
+
+			markers.AreaMarker.Enable(false);
+
+			markers.SplineMarker.Enable(false);
+			markers.AdditionalSplineMarker.Enable(false);
+
+			markers.LineMarker.Enable(false);
+
+			markers.Exclamation.Enable(false);
+			markers.Question.Enable(false);
+		}
+
+		public static void SingleTarget(this Markers markers)
+		{
+			markers.LineMarker.Enable(true);
+		}
+	}
 
 	public enum MaterialType : int
 	{

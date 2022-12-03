@@ -79,7 +79,7 @@ namespace Game.Entities.Models
 		protected override IEnumerator Start()
 		{
 			Outline.enabled = false;
-			ResetMarkers();
+			Markers.Reset();
 
 			InitializePersonality();
 			AnimatorController.Initialize();
@@ -200,25 +200,6 @@ namespace Game.Entities.Models
 
 		public bool IsLineAnimationProcess => LineAnimationCoroutine != null;
 		private Coroutine LineAnimationCoroutine = null;
-
-
-		protected virtual void ResetMarkers()
-		{
-			Markers.FollowMarker.Enable(false);
-
-			Markers.TargetMarker.transform.parent = null;
-			Markers.TargetMarker.Enable(false);
-
-			Markers.AreaMarker.Enable(false);
-
-			Markers.SplineMarker.Enable(false);
-			Markers.AdditionalSplineMarker.Enable(false);
-
-			Markers.LineMarker.Enable(false);
-
-			Markers.Exclamation.Enable(false);
-			Markers.Question.Enable(false);
-		}
 
 		private IEnumerator LineAnimation()
 		{
@@ -526,7 +507,7 @@ namespace Game.Entities.Models
 			}
 			else if(newState == BattleExecutorState.EndBattle)
 			{
-				ResetMarkers();
+				Markers.Reset();
 			}
 		}
 

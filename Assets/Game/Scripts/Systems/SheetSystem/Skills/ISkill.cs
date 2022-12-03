@@ -18,6 +18,13 @@ namespace Game.Systems.SheetSystem.Skills
 	{
 		public virtual bool IsActive { get; protected set; }
 
+		protected ICharacter character;
+
+		public Skill(ICharacter character)
+		{
+			this.character = character;
+		}
+
 		public virtual void Activate()
 		{
 			IsActive = true;
@@ -32,12 +39,10 @@ namespace Game.Systems.SheetSystem.Skills
 	{
 		private List<Enchantment> enchantments;
 
-		private ICharacter character;
 		private PassiveSkillData data;
 
-		public PassiveSkill(ICharacter character, PassiveSkillData data)
+		public PassiveSkill(ICharacter character, PassiveSkillData data) : base(character)
 		{
-			this.character = character;
 			this.data = data;
 
 			enchantments = data.enchantments.Select((x) => x.GetEnchantment(character.Sheet)).ToList();
@@ -68,29 +73,41 @@ namespace Game.Systems.SheetSystem.Skills
 
 	public abstract class ActiveSkill : Skill
 	{
-		
+		private ActiveSkillData data;
+		private AsyncManager asyncManager;
+
+		public ActiveSkill(ICharacter character, ActiveSkillData data, AsyncManager asyncManager) : base(character)
+		{
+			this.data = data;
+			this.asyncManager = asyncManager;
+		}
+
+		public void BeginProcess()
+		{
+			character.Model.Markers.SingleTarget();
+		}
 	}
 
-	public class SingleTargetSkill : ActiveSkill
-	{
-		//private ICharacter character;
-		//private PassiveSkillData data;
+	//public class SingleTargetSkill : ActiveSkill
+	//{
+	//	//private ICharacter character;
+	//	//private PassiveSkillData data;
 
-		//public SingleTargetSkill(ICharacter character, PassiveSkillData data)
-		//{
-		//	this.character = character;
-		//	this.data = data;
-		//}
+	//	//public SingleTargetSkill(ICharacter character, PassiveSkillData data)
+	//	//{
+	//	//	this.character = character;
+	//	//	this.data = data;
+	//	//}
 
-		//public class Factory : PlaceholderFactory<ICharacter, ActiveSkillData, ISkill> { }
-	}
+	//	//public class Factory : PlaceholderFactory<ICharacter, ActiveSkillData, ISkill> { }
+	//}
 
-	public class ProjectileSkill : ActiveSkill { }
+	//public class ProjectileSkill : ActiveSkill { }
 
-	public class AOESkill : ActiveSkill
-	{
+	//public class AOESkill : ActiveSkill
+	//{
 
-	}
+	//}
 
 	public class SkillFactory : PlaceholderFactory<SkillData, ICharacter, ISkill> { }
 

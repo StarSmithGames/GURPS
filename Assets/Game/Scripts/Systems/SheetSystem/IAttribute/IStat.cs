@@ -1,7 +1,10 @@
 namespace Game.Systems.SheetSystem
 {
 	public interface IStat : IAttribute { }
-	public interface IStatBar : IStat, IBar { }
+	public interface IStatBar : IStat, IBar
+	{
+		void Restore();
+	}
 
 	public abstract class Stat : Attribute, IStat
 	{
@@ -15,6 +18,11 @@ namespace Game.Systems.SheetSystem
 		public override string LocalizationKey => $"{base.LocalizationKey}stats.";
 
 		public StatBar(float value, float min, float max) : base(value, min, max) { }
+
+		public void Restore()
+		{
+			CurrentValue = TotalValue;
+		}
 	}
 
 	#region IStat

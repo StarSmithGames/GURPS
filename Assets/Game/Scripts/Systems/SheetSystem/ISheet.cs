@@ -30,7 +30,9 @@ namespace Game.Systems.SheetSystem
         //Ancestry?
 
         SheetSettings Settings { get; }
-    }
+
+        void Restore();
+	}
 
     public abstract class EntitySheet : ISheet
     {
@@ -70,6 +72,17 @@ namespace Game.Systems.SheetSystem
 
             Race.Activate();
         }
+
+        public virtual void Restore()
+        {
+			Stats.HitPoints.Restore();
+			Stats.FatiguePoints.Restore();
+			Stats.Move.Restore();
+			Stats.Speed.Restore();
+			Stats.Will.Restore();
+			Stats.Perception.Restore();
+			Stats.ActionPoints.Restore();
+		}
     }
 
     public sealed class CharacterSheet : EntitySheet
