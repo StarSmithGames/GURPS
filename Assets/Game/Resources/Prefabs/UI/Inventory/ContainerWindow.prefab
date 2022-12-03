@@ -760,6 +760,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Inventory>k__BackingField: {fileID: 3994318348759335134}
+  <DragableComponent>k__BackingField: {fileID: 6293412765018034024}
   <Close>k__BackingField: {fileID: 6603539055888008556}
   <TakeAll>k__BackingField: {fileID: 1606202498477783461}
 --- !u!114 &3994318348759335134

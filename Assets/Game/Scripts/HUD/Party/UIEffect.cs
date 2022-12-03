@@ -1,6 +1,6 @@
 using DG.Tweening;
 
-using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Effects;
 using Game.Systems.TooltipSystem;
 using Game.UI;
 using UnityEngine;
@@ -14,6 +14,7 @@ namespace Game.HUD
 	public class UIEffect : PoolableObject
 	{
 		[field: SerializeField] public CanvasGroup CanvasGroup { get; private set; }
+		[field: SerializeField] public UIAnimationBlinkComponent Blink { get; private set; }
 		[field: SerializeField] public PointerHandlerComponent PointerHandler { get; private set; }
 		[field: SerializeField] public Image Filler { get; private set; }
 		[field: SerializeField] public Image Icon { get; private set; }
@@ -22,7 +23,6 @@ namespace Game.HUD
 		public IEffect CurrentEffect { get; private set; }
 
 		private bool isInitialized = false;
-		private Sequence blinkSequence;
 		private bool isCanBlink = false;
 
 		private UITooltip tooltip;
@@ -93,27 +93,16 @@ namespace Game.HUD
 
 		public void Hide(UnityAction callback = null)
 		{
-			KillBlink();
+			Blink.Kill();
 
 			Sequence sequence = DOTween.Sequence();
 
 			if (isCanBlink)
 			{
-				blinkSequence = DOTween.Sequence();
-
-				float t = 0;
-
-				blinkSequence
-					.AppendCallback(() =>
-					{
-						CanvasGroup.alpha = Mathf.Lerp(1, 0, Mathf.PingPong(t * 1.5f, 1));
-
-						t += Time.deltaTime;
-					}).SetLoops(-1);
-
+				Blink.Do(1.5f);
 				sequence.AppendInterval(1.5f);
 			}
-			
+
 			sequence
 				.Append(CanvasGroup.DOFade(0, 0.2f))
 				.OnComplete(() =>
@@ -121,18 +110,6 @@ namespace Game.HUD
 					callback?.Invoke();
 					DespawnIt();
 				});
-		}
-
-		private void KillBlink()
-		{
-			if (blinkSequence != null)
-			{
-				if (blinkSequence.IsPlaying())
-				{
-					blinkSequence.Kill(true);
-					blinkSequence = null;
-				}
-			}
 		}
 
 		public override void OnSpawned(IMemoryPool pool)
@@ -153,7 +130,7 @@ namespace Game.HUD
 		{
 			base.OnDespawned();
 
-			KillBlink();
+			Blink.Kill();
 
 			if (CurrentEffect != null)
 			{

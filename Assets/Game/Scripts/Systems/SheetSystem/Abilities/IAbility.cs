@@ -20,14 +20,6 @@ namespace Game.Systems.SheetSystem.Abilities
 
 		public virtual IActivation Activation { get; protected set; }
 
-		protected ActivationFactory activationFactory;
-
-		[Inject]
-		public void Construct(ActivationFactory activationFactory)
-		{
-			this.activationFactory = activationFactory;
-		}
-
 		public abstract void Apply();
 
 		public virtual bool Activate()

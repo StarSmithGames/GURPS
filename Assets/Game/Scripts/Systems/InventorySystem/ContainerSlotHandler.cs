@@ -1,23 +1,12 @@
 using Game.Entities;
 using Game.HUD;
-using Game.Managers.CharacterManager;
-using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
 using Game.Systems.CommandCenter;
 using Game.Systems.ContextMenu;
 using Game.Systems.SheetSystem;
-using Game.Systems.SheetSystem.Skills;
 using Game.Systems.TooltipSystem;
 using Game.UI.CanvasSystem;
-
-using System;
-
-using UnityEditor.VersionControl;
-
-using UnityEngine;
 using UnityEngine.EventSystems;
-
-using Zenject;
 
 namespace Game.Systems.InventorySystem
 {

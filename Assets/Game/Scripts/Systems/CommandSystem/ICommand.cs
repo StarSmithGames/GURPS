@@ -87,7 +87,7 @@ namespace Game.Systems.CommandCenter
 
 		}
 
-		public CommandExamine(Skill observable)
+		public CommandExamine(SkillData observable)
 		{
 
 		}

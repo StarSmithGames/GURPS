@@ -110,6 +110,7 @@ namespace Game.UI.Windows
 			Popup.PopOut(onComplete: () =>
 			{
 				Enable(false);
+				DespawnIt();
 				IsInProcess = false;
 				callback?.Invoke();
 			});

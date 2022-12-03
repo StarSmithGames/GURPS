@@ -64,7 +64,7 @@ namespace Game.HUD
 			}
 			else
 			{
-				WindowSkillDeck.SetSkills(leader.Sheet.Skills);
+				WindowSkillDeck.SetSkills(leader.Skills.SkillDeck);
 				WindowSkillDeck.Show();
 
 				if (leader.Model.IsHasTarget)

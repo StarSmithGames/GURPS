@@ -280,9 +280,9 @@ namespace Game.Systems.InventorySystem
         public override bool IsEmpty => skill == null;
 
         [HideLabel]
-        public Skill skill;
+        public ActiveSkillData skill;
 
-        public bool SetSkill(Skill skill)
+        public bool SetSkill(ActiveSkillData skill)
         {
             this.skill = skill;
 

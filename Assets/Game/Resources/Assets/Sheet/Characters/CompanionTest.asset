@@ -219,8 +219,7 @@ MonoBehaviour:
     skills:
       skills: []
     abilities:
-      abilities:
-      - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}
+      abilities: []
     isImmortal: 0
   isNPC: 1
   information:

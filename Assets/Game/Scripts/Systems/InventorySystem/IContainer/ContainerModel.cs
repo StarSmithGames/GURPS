@@ -167,8 +167,6 @@ namespace Game.Systems.InventorySystem
 			{
 				window.onClose -= Dispose;
 				window.onTakeAll -= OnTakeAll;
-
-				window.DespawnIt();
 			}
 
 			window = null;

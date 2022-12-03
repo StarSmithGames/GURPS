@@ -1,14 +1,17 @@
 using Game.UI.CanvasSystem;
 
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 using Zenject;
 
 namespace Game.UI
 {
-	public class DragableComponent : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler//, , IEndDragHandler, IDropHandler
+	public class DragableComponent : MonoBehaviour, IBeginDragHandler, IDragHandler, IPointerDownHandler
 	{
+		public UnityAction onOrdered;
+
 		[SerializeField] private bool useOrder = true;
 		[field: SerializeField] public RectTransform DragRect { get; private set; }
 
@@ -31,6 +34,7 @@ namespace Game.UI
 			if (useOrder)
 			{
 				DragRect.SetAsLastSibling();
+				onOrdered?.Invoke();
 			}
 		}
 

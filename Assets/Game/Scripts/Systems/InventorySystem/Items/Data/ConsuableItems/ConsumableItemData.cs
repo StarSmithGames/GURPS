@@ -1,4 +1,5 @@
-using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Effects;
+
 using System.Collections.Generic;
 
 namespace Game.Systems.InventorySystem

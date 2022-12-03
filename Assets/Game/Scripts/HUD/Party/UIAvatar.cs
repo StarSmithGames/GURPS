@@ -1,18 +1,14 @@
 using Game.Entities;
-using Game.Entities.Models;
-using Game.Systems.BattleSystem;
 using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Effects;
 using Game.UI;
 using Game.UI.CanvasSystem;
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 using Zenject;

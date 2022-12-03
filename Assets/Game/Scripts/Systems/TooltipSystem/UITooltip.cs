@@ -1,6 +1,5 @@
-using Cinemachine;
 using Game.Systems.InventorySystem;
-using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Effects;
 using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 using UnityEngine;

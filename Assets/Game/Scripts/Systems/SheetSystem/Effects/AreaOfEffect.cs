@@ -1,5 +1,5 @@
 using Game.Entities.Models;
-using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Effects;
 
 using System.Collections.Generic;
 using UnityEngine;

@@ -1,13 +1,16 @@
+using DG.Tweening;
+
 using Game.Managers.PartyManager;
 using Game.Systems.CommandCenter;
 using Game.Systems.ContextMenu;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 using Game.Systems.SheetSystem.Skills;
-
-using System.Drawing;
+using Game.UI;
 
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 using Zenject;
 
@@ -15,7 +18,10 @@ namespace Game.HUD
 {
 	public class UISlotAction : UISlot<SlotAction>
 	{
+		public UnityAction<UISlotAction> onUse;
+
 		[field: Space]
+		[field: SerializeField] public UIAnimationBlinkComponent Blink { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Key { get; private set; }
 
@@ -41,25 +47,9 @@ namespace Game.HUD
 			containerHandler.Unsubscribe(this);
 		}
 
-		public bool Use()
+		public void Use()
 		{
-			if(Action is Item item)
-			{
-				var initiator = partyManager.PlayerParty.LeaderParty;
-
-				if (item.IsConsumable)
-				{
-					CommandConsume.Execute(initiator, item);
-
-					return true;
-				}
-			}
-			else if (Action is Skill skill)
-			{
-
-			}
-
-			return false;
+			onUse?.Invoke(this);
 		}
 
 		public void ContextMenu()
@@ -68,7 +58,7 @@ namespace Game.HUD
 			{
 				contextMenuSystem.SetTarget(item);
 			}
-			else if (Action is Skill skill)
+			else if (Action is SkillData skill)
 			{
 				contextMenuSystem.SetTarget(skill);
 			}
@@ -77,13 +67,6 @@ namespace Game.HUD
 		public bool SetAction(IAction action)
 		{
 			return Slot.SetAction(action);
-		}
-
-		public void Swap(UISlotAction slot)
-		{
-			IAction action = slot.Slot.action;
-			slot.Slot.SetAction(Slot.action);
-			Slot.SetAction(action);
 		}
 
 		public override void Drop(UISlot slot)
@@ -108,7 +91,7 @@ namespace Game.HUD
 						Count.text = item.CurrentStackSize.ToString();
 						break;
 					}
-					case Skill skill:
+					case SkillData skill:
 					{
 						Icon.enabled = true;
 						Icon.sprite = skill.information.portrait;

@@ -3312,7 +3312,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2009444132}
   - component: {fileID: 2009444133}
-  - component: {fileID: 8562671999708994278}
   m_Layer: 5
   m_Name: Middle
   m_TagString: Untagged
@@ -3350,35 +3349,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2009444131}
   m_CullTransparentMesh: 1
---- !u!114 &8562671999708994278
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2009444131}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2e446e30b0b66c4295a1ffa9aed4b85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Content>k__BackingField: {fileID: 3145448669655919232}
-  slots:
-  - {fileID: 6197926530413657599}
-  - {fileID: 9206244930896175226}
-  - {fileID: 2334010725600721402}
-  - {fileID: 1860045196256901345}
-  - {fileID: 3694185924053274796}
-  - {fileID: 1706933919346911661}
-  - {fileID: 8925861107227389908}
-  - {fileID: 2466905642509148774}
-  - {fileID: 7056626295711932813}
-  - {fileID: 4712882847219107123}
-  - {fileID: 3331045557466686683}
-  - {fileID: 2659115228015072853}
-  - {fileID: 2039087664705458322}
-  - {fileID: 1938637732681689881}
-  - {fileID: 1505314354690420785}
 --- !u!1 &2108426895
 GameObject:
   m_ObjectHideFlags: 0
@@ -5649,6 +5619,7 @@ GameObject:
   - component: {fileID: 3294843288859248031}
   - component: {fileID: 3514947649760806572}
   - component: {fileID: 2702595379129620525}
+  - component: {fileID: 3293977985806701419}
   m_Layer: 5
   m_Name: ActionBar
   m_TagString: Untagged
@@ -5727,6 +5698,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 0
+--- !u!114 &3293977985806701419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3717719517119596603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2e446e30b0b66c4295a1ffa9aed4b85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Content>k__BackingField: {fileID: 3145448669655919232}
+  slots:
+  - {fileID: 6197926530413657599}
+  - {fileID: 9206244930896175226}
+  - {fileID: 2334010725600721402}
+  - {fileID: 1860045196256901345}
+  - {fileID: 3694185924053274796}
+  - {fileID: 1706933919346911661}
+  - {fileID: 8925861107227389908}
+  - {fileID: 2466905642509148774}
+  - {fileID: 7056626295711932813}
+  - {fileID: 4712882847219107123}
+  - {fileID: 3331045557466686683}
+  - {fileID: 2659115228015072853}
+  - {fileID: 2039087664705458322}
+  - {fileID: 1938637732681689881}
+  - {fileID: 1505314354690420785}
 --- !u!1 &3800982244106551311
 GameObject:
   m_ObjectHideFlags: 0

@@ -190,7 +190,7 @@ MonoBehaviour:
         currentWeight: 0.01
         currentDurability: 100
         isShowFoldout: 0
-      - data: {fileID: 11400000, guid: 509a6ce85bbe8a347a9400df4b9f9469, type: 2}
+      - data: {fileID: 11400000, guid: 31d913388cddaa146a1d1be9f3d9cea6, type: 2}
         useRandom: 0
         currentStackSize: 1
         minimumStackSizeRandom: 0
@@ -370,11 +370,11 @@ MonoBehaviour:
       barSize: 15
     skills:
       skills:
-      - {fileID: -3500706701960549768, guid: 35dd00ecc4b03e7438c93179dbc22104, type: 3}
-      - {fileID: -8479967310570108433, guid: 4d0d23b317b011c4ebef0e11f3a8bab6, type: 3}
+      - {fileID: 11400000, guid: c06c3a64edefaee48b0402cf8c7a9450, type: 2}
+      - {fileID: 11400000, guid: 95ee6b55614c732489cb54c0a9a4f0c2, type: 2}
+      - {fileID: 11400000, guid: 77cdb0cffb2fc8644af040a69eeee575, type: 2}
     abilities:
-      abilities:
-      - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}
+      abilities: []
     isImmortal: 0
   isNPC: 0
   information:

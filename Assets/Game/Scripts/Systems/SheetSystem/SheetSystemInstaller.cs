@@ -1,3 +1,7 @@
+using Game.Systems.CombatDamageSystem;
+using Game.Systems.SheetSystem.Effects;
+using Game.Systems.SheetSystem.Skills;
+
 using Zenject;
 
 namespace Game.Systems.SheetSystem
@@ -6,14 +10,8 @@ namespace Game.Systems.SheetSystem
 	{
 		public override void InstallBindings()
 		{
-			Container.BindFactory<InstantEffectData, ISheet, InstantEffect, InstantEffect.Factory>().NonLazy();
-			Container.BindFactory<ProcessEffectData, ISheet, ProcessEffect, ProcessEffect.Factory>().NonLazy();
-			Container.BindFactory<InflictEffectData, ISheet, InflictEffect, InflictEffect.Factory>().NonLazy();
-
-			Container
-				.BindFactory<EffectData, ISheet, IEffect, EffectFactory>()
-				.FromFactory<CustomEffectFactory>()
-				.NonLazy();
+			EffectSystemInstaller.Install(Container);
+			SkillSystemInstaller.Install(Container);
 		}
 	}
 }

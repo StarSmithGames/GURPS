@@ -6,51 +6,54 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UIAnimationScaleComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+namespace Game.UI
 {
-	[SerializeField] private Transform targetTransform;
-	[SerializeField] private float scaleMultiply = 0.95f;
-
-	private Sequence sequence;
-	private Vector3 startScale;
-	private Vector3 endScale;
-
-	private void Awake()
+	public class UIAnimationScaleComponent : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 	{
-		if (targetTransform == null)
+		[SerializeField] private Transform targetTransform;
+		[SerializeField] private float scaleMultiply = 0.95f;
+
+		private Sequence sequence;
+		private Vector3 startScale;
+		private Vector3 endScale;
+
+		private void Awake()
 		{
-			targetTransform = transform;
+			if (targetTransform == null)
+			{
+				targetTransform = transform;
+			}
+
+			startScale = targetTransform.localScale;
+			endScale = startScale * scaleMultiply;
 		}
 
-		startScale = targetTransform.localScale;
-		endScale = startScale * scaleMultiply;
-	}
-
-	public void OnPointerDown(PointerEventData eventData)
-	{
-		TryForceComplete();
-
-		sequence = DOTween.Sequence();
-		sequence
-			.Append(targetTransform.DOScale(endScale, 0.1f))
-			.SetEase(Ease.Linear);
-	}
-
-	public void OnPointerUp(PointerEventData eventData)
-	{
-		TryForceComplete();
-
-		sequence = DOTween.Sequence();
-		sequence
-			.Append(targetTransform.DOScale(startScale, 0.1f))
-			.SetEase(Ease.Linear);
-	}
-
-	private void TryForceComplete()
-	{
-		if (sequence != null)
+		public void OnPointerDown(PointerEventData eventData)
 		{
-			sequence.Complete(true);
+			TryForceComplete();
+
+			sequence = DOTween.Sequence();
+			sequence
+				.Append(targetTransform.DOScale(endScale, 0.1f))
+				.SetEase(Ease.Linear);
+		}
+
+		public void OnPointerUp(PointerEventData eventData)
+		{
+			TryForceComplete();
+
+			sequence = DOTween.Sequence();
+			sequence
+				.Append(targetTransform.DOScale(startScale, 0.1f))
+				.SetEase(Ease.Linear);
+		}
+
+		private void TryForceComplete()
+		{
+			if (sequence != null)
+			{
+				sequence.Complete(true);
+			}
 		}
 	}
 }

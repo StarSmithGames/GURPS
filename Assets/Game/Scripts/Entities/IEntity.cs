@@ -1,6 +1,7 @@
 using Game.Entities.Models;
-using Game.Managers.CharacterManager;
 using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Effects;
+using Game.Systems.SheetSystem.Skills;
 
 using Zenject;
 
@@ -15,6 +16,7 @@ namespace Game.Entities
 	{
 		CharacterData CharacterData { get; }
 		Effects Effects { get; }
+		Skills Skills { get; }
 
 		void SetModel(ICharacterModel model);
 
@@ -28,12 +30,16 @@ namespace Game.Entities
 		public virtual ICharacterModel Model { get; protected set; }
 
 		public virtual Effects Effects { get; private set; }
+		public virtual Skills Skills { get; private set; }
 
-		public Character(CharacterData data, EffectFactory effectFactory)
+		public Character(CharacterData data,
+			EffectFactory effectFactory,
+			SkillFactory skillFactory)
 		{
 			CharacterData = data;
 			Sheet = new CharacterSheet(data);
 			Effects = new Effects(this, effectFactory);
+			Skills = new Skills(this, skillFactory, data.sheet.skills);
 		}
 
 		public void SetModel(ICharacterModel model)

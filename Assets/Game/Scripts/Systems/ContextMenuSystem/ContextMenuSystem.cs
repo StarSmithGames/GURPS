@@ -99,7 +99,7 @@ namespace Game.Systems.ContextMenu
 			contextMenu.SetCommands(commands);
 		}
 
-		public void SetTarget(Skill skill)
+		public void SetTarget(SkillData skill)
 		{
 			if (contextMenu == null)
 			{

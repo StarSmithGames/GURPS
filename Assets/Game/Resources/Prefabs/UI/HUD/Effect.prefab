@@ -464,6 +464,7 @@ GameObject:
   - component: {fileID: 3936926185526647163}
   - component: {fileID: 5079169986193553023}
   - component: {fileID: 8370480063244130010}
+  - component: {fileID: 1495627400488796456}
   m_Layer: 5
   m_Name: Effect
   m_TagString: Untagged
@@ -530,10 +531,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <CanvasGroup>k__BackingField: {fileID: 5079169986193553023}
+  <Blink>k__BackingField: {fileID: 1495627400488796456}
   <PointerHandler>k__BackingField: {fileID: 6949405091712752397}
   <Filler>k__BackingField: {fileID: 3306896850734713323}
   <Icon>k__BackingField: {fileID: 4477828380109687218}
   <Text>k__BackingField: {fileID: 8609626146603422349}
+--- !u!114 &1495627400488796456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6991511562025524396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fc9b95bd78ac914e940e2a8a7ab9853, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvasGroup: {fileID: 5079169986193553023}
 --- !u!1 &7559005781658041246
 GameObject:
   m_ObjectHideFlags: 0

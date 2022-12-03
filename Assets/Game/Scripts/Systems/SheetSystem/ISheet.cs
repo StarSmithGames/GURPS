@@ -5,11 +5,6 @@ using Game.Systems.SheetSystem.Abilities;
 using Game.Systems.SheetSystem.Skills;
 
 using Sirenix.OdinInspector;
-using Sirenix.Serialization;
-
-using System;
-
-using UnityEngine;
 
 namespace Game.Systems.SheetSystem
 {
@@ -27,7 +22,6 @@ namespace Game.Systems.SheetSystem
 
         Conditions Conditions { get; }
 
-        SkillDeck Skills { get; }
         Traits Traits { get; }
         Talents Talents { get; }
         //racial abilities
@@ -51,7 +45,6 @@ namespace Game.Systems.SheetSystem
 
         public virtual Conditions Conditions { get; private set; }
 
-        public virtual SkillDeck Skills { get; private set; }
         public virtual Traits Traits { get; private set; }
         public virtual Talents Talents { get; private set; }
 
@@ -72,7 +65,6 @@ namespace Game.Systems.SheetSystem
             ActionBar = new ActionBar(Settings.actionBar, this);
 
             Conditions = new Conditions();
-            Skills = new SkillDeck(Settings.skills);
             Traits = new Traits();
             Talents = new Talents();
 

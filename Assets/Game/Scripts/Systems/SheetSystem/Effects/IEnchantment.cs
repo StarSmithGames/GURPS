@@ -1,3 +1,5 @@
+using Sirenix.OdinInspector;
+
 using System.Collections.Generic;
 
 namespace Game.Systems.SheetSystem
@@ -53,12 +55,24 @@ namespace Game.Systems.SheetSystem
 	[System.Serializable]
 	public sealed class AddHealthPointsModifier : EnchantmentType
 	{
+		public bool isPercent = false;
+		[HideIf("isPercent")]
 		public float add;
+		[ShowIf("isPercent")]
+		[SuffixLabel("%", overlay: true)]
+		public float addPercent;
 
 		public override Enchantment GetEnchantment(object obj)
 		{
 			var sheet = (ISheet)obj;
-			return new AddStatModifierEnchantment(sheet.Stats.HitPoints, add);
+			if (isPercent)
+			{
+				return new AddPercentStatModifierEnchantment(sheet.Stats.HitPoints, addPercent);
+			}
+			else
+			{
+				return new AddStatModifierEnchantment(sheet.Stats.HitPoints, add);
+			}
 		}
 	}
 
