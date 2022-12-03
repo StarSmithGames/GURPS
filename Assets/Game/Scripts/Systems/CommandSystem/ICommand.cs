@@ -146,6 +146,26 @@ namespace Game.Systems.CommandCenter
 	}
 
 
+	public class CommandEquip : ContextCommand
+	{
+		private ICharacter character;
+		private Item item;
+		private UnityAction callback;
+
+		public CommandEquip(ICharacter character, Item item, UnityAction callback = null)
+		{
+			this.character = character;
+			this.item = item;
+			this.callback = callback;
+		}
+
+		public override void Execute()
+		{
+			//(character.Sheet as CharacterSheet).Equipment.Equip(item);
+			callback?.Invoke();
+		}
+	}
+
 	public class CommandConsume : ContextCommand
 	{
 		private ICharacter character;

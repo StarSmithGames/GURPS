@@ -106,31 +106,18 @@ namespace Game.Systems.InventorySystem
 			{
 				case UISlotInventory inventorySlot:
 				{
-					Item item = inventorySlot.Item;
-
-					var from = inventorySlot.Slot.Sheet.Inventory;
-					var to = partyManager.PlayerParty.LeaderParty.Sheet.Inventory;
-
 					if (eventData.button == PointerEventData.InputButton.Left)
 					{
 						if (eventData.clickCount > 1)
 						{
 							InventoryPointer.DoubleClick(inventorySlot, partyManager.PlayerParty.LeaderParty);
 						}
-						else
-						{
-							if (from == to) return;
-
-							to.Add(item);
-							from.Remove(item);
-						}
 
 						tooltip.ExitTarget(slot);
 					}
 					else if (eventData.button == PointerEventData.InputButton.Right)
 					{
-						contextMenuSystem.SetTarget(item);
-
+						contextMenuSystem.SetTarget(inventorySlot.Item);
 						tooltip.ExitTarget(slot);
 					}
 
@@ -138,10 +125,18 @@ namespace Game.Systems.InventorySystem
 				}
 				case UISlotEquipment equipmentSlot:
 				{
-					if (eventData.clickCount > 1)
+					if (eventData.button == PointerEventData.InputButton.Left)
 					{
-						EquipmentPointer.DoubleClick(equipmentSlot, partyManager.PlayerParty.LeaderParty);
-
+						if (eventData.clickCount > 1)
+						{
+							EquipmentPointer.DoubleClick(equipmentSlot, partyManager.PlayerParty.LeaderParty);
+						}
+						
+						tooltip.ExitTarget(slot);
+					}
+					else if(eventData.button == PointerEventData.InputButton.Right)
+					{
+						equipmentSlot.ContextMenu();
 						tooltip.ExitTarget(slot);
 					}
 
@@ -290,7 +285,7 @@ namespace Game.Systems.InventorySystem
 						}
 						else
 						{
-							//try swap with the first slot
+							//try swap with the first slot(need refact)
 							var slotEquipment = equipment.GetSlotByType(item.ItemData.GetType());
 							if (slotEquipment != null)
 							{

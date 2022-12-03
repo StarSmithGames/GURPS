@@ -78,7 +78,11 @@ namespace Game.Systems.ContextMenu
 
 			var leader = partyManager.PlayerParty.LeaderParty;
 
-			if (item.IsConsumable)
+			if (item.IsEquippable)
+			{
+				commands.Add(new CommandConsume(leader, item) { name = "Eat" });
+			}
+			else if (item.IsConsumable)
 			{
 				if (item.IsEatable)
 				{

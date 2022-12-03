@@ -47,7 +47,7 @@ namespace Game.UI.CanvasSystem
 			Container.BindFactory<UIContainerWindow, UIContainerWindow.Factory>()
 			   .FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
 			   .FromComponentInNewPrefab(chestPopupWindowPrefab)
-			   .UnderTransform((x) => x.Container.Resolve<UISubCanvas>().transform));
+			   .UnderTransform((x) => x.Container.Resolve<UISubCanvas>().Windows));
 
 			Container.BindInstance(Container.InstantiatePrefabForComponent<Systems.InventorySystem.UIDragItem>(itemCursorPrefab));
 

@@ -44,14 +44,8 @@ MonoBehaviour:
     inventory:
       useRandomItems: 0
       isDynamicRows: 0
-      grid:
-        gridSize: {x: 3, y: 3}
-        cellSize: {x: 16, y: 16}
-        cells:
-        - row: 000000
-        - row: 000000
-        - row: 000000
-      slots: []
+      inventorySize: 0
+      items: []
       randomSettings:
         isUnique: 0
         useRandomCount: 1
@@ -128,46 +122,6 @@ MonoBehaviour:
           currentWeight: 0.01
           currentDurability: 100
           isShowFoldout: 0
-      weapon00:
-        item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      weapon01:
-        item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      weapon10:
-        item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
-      weapon11:
-        item:
-          data: {fileID: 0}
-          useRandom: 0
-          currentStackSize: 1
-          minimumStackSizeRandom: 0
-          maximumStackSizeRandom: 0
-          currentWeight: 0.01
-          currentDurability: 100
-          isShowFoldout: 0
       cloak:
         item:
           data: {fileID: 0}
@@ -218,6 +172,48 @@ MonoBehaviour:
           currentWeight: 0.01
           currentDurability: 100
           isShowFoldout: 0
+      main:
+        main:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+        spare:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+      spare:
+        main:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+        spare:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
     actionBar:
       barSize: 15
     skills:

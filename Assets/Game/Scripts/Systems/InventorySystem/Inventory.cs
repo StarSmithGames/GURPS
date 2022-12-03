@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.Events;
 using Game.Systems.SheetSystem;
+using UnityEngine.Assertions;
 
 namespace Game.Systems.InventorySystem
 {
@@ -19,7 +20,9 @@ namespace Game.Systems.InventorySystem
         {
             Slots = new List<SlotInventory>();
 
-            for (int i = 0; i < settings.inventorySize; i++)
+            Assert.AreNotEqual(settings.inventorySize, InventorySize.None, "Inventory can not be size None!");
+
+            for (int i = 0; i < GetInitSize(settings.inventorySize); i++)
             {
                 SlotInventory slot = new SlotInventory();
                 slot.SetOwner(sheet);
@@ -162,6 +165,21 @@ namespace Game.Systems.InventorySystem
             return items.Count > 0;
         }
 
+
+        private int GetInitSize(InventorySize size)
+        {
+            if(size == InventorySize.Character)
+            {
+                return 49;
+            }
+            else if(size == InventorySize.Container)
+            {
+                return 15;
+            }
+
+            return 0;
+        }
+
         public Data GetData()
         {
             return new Data()
@@ -182,7 +200,7 @@ namespace Game.Systems.InventorySystem
         public bool useRandomItems = false;
 
         [ReadOnly] public bool isDynamicRows = false;
-        [ReadOnly] public int inventorySize = 49;
+        public InventorySize inventorySize = InventorySize.None;
 
         //sort by
         [HideIf("useRandomItems")]
@@ -270,5 +288,13 @@ namespace Game.Systems.InventorySystem
 
         [Space]
         public List<ItemData> ignoreList = new List<ItemData>();
+    }
+
+    public enum InventorySize : int
+    {
+        None = -1,
+
+        Character = 0,
+        Container = 1,
     }
 }

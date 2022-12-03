@@ -42,40 +42,10 @@ MonoBehaviour:
       barks: {fileID: 0}
       dialogues: {fileID: 11400000, guid: 6e84360e1e9040c4ebebb8147f572151, type: 2}
     inventory:
-      useRandomItems: 1
-      grid:
-        gridSize: {x: 3, y: 3}
-        cellSize: {x: 128, y: 32}
-        cells:
-        - row: 000000
-        - row: 000000
-        - row: 000000
-      slots: []
-      randomSettings:
-        isUnique: 0
-        useRandomCount: 1
-        itemsCount: 1
-        itemsMinMaxCount: {x: 1, y: 5}
-        staticItems: []
-        useConsumableItems: 1
-        useFireItems: 1
-        useAccelerantItems: 1
-        useFuelItems: 1
-        useStarterItems: 1
-        useTinderItems: 1
-        useToolItems: 1
-        useMaterialItems: 1
-        ignoreList: []
-    actions:
       useRandomItems: 0
-      grid:
-        gridSize: {x: 3, y: 3}
-        cellSize: {x: 0, y: 0}
-        cells:
-        - row: 000000
-        - row: 000000
-        - row: 000000
-      slots: []
+      isDynamicRows: 0
+      inventorySize: 0
+      items: []
       randomSettings:
         isUnique: 0
         useRandomCount: 1
@@ -91,6 +61,163 @@ MonoBehaviour:
         useToolItems: 1
         useMaterialItems: 1
         ignoreList: []
+    equipment:
+      head:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      sholders:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      chest:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      forearms:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      legs:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      feet:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      cloak:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      jewelry:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      ring0:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      ring1:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      trinket:
+        item:
+          data: {fileID: 0}
+          useRandom: 0
+          currentStackSize: 1
+          minimumStackSizeRandom: 0
+          maximumStackSizeRandom: 0
+          currentWeight: 0.01
+          currentDurability: 100
+          isShowFoldout: 0
+      main:
+        main:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+        spare:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+      spare:
+        main:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+        spare:
+          item:
+            data: {fileID: 0}
+            useRandom: 0
+            currentStackSize: 1
+            minimumStackSizeRandom: 0
+            maximumStackSizeRandom: 0
+            currentWeight: 0.01
+            currentDurability: 100
+            isShowFoldout: 0
+    actionBar:
+      barSize: 15
+    skills:
+      skills: []
     abilities:
       abilities:
       - {fileID: 2953428986822282548, guid: 392306911e8f5f148b59785913af17dd, type: 3}

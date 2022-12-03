@@ -44,7 +44,7 @@ MonoBehaviour:
     inventory:
       useRandomItems: 0
       isDynamicRows: 0
-      inventorySize: 49
+      inventorySize: 0
       items:
       - data: {fileID: 11400000, guid: 4d5f0c4e4c0630f48b3c33bac6232bc6, type: 2}
         useRandom: 0

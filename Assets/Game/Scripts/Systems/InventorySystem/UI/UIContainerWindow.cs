@@ -32,13 +32,13 @@ namespace Game.Systems.InventorySystem
 
 		private void OnClosed()
 		{
-			HidePopup();
+			HidePopup(() => DespawnIt());
 			onClose?.Invoke();
 		} 
 
 		private void OnTakeAll()
 		{
-			HidePopup();
+			HidePopup(() => DespawnIt());
 			onTakeAll?.Invoke();
 		}
 

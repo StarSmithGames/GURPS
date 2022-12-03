@@ -1,6 +1,11 @@
+using Game.Managers.PartyManager;
+using Game.Systems.ContextMenu;
+
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.UI;
+
+using Zenject;
 
 namespace Game.Systems.InventorySystem
 {
@@ -18,6 +23,14 @@ namespace Game.Systems.InventorySystem
 		public Item Item => Slot.item;
 
 		private bool IsWeaponSpareSlot => isWeaponSlot && !isMainWeaponSlot && !IsEmpty && Item.IsTwoHandedWeapon;
+
+		private ContextMenuSystem contextMenuSystem;
+
+		[Inject]
+		private void Construct(ContextMenuSystem contextMenuSystem)
+		{
+			this.contextMenuSystem = contextMenuSystem;
+		}
 
 		private void Start()
 		{
@@ -43,15 +56,20 @@ namespace Game.Systems.InventorySystem
 			base.EnableHightlight(IsWeaponSpareSlot);
 		}
 
+		public void ContextMenu()
+		{
+			contextMenuSystem.SetTarget(Item);
+		}
+
 		public void EnableProhibition(bool trigger)
 		{
 			Prohibition.enabled = trigger;
 		}
 
-		private void Swap()
-		{
-			Background.sprite = Background.sprite == BaseBackground ? SwapBackground : BaseBackground;
-		}
+		//private void Swap()
+		//{
+		//	Background.sprite = Background.sprite == BaseBackground ? SwapBackground : BaseBackground;
+		//}
 
 		public override void Drop(UISlot slot)
 		{

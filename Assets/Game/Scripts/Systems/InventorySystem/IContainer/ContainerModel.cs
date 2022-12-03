@@ -134,7 +134,7 @@ namespace Game.Systems.InventorySystem
 
 				window = containerWindowFactory.Create();
 
-				window.transform.SetParent(subCanvas.Windows);
+				//window.transform.SetParent(subCanvas.Windows);
 				(window.transform as RectTransform).anchoredPosition = Vector2.zero;
 
 				window.Inventory.SetInventory(Sheet.Inventory);
@@ -150,11 +150,13 @@ namespace Game.Systems.InventorySystem
 
 		public void Close()
 		{
-			window?.HidePopup();
-			if(window != null)
+			window?.HidePopup(() =>
 			{
-				Dispose();
-			}
+				if (window != null)
+				{
+					Dispose();
+				}
+			});
 		}
 
 		private void Dispose()
@@ -165,7 +167,10 @@ namespace Game.Systems.InventorySystem
 			{
 				window.onClose -= Dispose;
 				window.onTakeAll -= OnTakeAll;
+
+				window.DespawnIt();
 			}
+
 			window = null;
 		}
 		#endregion

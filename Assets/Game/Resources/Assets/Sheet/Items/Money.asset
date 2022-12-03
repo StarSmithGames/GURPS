@@ -12,17 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44aaa664baeb35b418fddfde28883eb0, type: 3}
   m_Name: Money
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: e738eed8c89912a4586e035f75ac4e44, type: 3}
-  localizations:
-  - language: 10
-    itemName: Money
-    itemDescription: A current medium of exchange in the form of coins and banknotes;
-      coins and banknotes collectively.
+  information:
+    portrait: {fileID: 21300000, guid: e738eed8c89912a4586e035f75ac4e44, type: 3}
+    name: 
+    isNameId: 1
+    description: 
+    isDescriptionId: 1
   prefab: {fileID: 0}
   isStackable: 1
   isInfinityStack: 1
   stackSize: 9999
-  isWeighty: 0
+  isWeighty: 1
   weight: 0.01
   isBreakable: 0
   decay:
