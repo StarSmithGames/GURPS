@@ -142,9 +142,10 @@ namespace Game.Systems.SheetSystem
         private CharacterSheet.Factory characterSheetFactory;
         private ContainerSheet.Factory containerSheetFactory;
 
-		public CustomSheetFactory(CharacterSheet.Factory characterSheetFactory)
+		public CustomSheetFactory(CharacterSheet.Factory characterSheetFactory, ContainerSheet.Factory containerSheetFactory)
         {
             this.characterSheetFactory = characterSheetFactory;
+            this.containerSheetFactory = containerSheetFactory;
 		}
 
 		public ISheet Create(ModelData data)
