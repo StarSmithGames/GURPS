@@ -1,5 +1,6 @@
 using Game.Entities;
 using Game.Entities.Models;
+using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 
 using System.Collections;
@@ -91,12 +92,14 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public void BeginProcess()
 		{
-			character.Model.Markers.EnableSingleTarget(true);
+			character.Model.Freeze(true);
+			character.Model.Markers.EnableSingleTargetLine(true);
 		}
 
 		public void CancelProcess()
 		{
-			character.Model.Markers.EnableSingleTarget(false);
+			character.Model.Markers.EnableSingleTargetLine(false);
+			character.Model.Freeze(false);
 		}
 
 		public class Factory : PlaceholderFactory<ActiveSkillData, ICharacter, ActiveSkill> { }

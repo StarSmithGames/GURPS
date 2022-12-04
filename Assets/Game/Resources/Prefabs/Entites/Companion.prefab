@@ -107,6 +107,7 @@ MonoBehaviour:
   model: {fileID: 5468961598750850960}
   outline: {fileID: 7707879391142115215}
   interactionPoint: {fileID: 5067109585629635533}
+  markPoint: {fileID: 6266712603787185999}
   modelRoot: {fileID: 3761009277470784773}
   animator: {fileID: 7120726294155093887}
   navMeshAgent: {fileID: 397710266938422184}
@@ -4802,6 +4803,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50c6480447325f34ba90fbec7be835da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6266712603787185999 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5115113611732729821, guid: dcb97ed74d7e5d24e8df009f4b1c17fa, type: 3}
+  m_PrefabInstance: {fileID: 1156120343487377554}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b4692a0ddc90f14ca880fbefbf22309, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6289480093348186099 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5135200345949091681, guid: dcb97ed74d7e5d24e8df009f4b1c17fa, type: 3}
@@ -5397,10 +5409,6 @@ PrefabInstance:
       propertyPath: relativeDirection
       value: 
       objectReference: {fileID: 1608075664323769055, guid: ebcbe1de3f9430e45acf9087269e140b, type: 3}
-    - target: {fileID: 4683828873647518014, guid: dc4ceaf1db4b02b4e8b1980a44ab3f79, type: 3}
-      propertyPath: speed
-      value: 2.5
-      objectReference: {fileID: 0}
     - target: {fileID: 5861811361040990810, guid: dc4ceaf1db4b02b4e8b1980a44ab3f79, type: 3}
       propertyPath: m_Positions.Array.data[0].y
       value: -0.040000074
@@ -5917,10 +5925,10 @@ PrefabInstance:
       propertyPath: showLines
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8820703741667094511, guid: dc4ceaf1db4b02b4e8b1980a44ab3f79, type: 3}
-      propertyPath: isCanMove
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 8684970224556478959, guid: dc4ceaf1db4b02b4e8b1980a44ab3f79, type: 3}
+      propertyPath: lineStartPoint
+      value: 
+      objectReference: {fileID: 6266712603787185999}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc4ceaf1db4b02b4e8b1980a44ab3f79, type: 3}
 --- !u!114 &2416944364642038130 stripped

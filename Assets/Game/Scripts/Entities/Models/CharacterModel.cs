@@ -49,6 +49,7 @@ namespace Game.Entities.Models
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorController AnimatorController { get; private set; }
 		public CameraPivot CameraPivot { get; private set; }
+		public MarkPoint MarkPoint { get; protected set; }
 
 		public Transform DialogueTransform => Transform;//rm
 
@@ -63,6 +64,7 @@ namespace Game.Entities.Models
 			DialogueSystem dialogueSystem,
 			Barker barker,
 			CameraPivot cameraPivot,
+			MarkPoint markPoint,
 			CombatFactory combatFactory)
 		{
 			Outfit = outfit;
@@ -70,6 +72,7 @@ namespace Game.Entities.Models
 			Outline = outline;
 			Markers = markerController;
 			CameraPivot = cameraPivot;
+			MarkPoint = markPoint;
 
 			this.dialogueSystem = dialogueSystem;
 			this.barker = barker;

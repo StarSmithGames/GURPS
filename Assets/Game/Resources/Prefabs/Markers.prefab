@@ -63,7 +63,11 @@ MonoBehaviour:
   - {fileID: 2100000, guid: a2492c9a70d652e4bbc904d96f522062, type: 2}
   - {fileID: 2100000, guid: 904280a30ee890b458b02de7e35f5410, type: 2}
   - {fileID: 2100000, guid: dbe4f8c638a5ec049b3081c579e4dc2c, type: 2}
-  colors: []
+  colors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0, g: 0.85490197, b: 1, a: 1}
+  - {r: 0, g: 1, b: 0.15686275, a: 1}
+  - {r: 1, g: 0, b: 0.08235294, a: 1}
   <Exclamation>k__BackingField: {fileID: 3651717449146404156}
   <Question>k__BackingField: {fileID: 7162937197923420260}
 --- !u!1001 &674264366133791907
@@ -116,10 +120,6 @@ PrefabInstance:
     - target: {fileID: 4928291953044809572, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5213825131270487453, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
-      propertyPath: raycastLayerMask.m_Bits
-      value: 63
       objectReference: {fileID: 0}
     - target: {fileID: 6830617372628650916, guid: 093eb9276cc611747a19769da4216b5b, type: 3}
       propertyPath: m_Name
@@ -380,10 +380,6 @@ PrefabInstance:
     - target: {fileID: 810158343001951058, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
       propertyPath: m_Parameters.widthMultiplier
       value: 0.05
-      objectReference: {fileID: 0}
-    - target: {fileID: 4785388017172133404, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
-      propertyPath: raycastLayerMask.m_Bits
-      value: 63
       objectReference: {fileID: 0}
     - target: {fileID: 5644954486938266853, guid: 8a39ac0f5fe72ee4daf223331ab25257, type: 3}
       propertyPath: m_RootOrder

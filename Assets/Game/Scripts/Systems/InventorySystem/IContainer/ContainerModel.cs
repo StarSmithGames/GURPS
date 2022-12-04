@@ -3,12 +3,13 @@ using Game.Managers.InputManager;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
-using Game.UI;
 using Game.UI.CanvasSystem;
-
 using UnityEngine;
-
 using Zenject;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Game.Systems.InventorySystem
 {
@@ -185,6 +186,13 @@ namespace Game.Systems.InventorySystem
 		private void OnDrawGizmos()
 		{
 			Gizmos.DrawSphere(transform.TransformPoint(DamagePosition), 0.1f);
+
+#if UNITY_EDITOR
+			var style = new GUIStyle();
+			style.normal.textColor = Color.white;
+
+			Handles.Label(transform.TransformPoint(DamagePosition) + transform.right * 0.1f, "Damage Position", style);
+#endif
 		}
 
 		public class Data

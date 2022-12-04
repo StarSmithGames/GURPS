@@ -8,6 +8,7 @@ namespace Game.Systems.CombatDamageSystem
 	{
 		Vector3 DamagePosition { get; }
 		InteractionPoint BattlePoint { get; }
+		MarkPoint MarkPoint { get; }
 
 		Damage GetDamage();
 	}

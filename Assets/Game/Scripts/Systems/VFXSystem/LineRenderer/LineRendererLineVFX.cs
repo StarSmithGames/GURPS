@@ -1,13 +1,4 @@
-using Game.Systems.VFX;
-
-using Sirenix.OdinInspector;
-
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
-
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Game.Systems.VFX
 {
@@ -63,81 +54,6 @@ namespace Game.Systems.VFX
 			else
 			{
 				Line.SetPositions(points);
-			}
-		}
-
-		void DrawSineWave(Vector3 startPoint, float amplitude, float wavelength)
-		{
-			float x = 0f;
-			float y;
-			float k = 2 * Mathf.PI / wavelength;
-			Line.positionCount = 200;
-			for (int i = 0; i < Line.positionCount; i++)
-			{
-				x += i * 0.001f;
-				y = amplitude * Mathf.Sin(k * x);
-				Line.SetPosition(i, new Vector3(x, y, 0) + startPoint);
-			}
-		}
-
-		void DrawTravellingSineWave(Vector3 startPoint, float amplitude, float wavelength, float waveSpeed)
-		{
-
-			float x = 0f;
-			float y;
-			float k = 2 * Mathf.PI / wavelength;
-			float w = k * waveSpeed;
-			Line.positionCount = 200;
-			for (int i = 0; i < Line.positionCount; i++)
-			{
-				x += i * 0.001f;
-				y = amplitude * Mathf.Sin(k * x + w * Time.time);
-				Line.SetPosition(i, new Vector3(x, y, 0) + startPoint);
-			}
-		}
-
-		void DrawStandingSineWave(Vector3 startPoint, float amplitude, float wavelength, float waveSpeed)
-		{
-
-			float x = 0f;
-			float y;
-			float k = 2 * Mathf.PI / wavelength;
-			float w = k * waveSpeed;
-			Line.positionCount = 200;
-			for (int i = 0; i < Line.positionCount; i++)
-			{
-				x += i * 0.001f;
-				y = amplitude * (Mathf.Sin(k * x + w * Time.time) + Mathf.Sin(k * x - w * Time.time));
-				Line.SetPosition(i, new Vector3(x, y, 0) + startPoint);
-			}
-		}
-
-		void DrawQuadraticBezierCurve(Vector3 point0, Vector3 point1, Vector3 point2)
-		{
-			Line.positionCount = 200;
-			float t = 0f;
-			Vector3 B = new Vector3(0, 0, 0);
-			for (int i = 0; i < Line.positionCount; i++)
-			{
-				B = (1 - t) * (1 - t) * point0 + 2 * (1 - t) * t * point1 + t * t * point2;
-				Line.SetPosition(i, B);
-				t += (1 / (float)Line.positionCount);
-			}
-		}
-
-		void DrawCubicBezierCurve(Vector3 point0, Vector3 point1, Vector3 point2, Vector3 point3)
-		{
-
-			Line.positionCount = 200;
-			float t = 0f;
-			Vector3 B = new Vector3(0, 0, 0);
-			for (int i = 0; i < Line.positionCount; i++)
-			{
-				B = (1 - t) * (1 - t) * (1 - t) * point0 + 3 * (1 - t) * (1 - t) *
-					t * point1 + 3 * (1 - t) * t * t * point2 + t * t * t * point3;
-
-				Line.SetPosition(i, B);
-				t += (1 / (float)Line.positionCount);
 			}
 		}
 	}

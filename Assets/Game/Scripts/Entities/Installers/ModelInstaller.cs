@@ -15,11 +15,13 @@ public class ModelInstaller : MonoInstaller
 	public Model model;
 	public Outlinable outline;
 	public InteractionPoint interactionPoint;
+	public MarkPoint markPoint;
 
 	public override void InstallBindings()
 	{
 		Container.BindInstance(outline);
 		Container.BindInstance(interactionPoint);
+		Container.BindInstance(markPoint);
 		BindModel();
 	}
 

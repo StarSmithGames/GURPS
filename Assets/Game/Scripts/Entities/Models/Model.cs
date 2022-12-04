@@ -86,7 +86,14 @@ namespace Game.Entities.Models
 	{
 		[field: SerializeField] public Vector3 DamagePosition { get; protected set; }
 		public virtual InteractionPoint BattlePoint { get; protected set; }
+		public virtual MarkPoint MarkPoint { get; protected set; }
 		public virtual ISheet Sheet { get; }
+
+		[Inject]
+		private void Construct(MarkPoint markPoint)
+		{
+			MarkPoint = markPoint;
+		}
 
 		public virtual Damage GetDamage()
 		{

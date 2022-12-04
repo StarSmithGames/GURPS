@@ -28,10 +28,10 @@ namespace Game.Systems.CameraSystem
 		public RaycastHit Hit { get; protected set; }
 		public Vector3 HitPoint { get; protected set; }
 
-		protected IObservable CurrentObserve
+		public IObservable CurrentObserve
 		{
 			get => currentEntity;
-			set
+			protected set
 			{
 				if (currentEntity != value)
 				{

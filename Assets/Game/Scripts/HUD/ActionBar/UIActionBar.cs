@@ -34,10 +34,12 @@ namespace Game.HUD
 		{
 			this.actionFactory = actionFactory;
 			this.partyManager = partyManager;
+
 		}
 
 		private void Start()
 		{
+			partyManager.PlayerParty.LeaderParty.Skills.onPreparedSkillChanged += OnPreparedSkillChanged;
 			var actionBar = partyManager.PlayerParty.LeaderParty.Sheet.ActionBar;
 
 			Assert.IsTrue(actionBar.Slots.Count == slots.Count);
@@ -53,6 +55,11 @@ namespace Game.HUD
 				slots[i].onUse += OnUsed;
 				slots[i].onChanged += OnSlotChanged;
 			}
+		}
+
+		private void OnDestroy()
+		{
+			partyManager.PlayerParty.LeaderParty.Skills.onPreparedSkillChanged -= OnPreparedSkillChanged;
 		}
 
 		private void EnableBlink(IAction action, bool trigger)
@@ -123,6 +130,11 @@ namespace Game.HUD
 					}
 				}
 			}
+		}
+
+		private void OnPreparedSkillChanged()
+		{
+
 		}
 
 		[Button(DirtyOnClick = true)]

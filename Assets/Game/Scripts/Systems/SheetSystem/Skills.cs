@@ -13,6 +13,7 @@ namespace Game.Systems.SheetSystem.Skills
 	public sealed class Skills
 	{
 		public event UnityAction onRegistratorChanged;
+		public event UnityAction onPreparedSkillChanged;
 
 		public SkillDeck SkillDeck { get; private set; }
 
@@ -47,12 +48,16 @@ namespace Game.Systems.SheetSystem.Skills
 		{
 			PreparedSkill = CreateSkill(data) as ActiveSkill;
 			PreparedSkill.BeginProcess();
+
+			onPreparedSkillChanged?.Invoke();
 		}
 
 		public void CancelPreparation()
 		{
 			PreparedSkill?.CancelProcess();
 			PreparedSkill = null;
+
+			onPreparedSkillChanged?.Invoke();
 		}
 
 		private ISkill CreateSkill(SkillData data)
