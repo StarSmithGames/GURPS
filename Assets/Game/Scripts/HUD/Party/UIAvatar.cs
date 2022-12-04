@@ -83,8 +83,8 @@ namespace Game.HUD
 		{
 			if (CurrentCharacter != null)
 			{
-				CurrentCharacter.Effects.onRegistratorApplied -= OnEffectApplied;
-				CurrentCharacter.Effects.onRegistratorRemoved -= OnEffectRemoved;
+				CurrentCharacter.Sheet.Effects.onRegistratorApplied -= OnEffectApplied;
+				CurrentCharacter.Sheet.Effects.onRegistratorRemoved -= OnEffectRemoved;
 				//character.Model.JoinBattle -= UpdateBattleUI;
 			}
 
@@ -95,8 +95,8 @@ namespace Game.HUD
 
 			if (CurrentCharacter != null)
 			{
-				CurrentCharacter.Effects.onRegistratorApplied += OnEffectApplied;
-				CurrentCharacter.Effects.onRegistratorRemoved += OnEffectRemoved;
+				CurrentCharacter.Sheet.Effects.onRegistratorApplied += OnEffectApplied;
+				CurrentCharacter.Sheet.Effects.onRegistratorRemoved += OnEffectRemoved;
 				//CurrentModel.onBattleChanged += UpdateBattleUI;
 			}
 		}

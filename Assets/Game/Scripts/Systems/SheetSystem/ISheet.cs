@@ -1,10 +1,15 @@
 using Game.Entities;
+using Game.Systems.CutomizationSystem;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem.Abilities;
+using Game.Systems.SheetSystem.Effects;
 using Game.Systems.SheetSystem.Skills;
 
 using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor.Modules;
+
+using Zenject;
 
 namespace Game.Systems.SheetSystem
 {
@@ -20,7 +25,9 @@ namespace Game.Systems.SheetSystem
         Inventory Inventory { get; }
         ActionBar ActionBar { get; }
 
-        Conditions Conditions { get; }
+		Effects.Effects Effects { get; }
+
+		Conditions Conditions { get; }
 
         Traits Traits { get; }
         Talents Talents { get; }
@@ -45,7 +52,9 @@ namespace Game.Systems.SheetSystem
         public virtual Inventory Inventory { get; private set; }
         public virtual ActionBar ActionBar { get; private set; }
 
-        public virtual Conditions Conditions { get; private set; }
+		public virtual Effects.Effects Effects { get; protected set; }
+
+		public virtual Conditions Conditions { get; private set; }
 
         public virtual Traits Traits { get; private set; }
         public virtual Talents Talents { get; private set; }
@@ -64,9 +73,9 @@ namespace Game.Systems.SheetSystem
             Characteristics = new Characteristics(Settings.characteristics);
             
             Inventory = new Inventory(Settings.inventory, this);
-            ActionBar = new ActionBar(Settings.actionBar, this);
+            ActionBar = new ActionBar(this);
 
-            Conditions = new Conditions();
+			Conditions = new Conditions();
             Traits = new Traits();
             Talents = new Talents();
 
@@ -85,11 +94,19 @@ namespace Game.Systems.SheetSystem
 		}
     }
 
-    public sealed class CharacterSheet : EntitySheet
-    {
+	public abstract class ModelSheet : EntitySheet
+	{
+		public ModelSheet(ModelData data, EffectFactory effectFactory) : base(data.information, data.sheet)
+		{
+			Effects = new Effects.Effects(this, effectFactory);
+		}
+	}
+
+	public sealed class CharacterSheet : ModelSheet
+	{
 		public Equipment Equipment { get; private set; }
 
-		public CharacterSheet(CharacterData data) : base(data.information, data.sheet)
+		public CharacterSheet(CharacterData data, EffectFactory effectFactory) : base(data, effectFactory)
         {
 			Equipment = new Equipment(data.sheet.equipment, this);
 		}
@@ -106,20 +123,47 @@ namespace Game.Systems.SheetSystem
 		{
 
 		}
-    }
 
-	public class ModelSheet : EntitySheet
-	{
-		public ModelSheet(ModelData data) : base(data.information, data.sheet) { }
-	}
+        public class Factory : PlaceholderFactory<CharacterData, CharacterSheet> { }
+    }
 
 	public sealed class ContainerSheet : ModelSheet
     {
-		public ContainerSheet(ContainerData data) : base(data) { }
+		public ContainerSheet(ContainerData data, EffectFactory effectFactory) : base(data, effectFactory) { }
+
+		public class Factory : PlaceholderFactory<ContainerData, ContainerSheet> { }
 	}
 
 
-    [HideLabel]
+	public class SheetFactory : PlaceholderFactory<ModelData, ISheet> { }
+
+	public class CustomSheetFactory : IFactory<ModelData, ISheet>
+	{
+        private CharacterSheet.Factory characterSheetFactory;
+        private ContainerSheet.Factory containerSheetFactory;
+
+		public CustomSheetFactory(CharacterSheet.Factory characterSheetFactory)
+        {
+            this.characterSheetFactory = characterSheetFactory;
+		}
+
+		public ISheet Create(ModelData data)
+		{
+            if(data is CharacterData characterData)
+            {
+                return characterSheetFactory.Create(characterData);
+			}
+            else if(data is ContainerData containerData)
+            {
+                return containerSheetFactory.Create(containerData);
+			}
+
+			throw new System.NotImplementedException();
+		}
+	}
+
+
+	[HideLabel]
     [System.Serializable]
     public sealed class SheetSettings
     {
@@ -134,11 +178,8 @@ namespace Game.Systems.SheetSystem
         public InventorySettings inventory;
 		[TabGroup("GroupB", "Equipment")]
 		public EquipmentSettings equipment;
-		[TabGroup("GroupB", "ActionBar")]
-        public ActionBarSettings actionBar;
         [TabGroup("GroupB", "Skills")]
         public SkillsSettings skills;
-
         
         [TabGroup("GroupC", "Abilities")]
         public AbilitiesSettings abilities;

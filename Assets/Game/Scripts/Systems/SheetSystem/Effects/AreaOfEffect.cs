@@ -17,7 +17,7 @@ public class AreaOfEffect : MonoBehaviour
 		var model = other.GetComponent<ICharacterModel>();
 		if (model != null)
 		{
-			colliders.Add(other, model.Character.Effects.Apply(data));
+			colliders.Add(other, model.Character.Sheet.Effects.Apply(data));
 		}
 	}
 

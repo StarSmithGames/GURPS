@@ -15,7 +15,6 @@ namespace Game.Entities
 	public interface ICharacter : IEntity<ICharacterModel>, ISheetable
 	{
 		CharacterData CharacterData { get; }
-		Effects Effects { get; }
 		Skills Skills { get; }
 
 		void SetModel(ICharacterModel model);
@@ -27,20 +26,15 @@ namespace Game.Entities
 	{
 		public CharacterData CharacterData { get; protected set; }
 		public virtual ISheet Sheet { get; protected set; }
+		public virtual Skills Skills { get; protected set; }
+
 		public virtual ICharacterModel Model { get; protected set; }
 
-		public virtual Effects Effects { get; private set; }
-		public virtual Skills Skills { get; private set; }
-
-		public Character(CharacterData data,
-			EffectFactory effectFactory,
-			SkillFactory skillFactory)
+		public Character(CharacterData data, SheetFactory sheetFactory, SkillFactory skillFactory)
 		{
 			CharacterData = data;
-			Sheet = new CharacterSheet(data);
-			Effects = new Effects(this, effectFactory);
+			Sheet = sheetFactory.Create(data);
 			Skills = new Skills(this, skillFactory, data.sheet.skills);
-
 			Sheet.Restore();
 		}
 

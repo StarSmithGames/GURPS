@@ -55,7 +55,7 @@ namespace Game.Editor
             GlobalDatabase.Instance.UpdateModelOverview();
             GlobalDatabase.Instance.UpdateContainerOverview();
             tree.Add("Characters",          new CharacterDataTable(GlobalDatabase.Instance.allCharacters));
-			tree.Add("Models",              new ModelDataTable(GlobalDatabase.Instance.allModels));
+			//tree.Add("Models",              new ModelDataTable(GlobalDatabase.Instance.allModels));
 			tree.Add("Models/Containers",   new ContainerDataTable(GlobalDatabase.Instance.allContainers));
 
             tree.AddAllAssetsAtPath("Characters", CharactersPath, typeof(CharacterData), true);
@@ -99,7 +99,7 @@ namespace Game.Editor
                 }
 
 
-				if (selected?.Value is EntityData data)
+				if (selected?.Value is ModelData data)
                 {
                     if (SirenixEditorGUI.ToolbarButton(new GUIContent("Delete", trash)))
                     {
@@ -145,7 +145,7 @@ namespace Game.Editor
 		{
             treeMenu.ForEach((x) =>
             {
-                if (x.Value is EntityData data)
+                if (x.Value is ModelData data)
                 {
                     RefreshData(data);
                 }
@@ -154,7 +154,7 @@ namespace Game.Editor
             AssetDatabase.SaveAssets();
         }
 
-        private void RefreshData(EntityData data)
+        private void RefreshData(ModelData data)
         {
             var abilities = data.sheet.abilities.abilities;
             //remove null's
@@ -172,8 +172,8 @@ namespace Game.Editor
             data.sheet.abilities.abilities = abilities.Union(baseAbilities).OrderBy((x) => x.name).ToList();
         }
 
-        private void ShowDialogue<T>(string path) where T : EntityData
-        {
+        private void ShowDialogue<T>(string path) where T : ModelData
+		{
             Sirenix.OdinInspector.Demos.RPGEditor.ScriptableObjectCreator.ShowDialog<T>(path, obj =>
             {
                 base.TrySelectMenuItemWithObject(obj); // Selects the newly created item in the editor

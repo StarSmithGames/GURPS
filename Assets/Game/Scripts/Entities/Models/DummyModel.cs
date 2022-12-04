@@ -33,7 +33,7 @@ namespace Game.Entities.Models
 			{
 				if (sheet == null)
 				{
-					sheet = new ModelSheet(data);
+					sheet = sheetFactory.Create(data);
 				}
 
 				return sheet;
@@ -44,9 +44,12 @@ namespace Game.Entities.Models
 
 		public Brain Brain { get; private set; }
 
+		private SheetFactory sheetFactory;
+
 		[Inject]
-		private void Construct(DialogueSystem dialogueSystem)
+		private void Construct(SheetFactory sheetFactory, DialogueSystem dialogueSystem)
 		{
+			this.sheetFactory = sheetFactory;
 			this.dialogueSystem = dialogueSystem;
 
 			Brain = new DummyAI(this);

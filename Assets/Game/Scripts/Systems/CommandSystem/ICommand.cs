@@ -181,14 +181,14 @@ namespace Game.Systems.CommandCenter
 
 		public override void Execute()
 		{
-			character.Effects.Apply(item.GetItemData<ConsumableItemData>().effects);
+			character.Sheet.Effects.Apply(item.GetItemData<ConsumableItemData>().effects);
 			character.Sheet.Inventory.Remove(item);
 			callback?.Invoke();
 		}
 
 		public static void Execute(ICharacter character, Item item, UnityAction callback = null)
 		{
-			character.Effects.Apply(item.GetItemData<ConsumableItemData>().effects);
+			character.Sheet.Effects.Apply(item.GetItemData<ConsumableItemData>().effects);
 			character.Sheet.Inventory.Remove(item);
 			callback?.Invoke();
 		}

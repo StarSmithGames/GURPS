@@ -8,6 +8,7 @@ namespace Game.Systems.SheetSystem.Skills
 		public override void InstallBindings()
 		{
 			Container.BindFactory<PassiveSkillData, ICharacter, PassiveSkill, PassiveSkill.Factory>().NonLazy();
+			Container.BindFactory<ActiveSkillData, ICharacter, ActiveSkill, ActiveSkill.Factory>().NonLazy();
 
 			Container
 				.BindFactory<SkillData, ICharacter, ISkill, SkillFactory>()

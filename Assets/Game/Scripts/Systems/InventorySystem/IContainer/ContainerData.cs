@@ -1,6 +1,4 @@
 using Game.Entities;
-using Game.Systems.SheetSystem;
-
 using UnityEngine;
 
 namespace Game.Systems.InventorySystem

@@ -71,7 +71,7 @@ namespace Game.Systems.SheetSystem.Skills
 		public class Factory : PlaceholderFactory<PassiveSkillData, ICharacter, PassiveSkill> { }
 	}
 
-	public abstract class ActiveSkill : Skill
+	public class ActiveSkill : Skill
 	{
 		private ActiveSkillData data;
 		private AsyncManager asyncManager;
@@ -85,7 +85,10 @@ namespace Game.Systems.SheetSystem.Skills
 		public void BeginProcess()
 		{
 			character.Model.Markers.SingleTarget();
+			Debug.LogError("HERER");
 		}
+
+		public class Factory : PlaceholderFactory<ActiveSkillData, ICharacter, ActiveSkill> { }
 	}
 
 	//public class SingleTargetSkill : ActiveSkill
@@ -114,20 +117,26 @@ namespace Game.Systems.SheetSystem.Skills
 	public class CustomSkillFactory : IFactory<SkillData, ICharacter, ISkill>
 	{
 		private PassiveSkill.Factory passiveSkillFactory;
+		private ActiveSkill.Factory activeSkillFactory;
 
-		public CustomSkillFactory(PassiveSkill.Factory passiveSkillFactory)
+		public CustomSkillFactory(PassiveSkill.Factory passiveSkillFactory, ActiveSkill.Factory activeSkillFactory)
 		{
 			this.passiveSkillFactory = passiveSkillFactory;
+			this.activeSkillFactory = activeSkillFactory;
 		}
 
 		public ISkill Create(SkillData data, ICharacter character)
 		{
-			if(data is PassiveSkillData passiveSkillData)
+			if (data is PassiveSkillData passiveSkillData)
 			{
 				return passiveSkillFactory.Create(passiveSkillData, character);
 			}
+			else if (data is ActiveSkillData activeSkillData)
+			{
+				return activeSkillFactory.Create(activeSkillData, character);
+			}
 
-			return null;
+			throw new System.NotImplementedException();
 		}
 	}
 

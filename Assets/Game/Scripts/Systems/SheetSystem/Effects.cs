@@ -17,9 +17,9 @@ namespace Game.Systems.SheetSystem.Effects
 		private ISheet sheet;
 		private EffectFactory effectFactory;
 
-		public Effects(ICharacter character, EffectFactory effectFactory)
+		public Effects(ISheet sheet, EffectFactory effectFactory)
 		{
-			this.sheet = character.Sheet;
+			this.sheet = sheet;
 			this.effectFactory = effectFactory;
 
 			registrator = new Registrator<IEffect>();

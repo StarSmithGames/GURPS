@@ -17,7 +17,7 @@ namespace Game
     {
         [ReadOnly] public CharacterData player;
         [ReadOnly] public CharacterData[] allCharacters;
-        [ReadOnly] public ModelData[] allModels;
+        //[ReadOnly] public ModelData[] allModels;
         [Header("Inventory")]
         [ReadOnly] public ContainerData[] allContainers;
         [Header("Debug")]
@@ -47,13 +47,13 @@ namespace Game
         [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-97)]
         public void UpdateModelOverview()
         {
-            allModels = LoadAssets<ModelData>();
+            //allModels = LoadAssets<ModelData>();
         }
 
         [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-96)]
         public void UpdateContainerOverview()
         {
-            allContainers = LoadAssets<ContainerData>();
+            //allContainers = LoadAssets<ContainerData>();
         }
 
         public static T[] LoadAssets<T>(bool orderByName = true) where T : ScriptableObject

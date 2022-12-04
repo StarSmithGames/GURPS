@@ -27,7 +27,7 @@ namespace Game.Systems.InventorySystem
 			{
 				if(containerSheet == null)
 				{
-					containerSheet = new ContainerSheet(ContainerData);
+					containerSheet = sheetFactory.Create(ContainerData);
 				}
 
 				return containerSheet;
@@ -54,16 +54,19 @@ namespace Game.Systems.InventorySystem
 		private UIContainerWindow window;
 
 		private UISubCanvas subCanvas;
+		private SheetFactory sheetFactory;
 		private UIContainerWindow.Factory containerWindowFactory;
 		private InputManager inputManager;
 		private FloatingTextSystem.FloatingSystem floatingSystem;
 
 		[Inject]
 		private void Construct(UISubCanvas subCanvas,
+			SheetFactory sheetFactory,
 			UIContainerWindow.Factory containerWindowFactory,
 			InputManager inputManager, FloatingTextSystem.FloatingSystem floatingSystem)
 		{
 			this.subCanvas = subCanvas;
+			this.sheetFactory = sheetFactory;
 			this.containerWindowFactory = containerWindowFactory;
 			this.inputManager = inputManager;
 			this.floatingSystem = floatingSystem;

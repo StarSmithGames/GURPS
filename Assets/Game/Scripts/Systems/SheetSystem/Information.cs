@@ -1,7 +1,4 @@
 using Sirenix.OdinInspector;
-
-using System;
-
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem
@@ -62,8 +59,5 @@ namespace Game.Systems.SheetSystem
 	}
 
 	[System.Serializable]
-    public class HumanoidInformation : EntityInformation { }
-
-    [System.Serializable]
-    public class ModelInformation : EntityInformation { }
+	public class ModelInformation : EntityInformation { }
 }

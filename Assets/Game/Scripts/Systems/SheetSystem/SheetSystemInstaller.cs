@@ -1,4 +1,5 @@
-using Game.Systems.CombatDamageSystem;
+using Game.Entities;
+using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem.Effects;
 using Game.Systems.SheetSystem.Skills;
 
@@ -12,6 +13,14 @@ namespace Game.Systems.SheetSystem
 		{
 			EffectSystemInstaller.Install(Container);
 			SkillSystemInstaller.Install(Container);
+
+			Container.BindFactory<CharacterData, CharacterSheet, CharacterSheet.Factory>().NonLazy();
+			Container.BindFactory<ContainerData, ContainerSheet, ContainerSheet.Factory>().NonLazy();
+
+			Container
+				.BindFactory<ModelData, ISheet, SheetFactory>()
+				.FromFactory<CustomSheetFactory>()
+				.NonLazy();
 		}
 	}
 }

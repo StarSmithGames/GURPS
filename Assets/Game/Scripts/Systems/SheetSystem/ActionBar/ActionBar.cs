@@ -17,11 +17,11 @@ namespace Game.Systems.SheetSystem
 
         private ISheet sheet;
 
-        public ActionBar(ActionBarSettings settings, ISheet sheet)
+        public ActionBar(ISheet sheet)
 		{
             Slots = new List<SlotAction>();
 
-			for (int i = 0; i < settings.barSize; i++)
+			for (int i = 0; i < 15; i++)
 			{
                 Slots.Add(new SlotAction());
 			}
@@ -71,15 +71,5 @@ namespace Game.Systems.SheetSystem
                 }
             }
 		}
-    }
-
-    [System.Serializable]
-    public sealed class ActionBarSettings
-	{
-        [ReadOnly]
-        public int barSize = 15; 
-        //[MinValue(15)]
-        //[ListDrawerSettings(ShowIndexLabels = true, ListElementLabelName = "Title")]
-        //public List<SlotAction> slots = new List<SlotAction>();
     }
 }
