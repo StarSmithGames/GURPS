@@ -61,9 +61,9 @@ namespace Game.Entities
 			markers.Question.Enable(false);
 		}
 
-		public static void SingleTarget(this Markers markers)
+		public static void EnableSingleTarget(this Markers markers, bool trigger)
 		{
-			markers.LineMarker.Enable(true);
+			markers.LineMarker.Enable(trigger);
 		}
 	}
 

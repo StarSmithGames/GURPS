@@ -16,10 +16,12 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public SkillDeck SkillDeck { get; private set; }
 
+		public bool IsHasPreparedSkill => PreparedSkill != null;
+		public ActiveSkill PreparedSkill { get; private set; }
+
 		public List<ISkill> CurrentPassiveSkills => passiveRegistrator.registers;
 
 		private Registrator<ISkill> passiveRegistrator;
-		private ActiveSkill preparedSkill;
 
 		private ICharacter character;
 		private SkillFactory skillFactory;
@@ -33,7 +35,7 @@ namespace Game.Systems.SheetSystem.Skills
 
 			passiveRegistrator = new Registrator<ISkill>();
 
-			SkillDeck.PasiveSkills.ForEach((skill) =>
+			SkillDeck.PassiveSkills.ForEach((skill) =>
 			{
 				ISkill passive = CreateSkill(skill);
 				passiveRegistrator.Registrate(passive);
@@ -43,13 +45,14 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public void PrepareSkill(ActiveSkillData data)
 		{
-			preparedSkill = CreateSkill(data) as ActiveSkill;
-			preparedSkill.BeginProcess();
+			PreparedSkill = CreateSkill(data) as ActiveSkill;
+			PreparedSkill.BeginProcess();
 		}
 
 		public void CancelPreparation()
 		{
-			preparedSkill = null;
+			PreparedSkill?.CancelProcess();
+			PreparedSkill = null;
 		}
 
 		private ISkill CreateSkill(SkillData data)
@@ -63,7 +66,7 @@ namespace Game.Systems.SheetSystem.Skills
 		public List<SlotSkill> Skills { get; }
 		public List<SlotSkill> MemorySkills { get; }
 
-		public List<PassiveSkillData> PasiveSkills { get; }
+		public List<PassiveSkillData> PassiveSkills { get; }
 		public List<ActiveSkillData> ActiveSkills { get; }
 
 		public SkillDeck(SkillsSettings settings)
@@ -71,7 +74,7 @@ namespace Game.Systems.SheetSystem.Skills
 			Skills = new List<SlotSkill>();
 			MemorySkills = new List<SlotSkill>();
 
-			PasiveSkills = settings.skills.Where((skill) => skill is PassiveSkillData).Cast<PassiveSkillData>().ToList();
+			PassiveSkills = settings.skills.Where((skill) => skill is PassiveSkillData).Cast<PassiveSkillData>().ToList();
 			ActiveSkills = settings.skills.Where((skill) => skill is ActiveSkillData).Cast<ActiveSkillData>().ToList();
 
 			ActiveSkills.ForEach((skill) =>

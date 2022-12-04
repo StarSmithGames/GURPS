@@ -19,6 +19,7 @@ namespace Game.HUD
 	public class UISlotAction : UISlot<SlotAction>
 	{
 		public UnityAction<UISlotAction> onUse;
+		public UnityAction<UISlotAction> onChanged;
 
 		[field: Space]
 		[field: SerializeField] public UIAnimationBlinkComponent Blink { get; private set; }
@@ -66,7 +67,16 @@ namespace Game.HUD
 
 		public bool SetAction(IAction action)
 		{
-			return Slot.SetAction(action);
+			bool result = Slot.SetAction(action);
+			onChanged?.Invoke(this);
+
+			return result;
+		}
+
+		public override void Dispose()
+		{
+			base.Dispose();
+			onChanged?.Invoke(this);
 		}
 
 		public override void Drop(UISlot slot)

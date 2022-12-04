@@ -12,11 +12,15 @@ using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public interface ISkill : IActivation { }
+	public interface ISkill : IActivation
+	{
+		SkillData Data { get; }
+	}
 
 	public abstract class Skill : ISkill
 	{
 		public virtual bool IsActive { get; protected set; }
+		public virtual SkillData Data { get; protected set; }
 
 		protected ICharacter character;
 
@@ -37,11 +41,12 @@ namespace Game.Systems.SheetSystem.Skills
 
 	public sealed class PassiveSkill : Skill
 	{
-		private List<Enchantment> enchantments;
-
+		public override SkillData Data => data;
 		private PassiveSkillData data;
 
-		public PassiveSkill(ICharacter character, PassiveSkillData data) : base(character)
+		private List<Enchantment> enchantments;
+
+		public PassiveSkill(PassiveSkillData data, ICharacter character) : base(character)
 		{
 			this.data = data;
 
@@ -73,10 +78,12 @@ namespace Game.Systems.SheetSystem.Skills
 
 	public class ActiveSkill : Skill
 	{
+		public override SkillData Data => data;
 		private ActiveSkillData data;
+
 		private AsyncManager asyncManager;
 
-		public ActiveSkill(ICharacter character, ActiveSkillData data, AsyncManager asyncManager) : base(character)
+		public ActiveSkill(ActiveSkillData data, ICharacter character, AsyncManager asyncManager) : base(character)
 		{
 			this.data = data;
 			this.asyncManager = asyncManager;
@@ -84,8 +91,12 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public void BeginProcess()
 		{
-			character.Model.Markers.SingleTarget();
-			Debug.LogError("HERER");
+			character.Model.Markers.EnableSingleTarget(true);
+		}
+
+		public void CancelProcess()
+		{
+			character.Model.Markers.EnableSingleTarget(false);
 		}
 
 		public class Factory : PlaceholderFactory<ActiveSkillData, ICharacter, ActiveSkill> { }

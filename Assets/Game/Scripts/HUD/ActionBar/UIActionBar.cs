@@ -51,45 +51,76 @@ namespace Game.HUD
 				slots[i].SetSlot(actionBar.Slots[i]);
 
 				slots[i].onUse += OnUsed;
+				slots[i].onChanged += OnSlotChanged;
+			}
+		}
+
+		private void EnableBlink(IAction action, bool trigger)
+		{
+			if (trigger)
+			{
+				slots
+					.Where((x) => x.Action == action)
+					.ForEach((y) => y.Blink.Do(1f, 0, 0.6f));
+			}
+			else
+			{
+				slots
+					.Where((x) => x.Action == action)
+					.ForEach((y) => y.Blink.Kill(0));
 			}
 		}
 
 		private void OnUsed(UISlotAction slot)
 		{
-			bool isSame = false;
 			var initiator = partyManager.PlayerParty.LeaderParty;
 
-			if (usageAction != null)
+			if (slot.Action is ActiveSkillData skillData)
 			{
-				isSame = usageAction == slot.Action;
-				if (usageAction is ActiveSkillData)
+				bool isRef = false;
+				if (initiator.Skills.IsHasPreparedSkill)
 				{
+					isRef = initiator.Skills.PreparedSkill.Data == slot.Action;
+
+					EnableBlink(initiator.Skills.PreparedSkill.Data, false);
 					initiator.Skills.CancelPreparation();
-
-					slots
-						.Where((x) => x.Action == usageAction)
-						.ForEach((y) => y.Blink.Kill(0));
 				}
-			}
 
-			usageAction = slot.Action;
-
-			if (usageAction is Item item)
-			{
-				if (item.IsConsumable)
-				{
-					CommandConsume.Execute(initiator, item);
-				}
-			}
-			else if (usageAction is ActiveSkillData skillData)
-			{
-				if (!isSame)
+				if (!isRef)
 				{
 					initiator.Skills.PrepareSkill(skillData);
+					EnableBlink(skillData, true);
+				}
+			}
+			else
+			{
+				if (initiator.Skills.IsHasPreparedSkill)
+				{
+					EnableBlink(initiator.Skills.PreparedSkill.Data, false);
+					initiator.Skills.CancelPreparation();
+				}
+			}
+		}
 
-					slots
-						.Where((x) => x.Action == usageAction)
-						.ForEach((y) => y.Blink.Do(1f, 0, 0.6f));
+		private void OnSlotChanged(UISlotAction slot)
+		{
+			if (slot.IsEmpty)
+			{
+				slot.Blink.Kill(0);
+			}
+			else
+			{
+				var initiator = partyManager.PlayerParty.LeaderParty;
+
+				if (slot.Action is ActiveSkillData skillData)
+				{
+					if (initiator.Skills.IsHasPreparedSkill)
+					{
+						if (initiator.Skills.PreparedSkill.Data == skillData)
+						{
+							slot.Blink.Do(1f, 0, 0.6f);
+						}
+					}
 				}
 			}
 		}

@@ -35,6 +35,14 @@ namespace Game.Entities
 			CharacterData = data;
 			Sheet = sheetFactory.Create(data);
 			Skills = new Skills(this, skillFactory, data.sheet.skills);
+
+			int i = 0;
+			Skills.SkillDeck.ActiveSkills.ForEach((skill) =>
+			{
+				Sheet.ActionBar.Slots[i].SetAction(skill);
+				i++;
+			});
+
 			Sheet.Restore();
 		}
 
