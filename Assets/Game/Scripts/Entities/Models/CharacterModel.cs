@@ -115,11 +115,7 @@ namespace Game.Entities.Models
 
 		private void Update()
 		{
-			Markers.TargetMarker.transform.position = Navigation.CurrentNavMeshDestination;
-			Markers.TargetMarker.DrawCircle();
-
-			Markers.FollowMarker.DrawCircle();
-
+			Markers.TargetDecal.transform.position = Navigation.CurrentNavMeshDestination;
 
 			if (InBattle)
 			{
@@ -141,9 +137,9 @@ namespace Game.Entities.Models
 				//Fade-In TargetMarker
 				if (Controller.IsHasTarget)
 				{
-					if (!Markers.TargetMarker.IsEnabled)
+					if (!Markers.TargetDecal.IsEnabled)
 					{
-						Markers.TargetMarker.EnableIn();
+						Markers.TargetDecal.EnableIn();
 					}
 				}
 			}
@@ -158,9 +154,9 @@ namespace Game.Entities.Models
 			if (!InBattle)
 			{
 				//Fade-Out TargetMarker
-				if (Markers.TargetMarker.IsEnabled)
+				if (Markers.TargetDecal.IsEnabled)
 				{
-					Markers.TargetMarker.EnableOut();
+					Markers.TargetDecal.EnableOut();
 				}
 			}
 			else
@@ -501,9 +497,9 @@ namespace Game.Entities.Models
 		{
 			if(newState == BattleExecutorState.PreBattle)
 			{
-				Markers.FollowMarker.Enable(true);
-				Markers.TargetMarker.Enable(false);
-				Markers.AreaMarker.Enable(false);
+				Markers.FollowDecal.Enable(true);
+				Markers.TargetDecal.Enable(false);
+				Markers.AreaDecal.Enable(false);
 			}
 			else if(newState == BattleExecutorState.EndBattle)
 			{
@@ -529,7 +525,7 @@ namespace Game.Entities.Models
 					}
 				}
 
-				Markers.TargetMarker.Enable(IsMoveAvailable);
+				Markers.TargetDecal.Enable(IsMoveAvailable);
 			}
 		}
 	

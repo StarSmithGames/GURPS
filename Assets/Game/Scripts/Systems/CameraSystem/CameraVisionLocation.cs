@@ -248,7 +248,7 @@ namespace Game.Systems.CameraSystem
 
 			leaderModel.Markers.SplineMarker.Enable(false);
 			leaderModel.Markers.AdditionalSplineMarker.Enable(false);
-			leaderModel.Markers.AreaMarker.Enable(false);
+			leaderModel.Markers.AreaDecal.Enable(false);
 		}
 
 		protected override void OnHoverObserveChanged()
@@ -406,7 +406,7 @@ namespace Game.Systems.CameraSystem
 			{
 				leaderModel.Markers.SplineMarker.Enable(false);
 				leaderModel.Markers.AdditionalSplineMarker.Enable(false);
-				leaderModel.Markers.AreaMarker.Enable(false);
+				leaderModel.Markers.AreaDecal.Enable(false);
 			}
 			else
 			{
@@ -417,9 +417,9 @@ namespace Game.Systems.CameraSystem
 					leaderModel.Markers.AdditionalSplineMarker.Enable(true);
 					leaderModel.Markers.SplineMarker.Enable(true);
 
-					leaderModel.Markers.AreaMarker.Radius = leaderModel.CharacterRange;
-					leaderModel.Markers.AreaMarker.Enable(true);
-					leaderModel.Markers.AreaMarker.DrawCircle();
+					//leaderModel.Markers.AreaDecal.Radius = leaderModel.CharacterRange;
+					//leaderModel.Markers.AreaDecal.Enable(true);
+					//leaderModel.Markers.AreaDecal.DrawCircle();
 				}
 			}
 		}

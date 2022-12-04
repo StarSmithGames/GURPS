@@ -14,15 +14,16 @@ namespace Game.Entities
 {
 	public class Markers : MonoBehaviour
 	{
-		[field: SerializeField] public LineRendererCircleVFX FollowMarker { get; private set; }
-		[field: SerializeField] public LineRendererCircleVFX TargetMarker { get; private set; }
-		[field: SerializeField] public LineRendererCircleVFX AreaMarker { get; private set; }
+		[field: SerializeField] public DecalVFX FollowDecal { get; private set; }
+		[field: SerializeField] public DecalVFX TargetDecal { get; private set; }
+		[field: SerializeField] public DecalVFX AreaDecal { get; private set; }
 		[field: SerializeField] public LineRendererSplineVFX SplineMarker { get; private set; }
 		[field: SerializeField] public LineRendererSplineVFX AdditionalSplineMarker { get; private set; }
 		[field: Space]
 		[field: SerializeField] public LineRendererLineVFX LineMarker { get; private set; }
 		[Space]
 		[SerializeField] private List<Material> markerColors = new List<Material>();//rm
+		[SerializeField] private List<Color> colors = new List<Color>();
 
 		[field: Space]
 		[field: SerializeField] public IndicatorVFX Exclamation { get; private set; }
@@ -32,12 +33,12 @@ namespace Game.Entities
 		{
 			Assert.AreEqual(markerColors.Count, Enum.GetValues(typeof(MaterialType)).Length, "Materials count are not equal enum");
 
-			TargetMarker.transform.parent = null;
+			TargetDecal.transform.parent = null;
 		}
 
 		public void SetFollowMaterial(MaterialType type)
 		{
-			FollowMarker.Line.material = markerColors[(int)type];
+			FollowDecal.SetColor(colors[(int)type]);
 		}
 	}
 
@@ -45,12 +46,12 @@ namespace Game.Entities
 	{
 		public static void Reset(this Markers markers)
 		{
-			markers.FollowMarker.Enable(false);
+			markers.FollowDecal.Enable(false);
 
-			markers.TargetMarker.transform.parent = null;
-			markers.TargetMarker.Enable(false);
+			markers.TargetDecal.transform.parent = null;
+			markers.TargetDecal.Enable(false);
 
-			markers.AreaMarker.Enable(false);
+			markers.AreaDecal.Enable(false);
 
 			markers.SplineMarker.Enable(false);
 			markers.AdditionalSplineMarker.Enable(false);
