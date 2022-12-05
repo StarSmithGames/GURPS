@@ -1,9 +1,12 @@
+using EPOOutline;
+
 using Game.Entities;
 using Game.Systems.InventorySystem;
 
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 
+using System.Collections.Generic;
 using System.Linq;
 
 using UnityEditor;
@@ -20,7 +23,9 @@ namespace Game
         //[ReadOnly] public ModelData[] allModels;
         [Header("Inventory")]
         [ReadOnly] public ContainerData[] allContainers;
-        [Header("Debug")]
+        [Header("Visual")]
+        public List<OutlineData> allOutlines = new List<OutlineData>();
+		[Header("Debug")]
         public Mesh HumanoidMesh;
         public Mesh Stand;
         public Material Material;
@@ -33,8 +38,9 @@ namespace Game
             UpdateCharacterOverview();
             UpdateModelOverview();
             UpdateContainerOverview();
+            UpdateOutlines();
 
-            AssetDatabase.SaveAssets();
+			AssetDatabase.SaveAssets();
         }
 
         [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-98)]
@@ -55,8 +61,13 @@ namespace Game
         {
             //allContainers = LoadAssets<ContainerData>();
         }
+		[Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-95)]
+		public void UpdateOutlines()
+		{
+			allOutlines = LoadAssets<OutlineData>().ToList();
+		}
 
-        public static T[] LoadAssets<T>(bool orderByName = true) where T : ScriptableObject
+		public static T[] LoadAssets<T>(bool orderByName = true) where T : ScriptableObject
         {
             var result = AssetDatabase
                 .FindAssets($"t:{typeof(T).Name}")

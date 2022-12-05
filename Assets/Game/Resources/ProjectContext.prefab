@@ -28,6 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -48,6 +49,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9737597b31ac49843a585c939adbd3df, type: 2}
   - {fileID: 11400000, guid: c241d8168707ef94ea203b7e537948f9, type: 2}
   - {fileID: 11400000, guid: 2a4bd727e72eba84390c22f56fc39abc, type: 2}
+  - {fileID: 11400000, guid: 1d608e06c93029042bef3cac15d11dbd, type: 2}
   _monoInstallers:
   - {fileID: -3076613229729817307}
   _installerPrefabs: []

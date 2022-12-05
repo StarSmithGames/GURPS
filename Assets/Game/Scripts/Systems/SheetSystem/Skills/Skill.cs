@@ -4,6 +4,7 @@ using Game.Entities;
 using Game.Entities.Models;
 
 using Zenject;
+using Sirenix.OdinInspector;
 
 namespace Game.Systems.SheetSystem.Skills
 {
@@ -15,7 +16,7 @@ namespace Game.Systems.SheetSystem.Skills
 		public event UnityAction<SkillStatus> onStatusChanged;
 
 		public SkillData Data => data;
-		[SerializeField] private SkillData data;
+		[SerializeField] protected SkillData data;
 
 		public SkillStatus SkillStatus { get; private set; }
 
@@ -33,12 +34,7 @@ namespace Game.Systems.SheetSystem.Skills
 		{
 			if (SkillStatus == SkillStatus.Preparing)
 			{
-				if (Input.GetMouseButtonDown(0))
-				{
-					Debug.LogError("Fire");
-					character.Skills.CancelPreparation();
-				}
-				else if (Input.GetMouseButtonDown(1))
+				if (Input.GetMouseButtonDown(1))
 				{
 					character.Skills.CancelPreparation();
 				}

@@ -24,6 +24,19 @@ namespace EPOOutline
 
         private static HashSet<Outlinable> outlinables = new HashSet<Outlinable>();
 
+        private OutlineData dataSave;
+
+
+		public void SetData(OutlineData data)
+        {
+            this.data = data;
+		}
+
+        public void ResetData()
+        {
+			this.data = dataSave;
+		}
+
         public RenderStyle RenderStyle
         {
             get
@@ -241,7 +254,9 @@ namespace EPOOutline
 
         private void Awake()
         {
-            ValidateTargets();
+            dataSave = data;
+
+			ValidateTargets();
         }
 
         private void ValidateTargets()
