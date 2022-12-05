@@ -8,55 +8,36 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public interface ISkill : IActivation
+	public interface ISkill { }
+
+	public sealed class PassiveSkill : ISkill, IActivation
 	{
-		SkillData Data { get; }
-	}
-
-	public abstract class Skill : ISkill
-	{
-		public virtual bool IsActive { get; protected set; }
-		public virtual SkillData Data { get; protected set; }
-
-		protected ICharacter character;
-
-		public Skill(ICharacter character)
-		{
-			this.character = character;
-		}
-
-		public virtual void Activate()
-		{
-			IsActive = true;
-		}
-		public virtual void Deactivate()
-		{
-			IsActive = false;
-		}
-	}
-
-	public sealed class PassiveSkill : Skill
-	{
-		public override SkillData Data => data;
-		private PassiveSkillData data;
+		public bool IsActive { get; private set; }
 
 		private List<Enchantment> enchantments;
 
-		public PassiveSkill(PassiveSkillData data, ICharacter character) : base(character)
+		public SkillData Data => data;
+		private PassiveSkillData data;
+		private ICharacter character;
+
+		public PassiveSkill(PassiveSkillData data, ICharacter character)
 		{
 			this.data = data;
+			this.character = character;
 
 			enchantments = data.enchantments.Select((x) => x.GetEnchantment(character.Sheet)).ToList();
 		}
 
-		public override void Activate()
+		public void Activate()
 		{
-			base.Activate();
+			IsActive = true;
 
 			for (int i = 0; i < enchantments.Count; i++)
 			{
@@ -64,9 +45,9 @@ namespace Game.Systems.SheetSystem.Skills
 			}
 		}
 
-		public override void Deactivate()
+		public void Deactivate()
 		{
-			base.Deactivate();
+			IsActive = false;
 
 			for (int i = 0; i < enchantments.Count; i++)
 			{
@@ -77,33 +58,47 @@ namespace Game.Systems.SheetSystem.Skills
 		public class Factory : PlaceholderFactory<PassiveSkillData, ICharacter, PassiveSkill> { }
 	}
 
-	public class ActiveSkill : Skill
-	{
-		public override SkillData Data => data;
-		private ActiveSkillData data;
+	//public class ActiveSkillTest : Skill
+	//{
+	//	public event UnityAction<SkillStatus> onStatusChanged;
+	//	public SkillStatus SkillStatus { get; private set; }
 
-		private AsyncManager asyncManager;
+	//	public override SkillData Data => data;
+	//	private ActiveSkillData data;
 
-		public ActiveSkill(ActiveSkillData data, ICharacter character, AsyncManager asyncManager) : base(character)
-		{
-			this.data = data;
-			this.asyncManager = asyncManager;
-		}
+	//	public ActiveSkillTest(ActiveSkillData data, ICharacter character, AsyncManager asyncManager) : base(character)
+	//	{
+	//		this.data = data;
 
-		public void BeginProcess()
-		{
-			character.Model.Freeze(true);
-			character.Model.Markers.EnableSingleTargetLine(true);
-		}
+	//		SkillStatus = SkillStatus.None;
+	//	}
 
-		public void CancelProcess()
-		{
-			character.Model.Markers.EnableSingleTargetLine(false);
-			character.Model.Freeze(false);
-		}
+	//	public void BeginProcess()
+	//	{
+	//		character.Model.Freeze(true);
+	//		character.Model.Markers.EnableSingleTargetLine(true);
 
-		public class Factory : PlaceholderFactory<ActiveSkillData, ICharacter, ActiveSkill> { }
-	}
+	//		SetStatus(SkillStatus.Prepared);
+	//	}
+
+	//	public void CancelProcess()
+	//	{
+	//		character.Model.Markers.EnableSingleTargetLine(false);
+	//		character.Model.Freeze(false);
+
+	//		SetStatus(SkillStatus.Canceled);
+	//	}
+
+	//	private void SetStatus(SkillStatus status)
+	//	{
+	//		SkillStatus = status;
+	//		onStatusChanged?.Invoke(SkillStatus);
+	//	}
+
+	//	public class Factory : PlaceholderFactory<ActiveSkillData, ICharacter, ActiveSkillTest> { }
+	//}
+
+
 
 	//public class SingleTargetSkill : ActiveSkill
 	//{
@@ -131,12 +126,10 @@ namespace Game.Systems.SheetSystem.Skills
 	public class CustomSkillFactory : IFactory<SkillData, ICharacter, ISkill>
 	{
 		private PassiveSkill.Factory passiveSkillFactory;
-		private ActiveSkill.Factory activeSkillFactory;
 
-		public CustomSkillFactory(PassiveSkill.Factory passiveSkillFactory, ActiveSkill.Factory activeSkillFactory)
+		public CustomSkillFactory(PassiveSkill.Factory passiveSkillFactory)
 		{
 			this.passiveSkillFactory = passiveSkillFactory;
-			this.activeSkillFactory = activeSkillFactory;
 		}
 
 		public ISkill Create(SkillData data, ICharacter character)
@@ -147,7 +140,11 @@ namespace Game.Systems.SheetSystem.Skills
 			}
 			else if (data is ActiveSkillData activeSkillData)
 			{
-				return activeSkillFactory.Create(activeSkillData, character);
+				var skill = character.Model.ActiveSkillsRegistrator.registers.Find((x) => x.data == activeSkillData);
+
+				Assert.IsNotNull(skill);
+
+				return skill.Create();
 			}
 
 			throw new System.NotImplementedException();

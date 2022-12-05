@@ -7,27 +7,38 @@ using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.InteractionSystem;
 
-using System;
+using Sirenix.OdinInspector;
+
+using System.Collections;
+using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public class SkillController : IInitializable, IDisposable, ITickable
+	public abstract class Skill : MonoBehaviour, ISkill
 	{
-		private bool isTargeting = false;
+		public event UnityAction<SkillStatus> onStatusChanged;
 
+		public SkillData data;
+
+		public bool IsActive { get; protected set; }
+		public SkillStatus SkillStatus { get; private set; }
+
+		protected ICharacter character;
 		private Vector3 worldPosition;
 		private Plane plane = new Plane(Vector3.up, 0);
+		private bool isTargeting = false;
 
-		private ICharacter character;
 		private MarkPoint startPoint;
 		private CinemachineBrain brain;
 		private CameraVisionLocation cameraVision;
 
-		public SkillController(ICharacterModel model, MarkPoint markPoint, CinemachineBrain brain, CameraVisionLocation cameraVision)
+		[Inject]
+		private void Construct(ICharacterModel model, MarkPoint markPoint, CinemachineBrain brain, CameraVisionLocation cameraVision)
 		{
 			this.character = model.Character;
 			this.startPoint = markPoint;
@@ -35,17 +46,7 @@ namespace Game.Systems.SheetSystem.Skills
 			this.cameraVision = cameraVision;
 		}
 
-		public void Initialize()
-		{
-			character.Skills.onPreparedSkillChanged += OnPreparedSkillChanged;
-		}
-
-		public void Dispose()
-		{
-			character.Skills.onPreparedSkillChanged -= OnPreparedSkillChanged;
-		}
-
-		public virtual void Tick()
+		protected virtual void Update()
 		{
 			if (isTargeting)
 			{
@@ -66,16 +67,40 @@ namespace Game.Systems.SheetSystem.Skills
 
 				character.Model.Markers.LineMarker.DrawLine(new Vector3[] { startPoint.transform.position, worldPosition });
 
-				if (Input.GetMouseButtonDown(1))
+				if (Input.GetMouseButtonDown(0))
+				{
+
+				}
+				else if (Input.GetMouseButtonDown(1))
 				{
 					character.Skills.CancelPreparation();
 				}
 			}
 		}
 
-		private void OnPreparedSkillChanged()
+		public abstract ISkill Create();
+
+		public virtual void Activate()
 		{
-			isTargeting = character.Skills.IsHasPreparedSkill;
+			IsActive = true;
 		}
+
+		public virtual void Deactivate()
+		{
+			IsActive = false;
+		}
+
+		public string Title => $"{(data.information.name.IsEmpty() ? name : data.information.name)}";
+	}
+
+	public enum SkillStatus
+	{
+		None,
+
+		Prepared,
+		Running,
+		Canceled,
+		Faulted,
+		Success,
 	}
 }

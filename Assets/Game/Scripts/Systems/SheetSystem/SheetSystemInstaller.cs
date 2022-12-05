@@ -12,7 +12,6 @@ namespace Game.Systems.SheetSystem
 		public override void InstallBindings()
 		{
 			EffectSystemInstaller.Install(Container);
-			SkillSystemInstaller.Install(Container);
 
 			Container.BindFactory<CharacterData, CharacterSheet, CharacterSheet.Factory>().NonLazy();
 			Container.BindFactory<ContainerData, ContainerSheet, ContainerSheet.Factory>().NonLazy();
@@ -20,6 +19,13 @@ namespace Game.Systems.SheetSystem
 			Container
 				.BindFactory<ModelData, ISheet, SheetFactory>()
 				.FromFactory<CustomSheetFactory>()
+				.NonLazy();
+
+			//SKILLS
+			Container.BindFactory<PassiveSkillData, ICharacter, PassiveSkill, PassiveSkill.Factory>().AsSingle().NonLazy();
+			Container
+				.BindFactory<SkillData, ICharacter, ISkill, SkillFactory>()
+				.FromFactory<CustomSkillFactory>()
 				.NonLazy();
 		}
 	}

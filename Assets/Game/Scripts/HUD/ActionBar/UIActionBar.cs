@@ -1,16 +1,12 @@
+using Game.Entities;
 using Game.Managers.PartyManager;
-using Game.Systems.CommandCenter;
-using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 using Game.Systems.SheetSystem.Skills;
+using System.Collections.Generic;
+using System.Linq;
 
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
-
-using System;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -19,28 +15,32 @@ using Zenject;
 
 namespace Game.HUD
 {
-	public sealed class UIActionBar : MonoBehaviour
+	public partial class UIActionBar : MonoBehaviour
 	{
 		[field: SerializeField] public Transform Content { get; private set; }
 		[SerializeField] private List<UISlotAction> slots = new List<UISlotAction>();
 
-		private IAction usageAction;
+		private ICharacter currentLeader;
+		private Skill lastSkill;
 
+		private SignalBus signalBus;
 		private UISlotAction.Factory actionFactory;
 		private PartyManager partyManager;
 
 		[Inject]
-		private void Construct(UISlotAction.Factory actionFactory, PartyManager partyManager)
+		private void Construct(SignalBus signalBus, UISlotAction.Factory actionFactory, PartyManager partyManager)
 		{
+			this.signalBus = signalBus;
 			this.actionFactory = actionFactory;
 			this.partyManager = partyManager;
-
 		}
 
 		private void Start()
 		{
-			partyManager.PlayerParty.LeaderParty.Skills.onPreparedSkillChanged += OnPreparedSkillChanged;
-			var actionBar = partyManager.PlayerParty.LeaderParty.Sheet.ActionBar;
+			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+			SetLeader(partyManager.PlayerParty.LeaderParty);
+
+			var actionBar = currentLeader.Sheet.ActionBar;
 
 			Assert.IsTrue(actionBar.Slots.Count == slots.Count);
 
@@ -59,7 +59,15 @@ namespace Game.HUD
 
 		private void OnDestroy()
 		{
-			partyManager.PlayerParty.LeaderParty.Skills.onPreparedSkillChanged -= OnPreparedSkillChanged;
+			signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+			if(currentLeader != null)
+			{
+				currentLeader.Skills.onActiveSkillChanged -= onActiveSkillChanged;
+			}
+			if (lastSkill != null)
+			{
+				lastSkill.onStatusChanged -= OnActiveSkillStatusChanged;
+			}
 		}
 
 		private void EnableBlink(IAction action, bool trigger)
@@ -80,35 +88,30 @@ namespace Game.HUD
 
 		private void OnUsed(UISlotAction slot)
 		{
-			var initiator = partyManager.PlayerParty.LeaderParty;
-
-			if (slot.Action is ActiveSkillData skillData)
+			if (slot.Action is SkillData skillData)
 			{
 				bool isRef = false;
-				if (initiator.Skills.IsHasPreparedSkill)
+				if (currentLeader.Skills.IsHasActiveSkill)
 				{
-					isRef = initiator.Skills.PreparedSkill.Data == slot.Action;
-
-					EnableBlink(initiator.Skills.PreparedSkill.Data, false);
-					initiator.Skills.CancelPreparation();
+					//isRef = currentLeader.Skills.ActiveSkill.Data == slot.Action;
+					currentLeader.Skills.CancelPreparation();
 				}
 
 				if (!isRef)
 				{
-					initiator.Skills.PrepareSkill(skillData);
-					EnableBlink(skillData, true);
+					currentLeader.Skills.PrepareSkill(skillData);
 				}
 			}
 			else
 			{
-				if (initiator.Skills.IsHasPreparedSkill)
+				if (currentLeader.Skills.IsHasActiveSkill)
 				{
-					EnableBlink(initiator.Skills.PreparedSkill.Data, false);
-					initiator.Skills.CancelPreparation();
+					currentLeader.Skills.CancelPreparation();
 				}
 			}
 		}
 
+		//rm
 		private void OnSlotChanged(UISlotAction slot)
 		{
 			if (slot.IsEmpty)
@@ -117,24 +120,71 @@ namespace Game.HUD
 			}
 			else
 			{
-				var initiator = partyManager.PlayerParty.LeaderParty;
-
-				if (slot.Action is ActiveSkillData skillData)
-				{
-					if (initiator.Skills.IsHasPreparedSkill)
-					{
-						if (initiator.Skills.PreparedSkill.Data == skillData)
-						{
-							slot.Blink.Do(1f, 0, 0.6f);
-						}
-					}
-				}
+				//if (slot.Action is ActiveSkillData skillData)
+				//{
+				//	if (currentLeader.Skills.IsHasActiveSkill)
+				//	{
+				//		if (currentLeader.Skills.ActiveSkill.Data == skillData)
+				//		{
+				//			slot.Blink.Do(1f, 0, 0.6f);
+				//		}
+				//	}
+				//}
 			}
 		}
 
-		private void OnPreparedSkillChanged()
+		private void OnActiveSkillStatusChanged(SkillStatus status)
 		{
+			if(status == SkillStatus.Prepared)
+			{
+				//EnableBlink(lastSkill.Data, true);
+			}
+			else if(status != SkillStatus.Prepared)
+			{
+				//EnableBlink(lastSkill.Data, false);
+			}
+		}
 
+		private void onActiveSkillChanged()
+		{
+			RefreshActiveSkill();
+		}
+		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
+		{
+			SetLeader(signal.leader);
+		}
+	}
+
+
+	public partial class UIActionBar
+	{
+		private void SetLeader(ICharacter leader)
+		{
+			if (currentLeader != null)
+			{
+				currentLeader.Skills.onActiveSkillChanged -= onActiveSkillChanged;
+			}
+
+			currentLeader = leader;
+
+			currentLeader.Skills.onActiveSkillChanged += onActiveSkillChanged;
+		}
+
+		private void RefreshActiveSkill()
+		{
+			if (lastSkill != null)
+			{
+				lastSkill.onStatusChanged -= OnActiveSkillStatusChanged;
+			}
+
+			lastSkill = currentLeader.Skills.ActiveSkill;
+
+			if (lastSkill != null)
+			{
+				lastSkill.onStatusChanged += OnActiveSkillStatusChanged;
+
+				OnActiveSkillStatusChanged(lastSkill.SkillStatus);
+			}
 		}
 
 		[Button(DirtyOnClick = true)]

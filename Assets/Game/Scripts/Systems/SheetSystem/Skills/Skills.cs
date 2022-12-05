@@ -13,12 +13,12 @@ namespace Game.Systems.SheetSystem.Skills
 	public sealed class Skills
 	{
 		public event UnityAction onRegistratorChanged;
-		public event UnityAction onPreparedSkillChanged;
+		public event UnityAction onActiveSkillChanged;
 
 		public SkillDeck SkillDeck { get; private set; }
 
-		public bool IsHasPreparedSkill => PreparedSkill != null;
-		public ActiveSkill PreparedSkill { get; private set; }
+		public bool IsHasActiveSkill => ActiveSkill != null;
+		public Skill ActiveSkill { get; private set; }
 
 		public List<ISkill> CurrentPassiveSkills => passiveRegistrator.registers;
 
@@ -36,28 +36,33 @@ namespace Game.Systems.SheetSystem.Skills
 
 			passiveRegistrator = new Registrator<ISkill>();
 
-			SkillDeck.PassiveSkills.ForEach((skill) =>
-			{
-				ISkill passive = CreateSkill(skill);
-				passiveRegistrator.Registrate(passive);
-				passive.Activate();
-			});
+			ActivatePassiveSkills();
 		}
 
-		public void PrepareSkill(ActiveSkillData data)
+		public void PrepareSkill(SkillData data)
 		{
-			PreparedSkill = CreateSkill(data) as ActiveSkill;
-			PreparedSkill.BeginProcess();
+			ActiveSkill = CreateSkill(data) as Skill;
+			//ActiveSkill.BeginProcess();
 
-			onPreparedSkillChanged?.Invoke();
+			onActiveSkillChanged?.Invoke();
 		}
 
 		public void CancelPreparation()
 		{
-			PreparedSkill?.CancelProcess();
-			PreparedSkill = null;
+			//ActiveSkill?.CancelProcess();
+			ActiveSkill = null;
 
-			onPreparedSkillChanged?.Invoke();
+			onActiveSkillChanged?.Invoke();
+		}
+
+		private void ActivatePassiveSkills()
+		{
+			SkillDeck.PassiveSkills.ForEach((skill) =>
+			{
+				PassiveSkill passiveSkill = CreateSkill(skill) as PassiveSkill;
+				passiveRegistrator.Registrate(passiveSkill);
+				passiveSkill.Activate();
+			});
 		}
 
 		private ISkill CreateSkill(SkillData data)

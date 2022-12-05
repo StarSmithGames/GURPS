@@ -33,8 +33,6 @@ namespace Game.Entities
 			Container.BindInstance(markers);
 			Container.BindInstance(outfit);
 			Container.BindInstance(barker);
-
-			Container.BindInterfacesAndSelfTo<SkillController>().AsSingle().NonLazy();
 		}
 
 		protected override void BindModel()

@@ -10,6 +10,7 @@ using Game.Systems.InteractionSystem;
 using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 using Game.Systems.SheetSystem.Abilities;
+using Game.Systems.SheetSystem.Skills;
 
 using System.Collections;
 using UnityEngine;
@@ -26,6 +27,7 @@ namespace Game.Entities.Models
 
 		ICharacter Character { get; }
 
+		ActiveSkillsRegistrator ActiveSkillsRegistrator { get; }
 		AnimatorController AnimatorController { get; }
 		CharacterOutfit Outfit { get; }
 		Markers Markers { get; }
@@ -46,6 +48,20 @@ namespace Game.Entities.Models
 		public virtual ICharacter Character { get; protected set; }
 		public ISheet Sheet => Character.Sheet;
 
+		public ActiveSkillsRegistrator ActiveSkillsRegistrator
+		{
+			get
+			{
+				if(activeSkillsRegistrator == null)
+				{
+					activeSkillsRegistrator = new ActiveSkillsRegistrator();
+				}
+
+				return activeSkillsRegistrator;
+			}
+		}
+		private ActiveSkillsRegistrator activeSkillsRegistrator;
+
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorController AnimatorController { get; private set; }
 		public CameraPivot CameraPivot { get; private set; }
@@ -53,7 +69,6 @@ namespace Game.Entities.Models
 
 		public Transform DialogueTransform => Transform;//rm
 
-		//private IEquipment equipment;
 
 		[Inject]
 		private void Construct(
