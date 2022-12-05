@@ -1,75 +1,42 @@
-using Cinemachine;
-
-using Game.Entities;
-using Game.Entities.AI;
-using Game.Entities.Models;
-using Game.Systems.CameraSystem;
-using Game.Systems.CombatDamageSystem;
-using Game.Systems.InteractionSystem;
-
-using Sirenix.OdinInspector;
-
-using System.Collections;
-using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.Events;
+using Game.Entities;
+using Game.Entities.Models;
 
 using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
+	//public class SingleTargetSkill
+	//public class ProjectileSkill
+	//public class AOESkill
 	public abstract class Skill : MonoBehaviour, ISkill
 	{
 		public event UnityAction<SkillStatus> onStatusChanged;
 
-		public SkillData data;
+		public SkillData Data => data;
+		[SerializeField] private SkillData data;
 
-		public bool IsActive { get; protected set; }
 		public SkillStatus SkillStatus { get; private set; }
 
 		protected ICharacter character;
-		private Vector3 worldPosition;
-		private Plane plane = new Plane(Vector3.up, 0);
-		private bool isTargeting = false;
-
-		private MarkPoint startPoint;
-		private CinemachineBrain brain;
-		private CameraVisionLocation cameraVision;
 
 		[Inject]
-		private void Construct(ICharacterModel model, MarkPoint markPoint, CinemachineBrain brain, CameraVisionLocation cameraVision)
+		private void Construct(ICharacterModel model)
 		{
 			this.character = model.Character;
-			this.startPoint = markPoint;
-			this.brain = brain;
-			this.cameraVision = cameraVision;
+
+			SkillStatus = SkillStatus.None;
 		}
 
 		protected virtual void Update()
 		{
-			if (isTargeting)
+			if (SkillStatus == SkillStatus.Preparing)
 			{
-				float distance;
-				Ray ray = brain.OutputCamera.ScreenPointToRay(Input.mousePosition);
-				if (plane.Raycast(ray, out distance))
-				{
-					worldPosition = ray.GetPoint(distance);
-				}
-
-				if (cameraVision.CurrentObserve != null)
-				{
-					if (cameraVision.CurrentObserve is IDamageable damageable)
-					{
-						worldPosition = damageable.MarkPoint.transform.position;
-					}
-				}
-
-				character.Model.Markers.LineMarker.DrawLine(new Vector3[] { startPoint.transform.position, worldPosition });
-
 				if (Input.GetMouseButtonDown(0))
 				{
-
+					Debug.LogError("Fire");
+					character.Skills.CancelPreparation();
 				}
 				else if (Input.GetMouseButtonDown(1))
 				{
@@ -80,14 +47,20 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public abstract ISkill Create();
 
-		public virtual void Activate()
+		public virtual void BeginProcess()
 		{
-			IsActive = true;
+			SetStatus(SkillStatus.Preparing);
 		}
 
-		public virtual void Deactivate()
+		public virtual void CancelProcess()
 		{
-			IsActive = false;
+			SetStatus(SkillStatus.Canceled);
+		}
+
+		protected void SetStatus(SkillStatus status)
+		{
+			SkillStatus = status;
+			onStatusChanged?.Invoke(SkillStatus);
 		}
 
 		public string Title => $"{(data.information.name.IsEmpty() ? name : data.information.name)}";
@@ -97,10 +70,10 @@ namespace Game.Systems.SheetSystem.Skills
 	{
 		None,
 
-		Prepared,
+		Preparing,
 		Running,
 		Canceled,
 		Faulted,
-		Success,
+		Successed,
 	}
 }

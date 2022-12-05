@@ -93,7 +93,7 @@ namespace Game.HUD
 				bool isRef = false;
 				if (currentLeader.Skills.IsHasActiveSkill)
 				{
-					//isRef = currentLeader.Skills.ActiveSkill.Data == slot.Action;
+					isRef = currentLeader.Skills.ActiveSkill.Data == slot.Action;
 					currentLeader.Skills.CancelPreparation();
 				}
 
@@ -120,28 +120,28 @@ namespace Game.HUD
 			}
 			else
 			{
-				//if (slot.Action is ActiveSkillData skillData)
-				//{
-				//	if (currentLeader.Skills.IsHasActiveSkill)
-				//	{
-				//		if (currentLeader.Skills.ActiveSkill.Data == skillData)
-				//		{
-				//			slot.Blink.Do(1f, 0, 0.6f);
-				//		}
-				//	}
-				//}
+				if (slot.Action is ActiveSkillData skillData)
+				{
+					if (currentLeader.Skills.IsHasActiveSkill)
+					{
+						if (currentLeader.Skills.ActiveSkill.Data == skillData)
+						{
+							slot.Blink.Do(1f, 0, 0.6f);
+						}
+					}
+				}
 			}
 		}
 
 		private void OnActiveSkillStatusChanged(SkillStatus status)
 		{
-			if(status == SkillStatus.Prepared)
+			if(status == SkillStatus.Preparing)
 			{
-				//EnableBlink(lastSkill.Data, true);
+				EnableBlink(lastSkill.Data, true);
 			}
-			else if(status != SkillStatus.Prepared)
+			else if(status != SkillStatus.Preparing)
 			{
-				//EnableBlink(lastSkill.Data, false);
+				EnableBlink(lastSkill.Data, false);
 			}
 		}
 

@@ -42,14 +42,14 @@ namespace Game.Systems.SheetSystem.Skills
 		public void PrepareSkill(SkillData data)
 		{
 			ActiveSkill = CreateSkill(data) as Skill;
-			//ActiveSkill.BeginProcess();
+			ActiveSkill.BeginProcess();
 
 			onActiveSkillChanged?.Invoke();
 		}
 
 		public void CancelPreparation()
 		{
-			//ActiveSkill?.CancelProcess();
+			ActiveSkill?.CancelProcess();
 			ActiveSkill = null;
 
 			onActiveSkillChanged?.Invoke();

@@ -81,7 +81,7 @@ namespace Game.HUD
 
 		public override void Drop(UISlot slot)
 		{
-			ActionBarDrop.Process(this, slot);
+			ActionBarDrop.Drop(this, slot);
 		}
 
 		protected override void UpdateUI()

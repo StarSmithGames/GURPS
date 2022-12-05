@@ -1,21 +1,16 @@
 using Game.Entities;
-using Game.Entities.Models;
-using Game.Systems.CameraSystem;
-using Game.Systems.CombatDamageSystem;
-
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
-using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.Events;
 
 using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public interface ISkill { }
+	public interface ISkill
+	{
+		SkillData Data { get; }
+	}
 
 	public sealed class PassiveSkill : ISkill, IActivation
 	{
@@ -58,69 +53,6 @@ namespace Game.Systems.SheetSystem.Skills
 		public class Factory : PlaceholderFactory<PassiveSkillData, ICharacter, PassiveSkill> { }
 	}
 
-	//public class ActiveSkillTest : Skill
-	//{
-	//	public event UnityAction<SkillStatus> onStatusChanged;
-	//	public SkillStatus SkillStatus { get; private set; }
-
-	//	public override SkillData Data => data;
-	//	private ActiveSkillData data;
-
-	//	public ActiveSkillTest(ActiveSkillData data, ICharacter character, AsyncManager asyncManager) : base(character)
-	//	{
-	//		this.data = data;
-
-	//		SkillStatus = SkillStatus.None;
-	//	}
-
-	//	public void BeginProcess()
-	//	{
-	//		character.Model.Freeze(true);
-	//		character.Model.Markers.EnableSingleTargetLine(true);
-
-	//		SetStatus(SkillStatus.Prepared);
-	//	}
-
-	//	public void CancelProcess()
-	//	{
-	//		character.Model.Markers.EnableSingleTargetLine(false);
-	//		character.Model.Freeze(false);
-
-	//		SetStatus(SkillStatus.Canceled);
-	//	}
-
-	//	private void SetStatus(SkillStatus status)
-	//	{
-	//		SkillStatus = status;
-	//		onStatusChanged?.Invoke(SkillStatus);
-	//	}
-
-	//	public class Factory : PlaceholderFactory<ActiveSkillData, ICharacter, ActiveSkillTest> { }
-	//}
-
-
-
-	//public class SingleTargetSkill : ActiveSkill
-	//{
-	//	//private ICharacter character;
-	//	//private PassiveSkillData data;
-
-	//	//public SingleTargetSkill(ICharacter character, PassiveSkillData data)
-	//	//{
-	//	//	this.character = character;
-	//	//	this.data = data;
-	//	//}
-
-	//	//public class Factory : PlaceholderFactory<ICharacter, ActiveSkillData, ISkill> { }
-	//}
-
-	//public class ProjectileSkill : ActiveSkill { }
-
-	//public class AOESkill : ActiveSkill
-	//{
-
-	//}
-
 	public class SkillFactory : PlaceholderFactory<SkillData, ICharacter, ISkill> { }
 
 	public class CustomSkillFactory : IFactory<SkillData, ICharacter, ISkill>
@@ -140,7 +72,7 @@ namespace Game.Systems.SheetSystem.Skills
 			}
 			else if (data is ActiveSkillData activeSkillData)
 			{
-				var skill = character.Model.ActiveSkillsRegistrator.registers.Find((x) => x.data == activeSkillData);
+				var skill = character.Model.ActiveSkillsRegistrator.registers.Find((x) => x.Data == activeSkillData);
 
 				Assert.IsNotNull(skill);
 

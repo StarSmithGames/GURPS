@@ -24,7 +24,7 @@ namespace Game.HUD
 
 		public override void Drop(UISlot slot)
 		{
-			SkillDeckDrop.Process(this, slot);
+			SkillDeckDrop.Drop(this, slot);
 		}
 
 		public override void OnSpawned(IMemoryPool pool)

@@ -526,7 +526,7 @@ namespace Game.Systems.InventorySystem
 
 	public static class ActionBarDrop
 	{
-		public static void Process(UISlotAction begin, UISlot end)
+		public static void Drop(UISlotAction begin, UISlot end)
 		{
 			switch (end)
 			{
@@ -542,7 +542,7 @@ namespace Game.Systems.InventorySystem
 
 	public static class SkillDeckDrop
 	{
-		public static void Process(UISlotSkill begin, UISlot end)
+		public static void Drop(UISlotSkill begin, UISlot end)
 		{
 			switch (end)
 			{
