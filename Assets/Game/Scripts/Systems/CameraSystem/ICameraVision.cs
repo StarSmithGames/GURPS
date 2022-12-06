@@ -22,6 +22,7 @@ namespace Game.Systems.CameraSystem
 	{
 		public bool IsEnabled { get; protected set; }
 
+		public bool IsCanMouseClick { get; set; }
 		public bool IsCanHoldMouse { get; protected set; }
 		public bool IsMouseHit { get; protected set; }
 		public bool IsUI { get; protected set; }
@@ -65,6 +66,7 @@ namespace Game.Systems.CameraSystem
 
 		public virtual void Initialize()
 		{
+			IsCanMouseClick = true;
 			IsCanHoldMouse = settings.isCanHoldMouse;
 
 			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
@@ -89,7 +91,10 @@ namespace Game.Systems.CameraSystem
 			CurrentObserve = IsMouseHit && !IsUI ? Hit.transform.root.GetComponent<IObservable>() : null;
 
 			HandleHover(HitPoint);
-			HandleMouseClick(HitPoint);
+			if (IsCanMouseClick)
+			{
+				HandleMouseClick(HitPoint);
+			}
 		}
 
 

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BlitzBoltActiveSkill
   m_EditorClassIdentifier: 
   information:
-    portrait: {fileID: 21300000, guid: 03f1f3820c263df4ab6acfca7fb4cf77, type: 3}
+    portrait: {fileID: 21300000, guid: 6d65a9ed35967134faf56f950b0c1b8f, type: 3}
     name: 
     isNameId: 1
     description: 

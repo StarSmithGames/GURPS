@@ -9,6 +9,8 @@ namespace Game.Systems.VFX
 	{
 		public Pointer3D pointer3DPrefab;
 		public Pointer2D pointer2DPrefab;
+		[Header("Projectiles")]
+		public ElectricBallProjectileVFX electricBallPrefab;
 
 		public override void InstallBindings()
 		{
@@ -20,6 +22,16 @@ namespace Game.Systems.VFX
 					.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
 					.FromComponentInNewPrefab(pointer2DPrefab)
 					.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().VFXIndicators));
+
+			BindProjectiles();
+		}
+
+		private void BindProjectiles()
+		{
+			Container
+				.BindFactory<ElectricBallProjectileVFX, ElectricBallProjectileVFX.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
+				.FromComponentInNewPrefab(electricBallPrefab));
 		}
 	}
 }

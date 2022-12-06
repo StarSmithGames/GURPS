@@ -8,7 +8,7 @@ public interface IPoolable
 	void DespawnIt();
 }
 
-public class PoolableObject : MonoBehaviour, IPoolable, IPoolable<IMemoryPool>
+public abstract class PoolableObject : MonoBehaviour, IPoolable, IPoolable<IMemoryPool>
 {
 	public IMemoryPool Pool { get => pool; protected set => pool = value; }
 	private IMemoryPool pool;

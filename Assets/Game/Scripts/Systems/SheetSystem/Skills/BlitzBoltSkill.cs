@@ -7,6 +7,12 @@ using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.CursorSystem;
 using Game.Systems.InteractionSystem;
+using Game.Systems.NavigationSystem;
+using Game.Systems.VFX;
+
+using System.Collections.Generic;
+using System.Drawing;
+
 using UnityEngine;
 
 using Zenject;
@@ -23,6 +29,7 @@ namespace Game.Systems.SheetSystem.Skills
 		private ICombat currentCombat;
 
 		private BlitzBoltSkill.Factory factory;
+		private ElectricBallProjectileVFX.Factory electricBallFactory;
 		private MarkPoint startPoint;
 		private CinemachineBrain brain;
 		private CameraVisionLocation cameraVision;
@@ -30,7 +37,7 @@ namespace Game.Systems.SheetSystem.Skills
 		private CombatFactory combatFactory;
 
 		[Inject]
-		private void Construct(BlitzBoltSkill.Factory factory,
+		private void Construct(BlitzBoltSkill.Factory factory, ElectricBallProjectileVFX.Factory electricBallFactory,
 			MarkPoint markPoint,
 			CinemachineBrain brain,
 			CameraVisionLocation cameraVision,
@@ -38,6 +45,7 @@ namespace Game.Systems.SheetSystem.Skills
 			CombatFactory combatFactory)
 		{
 			this.factory = factory;
+			this.electricBallFactory = electricBallFactory;
 			this.startPoint = markPoint;
 			this.brain = brain;
 			this.cameraVision = cameraVision;
@@ -69,12 +77,14 @@ namespace Game.Systems.SheetSystem.Skills
 				}
 
 				character.Model.Markers.LineMarker.DrawLine(new Vector3[] { startPoint.transform.position, worldPosition });
+				(character.Model.Controller as CharacterController3D).RotateTo(worldPosition);
+
 
 				if (Input.GetMouseButtonDown(0))
 				{
 					if (target != null)
 					{
-						Attack();
+						AttackProcess();
 						character.Skills.CancelPreparation();
 					}
 				}
@@ -88,6 +98,7 @@ namespace Game.Systems.SheetSystem.Skills
 		public override void BeginProcess()
 		{
 			cursorSystem.SetCursor(CursorType.Base);
+			cameraVision.IsCanMouseClick = false;
 
 			targetOutline = GlobalDatabase.Instance.allOutlines.Find((x) => x.outlineType == OutlineType.Target);
 
@@ -99,6 +110,7 @@ namespace Game.Systems.SheetSystem.Skills
 		public override void CancelProcess()
 		{
 			cursorSystem.SetCursor(CursorType.Hand);
+			cameraVision.IsCanMouseClick = true;
 
 			character.Model.Markers.EnableSingleTargetLine(false);
 			character.Model.Freeze(false);
@@ -108,13 +120,21 @@ namespace Game.Systems.SheetSystem.Skills
 			base.CancelProcess();
 		}
 
-		private void Attack()
+		private void AttackProcess()
 		{
 			currentCombat = combatFactory.Create(character.Model, target);
 
 			character.Model.TaskSequence
-				.Append(currentCombat.AttackAnimation)
-				.Append(new TaskWaitAttack(character.Model.AnimatorController))
+				.Append(() =>
+				{
+					var projectile = electricBallFactory.Create();
+					projectile
+						.SetStart(startPoint.transform.position, startPoint.transform.forward)
+						.SetTarget(target.MarkPoint.transform)
+						.Launch();
+				})
+				//.Append(currentCombat.AttackAnimation)
+				//.Append(new TaskWaitAttack(character.Model.AnimatorController))
 				.Execute();
 		}
 
