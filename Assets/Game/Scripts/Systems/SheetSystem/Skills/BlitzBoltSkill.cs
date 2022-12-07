@@ -142,14 +142,14 @@ namespace Game.Systems.SheetSystem.Skills
 		{
 			if (target != null)
 			{
-				(target as Model).Outline.ResetData();
+				target.Outline.ResetData();
 			}
 
 			target = damageable != character.Model ? damageable : null;
 
 			if(target != null)
 			{
-				(target as Model).Outline.SetData(targetOutline);
+				target.Outline.SetData(targetOutline);
 			}
 		}
 

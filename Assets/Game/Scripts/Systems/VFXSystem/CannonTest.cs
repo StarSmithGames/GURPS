@@ -13,6 +13,8 @@ public class CannonTest : MonoBehaviour
 	public Transform point;
 	public Transform target;
 
+	public TestVFX vfx;
+
 	private ElectricBallProjectileVFX.Factory electricalBallFactory;
 
 	[Inject]
@@ -24,10 +26,19 @@ public class CannonTest : MonoBehaviour
 	[Button]
 	private void Fire()
 	{
-		var projectile = electricalBallFactory.Create();
-		projectile
-			.SetStart(point.position, point.forward)
-			.SetTarget(target)
-			.Launch();
+		if (vfx == TestVFX.ElectricBall)
+		{
+			var projectile = electricalBallFactory.Create();
+			projectile
+				.SetStart(point.position, point.forward)
+				.SetTarget(target)
+				.Launch();
+		}
+	}
+
+	public enum TestVFX
+	{
+		ElectricBall,
+
 	}
 }

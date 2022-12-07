@@ -37,6 +37,9 @@ namespace Game.Systems.VFX
 		protected List<Transform> ignoreList;
 		protected Vector3 startPosition;
 		protected Vector3 endPosition;
+		protected Vector3 forward;
+		protected Vector3 forwardPosition;
+		protected Vector3 targetPosition;
 		protected float startTime;
 		protected bool isCanMove;
 
@@ -68,7 +71,7 @@ namespace Game.Systems.VFX
 			}
 
 			//Position Rotation
-			var moveDistance = Vector3.MoveTowards(root.position, isHomingMove ? target.position : endPosition, moveSpeed * Time.deltaTime * accelerationY);
+			var moveDistance = Vector3.MoveTowards(root.position, isHomingMove ? target.position : targetPosition, moveSpeed * Time.deltaTime * accelerationY);
 			var moveDistanceRandom = moveDistance + delta;
 			if (isLookAt && isHomingMove)
 			{
@@ -86,7 +89,7 @@ namespace Game.Systems.VFX
 			}
 
 			//Raycast
-			var distance = Vector3.Distance(root.position, endPosition);
+			var distance = Vector3.Distance(root.position, targetPosition);
 			var distanceNextFrame = moveSpeed * Time.deltaTime;
 			if (distanceNextFrame > distance)
 			{
@@ -97,13 +100,13 @@ namespace Game.Systems.VFX
 				Collision(new RaycastHit());//>:c
 			}
 
-			var direction = (endPosition - root.position).normalized;
+			var direction = (targetPosition - root.position).normalized;
 			RaycastHit raycastHit;
 			if (Physics.Raycast(root.position, direction, out raycastHit, distanceNextFrame + colliderRadius, layerMask))
 			{
-				if (ignoreColliders && target.root == raycastHit.transform.root || !ignoreColliders)
+				if (target == null || ignoreColliders && target.root == raycastHit.transform.root || !ignoreColliders)
 				{
-					endPosition = raycastHit.point - direction * colliderRadius;
+					targetPosition = raycastHit.point - direction * colliderRadius;
 					Collision(raycastHit);
 				}
 			}
@@ -122,6 +125,10 @@ namespace Game.Systems.VFX
 
 			oldSmootRandomPosition = smootRandomPosition = Vector3.zero;
 
+			forwardPosition = root.position + forward * range;
+
+			targetPosition = target == null ? forwardPosition : endPosition;
+
 			isCanMove = true;
 		}
 
@@ -135,6 +142,7 @@ namespace Game.Systems.VFX
 		public ProjectileVFX SetStart(Vector3 position, Vector3 forward)
 		{
 			startPosition = position;
+			this.forward = forward;
 			root.position = startPosition;
 			if (!isLookAt)
 			{
@@ -146,10 +154,10 @@ namespace Game.Systems.VFX
 
 		public ProjectileVFX SetTarget(Transform target)
 		{
-			endPosition = target.position;
+			endPosition = target == null ? Vector3.zero : target.position;
 			this.target = target;
 
-			if (isLookAt)
+			if (isLookAt && target != null)
 			{
 				root.LookAt(target);
 			}

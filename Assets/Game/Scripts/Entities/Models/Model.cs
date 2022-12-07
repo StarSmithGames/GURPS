@@ -11,7 +11,7 @@ using Zenject;
 
 namespace Game.Entities.Models
 {
-	public abstract class Model : MonoBehaviour, IInteractable, IObservable
+	public abstract class Model : MonoBehaviour, IInteractable, IObservable, IOutlinable
 	{
 		public bool IsInteractable { get => isInteractable; protected set => isInteractable = value; }
 		protected bool isInteractable = true;

@@ -1,10 +1,12 @@
+using EPOOutline;
+
 using Game.Systems.InteractionSystem;
 
 using UnityEngine;
 
 namespace Game.Systems.CombatDamageSystem
 {
-	public interface IDamageable : ITransform
+	public interface IDamageable : ITransform, IOutlinable
 	{
 		Vector3 DamagePosition { get; }
 		InteractionPoint BattlePoint { get; }
