@@ -6,6 +6,6 @@ namespace Game.Systems.SheetSystem
     {
 		event UnityAction<IAction> onUsed;
 
-		bool Use();
+		void Use();
     }
 }

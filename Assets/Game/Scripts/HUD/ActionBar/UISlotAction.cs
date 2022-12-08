@@ -1,5 +1,7 @@
 using DG.Tweening;
 
+using FlowCanvas.Nodes;
+
 using Game.Managers.PartyManager;
 using Game.Systems.CommandCenter;
 using Game.Systems.ContextMenu;
@@ -71,6 +73,7 @@ namespace Game.HUD
 		public bool SetAction(IAction action)
 		{
 			bool result = Slot.SetAction(action);
+
 			onChanged?.Invoke(this);
 
 			return result;
@@ -78,6 +81,13 @@ namespace Game.HUD
 
 		public override void Dispose()
 		{
+			if (!IsEmpty)
+			{
+				if (Action is ActiveSkill activeSkill)
+				{
+					activeSkill.Cooldown.onChanged -= OnCooldownChanged;
+				}
+			}
 			base.Dispose();
 			onChanged?.Invoke(this);
 		}
@@ -97,6 +107,8 @@ namespace Game.HUD
 				{
 					case Item item:
 					{
+						FillAmountCooldown.enabled = false;
+
 						Icon.enabled = true;
 						Icon.sprite = item.ItemData.information.portrait;
 
@@ -106,6 +118,9 @@ namespace Game.HUD
 					}
 					case ISkill skill:
 					{
+						FillAmountCooldown.fillAmount = 0f;
+						FillAmountCooldown.enabled = true;
+
 						Icon.enabled = true;
 						Icon.sprite = skill.Data.information.portrait;
 
@@ -121,12 +136,37 @@ namespace Game.HUD
 			}
 			else
 			{
+				FillAmountCooldown.enabled = false;
+
 				Icon.enabled = false;
 				Icon.sprite = null;
 
 				Count.enabled = false;
 				Count.text = "";
 			}
+		}
+
+		protected override void OnSlotChanged()
+		{
+			base.OnSlotChanged();
+
+			if (!IsEmpty)
+			{
+				if (Action is ActiveSkill activeSkill)
+				{
+					activeSkill.Cooldown.onChanged -= OnCooldownChanged;
+				}
+			}
+
+			if (Action is ActiveSkill skill)
+			{
+				skill.Cooldown.onChanged += OnCooldownChanged;
+			}
+		}
+
+		private void OnCooldownChanged(float cooldown, float cooldownNormalized)
+		{
+			FillAmountCooldown.fillAmount = cooldownNormalized;
 		}
 
 		public class Factory : PlaceholderFactory<UISlotAction> { }

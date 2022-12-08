@@ -44,18 +44,18 @@ namespace Game.Systems.InventorySystem
 			this.containerHandler = containerHandler;
 		}
 
-		public void SetSlot(SLOT slot)
+		public virtual void SetSlot(SLOT slot)
 		{
 			if(Slot != null)
 			{
-				Slot.onChanged -= UpdateUI;
+				Slot.onChanged -= OnSlotChanged;
 			}
 
 			Slot = slot;
 
-			UpdateUI();
+			OnSlotChanged();
 
-			Slot.onChanged += UpdateUI;
+			Slot.onChanged += OnSlotChanged;
 		}
 
 		public override void Dispose()
@@ -63,6 +63,11 @@ namespace Game.Systems.InventorySystem
 			Slot?.Dispose();
 		}
 
-		protected virtual void UpdateUI() { }
+		protected abstract void UpdateUI();
+
+		protected virtual void OnSlotChanged()
+		{
+			UpdateUI();
+		}
 	}
 }

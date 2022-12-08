@@ -1,10 +1,7 @@
 using Game.Entities;
-using Game.Systems.InventorySystem;
 
 using System.Collections.Generic;
 using System.Linq;
-
-using UnityEditor.Experimental.GraphView;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -68,17 +65,33 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public SkillStatus SkillStatus { get; private set; }
 
+		public Cooldown Cooldown { get; private set; }
+		protected bool isCooldown = false;
+
 		protected ICharacter character;
 
 		protected virtual void Start()
 		{
+			Cooldown = new Cooldown();
 			ResetSkill();
 		}
 
-		protected abstract void Update();
-
-		public virtual bool Use()
+		protected virtual void Update()
 		{
+			if (isCooldown)
+			{
+				Cooldown.Tick();
+				if(Cooldown.Remaining <= 0)
+				{
+					isCooldown = false;
+				}
+			}
+		}
+
+		public virtual void Use()
+		{
+			if (isCooldown) return;
+
 			bool isRef = false;
 			if (character.LocalSheet.Skills.IsHasActiveSkill)
 			{
@@ -99,7 +112,6 @@ namespace Game.Systems.SheetSystem.Skills
 			//}
 
 			onUsed?.Invoke(this);
-			return true;
 		}
 
 		public virtual void BeginProcess()
@@ -118,12 +130,49 @@ namespace Game.Systems.SheetSystem.Skills
 			onStatusChanged?.Invoke(SkillStatus);
 		}
 
+		protected void StartCooldown()
+		{
+			Cooldown.Total = (Data as ActiveSkillData).baseCooldown;
+			Cooldown.Reset();
+			isCooldown = true;
+		}
+
 		protected virtual void ResetSkill()
 		{
+			isCooldown = false;
 			SetStatus(SkillStatus.None);
 		}
 	}
 
+	public class Cooldown
+	{
+		public event UnityAction<float, float> onChanged;
+
+		public float Total { get; set; }
+
+		public float Remaining
+		{
+			get => remaining;
+			set
+			{
+				remaining = value;
+				onChanged?.Invoke(remaining, Normalized);
+			}
+		}
+		protected float remaining;
+
+		public float Normalized => Remaining / Total;
+
+		public void Tick()
+		{
+			Remaining -= Time.deltaTime;
+		}
+
+		public void Reset()
+		{
+			Remaining = Total;
+		}
+	}
 
 	public enum SkillStatus
 	{

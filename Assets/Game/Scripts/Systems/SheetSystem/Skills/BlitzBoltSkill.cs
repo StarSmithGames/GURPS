@@ -21,7 +21,6 @@ namespace Game.Systems.SheetSystem.Skills
 		public override SkillData Data => data;
 		protected BlitzBoltData data;
 
-
 		private Vector3 worldPosition;
 		private Plane plane = new Plane(Vector3.up, 0);
 
@@ -56,6 +55,10 @@ namespace Game.Systems.SheetSystem.Skills
 
 		protected override void Update()
 		{
+			base.Update();
+
+			if (isCooldown) return;
+
 			if (SkillStatus == SkillStatus.Preparing)
 			{
 				float distance;
@@ -104,6 +107,7 @@ namespace Game.Systems.SheetSystem.Skills
 
 		private void AttackProcess()
 		{
+			StartCooldown();
 			SetStatus(SkillStatus.Running);
 
 			character.Model.TaskSequence
@@ -146,6 +150,10 @@ namespace Game.Systems.SheetSystem.Skills
 				character.Model.Freeze(false);
 
 				SetTarget(null);
+			}
+			else if(status == SkillStatus.Running)
+			{
+				character.Model.Markers.EnableSingleTargetLine(false);
 			}
 
 			base.SetStatus(status);

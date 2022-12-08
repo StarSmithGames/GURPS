@@ -19,7 +19,7 @@ MonoBehaviour:
     description: 
     isDescriptionId: 1
   requiredLevel: 1
-  baseCooldown: 1
+  baseCooldown: 3
   duration: 1
   isHasLimitationsOnUse: 0
   limitations:

@@ -1797,7 +1797,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -5969,7 +5969,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -10388,7 +10388,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -16651,6 +16651,14 @@ PrefabInstance:
     - target: {fileID: 2105553422330935491, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2144060861969845273, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 238.77002
+      objectReference: {fileID: 0}
+    - target: {fileID: 2144060861969845273, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 47.914062
       objectReference: {fileID: 0}
     - target: {fileID: 2210568265106531942, guid: 0e272ac1e1c198746928d997fe184654, type: 3}
       propertyPath: m_AnchorMax.y

@@ -333,11 +333,9 @@ namespace Game.Systems.InventorySystem
 	{
 		public event UnityAction<IAction> onUsed;
 		
-		public bool Use()
+		public void Use()
 		{
 			onUsed?.Invoke(this);
-
-			return true;
 		}
 	}
 
