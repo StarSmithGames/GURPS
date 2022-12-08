@@ -36,7 +36,8 @@ namespace Game.Systems.SheetSystem.Skills
 		private CursorSystem.CursorSystem cursorSystem;
 		private CombatFactory combatFactory;
 
-		public BlitzBoltSkill(BlitzBoltData data, ICharacter character,
+		[Inject]
+		public void Construct(BlitzBoltData data, ICharacter character,
 			ElectricBallProjectileVFX.Factory electricBallFactory,
 			//MarkPoint markPoint,
 			CinemachineBrain brain,

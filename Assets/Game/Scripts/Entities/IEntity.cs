@@ -33,10 +33,10 @@ namespace Game.Entities
 
 		public ICharacterModel Model { get; protected set; }
 
-		public Character(CharacterData data, ICharacterModel model, SheetFactory sheetFactory)
+		public Character(CharacterData data, SheetFactory sheetFactory)
 		{
 			CharacterData = data;
-			Model = model;
+			//Model = model;
 			Sheet = sheetFactory.Create(data);
 			Sheet.Restore();
 
