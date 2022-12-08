@@ -23,7 +23,6 @@ namespace Game.Systems.SheetSystem
         Characteristics Characteristics { get; }
 
         Inventory Inventory { get; }
-        ActionBar ActionBar { get; }
 
 		Effects.Effects Effects { get; }
 
@@ -50,7 +49,6 @@ namespace Game.Systems.SheetSystem
 		public virtual Characteristics Characteristics { get; private set; }
 
         public virtual Inventory Inventory { get; private set; }
-        public virtual ActionBar ActionBar { get; private set; }
 
 		public virtual Effects.Effects Effects { get; protected set; }
 
@@ -73,14 +71,13 @@ namespace Game.Systems.SheetSystem
             Characteristics = new Characteristics(Settings.characteristics);
             
             Inventory = new Inventory(Settings.inventory, this);
-            ActionBar = new ActionBar(this);
 
 			Conditions = new Conditions();
             Traits = new Traits();
             Talents = new Talents();
 
             Race.Activate();
-        }
+		}
 
         public virtual void Restore()
         {
@@ -104,14 +101,19 @@ namespace Game.Systems.SheetSystem
 
 	public sealed class CharacterSheet : ModelSheet
 	{
+		public SkillDeck SkillDeck { get; private set; }
+
 		public Equipment Equipment { get; private set; }
+		public ActionBar ActionBar { get; private set; }
 
 		public CharacterSheet(CharacterData data, EffectFactory effectFactory) : base(data, effectFactory)
         {
+			SkillDeck = new SkillDeck(data.sheet.skills);
 			Equipment = new Equipment(data.sheet.equipment, this);
+			ActionBar = new ActionBar(this);
 		}
 
-        public Data GetData()
+		public Data GetData()
 		{
             return new Data
             {
@@ -142,7 +144,9 @@ namespace Game.Systems.SheetSystem
         private CharacterSheet.Factory characterSheetFactory;
         private ContainerSheet.Factory containerSheetFactory;
 
-		public CustomSheetFactory(CharacterSheet.Factory characterSheetFactory, ContainerSheet.Factory containerSheetFactory)
+		public CustomSheetFactory(
+			CharacterSheet.Factory characterSheetFactory,
+            ContainerSheet.Factory containerSheetFactory)
         {
             this.characterSheetFactory = characterSheetFactory;
             this.containerSheetFactory = containerSheetFactory;

@@ -2,7 +2,7 @@ using Cinemachine;
 
 using EPOOutline;
 
-using Game.Entities.Models;
+using Game.Entities;
 using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.CursorSystem;
@@ -10,25 +10,25 @@ using Game.Systems.InteractionSystem;
 using Game.Systems.NavigationSystem;
 using Game.Systems.VFX;
 
-using System.Collections.Generic;
-using System.Drawing;
-
 using UnityEngine;
 
 using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public class BlitzBoltSkill : Skill
+	public class BlitzBoltSkill : ActiveSkill
 	{
+		public override SkillData Data => data;
+		protected BlitzBoltData data;
+
+		protected ICharacter character;
+
 		private Vector3 worldPosition;
 		private Plane plane = new Plane(Vector3.up, 0);
 
 		private IDamageable target;
 		private OutlineData targetOutline;
-		private ICombat currentCombat;
 
-		private BlitzBoltSkill.Factory factory;
 		private ElectricBallProjectileVFX.Factory electricBallFactory;
 		private MarkPoint startPoint;
 		private CinemachineBrain brain;
@@ -36,26 +36,23 @@ namespace Game.Systems.SheetSystem.Skills
 		private CursorSystem.CursorSystem cursorSystem;
 		private CombatFactory combatFactory;
 
-		[Inject]
-		private void Construct(BlitzBoltSkill.Factory factory, ElectricBallProjectileVFX.Factory electricBallFactory,
-			MarkPoint markPoint,
+		public BlitzBoltSkill(BlitzBoltData data, ICharacter character,
+			ElectricBallProjectileVFX.Factory electricBallFactory,
+			//MarkPoint markPoint,
 			CinemachineBrain brain,
 			CameraVisionLocation cameraVision,
 			CursorSystem.CursorSystem cursorSystem,
 			CombatFactory combatFactory)
 		{
-			this.factory = factory;
+			this.data = data;
+			this.character = character;
+
 			this.electricBallFactory = electricBallFactory;
-			this.startPoint = markPoint;
+			//this.startPoint = markPoint;
 			this.brain = brain;
 			this.cameraVision = cameraVision;
 			this.cursorSystem = cursorSystem;
 			this.combatFactory = combatFactory;
-		}
-
-		private void Start()
-		{
-			character.Model.ActiveSkillsRegistrator.Registrate(this);
 		}
 
 		protected override void Update()
@@ -85,12 +82,11 @@ namespace Game.Systems.SheetSystem.Skills
 					if (target != null)
 					{
 						AttackProcess();
-						character.Skills.CancelPreparation();
 					}
 				}
 				else if (Input.GetMouseButtonDown(1))
 				{
-					character.Skills.CancelPreparation();
+					character.Model.Skills.CancelPreparation();
 				}
 			}
 		}
@@ -107,22 +103,9 @@ namespace Game.Systems.SheetSystem.Skills
 			base.BeginProcess();
 		}
 
-		public override void CancelProcess()
-		{
-			cursorSystem.SetCursor(CursorType.Hand);
-			cameraVision.IsCanMouseClick = true;
-
-			character.Model.Markers.EnableSingleTargetLine(false);
-			character.Model.Freeze(false);
-
-			SetTarget(null);
-
-			base.CancelProcess();
-		}
-
 		private void AttackProcess()
 		{
-			currentCombat = combatFactory.Create(character.Model, target);
+			SetStatus(SkillStatus.Running);
 
 			character.Model.TaskSequence
 				.Append(() =>
@@ -131,7 +114,7 @@ namespace Game.Systems.SheetSystem.Skills
 					projectile
 						.SetStart(startPoint.transform.position, startPoint.transform.forward)
 						.SetTarget(target.MarkPoint.transform)
-						.Launch();
+						.Launch(OnProjectileCompleted);
 				})
 				//.Append(currentCombat.AttackAnimation)
 				//.Append(new TaskWaitAttack(character.Model.AnimatorController))
@@ -147,17 +130,36 @@ namespace Game.Systems.SheetSystem.Skills
 
 			target = damageable != character.Model ? damageable : null;
 
-			if(target != null)
+			if (target != null)
 			{
 				target.Outline.SetData(targetOutline);
 			}
 		}
 
-		public override ISkill Create()
+		protected override void SetStatus(SkillStatus status)
 		{
-			return factory.Create();
+			if(status == SkillStatus.Canceled || status == SkillStatus.Faulted || status == SkillStatus.Successed)
+			{
+				cursorSystem.SetCursor(CursorType.Hand);
+				cameraVision.IsCanMouseClick = true;
+
+				character.Model.Markers.EnableSingleTargetLine(false);
+				character.Model.Freeze(false);
+
+				SetTarget(null);
+			}
+
+			base.SetStatus(status);
 		}
 
-		public class Factory : PlaceholderFactory<BlitzBoltSkill> { }
+		private void OnProjectileCompleted()
+		{
+			ICombat currentCombat = combatFactory.Create(character.Model, target);
+			currentCombat.DealDamage();
+
+			SetStatus(SkillStatus.Successed);
+		}
+
+		public class Factory : PlaceholderFactory<BlitzBoltData, ICharacter, BlitzBoltSkill> { }
 	}
 }

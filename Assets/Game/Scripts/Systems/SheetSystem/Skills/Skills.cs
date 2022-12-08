@@ -7,6 +7,7 @@ using System.Linq;
 
 using UnityEngine;
 using UnityEngine.Events;
+using Game.Entities.Models;
 
 namespace Game.Systems.SheetSystem.Skills
 {
@@ -15,97 +16,146 @@ namespace Game.Systems.SheetSystem.Skills
 		public event UnityAction onRegistratorChanged;
 		public event UnityAction onActiveSkillChanged;
 
-		public SkillDeck SkillDeck { get; private set; }
-
 		public bool IsHasActiveSkill => ActiveSkill != null;
-		public Skill ActiveSkill { get; private set; }
+		public ActiveSkill ActiveSkill { get; private set; }
 
+		public List<ISkill> CurrentActiveSkills => activeRegistrator.registers;
 		public List<ISkill> CurrentPassiveSkills => passiveRegistrator.registers;
 
+		private Registrator<ISkill> activeRegistrator;
 		private Registrator<ISkill> passiveRegistrator;
 
 		private ICharacter character;
-		private SkillFactory skillFactory;
+		private PassiveSkill.Factory passiveSkillFactory;
+		private BlitzBoltSkill.Factory blitzBoltFactory;
 
-		public Skills(ICharacter character, SkillFactory skillFactory, SkillsSettings settings)
+		public Skills(PassiveSkill.Factory passiveSkillFactory, BlitzBoltSkill.Factory blitzBoltFactory)
+		{
+			this.passiveSkillFactory = passiveSkillFactory;
+			this.blitzBoltFactory = blitzBoltFactory;
+
+			activeRegistrator = new Registrator<ISkill>();
+			passiveRegistrator = new Registrator<ISkill>();
+		}
+
+		public void SetOwner(ICharacter character)
 		{
 			this.character = character;
-			this.skillFactory = skillFactory;
-
-			SkillDeck = new SkillDeck(settings);
-
-			passiveRegistrator = new Registrator<ISkill>();
 
 			ActivatePassiveSkills();
+			CreateActiveSkills();
+
+			//fill slots
+			CurrentActiveSkills.ForEach((skill) =>
+			{
+				character.Sheet.SkillDeck.SkillSlots.Add(new SlotSkill()
+				{
+					skill = skill,
+				});
+			});
+
+			int i = 0;
+			CurrentActiveSkills.ForEach((skill) =>
+			{
+				character.Sheet.ActionBar.Slots[i].SetAction(skill as IAction);
+				i++;
+			});
 		}
 
 		public void PrepareSkill(SkillData data)
 		{
-			ActiveSkill = CreateSkill(data) as Skill;
-			ActiveSkill.BeginProcess();
+			ActiveSkill = CreateSkill(data) as ActiveSkill;
+			ActiveSkill.onStatusChanged += OnActiveSkillStatusChanged;
 
 			onActiveSkillChanged?.Invoke();
+
+			ActiveSkill.BeginProcess();
 		}
 
 		public void CancelPreparation()
 		{
 			ActiveSkill?.CancelProcess();
-			ActiveSkill = null;
-
-			onActiveSkillChanged?.Invoke();
 		}
 
 		private void ActivatePassiveSkills()
 		{
-			SkillDeck.PassiveSkills.ForEach((skill) =>
+			character.Sheet.SkillDeck.PassiveSkills.ForEach((data) =>
 			{
-				PassiveSkill passiveSkill = CreateSkill(skill) as PassiveSkill;
+				PassiveSkill passiveSkill = CreateSkill(data) as PassiveSkill;
 				passiveRegistrator.Registrate(passiveSkill);
 				passiveSkill.Activate();
 			});
 		}
 
-		private ISkill CreateSkill(SkillData data)
+		private void CreateActiveSkills()
 		{
-			return skillFactory.Create(data, character);
+			character.Sheet.SkillDeck.ActiveSkills.ForEach((data) =>
+			{
+				ISkill activeSkill = CreateSkill(data);
+				activeRegistrator.Registrate(activeSkill);
+			});
+		}
+
+		private void OnActiveSkillStatusChanged(SkillStatus status)
+		{
+			if(status == SkillStatus.Canceled || status == SkillStatus.Faulted || status == SkillStatus.Successed)
+			{
+				if (ActiveSkill != null)
+				{
+					ActiveSkill.onStatusChanged -= OnActiveSkillStatusChanged;
+				}
+
+				ActiveSkill = null;
+
+				onActiveSkillChanged?.Invoke();
+			}
+		}
+
+		public ISkill CreateSkill(SkillData data)
+		{
+			if (data is PassiveSkillData passiveSkillData)
+			{
+				return passiveSkillFactory.Create(passiveSkillData, character);
+			}
+			else if (data is ActiveSkillData)
+			{
+				if (data is BlitzBoltData blitzBoltData)
+				{
+					return blitzBoltFactory.Create(blitzBoltData, character);
+				}
+			}
+
+			throw new System.NotImplementedException();
 		}
 	}
 
 	public sealed class SkillDeck
 	{
-		public List<SlotSkill> Skills { get; }
-		public List<SlotSkill> MemorySkills { get; }
+		public List<SlotSkill> SkillSlots { get; }
+		public List<SlotSkill> MemorySkillSlots { get; }
 
 		public List<PassiveSkillData> PassiveSkills { get; }
 		public List<ActiveSkillData> ActiveSkills { get; }
 
 		public SkillDeck(SkillsSettings settings)
 		{
-			Skills = new List<SlotSkill>();
-			MemorySkills = new List<SlotSkill>();
+			SkillSlots = new List<SlotSkill>();
+			MemorySkillSlots = new List<SlotSkill>();
 
 			PassiveSkills = settings.skills.Where((skill) => skill is PassiveSkillData).Cast<PassiveSkillData>().ToList();
 			ActiveSkills = settings.skills.Where((skill) => skill is ActiveSkillData).Cast<ActiveSkillData>().ToList();
-
-			ActiveSkills.ForEach((skill) =>
-			{
-				Skills.Add(new SlotSkill()
-				{
-					skill = skill,
-				});
-			});
 		}
 
 		public SlotSkill[] GetSkillSlotsByLevel(int level)
 		{
-			return Skills.Where((x) => x.skill.level == level).ToArray();
+			return SkillSlots.Where((x) => x.skill.Data.requiredLevel == level).ToArray();
 		}
 
 		public List<SkillGroup> GetSkillGroupsByLevel()
 		{
 			List<SkillGroup> groups = new List<SkillGroup>();
 
-			var levels = Skills.Select((x) => x.skill.level).Distinct().OrderBy((y) => y).ToArray();
+			var levels = SkillSlots.Select((x) => x.skill.Data.requiredLevel).Distinct().OrderBy((y) => y).ToArray();
 
 			for (int i = 0; i < levels.Length; i++)
 			{

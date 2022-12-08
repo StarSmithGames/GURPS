@@ -19,7 +19,7 @@ namespace Game.HUD
 		{
 			bool isEmpty = Slot.IsEmpty;
 			Icon.enabled = !isEmpty;
-			Icon.sprite = !isEmpty ? Slot.skill.information.portrait : null;
+			Icon.sprite = !isEmpty ? Slot.skill.Data.information.portrait : null;
 		}
 
 		public override void Drop(UISlot slot)

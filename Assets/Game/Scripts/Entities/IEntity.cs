@@ -1,7 +1,7 @@
 using Game.Entities.Models;
 using Game.Systems.SheetSystem;
-using Game.Systems.SheetSystem.Effects;
-using Game.Systems.SheetSystem.Skills;
+
+using UnityEngine;
 
 using Zenject;
 
@@ -15,7 +15,8 @@ namespace Game.Entities
 	public interface ICharacter : IEntity<ICharacterModel>, ISheetable
 	{
 		CharacterData CharacterData { get; }
-		Skills Skills { get; }
+
+		new CharacterSheet Sheet { get; }
 
 		void SetModel(ICharacterModel model);
 
@@ -25,25 +26,21 @@ namespace Game.Entities
 	public class Character : ICharacter
 	{
 		public CharacterData CharacterData { get; protected set; }
-		public virtual ISheet Sheet { get; protected set; }
-		public virtual Skills Skills { get; protected set; }
+		
+		public ISheet Sheet { get; protected set; }
+		CharacterSheet ICharacter.Sheet => sheet;
+		private CharacterSheet sheet;
 
-		public virtual ICharacterModel Model { get; protected set; }
+		public ICharacterModel Model { get; protected set; }
 
-		public Character(CharacterData data, SheetFactory sheetFactory, SkillFactory skillFactory)
+		public Character(CharacterData data, ICharacterModel model, SheetFactory sheetFactory)
 		{
 			CharacterData = data;
+			Model = model;
 			Sheet = sheetFactory.Create(data);
-			Skills = new Skills(this, skillFactory, data.sheet.skills);
-
-			int i = 0;
-			Skills.SkillDeck.ActiveSkills.ForEach((skill) =>
-			{
-				Sheet.ActionBar.Slots[i].SetAction(skill);
-				i++;
-			});
-
 			Sheet.Restore();
+
+			sheet = Sheet as CharacterSheet;
 		}
 
 		public void SetModel(ICharacterModel model)

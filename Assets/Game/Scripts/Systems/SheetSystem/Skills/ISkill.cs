@@ -1,7 +1,9 @@
 using Game.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.Assertions;
+
+using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
@@ -53,36 +55,73 @@ namespace Game.Systems.SheetSystem.Skills
 		public class Factory : PlaceholderFactory<PassiveSkillData, ICharacter, PassiveSkill> { }
 	}
 
-	public class SkillFactory : PlaceholderFactory<SkillData, ICharacter, ISkill> { }
-
-	public class CustomSkillFactory : IFactory<SkillData, ICharacter, ISkill>
+	public abstract class ActiveSkill : MonoBehaviour, ISkill, IAction
 	{
-		private PassiveSkill.Factory passiveSkillFactory;
+		public event UnityAction<IAction> onUsed;
+		public event UnityAction<SkillStatus> onStatusChanged;
 
-		public CustomSkillFactory(PassiveSkill.Factory passiveSkillFactory)
+		public abstract SkillData Data { get; }
+
+		public SkillStatus SkillStatus { get; private set; }
+
+		[Inject]
+		private void Construct()
 		{
-			this.passiveSkillFactory = passiveSkillFactory;
+			//this.character = model.Character;
+			SkillStatus = SkillStatus.None;
 		}
 
-		public ISkill Create(SkillData data, ICharacter character)
+		protected virtual void Update()
 		{
-			if (data is PassiveSkillData passiveSkillData)
+			if (SkillStatus == SkillStatus.Preparing)
 			{
-				return passiveSkillFactory.Create(passiveSkillData, character);
+				if (Input.GetMouseButtonDown(1))
+				{
+					//character.Skills.CancelPreparation();
+				}
 			}
-			else if (data is ActiveSkillData activeSkillData)
-			{
-				var skill = character.Model.ActiveSkillsRegistrator.registers.Find((x) => x.Data == activeSkillData);
+		}
 
-				Assert.IsNotNull(skill);
+		public bool Use()
+		{
+			onUsed?.Invoke(this);
+			return true;
+		}
 
-				return skill.Create();
-			}
+		public virtual void BeginProcess()
+		{
+			SetStatus(SkillStatus.Preparing);
+		}
 
-			throw new System.NotImplementedException();
+		public virtual void CancelProcess()
+		{
+			SetStatus(SkillStatus.Canceled);
+		}
+
+		protected virtual void SetStatus(SkillStatus status)
+		{
+			SkillStatus = status;
+			onStatusChanged?.Invoke(SkillStatus);
 		}
 	}
 
+
+	public enum SkillStatus
+	{
+		None,
+
+		Preparing,
+		Running,
+		Canceled,
+		Faulted,
+		Successed,
+	}
+
+
+
+	//public class SingleTargetSkill
+	//public class ProjectileSkill
+	//public class AOESkill
 	public enum EffectPlacement
 	{
 		CenteredOnTargets,

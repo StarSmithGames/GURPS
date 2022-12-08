@@ -280,9 +280,9 @@ namespace Game.Systems.InventorySystem
         public override bool IsEmpty => skill == null;
 
         [HideLabel]
-        public ActiveSkillData skill;
+        public ISkill skill;
 
-        public bool SetSkill(ActiveSkillData skill)
+        public bool SetSkill(ISkill skill)
         {
             this.skill = skill;
 
@@ -306,6 +306,6 @@ namespace Game.Systems.InventorySystem
             };
         }
 
-        private string Title => $"Skill Slot with {skill.Title}";
+        private string Title => $"Skill Slot with {skill.Data.Title}";
     }
 }

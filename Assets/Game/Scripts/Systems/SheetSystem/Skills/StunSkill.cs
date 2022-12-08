@@ -1,27 +1,15 @@
+using Game.Entities;
+
 using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public class StunSkill : Skill
+	public class StunSkill : ActiveSkill
 	{
-		private StunSkill.Factory factory;
+		public override SkillData Data { get; }
 
-		[Inject]
-		private void Construct(StunSkill.Factory factory)
-		{
-			this.factory = factory;
-		}
 
-		private void Start()
-		{
-			character.Model.ActiveSkillsRegistrator.Registrate(this);
-		}
 
-		public override ISkill Create()
-		{
-			return factory.Create();
-		}
-
-		public class Factory : PlaceholderFactory<StunSkill> { }
+		public class Factory : PlaceholderFactory<ActiveSkillData, ICharacter, StunSkill> { }
 	}
 }

@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
@@ -14,9 +15,9 @@ namespace Game.Systems.VFX
 		[SerializeField] private Light light2;
 		[SerializeField] private TrailRenderer trail;
 
-		public override void Launch()
+		public override void Launch(UnityAction onCompleted = null)
 		{
-			base.Launch();
+			base.Launch(onCompleted);
 
 			projectile.Play(true);
 			explotion.Stop(true);
@@ -24,7 +25,6 @@ namespace Game.Systems.VFX
 
 		protected override void Collision(RaycastHit hit)
 		{
-			base.Collision(hit);
 			projectile.Stop(true);
 			explotion.Play(true);
 
@@ -34,6 +34,8 @@ namespace Game.Systems.VFX
 				.Join(light2.DOIntensity(0, 0.15f))
 				.AppendInterval(2.5f)
 				.AppendCallback(() => DespawnIt());
+
+			base.Collision(hit);
 		}
 
 		public override void OnDespawned()

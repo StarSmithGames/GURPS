@@ -1,17 +1,16 @@
 using Sirenix.OdinInspector;
-
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public abstract class SkillData : ScriptableObject, IAction
+	public abstract class SkillData : ScriptableObject
 	{
 		[HideLabel]
 		public Information information;
 
-		[Range(0, 9)]
-		public int level;
-
+		[Min(0)]
+		public int requiredLevel;
+		
 		public string Title => $"{(information.name.IsEmpty() ? name : information.name)}";
 	}
 }

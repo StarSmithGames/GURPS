@@ -16,7 +16,7 @@ using UnityEditor;
 namespace Game.Systems.InventorySystem
 {
 	[System.Serializable]
-	public class Item : IAction, ICopyable<Item>
+	public partial class Item : IAction, ICopyable<Item>
 	{
 		public UnityAction OnItemChanged;
 
@@ -325,6 +325,22 @@ namespace Game.Systems.InventorySystem
 		}
 #endif
 	}
+
+	/// <summary>
+	/// IAction Implementation
+	/// </summary>
+	public partial class Item
+	{
+		public event UnityAction<IAction> onUsed;
+		
+		public bool Use()
+		{
+			onUsed?.Invoke(this);
+
+			return true;
+		}
+	}
+
 
 #if UNITY_EDITOR
 	[CustomPropertyDrawer(typeof(Item))]

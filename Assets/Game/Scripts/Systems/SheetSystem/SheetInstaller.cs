@@ -1,3 +1,5 @@
+using Game.Entities;
+using Game.Entities.Models;
 using Game.Systems.SheetSystem.Skills;
 using UnityEngine;
 
@@ -5,20 +7,19 @@ using Zenject;
 
 namespace Game.Systems.SheetSystem
 {
-	public class SheetInstaller : MonoInstaller<SheetInstaller>
+	[CreateAssetMenu(fileName = "SheetInstaller", menuName = "Installers/SheetInstaller")]
+	public class SheetInstaller : ScriptableObjectInstaller
 	{
-		[SerializeField] private BlitzBoltSkill blitzBoltSkill;
-		[SerializeField] private StunSkill stunSkill;
-
 		public override void InstallBindings()
 		{
-			Container.BindInterfacesAndSelfTo<ActiveSkillsRegistrator>().AsSingle().NonLazy();
+			Container.BindFactory<PassiveSkillData, ICharacter, PassiveSkill, PassiveSkill.Factory>();
+
 			Container
-				.BindFactory<BlitzBoltSkill, BlitzBoltSkill.Factory>()
-				.FromComponentInNewPrefab(blitzBoltSkill).AsSingle().NonLazy();
-			Container
-				.BindFactory<StunSkill, StunSkill.Factory>()
-				.FromComponentInNewPrefab(stunSkill).AsSingle().NonLazy();
+				.BindFactory<BlitzBoltData, ICharacter, BlitzBoltSkill, BlitzBoltSkill.Factory>()
+				.FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+			//Container
+			//	.BindFactory<ICharacter, StunSkill, StunSkill.Factory>()
+			//	.FromNewComponentOnNewGameObject().AsSingle().NonLazy();
 		}
 	}
 }

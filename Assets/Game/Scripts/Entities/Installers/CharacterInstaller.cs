@@ -2,6 +2,7 @@ using Game.Entities.Models;
 using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
 using Game.Systems.DialogueSystem;
+using Game.Systems.SheetSystem.Skills;
 
 using Sirenix.OdinInspector;
 
@@ -31,6 +32,8 @@ namespace Game.Entities
 			Container.BindInstance(markers);
 			Container.BindInstance(outfit);
 			Container.BindInstance(barker);
+
+			Container.BindInterfacesAndSelfTo<Skills>().AsSingle().NonLazy();
 		}
 
 		protected override void BindModel()

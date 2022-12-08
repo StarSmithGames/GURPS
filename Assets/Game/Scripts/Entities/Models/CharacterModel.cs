@@ -21,11 +21,11 @@ namespace Game.Entities.Models
 
 		ICharacter Character { get; }
 
-		ActiveSkillsRegistrator ActiveSkillsRegistrator { get; }
+		Skills Skills { get; }
+
 		AnimatorController AnimatorController { get; }
 		CharacterOutfit Outfit { get; }
 		Markers Markers { get; }
-		Outlinable Outline { get; }
 
 		bool IsCanBattleMove { get; }
 
@@ -41,20 +41,7 @@ namespace Game.Entities.Models
 
 		public virtual ICharacter Character { get; protected set; }
 		public ISheet Sheet => Character.Sheet;
-
-		public ActiveSkillsRegistrator ActiveSkillsRegistrator
-		{
-			get
-			{
-				if(activeSkillsRegistrator == null)
-				{
-					activeSkillsRegistrator = new ActiveSkillsRegistrator();
-				}
-
-				return activeSkillsRegistrator;
-			}
-		}
-		private ActiveSkillsRegistrator activeSkillsRegistrator;
+		public Skills Skills { get; protected set; }
 
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorController AnimatorController { get; private set; }
@@ -63,9 +50,9 @@ namespace Game.Entities.Models
 
 		public Transform DialogueTransform => Transform;//rm
 
-
 		[Inject]
 		private void Construct(
+			Skills skills,
 			CharacterOutfit outfit,
 			AnimatorController animatorControl,
 			Outlinable outline,
@@ -76,6 +63,7 @@ namespace Game.Entities.Models
 			MarkPoint markPoint,
 			CombatFactory combatFactory)
 		{
+			Skills = skills;
 			Outfit = outfit;
 			AnimatorController = animatorControl;
 			Outline = outline;
@@ -90,6 +78,8 @@ namespace Game.Entities.Models
 
 		protected override IEnumerator Start()
 		{
+			Skills.SetOwner(Character);
+
 			Outline.enabled = false;
 			Markers.Reset();
 
@@ -247,6 +237,12 @@ namespace Game.Entities.Models
 
 			LineAnimationCoroutine = null;
 		}
+	}
+
+	//
+	partial class CharacterModel
+	{
+
 	}
 
 	//IActor implementation

@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 using Zenject;
+using Game.Managers.GameManager;
 
 namespace Game.HUD
 {
@@ -21,7 +22,8 @@ namespace Game.HUD
 		[SerializeField] private List<UISlotAction> slots = new List<UISlotAction>();
 
 		private ICharacter currentLeader;
-		private Skill lastSkill;
+		private Skills сurrentSkills;
+		private ActiveSkill lastSkill;
 
 		private SignalBus signalBus;
 		private UISlotAction.Factory actionFactory;
@@ -38,23 +40,9 @@ namespace Game.HUD
 		private void Start()
 		{
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
-			SetLeader(partyManager.PlayerParty.LeaderParty);
+			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 
-			var actionBar = currentLeader.Sheet.ActionBar;
 
-			Assert.IsTrue(actionBar.Slots.Count == slots.Count);
-
-			for (int i = 0; i < slots.Count; i++)
-			{
-				//Num 0-9
-				slots[i].Key.enabled = i < 10;
-				slots[i].Key.text = i < 10 ? (i + 1) < 10 ? (i + 1).ToString() : "0" : "";
-
-				slots[i].SetSlot(actionBar.Slots[i]);
-
-				slots[i].onUse += OnUsed;
-				slots[i].onChanged += OnSlotChanged;
-			}
 		}
 
 		private void OnDestroy()
@@ -62,7 +50,7 @@ namespace Game.HUD
 			signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 			if(currentLeader != null)
 			{
-				currentLeader.Skills.onActiveSkillChanged -= onActiveSkillChanged;
+				сurrentSkills.onActiveSkillChanged -= RefreshActiveSkill;
 			}
 			if (lastSkill != null)
 			{
@@ -91,22 +79,22 @@ namespace Game.HUD
 			if (slot.Action is SkillData skillData)
 			{
 				bool isRef = false;
-				if (currentLeader.Skills.IsHasActiveSkill)
+				if (сurrentSkills.IsHasActiveSkill)
 				{
-					isRef = currentLeader.Skills.ActiveSkill.Data == slot.Action;
-					currentLeader.Skills.CancelPreparation();
+					isRef = сurrentSkills.ActiveSkill == slot.Action;
+					сurrentSkills.CancelPreparation();
 				}
 
 				if (!isRef)
 				{
-					currentLeader.Skills.PrepareSkill(skillData);
+					сurrentSkills.PrepareSkill(skillData);
 				}
 			}
 			else
 			{
-				if (currentLeader.Skills.IsHasActiveSkill)
+				if (сurrentSkills.IsHasActiveSkill)
 				{
-					currentLeader.Skills.CancelPreparation();
+					сurrentSkills.CancelPreparation();
 				}
 			}
 		}
@@ -122,9 +110,9 @@ namespace Game.HUD
 			{
 				if (slot.Action is ActiveSkillData skillData)
 				{
-					if (currentLeader.Skills.IsHasActiveSkill)
+					if (сurrentSkills.IsHasActiveSkill)
 					{
-						if (currentLeader.Skills.ActiveSkill.Data == skillData)
+						if (сurrentSkills.ActiveSkill.Data == skillData)
 						{
 							slot.Blink.Do(1f, 0, 0.6f);
 						}
@@ -137,21 +125,41 @@ namespace Game.HUD
 		{
 			if(status == SkillStatus.Preparing)
 			{
-				EnableBlink(lastSkill.Data, true);
+				EnableBlink(lastSkill, true);
 			}
 			else if(status != SkillStatus.Preparing)
 			{
-				EnableBlink(lastSkill.Data, false);
+				EnableBlink(lastSkill, false);
 			}
 		}
 
-		private void onActiveSkillChanged()
-		{
-			RefreshActiveSkill();
-		}
 		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 		{
 			SetLeader(signal.leader);
+		}
+
+		private void OnGameStateChanged(SignalGameStateChanged signal)
+		{
+			if(signal.newGameState == GameState.Gameplay)
+			{
+				SetLeader(partyManager.PlayerParty.LeaderParty);
+
+				var actionBar = currentLeader.Sheet.ActionBar;
+
+				Assert.IsTrue(actionBar.Slots.Count == slots.Count);
+
+				for (int i = 0; i < slots.Count; i++)
+				{
+					//Num 0-9
+					slots[i].Key.enabled = i < 10;
+					slots[i].Key.text = i < 10 ? (i + 1) < 10 ? (i + 1).ToString() : "0" : "";
+
+					slots[i].SetSlot(actionBar.Slots[i]);
+
+					slots[i].onClicked += OnUsed;
+					slots[i].onChanged += OnSlotChanged;
+				}
+			}
 		}
 	}
 
@@ -162,12 +170,13 @@ namespace Game.HUD
 		{
 			if (currentLeader != null)
 			{
-				currentLeader.Skills.onActiveSkillChanged -= onActiveSkillChanged;
+				сurrentSkills.onActiveSkillChanged -= RefreshActiveSkill;
 			}
 
 			currentLeader = leader;
+			сurrentSkills = currentLeader.Model.Skills;
 
-			currentLeader.Skills.onActiveSkillChanged += onActiveSkillChanged;
+			сurrentSkills.onActiveSkillChanged += RefreshActiveSkill;
 		}
 
 		private void RefreshActiveSkill()
@@ -177,7 +186,7 @@ namespace Game.HUD
 				lastSkill.onStatusChanged -= OnActiveSkillStatusChanged;
 			}
 
-			lastSkill = currentLeader.Skills.ActiveSkill;
+			lastSkill = сurrentSkills.ActiveSkill;
 
 			if (lastSkill != null)
 			{

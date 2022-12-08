@@ -137,7 +137,7 @@ namespace Game.Systems.InventorySystem
 					{
 						if (eventData.clickCount > 0)
 						{
-							actionSlot.Use();
+							actionSlot.OneClick();
 							tooltip.ExitTarget(slot);
 						}
 					}
@@ -548,7 +548,7 @@ namespace Game.Systems.InventorySystem
 			{
 				case UISlotAction actionSlot:
 				{
-					actionSlot.SetAction(begin.Slot.skill);
+					actionSlot.SetAction(begin.Slot.skill as IAction);
 					break;
 				}
 			}

@@ -18,10 +18,11 @@ namespace Game.HUD
 {
 	public class UISlotAction : UISlot<SlotAction>
 	{
-		public UnityAction<UISlotAction> onUse;
+		public UnityAction<UISlotAction> onClicked;
 		public UnityAction<UISlotAction> onChanged;
 
 		[field: Space]
+		[field: SerializeField] public Image FillAmountCooldown { get; private set; }
 		[field: SerializeField] public UIAnimationBlinkComponent Blink { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Key { get; private set; }
@@ -48,9 +49,9 @@ namespace Game.HUD
 			containerHandler.Unsubscribe(this);
 		}
 
-		public void Use()
+		public void OneClick()
 		{
-			onUse?.Invoke(this);
+			onClicked?.Invoke(this);
 		}
 
 		public void ContextMenu()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
@@ -41,6 +42,9 @@ namespace Game.Systems.VFX
 		protected Vector3 forwardPosition;
 		protected Vector3 targetPosition;
 		protected float startTime;
+
+		protected UnityAction onCompleted;
+
 		protected bool isCanMove;
 
 		[Inject]
@@ -112,8 +116,10 @@ namespace Game.Systems.VFX
 			}
 		}
 
-		public virtual void Launch()
+		public virtual void Launch(UnityAction onCompleted = null)
 		{
+			this.onCompleted = onCompleted;
+
 			startTime = Time.time;
 			deltaSpeed = randomMoveSpeed * Random.Range(1, 1000 * randomRange + 1) / 1000 - 1;
 			randomRadiusX = Random.Range(randomMoveRadius / 20, randomMoveRadius * 100) / 100;
@@ -171,6 +177,8 @@ namespace Game.Systems.VFX
 
 			if (attachAfterCollision)
 				root.parent = hit.transform == null ? target : hit.transform;
+
+			onCompleted?.Invoke();
 		}
 	}
 
