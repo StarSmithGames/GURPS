@@ -42,7 +42,15 @@ namespace Game.HUD
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 
+			for (int i = 0; i < slots.Count; i++)
+			{
+				//Num 0-9
+				slots[i].Key.enabled = i < 10;
+				slots[i].Key.text = i < 10 ? (i + 1) < 10 ? (i + 1).ToString() : "0" : "";
 
+				slots[i].onClicked += OnClicked;
+				slots[i].onChanged += OnSlotChanged;
+			}
 		}
 
 		private void OnDestroy()
@@ -74,29 +82,9 @@ namespace Game.HUD
 			}
 		}
 
-		private void OnUsed(UISlotAction slot)
+		private void OnClicked(UISlotAction slot)
 		{
-			if (slot.Action is SkillData skillData)
-			{
-				bool isRef = false;
-				if (сurrentSkills.IsHasActiveSkill)
-				{
-					isRef = сurrentSkills.ActiveSkill == slot.Action;
-					сurrentSkills.CancelPreparation();
-				}
-
-				if (!isRef)
-				{
-					сurrentSkills.PrepareSkill(skillData);
-				}
-			}
-			else
-			{
-				if (сurrentSkills.IsHasActiveSkill)
-				{
-					сurrentSkills.CancelPreparation();
-				}
-			}
+			slot.Action.Use();
 		}
 
 		//rm
@@ -123,6 +111,9 @@ namespace Game.HUD
 
 		private void OnActiveSkillStatusChanged(SkillStatus status)
 		{
+			Debug.LogError(lastSkill != null);
+			if (lastSkill == null) return;
+
 			if(status == SkillStatus.Preparing)
 			{
 				EnableBlink(lastSkill, true);
@@ -143,22 +134,6 @@ namespace Game.HUD
 			if(signal.newGameState == GameState.Gameplay)
 			{
 				SetLeader(partyManager.PlayerParty.LeaderParty);
-
-				var actionBar = currentLeader.Sheet.ActionBar;
-
-				Assert.IsTrue(actionBar.Slots.Count == slots.Count);
-
-				for (int i = 0; i < slots.Count; i++)
-				{
-					//Num 0-9
-					slots[i].Key.enabled = i < 10;
-					slots[i].Key.text = i < 10 ? (i + 1) < 10 ? (i + 1).ToString() : "0" : "";
-
-					slots[i].SetSlot(actionBar.Slots[i]);
-
-					slots[i].onClicked += OnUsed;
-					slots[i].onChanged += OnSlotChanged;
-				}
 			}
 		}
 	}
@@ -174,7 +149,16 @@ namespace Game.HUD
 			}
 
 			currentLeader = leader;
-			сurrentSkills = currentLeader.Model.Skills;
+			сurrentSkills = currentLeader.LocalSheet.Skills;
+
+			var actionBar = currentLeader.Sheet.ActionBar;
+
+			Assert.IsTrue(actionBar.Slots.Count == slots.Count);
+
+			for (int i = 0; i < slots.Count; i++)
+			{
+				slots[i].SetSlot(actionBar.Slots[i]);
+			}
 
 			сurrentSkills.onActiveSkillChanged += RefreshActiveSkill;
 		}
@@ -183,6 +167,7 @@ namespace Game.HUD
 		{
 			if (lastSkill != null)
 			{
+				EnableBlink(lastSkill, false);
 				lastSkill.onStatusChanged -= OnActiveSkillStatusChanged;
 			}
 

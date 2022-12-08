@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using System;
 using System.Linq;
 
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Game.Systems.InventorySystem
@@ -279,7 +280,6 @@ namespace Game.Systems.InventorySystem
     {
         public override bool IsEmpty => skill == null;
 
-        [HideLabel]
         public ISkill skill;
 
         public bool SetSkill(ISkill skill)

@@ -8,6 +8,8 @@ using Game.Systems.SheetSystem;
 using Game.Systems.SheetSystem.Skills;
 using Game.UI;
 
+using System;
+
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -102,14 +104,18 @@ namespace Game.HUD
 						Count.text = item.CurrentStackSize.ToString();
 						break;
 					}
-					case SkillData skill:
+					case ISkill skill:
 					{
 						Icon.enabled = true;
-						Icon.sprite = skill.information.portrait;
+						Icon.sprite = skill.Data.information.portrait;
 
 						Count.enabled = false;
 						Count.text = "";
 						break;
+					}
+					default:
+					{
+						throw new NotImplementedException();
 					}
 				}
 			}

@@ -1,5 +1,4 @@
 using Game.Entities;
-using Game.Entities.Models;
 using Game.Systems.SheetSystem.Skills;
 using UnityEngine;
 
@@ -7,8 +6,8 @@ using Zenject;
 
 namespace Game.Systems.SheetSystem
 {
-	[CreateAssetMenu(fileName = "SheetInstaller", menuName = "Installers/SheetInstaller")]
-	public class SheetInstaller : ScriptableObjectInstaller
+	[CreateAssetMenu(fileName = "LocalSheetInstaller", menuName = "Installers/LocalSheetInstaller")]
+	public class LocalSheetInstaller : ScriptableObjectInstaller
 	{
 		public override void InstallBindings()
 		{

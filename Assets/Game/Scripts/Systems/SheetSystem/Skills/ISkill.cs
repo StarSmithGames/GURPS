@@ -1,6 +1,10 @@
 using Game.Entities;
+using Game.Systems.InventorySystem;
+
 using System.Collections.Generic;
 using System.Linq;
+
+using UnityEditor.Experimental.GraphView;
 
 using UnityEngine;
 using UnityEngine.Events;
@@ -64,26 +68,36 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public SkillStatus SkillStatus { get; private set; }
 
-		[Inject]
-		private void Construct()
+		protected ICharacter character;
+
+		protected virtual void Start()
 		{
-			//this.character = model.Character;
-			SkillStatus = SkillStatus.None;
+			ResetSkill();
 		}
 
-		protected virtual void Update()
+		protected abstract void Update();
+
+		public virtual bool Use()
 		{
-			if (SkillStatus == SkillStatus.Preparing)
+			bool isRef = false;
+			if (character.LocalSheet.Skills.IsHasActiveSkill)
 			{
-				if (Input.GetMouseButtonDown(1))
-				{
-					//character.Skills.CancelPreparation();
-				}
+				isRef = character.LocalSheet.Skills.ActiveSkill == this;
+				character.LocalSheet.Skills.CancelPreparation();
 			}
-		}
 
-		public bool Use()
-		{
+			if (!isRef)
+			{
+				character.LocalSheet.Skills.PrepareSkill(this);
+			}
+			//else
+			//{
+			//	if (сurrentSkills.IsHasActiveSkill)
+			//	{
+			//		сurrentSkills.CancelPreparation();
+			//	}
+			//}
+
 			onUsed?.Invoke(this);
 			return true;
 		}
@@ -102,6 +116,11 @@ namespace Game.Systems.SheetSystem.Skills
 		{
 			SkillStatus = status;
 			onStatusChanged?.Invoke(SkillStatus);
+		}
+
+		protected virtual void ResetSkill()
+		{
+			SetStatus(SkillStatus.None);
 		}
 	}
 

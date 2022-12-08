@@ -21,7 +21,6 @@ namespace Game.Systems.SheetSystem.Skills
 		public override SkillData Data => data;
 		protected BlitzBoltData data;
 
-		protected ICharacter character;
 
 		private Vector3 worldPosition;
 		private Plane plane = new Plane(Vector3.up, 0);
@@ -39,7 +38,6 @@ namespace Game.Systems.SheetSystem.Skills
 		[Inject]
 		public void Construct(BlitzBoltData data, ICharacter character,
 			ElectricBallProjectileVFX.Factory electricBallFactory,
-			//MarkPoint markPoint,
 			CinemachineBrain brain,
 			CameraVisionLocation cameraVision,
 			CursorSystem.CursorSystem cursorSystem,
@@ -49,7 +47,7 @@ namespace Game.Systems.SheetSystem.Skills
 			this.character = character;
 
 			this.electricBallFactory = electricBallFactory;
-			//this.startPoint = markPoint;
+			this.startPoint = character.Model.MarkPoint;
 			this.brain = brain;
 			this.cameraVision = cameraVision;
 			this.cursorSystem = cursorSystem;
@@ -87,7 +85,7 @@ namespace Game.Systems.SheetSystem.Skills
 				}
 				else if (Input.GetMouseButtonDown(1))
 				{
-					character.Model.Skills.CancelPreparation();
+					CancelProcess();
 				}
 			}
 		}

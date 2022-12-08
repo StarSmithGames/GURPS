@@ -4,6 +4,7 @@ using Game.Managers.PartyManager;
 using Game.Systems.CommandCenter;
 using Game.Systems.ContextMenu;
 using Game.Systems.SheetSystem;
+using Game.Systems.SheetSystem.Skills;
 using Game.Systems.TooltipSystem;
 using Game.UI.CanvasSystem;
 using UnityEngine.EventSystems;
@@ -548,7 +549,7 @@ namespace Game.Systems.InventorySystem
 			{
 				case UISlotAction actionSlot:
 				{
-					actionSlot.SetAction(begin.Slot.skill as IAction);
+					actionSlot.SetAction(begin.Slot.skill as ActiveSkill);
 					break;
 				}
 			}

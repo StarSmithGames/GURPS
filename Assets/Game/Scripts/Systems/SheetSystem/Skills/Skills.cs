@@ -8,6 +8,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using Game.Entities.Models;
+using UnityEngine.Assertions;
 
 namespace Game.Systems.SheetSystem.Skills
 {
@@ -26,45 +27,31 @@ namespace Game.Systems.SheetSystem.Skills
 		private Registrator<ISkill> passiveRegistrator;
 
 		private ICharacter character;
+
+		private ICharacterModel model;
 		private PassiveSkill.Factory passiveSkillFactory;
 		private BlitzBoltSkill.Factory blitzBoltFactory;
 
-		public Skills(PassiveSkill.Factory passiveSkillFactory, BlitzBoltSkill.Factory blitzBoltFactory)
+		public Skills(ICharacterModel model, PassiveSkill.Factory passiveSkillFactory, BlitzBoltSkill.Factory blitzBoltFactory)
 		{
+			this.model = model;
 			this.passiveSkillFactory = passiveSkillFactory;
 			this.blitzBoltFactory = blitzBoltFactory;
 
+			character = model.Character;
+
 			activeRegistrator = new Registrator<ISkill>();
 			passiveRegistrator = new Registrator<ISkill>();
-		}
-
-		public void SetOwner(ICharacter character)
-		{
-			this.character = character;
 
 			ActivatePassiveSkills();
 			CreateActiveSkills();
-
-			//fill slots
-			CurrentActiveSkills.ForEach((skill) =>
-			{
-				character.Sheet.SkillDeck.SkillSlots.Add(new SlotSkill()
-				{
-					skill = skill,
-				});
-			});
-
-			int i = 0;
-			CurrentActiveSkills.ForEach((skill) =>
-			{
-				character.Sheet.ActionBar.Slots[i].SetAction(skill as IAction);
-				i++;
-			});
 		}
 
-		public void PrepareSkill(SkillData data)
+		public void PrepareSkill(ISkill skill)
 		{
-			ActiveSkill = CreateSkill(data) as ActiveSkill;
+			Assert.IsTrue(IsContainsSkill(skill));
+			ActiveSkill = skill as ActiveSkill;
+			Assert.IsNotNull(ActiveSkill);
 			ActiveSkill.onStatusChanged += OnActiveSkillStatusChanged;
 
 			onActiveSkillChanged?.Invoke();
@@ -126,6 +113,16 @@ namespace Game.Systems.SheetSystem.Skills
 			}
 
 			throw new System.NotImplementedException();
+		}
+
+		private ISkill GetSkill(SkillData data)
+		{
+			return activeRegistrator.registers.FirstOrDefault((x) => x.Data == data);
+		}
+
+		private bool IsContainsSkill(ISkill skill)
+		{
+			return activeRegistrator.registers.Contains(skill);
 		}
 	}
 

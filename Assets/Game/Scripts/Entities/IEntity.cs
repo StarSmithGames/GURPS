@@ -17,8 +17,10 @@ namespace Game.Entities
 		CharacterData CharacterData { get; }
 
 		new CharacterSheet Sheet { get; }
+		LocalSheet LocalSheet { get; }
 
 		void SetModel(ICharacterModel model);
+		void SetLocalSheet(LocalSheet sheet);
 
 		public Character.Data GetData();
 	}
@@ -32,13 +34,12 @@ namespace Game.Entities
 		private CharacterSheet sheet;
 
 		public ICharacterModel Model { get; protected set; }
+		public LocalSheet LocalSheet { get; protected set; }
 
 		public Character(CharacterData data, SheetFactory sheetFactory)
 		{
 			CharacterData = data;
-			//Model = model;
 			Sheet = sheetFactory.Create(data);
-			Sheet.Restore();
 
 			sheet = Sheet as CharacterSheet;
 		}
@@ -46,6 +47,11 @@ namespace Game.Entities
 		public void SetModel(ICharacterModel model)
 		{
 			Model = model;
+		}
+
+		public void SetLocalSheet(LocalSheet sheet)
+		{
+			LocalSheet = sheet;
 		}
 
 		public Data GetData()

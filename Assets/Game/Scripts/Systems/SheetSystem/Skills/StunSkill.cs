@@ -8,7 +8,13 @@ namespace Game.Systems.SheetSystem.Skills
 	{
 		public override SkillData Data { get; }
 
+		protected override void Update()
+		{
+			if(SkillStatus == SkillStatus.Preparing)
+			{
 
+			}
+		}
 
 		public class Factory : PlaceholderFactory<ActiveSkillData, ICharacter, StunSkill> { }
 	}

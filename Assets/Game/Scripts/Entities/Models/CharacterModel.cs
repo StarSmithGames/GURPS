@@ -20,9 +20,6 @@ namespace Game.Entities.Models
 		float CharacterRange { get; }//rm
 
 		ICharacter Character { get; }
-
-		Skills Skills { get; }
-
 		AnimatorController AnimatorController { get; }
 		CharacterOutfit Outfit { get; }
 		Markers Markers { get; }
@@ -41,7 +38,6 @@ namespace Game.Entities.Models
 
 		public virtual ICharacter Character { get; protected set; }
 		public ISheet Sheet => Character.Sheet;
-		public Skills Skills { get; protected set; }
 
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorController AnimatorController { get; private set; }
@@ -52,7 +48,6 @@ namespace Game.Entities.Models
 
 		[Inject]
 		private void Construct(
-			Skills skills,
 			CharacterOutfit outfit,
 			AnimatorController animatorControl,
 			Outlinable outline,
@@ -63,7 +58,6 @@ namespace Game.Entities.Models
 			MarkPoint markPoint,
 			CombatFactory combatFactory)
 		{
-			Skills = skills;
 			Outfit = outfit;
 			AnimatorController = animatorControl;
 			Outline = outline;
@@ -78,8 +72,6 @@ namespace Game.Entities.Models
 
 		protected override IEnumerator Start()
 		{
-			Skills.SetOwner(Character);
-
 			Outline.enabled = false;
 			Markers.Reset();
 
