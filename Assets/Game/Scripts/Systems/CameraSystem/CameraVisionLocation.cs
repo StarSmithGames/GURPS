@@ -51,7 +51,6 @@ namespace Game.Systems.CameraSystem
 
 		private CharacterManager characterManager;
 		private PartyManager partyManager;
-		private TooltipSystem.BattleTooltip tooltipSystem;
 		private ContextMenuSystem contextMenuSystem;
 		private UISubCanvas subCanvas;
 		private BattleSystem.BattleSystem battleSystem;
@@ -63,7 +62,6 @@ namespace Game.Systems.CameraSystem
 			CharacterManager characterManager,
 			PartyManager partyManager,
 			GlobalSettings settings,
-			TooltipSystem.BattleTooltip tooltipSystem,
 			ContextMenuSystem contextMenuSystem,
 			BattleSystem.BattleSystem battleSystem) : base(signalBus, brain, inputManager)
 		{
@@ -71,7 +69,6 @@ namespace Game.Systems.CameraSystem
 			this.characterManager = characterManager;
 			this.partyManager = partyManager;
 			this.settings = settings.cameraVisionLocation;
-			this.tooltipSystem = tooltipSystem;
 			this.contextMenuSystem = contextMenuSystem;
 			this.battleSystem = battleSystem;
 		}
@@ -86,29 +83,6 @@ namespace Game.Systems.CameraSystem
 		{
 			base.Dispose();
 			signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
-		}
-
-		public override void Tick()
-		{
-			base.Tick();
-
-			if (!IsEnabled) return;
-
-			if (!leaderModel.IsInDialogue)
-			{
-				ValidatePath(HitPoint);
-			}
-
-			if (leaderModel.InBattle && !leaderModel.IsHasTarget)
-			{
-				if (battleSystem.CurrentExecutor.CurrentInitiator == leaderModel)
-				{
-					if (battleSystem.CurrentExecutor.CurrentState == BattleExecutorState.Battle)
-					{
-						TooltipRuler();
-					}
-				}
-			}
 		}
 
 		protected override void HandleHover(Vector3 point)
@@ -169,66 +143,6 @@ namespace Game.Systems.CameraSystem
 							contextMenuSystem.SetTarget(CurrentObserve);
 						}
 					}
-				}
-			}
-		}
-
-		private void ValidatePath(Vector3 point)
-		{
-			float pathDistance = CurrentObserve != null ? leaderModel.Navigation.CurrentNavMeshPathDistance : (float)Math.Round(leaderModel.Navigation.FullPath.Distance, 2);
-
-			bool isInvalidTarget = !IsMouseHit || !leaderModel.Navigation.NavMeshAgent.IsPathValid(point);
-			bool isOutOfRange = IsMouseHit && !IsUI && leaderModel.InBattle && leaderModel.IsWithRangedWeapon && CurrentObserve != null && !IsPointInLeaderRange(point);
-			bool isNotEnoughMovement = IsMouseHit && !IsUI &&
-				leaderModel.InBattle && !leaderModel.IsHasTarget &&
-				(leader.Sheet.Stats.Move.CurrentValue < pathDistance);
-
-			bool isError = isInvalidTarget || isNotEnoughMovement || isOutOfRange;
-
-			if (isError)
-			{
-				if (isInvalidTarget)
-				{
-					tooltipSystem.SetMessage(TooltipMessageType.InvalidTarget);
-				}
-				else if (isOutOfRange)
-				{
-					tooltipSystem.SetMessage(TooltipMessageType.OutOfRange);
-				}
-				else if (isNotEnoughMovement)
-				{
-					tooltipSystem.SetMessage(TooltipMessageType.NotEnoughMovement);
-				}
-				tooltipSystem.EnableMessage(true);
-			}
-			else
-			{
-				if (tooltipSystem.IsMessageShowing)
-				{
-					tooltipSystem.EnableMessage(false);
-				}
-			}
-		}
-
-		private void TooltipRuler()
-		{
-			if (IsMouseHit && !IsUI)
-			{
-				string text = 
-					Math.Round(leaderModel.Navigation.CurrentPath.Distance, 2) + SymbolCollector.METRE.ToString() + "-" +
-					Math.Round(leaderModel.Navigation.FullPath.Distance, 2) + SymbolCollector.METRE.ToString();
-
-				tooltipSystem.SetRulerText(text);
-				if (!tooltipSystem.IsRulerShowing)
-				{
-					tooltipSystem.EnableRuler(true);
-				}
-			}
-			else
-			{
-				if (tooltipSystem.IsRulerShowing)
-				{
-					tooltipSystem.EnableRuler(false);
 				}
 			}
 		}

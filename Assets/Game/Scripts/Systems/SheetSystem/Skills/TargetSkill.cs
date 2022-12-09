@@ -43,6 +43,7 @@ namespace Game.Systems.SheetSystem.Skills
 		private LineTargetVFX.Factory lineTargetFactory;
 		private RadialAreaDecalVFX.Factory areaFactory;
 		private CombatFactory combatFactory;
+		private TooltipSystem.TooltipSystem tooltipSystem;
 
 		[Inject]
 		private void Construct(CinemachineBrain brain,
@@ -50,7 +51,8 @@ namespace Game.Systems.SheetSystem.Skills
 			CursorSystem.CursorSystem cursorSystem,
 			LineTargetVFX.Factory lineTargetFactory,
 			RadialAreaDecalVFX.Factory areaFactory,
-			CombatFactory combatFactory)
+			CombatFactory combatFactory,
+			TooltipSystem.TooltipSystem tooltipSystem)
 		{
 			this.startPoint = character.Model.MarkPoint;
 
@@ -60,6 +62,7 @@ namespace Game.Systems.SheetSystem.Skills
 			this.lineTargetFactory = lineTargetFactory;
 			this.areaFactory = areaFactory;
 			this.combatFactory = combatFactory;
+			this.tooltipSystem = tooltipSystem;
 		}
 
 		protected override void Update()
@@ -87,6 +90,16 @@ namespace Game.Systems.SheetSystem.Skills
 				currentLine.DrawLine(new Vector3[] { startPoint.transform.position, worldPosition });
 				(character.Model.Controller as CharacterController3D).RotateTo(worldPosition);
 
+				if (!Range.IsIn(character.Model.Transform.position, worldPosition, TargetSkillData.range))
+				{
+					tooltipSystem.SetMessage(TooltipSystem.TooltipMessageType.OutOfRange);
+					tooltipSystem.EnableMessage(true);
+				}
+				else
+				{
+					tooltipSystem.EnableMessage(false);
+				}
+
 				if (Input.GetMouseButtonDown(0))
 				{
 					if(currentTarget != null)
@@ -110,6 +123,7 @@ namespace Game.Systems.SheetSystem.Skills
 
 			cursorSystem.SetCursor(CursorType.Base);
 			cameraVision.IsCanMouseClick = false;
+			tooltipSystem.EnableRuler(true);
 
 			character.Model.Freeze(true);
 
@@ -192,6 +206,8 @@ namespace Game.Systems.SheetSystem.Skills
 			{
 				cursorSystem.SetCursor(CursorType.Hand);
 				cameraVision.IsCanMouseClick = true;
+				tooltipSystem.EnableRuler(false);
+				tooltipSystem.EnableMessage(false);
 
 				SetTarget(null);
 
