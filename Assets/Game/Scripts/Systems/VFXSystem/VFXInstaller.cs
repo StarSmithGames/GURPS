@@ -11,6 +11,8 @@ namespace Game.Systems.VFX
 		public Pointer2D pointer2DPrefab;
 		[Header("Lines")]
 		public LineTargetVFX lineTargetPrefab;
+		[Header("Areas")]
+		public RadialAreaDecalVFX radialAreaDecalPrefab;
 		[Header("Projectiles")]
 		public ElectricBallProjectileVFX electricBallPrefab;
 		public ElectricBallProjectileVFX electricBall2Prefab;
@@ -26,6 +28,7 @@ namespace Game.Systems.VFX
 					.FromComponentInNewPrefab(pointer2DPrefab)
 					.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().VFXIndicators));
 			BindLines();
+			BindAreas();
 			BindProjectiles();
 		}
 
@@ -35,6 +38,14 @@ namespace Game.Systems.VFX
 				.BindFactory<LineTargetVFX, LineTargetVFX.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
 				.FromComponentInNewPrefab(lineTargetPrefab));
+		}
+
+		private void BindAreas()
+		{
+			Container
+				.BindFactory<RadialAreaDecalVFX, RadialAreaDecalVFX.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
+				.FromComponentInNewPrefab(radialAreaDecalPrefab));
 		}
 
 		private void BindProjectiles()

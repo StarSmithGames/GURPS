@@ -1,19 +1,17 @@
 using DG.Tweening;
 
-using Sirenix.OdinInspector;
-
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering.Universal;
 
 namespace Game.Systems.VFX
 {
-	public class DecalVFX : MonoBehaviour
+	public class DecalVFX : PoolableObject
 	{
 		public bool IsEnabled { get => isEnable; protected set => isEnable = value; }
 		private bool isEnable = true;
 
-		[SerializeField] private DecalProjector projector;
+		[SerializeField] protected DecalProjector projector;
 
 		private void Start()
 		{
@@ -26,38 +24,40 @@ namespace Game.Systems.VFX
 			projector.enabled = IsEnabled;
 		}
 
-		public void EnableIn(UnityAction callback = null)
+		public DecalVFX SetFade(float value)
 		{
-			projector.fadeFactor = 0;
-			Enable(true);
+			projector.fadeFactor = value;
+			Enable(projector.fadeFactor != 0);
 
-			DOTween
-				.To(() => projector.fadeFactor, x => projector.fadeFactor = x, 0.8f, 0.25f)
-				.OnComplete(() => { callback?.Invoke(); });
+			return this;
 		}
 
-		public void EnableOut(UnityAction callback = null)
+		public void FadeTo(float end, float duration = 0.25f, UnityAction callback = null)
 		{
 			Enable(true);
 
-			DOTween
-				.To(() => projector.fadeFactor, x => projector.fadeFactor = x, 0f, 0.2f)
-				.OnComplete(() =>
-				{ 
-					Enable(false);
-					callback?.Invoke();
-				});
+			if (end == 0)
+			{
+				DOTween
+					.To(() => projector.fadeFactor, x => projector.fadeFactor = x, 0f, duration)
+					.OnComplete(() =>
+					{
+						Enable(false);
+						DespawnIt();
+						callback?.Invoke();
+					});
+			}
+			else
+			{
+				DOTween
+					.To(() => projector.fadeFactor, x => projector.fadeFactor = x, end, duration)
+					.OnComplete(() => { callback?.Invoke(); });
+			}
 		}
 
 		public void SetColor(Color color)
 		{
 			projector.material.color = color;
-		}
-
-		[Button]
-		private void RandomColor()
-		{
-			SetColor(Random.ColorHSV());
 		}
 	}
 }

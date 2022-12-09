@@ -248,7 +248,6 @@ namespace Game.Systems.CameraSystem
 
 			leaderModel.Markers.SplineMarker.Enable(false);
 			leaderModel.Markers.AdditionalSplineMarker.Enable(false);
-			leaderModel.Markers.AreaDecal.Enable(false);
 		}
 
 		protected override void OnHoverObserveChanged()
@@ -406,7 +405,6 @@ namespace Game.Systems.CameraSystem
 			{
 				leaderModel.Markers.SplineMarker.Enable(false);
 				leaderModel.Markers.AdditionalSplineMarker.Enable(false);
-				leaderModel.Markers.AreaDecal.Enable(false);
 			}
 			else
 			{

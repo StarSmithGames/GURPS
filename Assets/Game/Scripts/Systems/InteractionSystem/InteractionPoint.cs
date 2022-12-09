@@ -83,3 +83,12 @@ namespace Game.Systems.InteractionSystem
 		CustomPoint,
 	}
 }
+public static class Range
+{
+	public static bool IsIn(Vector3 origin, Vector3 position, float range)
+	{
+		float distance = Vector3.Distance(origin, position);
+
+		return distance <= range;
+	}
+}

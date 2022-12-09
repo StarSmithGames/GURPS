@@ -15,6 +15,10 @@ namespace Game.Systems.SheetSystem.Skills
 		[ShowIf("isHasLimitationsOnUse")]
 		public Limitations limitations;
 		[Space]
+		[Min(0)]
+		[SuffixLabel("m", true)]
+		public float range;
+		[Space]
 		public List<ThrowsType> savingThrows;//or
 	}
 

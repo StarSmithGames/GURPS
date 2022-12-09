@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: RadialFolow
+  m_Name: RadialArea
   m_Shader: {fileID: -6465566751694194690, guid: 4e8f16c3ef475b34b8a234076c77a13f, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []

@@ -27,6 +27,7 @@ namespace Game.Systems.SheetSystem.Skills
 		private ActiveTargetSkillData TargetSkillData => Data as ActiveTargetSkillData;
 		private IDamageable currentTarget;
 		private LineTargetVFX currentLine;
+		private RadialAreaDecalVFX currentArea;
 
 		private Dictionary<ProjectileVFX, IDamageable> projectilesWithTargets = new Dictionary<ProjectileVFX, IDamageable>();
 		private int projectileCompletedCount = 0;
@@ -40,6 +41,7 @@ namespace Game.Systems.SheetSystem.Skills
 		private CameraVisionLocation cameraVision;
 		private CursorSystem.CursorSystem cursorSystem;
 		private LineTargetVFX.Factory lineTargetFactory;
+		private RadialAreaDecalVFX.Factory areaFactory;
 		private CombatFactory combatFactory;
 
 		[Inject]
@@ -47,6 +49,7 @@ namespace Game.Systems.SheetSystem.Skills
 			CameraVisionLocation cameraVision,
 			CursorSystem.CursorSystem cursorSystem,
 			LineTargetVFX.Factory lineTargetFactory,
+			RadialAreaDecalVFX.Factory areaFactory,
 			CombatFactory combatFactory)
 		{
 			this.startPoint = character.Model.MarkPoint;
@@ -55,6 +58,7 @@ namespace Game.Systems.SheetSystem.Skills
 			this.cameraVision = cameraVision;
 			this.cursorSystem = cursorSystem;
 			this.lineTargetFactory = lineTargetFactory;
+			this.areaFactory = areaFactory;
 			this.combatFactory = combatFactory;
 		}
 
@@ -87,7 +91,10 @@ namespace Game.Systems.SheetSystem.Skills
 				{
 					if(currentTarget != null)
 					{
-						AddTarget(currentTarget);
+						if (Range.IsIn(character.Model.Transform.position, currentTarget.MarkPoint.transform.position, TargetSkillData.range))
+						{
+							AddTarget(currentTarget);
+						}
 					}
 				}
 				else if (Input.GetMouseButtonDown(1))
@@ -107,6 +114,11 @@ namespace Game.Systems.SheetSystem.Skills
 			character.Model.Freeze(true);
 
 			AddLine();
+
+			currentArea = areaFactory.Create();
+			currentArea.SetRange(TargetSkillData.range);
+			currentArea.SetFade(0).FadeTo(1f);
+			currentArea.transform.position = character.Model.Transform.position + Vector3.up * 2;
 
 			base.BeginProcess();
 		}
@@ -135,8 +147,6 @@ namespace Game.Systems.SheetSystem.Skills
 			//.Append(new TaskWaitAttack(character.Model.AnimatorController))
 			.Execute();
 		}
-
-		protected abstract ProjectileVFX GetProjectile();
 
 		private void AddLine()
 		{
@@ -183,13 +193,20 @@ namespace Game.Systems.SheetSystem.Skills
 				cursorSystem.SetCursor(CursorType.Hand);
 				cameraVision.IsCanMouseClick = true;
 
-				for (int i = 0; i < lines.Count; i++)
-				{
-					lines[i].DespawnIt();
-				}
+				SetTarget(null);
+
 				character.Model.Freeze(false);
 
-				SetTarget(null);
+				for (int i = 0; i < lines.Count; i++)
+				{
+					lines[i].FadeOut();
+				}
+				currentArea.FadeTo(0);
+
+				if(status == SkillStatus.Canceled)
+				{
+					ResetSkill();
+				}
 			}
 			else if (status == SkillStatus.Running)
 			{
@@ -197,6 +214,7 @@ namespace Game.Systems.SheetSystem.Skills
 				{
 					lines[i].FadeOut();
 				}
+				currentArea.FadeTo(0);
 			}
 
 			base.SetStatus(status);
@@ -209,6 +227,7 @@ namespace Game.Systems.SheetSystem.Skills
 			currentTarget = null;
 			targets.Clear();
 			lines.Clear();
+			currentArea = null;
 
 			projectileCompletedCount = 0;
 			projectilesWithTargets.Clear();
@@ -231,5 +250,7 @@ namespace Game.Systems.SheetSystem.Skills
 				SetStatus(SkillStatus.Successed);
 			}
 		}
+
+		protected abstract ProjectileVFX GetProjectile();
 	}
 }

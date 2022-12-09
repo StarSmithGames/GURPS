@@ -133,7 +133,7 @@ namespace Game.Entities.Models
 				{
 					if (!Markers.TargetDecal.IsEnabled)
 					{
-						Markers.TargetDecal.EnableIn();
+						Markers.TargetDecal.FadeTo(1f, 0.25f);
 					}
 				}
 			}
@@ -150,7 +150,7 @@ namespace Game.Entities.Models
 				//Fade-Out TargetMarker
 				if (Markers.TargetDecal.IsEnabled)
 				{
-					Markers.TargetDecal.EnableOut();
+					Markers.TargetDecal.FadeTo(0, 0.2f);
 				}
 			}
 			else
@@ -499,7 +499,6 @@ namespace Game.Entities.Models
 			{
 				Markers.FollowDecal.Enable(true);
 				Markers.TargetDecal.Enable(false);
-				Markers.AreaDecal.Enable(false);
 			}
 			else if(newState == BattleExecutorState.EndBattle)
 			{

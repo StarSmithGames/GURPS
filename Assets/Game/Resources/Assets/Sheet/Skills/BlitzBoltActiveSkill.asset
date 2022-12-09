@@ -27,4 +27,7 @@ MonoBehaviour:
     maxCountInBattle: 1
     isUseLimitToRest: 0
     maxCountToRest: 1
+  range: 8
   savingThrows: 
+  targetCount: 1
+  isCanTargetSelf: 0
