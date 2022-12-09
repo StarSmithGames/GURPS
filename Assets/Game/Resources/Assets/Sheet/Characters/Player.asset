@@ -377,6 +377,7 @@ MonoBehaviour:
       skills:
       - {fileID: 11400000, guid: c06c3a64edefaee48b0402cf8c7a9450, type: 2}
       - {fileID: 11400000, guid: 97139672e34f4804d8b4dc128939609e, type: 2}
+      - {fileID: 11400000, guid: 783ae61939e557a4e8a7f5412ddc1864, type: 2}
     abilities:
       abilities: []
     isImmortal: 0

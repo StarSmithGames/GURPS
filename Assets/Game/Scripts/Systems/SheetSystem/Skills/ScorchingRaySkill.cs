@@ -5,17 +5,18 @@ using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-	public class BlitzBoltSkill : TargetSkill
+	public class ScorchingRaySkill : TargetSkill
 	{
 		public override SkillData Data => data;
-		protected BlitzBoltData data;
+		protected ScorchingRayData data;
 
 		private ElectricBallProjectileVFX.Factory electricBallFactory;
 
 		[Inject]
-		public void Construct(BlitzBoltData data, ElectricBallProjectileVFX.Factory electricBallFactory)
+		public void Construct(ScorchingRayData data, [Inject(Id = "Version2")]ElectricBallProjectileVFX.Factory electricBallFactory)
 		{
 			this.data = data;
+
 			this.electricBallFactory = electricBallFactory;
 		}
 
@@ -24,6 +25,6 @@ namespace Game.Systems.SheetSystem.Skills
 			return electricBallFactory.Create();
 		}
 
-		public class Factory : PlaceholderFactory<BlitzBoltData, ICharacter, BlitzBoltSkill> { }
+		public class Factory : PlaceholderFactory<ScorchingRayData, ICharacter, ScorchingRaySkill> { }
 	}
 }

@@ -43,7 +43,7 @@ namespace Game.Systems.VFX
 		protected Vector3 targetPosition;
 		protected float startTime;
 
-		protected UnityAction onCompleted;
+		protected UnityAction<ProjectileVFX> onCompleted;
 
 		protected bool isCanMove;
 
@@ -116,7 +116,7 @@ namespace Game.Systems.VFX
 			}
 		}
 
-		public virtual void Launch(UnityAction onCompleted = null)
+		public virtual void Launch(UnityAction<ProjectileVFX> onCompleted = null)
 		{
 			this.onCompleted = onCompleted;
 
@@ -178,7 +178,7 @@ namespace Game.Systems.VFX
 			if (attachAfterCollision)
 				root.parent = hit.transform == null ? target : hit.transform;
 
-			onCompleted?.Invoke();
+			onCompleted?.Invoke(this);
 		}
 	}
 

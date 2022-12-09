@@ -14,8 +14,16 @@ namespace Game.Systems.SheetSystem.Skills
 		public bool isHasLimitationsOnUse = false;
 		[ShowIf("isHasLimitationsOnUse")]
 		public Limitations limitations;
-
+		[Space]
 		public List<ThrowsType> savingThrows;//or
+	}
+
+	public abstract class ActiveTargetSkillData : ActiveSkillData
+	{
+		[Space]
+		[Min(1)]
+		public int targetCount = 1;
+		public bool isCanTargetSelf = false;
 	}
 
 	[System.Serializable]

@@ -15,7 +15,7 @@ namespace Game.Systems.VFX
 		[SerializeField] private Light light2;
 		[SerializeField] private TrailRenderer trail;
 
-		public override void Launch(UnityAction onCompleted = null)
+		public override void Launch(UnityAction<ProjectileVFX> onCompleted = null)
 		{
 			base.Launch(onCompleted);
 

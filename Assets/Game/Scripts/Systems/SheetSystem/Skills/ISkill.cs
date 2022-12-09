@@ -70,6 +70,12 @@ namespace Game.Systems.SheetSystem.Skills
 
 		protected ICharacter character;
 
+		[Inject]
+		private void Construct(ICharacter character)
+		{
+			this.character = character;
+		}
+
 		protected virtual void Start()
 		{
 			Cooldown = new Cooldown();
@@ -83,6 +89,7 @@ namespace Game.Systems.SheetSystem.Skills
 				Cooldown.Tick();
 				if(Cooldown.Remaining <= 0)
 				{
+					ResetSkill();
 					isCooldown = false;
 				}
 			}

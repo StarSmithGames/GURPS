@@ -9,8 +9,11 @@ namespace Game.Systems.VFX
 	{
 		public Pointer3D pointer3DPrefab;
 		public Pointer2D pointer2DPrefab;
+		[Header("Lines")]
+		public LineTargetVFX lineTargetPrefab;
 		[Header("Projectiles")]
 		public ElectricBallProjectileVFX electricBallPrefab;
+		public ElectricBallProjectileVFX electricBall2Prefab;
 
 		public override void InstallBindings()
 		{
@@ -22,8 +25,16 @@ namespace Game.Systems.VFX
 					.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
 					.FromComponentInNewPrefab(pointer2DPrefab)
 					.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().VFXIndicators));
-
+			BindLines();
 			BindProjectiles();
+		}
+
+		private void BindLines()
+		{
+			Container
+				.BindFactory<LineTargetVFX, LineTargetVFX.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
+				.FromComponentInNewPrefab(lineTargetPrefab));
 		}
 
 		private void BindProjectiles()
@@ -32,6 +43,12 @@ namespace Game.Systems.VFX
 				.BindFactory<ElectricBallProjectileVFX, ElectricBallProjectileVFX.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
 				.FromComponentInNewPrefab(electricBallPrefab));
+
+			Container
+				.BindFactory<ElectricBallProjectileVFX, ElectricBallProjectileVFX.Factory>()
+				.WithId("Version2")
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
+				.FromComponentInNewPrefab(electricBall2Prefab));
 		}
 	}
 }

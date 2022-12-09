@@ -14,4 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointer3DPrefab: {fileID: 8268013290504292415, guid: 043b3cff038ae4f4f98eaa50d16a331b, type: 3}
   pointer2DPrefab: {fileID: 3591282316941683730, guid: a71730313e2e8c949bb4a78656ccddfa, type: 3}
+  lineTargetPrefab: {fileID: 2617022102928383705, guid: 6e5bdb3ab4cb8ad4da2d5fdb705bea3e, type: 3}
   electricBallPrefab: {fileID: 2495577799142579280, guid: 5bc38ce8b83624f4d94844c673c128c6, type: 3}
+  electricBall2Prefab: {fileID: 2495577799142579280, guid: 0c99a33e796b03c449c59618792539ab, type: 3}

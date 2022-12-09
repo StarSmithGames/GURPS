@@ -31,12 +31,15 @@ namespace Game.Systems.SheetSystem.Skills
 		private ICharacterModel model;
 		private PassiveSkill.Factory passiveSkillFactory;
 		private BlitzBoltSkill.Factory blitzBoltFactory;
+		private ScorchingRaySkill.Factory scorchingRayFactory;
 
-		public Skills(ICharacterModel model, PassiveSkill.Factory passiveSkillFactory, BlitzBoltSkill.Factory blitzBoltFactory)
+		public Skills(ICharacterModel model, PassiveSkill.Factory passiveSkillFactory,
+			BlitzBoltSkill.Factory blitzBoltFactory, ScorchingRaySkill.Factory scorchingRayFactory)
 		{
 			this.model = model;
 			this.passiveSkillFactory = passiveSkillFactory;
 			this.blitzBoltFactory = blitzBoltFactory;
+			this.scorchingRayFactory = scorchingRayFactory;
 
 			character = model.Character;
 
@@ -109,6 +112,10 @@ namespace Game.Systems.SheetSystem.Skills
 				if (data is BlitzBoltData blitzBoltData)
 				{
 					return blitzBoltFactory.Create(blitzBoltData, character);
+				}
+				else if(data is ScorchingRayData scorchingRayData)
+				{
+					return scorchingRayFactory.Create(scorchingRayData, character);
 				}
 			}
 

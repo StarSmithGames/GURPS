@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Game.Systems.SheetSystem.Skills
 {
 	[CreateAssetMenu(fileName = "BlitzBolt", menuName = "Game/Sheet/Skills/Blitz Bolt")]
-	public class BlitzBoltData : ActiveSkillData
-    {
+	public class BlitzBoltData : ActiveTargetSkillData
+	{
     }
 }

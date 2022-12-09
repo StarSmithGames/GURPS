@@ -50,7 +50,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0.01, z: 0}
   isDebub: 0
   showLines: 0
-  useRaycast: 1
+  useRaycast: 0
   rayLength: 100
   raycastLayerMask:
     serializedVersion: 2
