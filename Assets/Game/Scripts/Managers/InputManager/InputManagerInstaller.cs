@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -12,13 +14,30 @@ namespace Game.Managers.InputManager
 		public override void InstallBindings()
 		{
 			Dictionary<KeyAction, KeyCode> pairs = new Dictionary<KeyAction, KeyCode>();
-
 			for (int i = 0; i < keyBindings.Count; i++)
 			{
 				pairs.Add(keyBindings[i].keyAction, keyBindings[i].keyCode);
 			}
 
+			Dictionary<KeyCode, string> keyNames = new Dictionary<KeyCode, string>();
+			foreach (KeyCode k in Enum.GetValues(typeof(KeyCode)))
+			{
+				keyNames.TryAdd(k, k.ToString());
+			}
+
+			for (int i = 0; i < 10; i++)
+			{
+				keyNames[(KeyCode)((int)KeyCode.Alpha0 + i)] = i.ToString();
+				keyNames[(KeyCode)((int)KeyCode.Keypad0 + i)] = i.ToString();
+			}
+
+			keyNames[KeyCode.Minus] = "-";
+			keyNames[KeyCode.Equals] = "=";
+			keyNames[KeyCode.Comma] = ",";
+			keyNames[KeyCode.Escape] = "Esc";
+
 			Container.BindInstance(pairs).WhenInjectedInto<InputManager>();
+			Container.BindInstance(keyNames).WhenInjectedInto<InputManager>();
 
 			Container.BindInterfacesAndSelfTo<InputManager>().AsSingle();
 		}

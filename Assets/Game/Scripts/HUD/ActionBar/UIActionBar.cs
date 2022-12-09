@@ -13,6 +13,7 @@ using UnityEngine.Assertions;
 
 using Zenject;
 using Game.Managers.GameManager;
+using System;
 
 namespace Game.HUD
 {
@@ -42,12 +43,23 @@ namespace Game.HUD
 			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
 			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
 
+
+			slots[0].SetKeyCode(KeyCode.Alpha1);
+			slots[1].SetKeyCode(KeyCode.Alpha2);
+			slots[2].SetKeyCode(KeyCode.Alpha3);
+			slots[3].SetKeyCode(KeyCode.Alpha4);
+			slots[4].SetKeyCode(KeyCode.Alpha5);
+			slots[5].SetKeyCode(KeyCode.Alpha6);
+			slots[6].SetKeyCode(KeyCode.Alpha7);
+			slots[7].SetKeyCode(KeyCode.Alpha8);
+			slots[8].SetKeyCode(KeyCode.Alpha9);
+			slots[9].SetKeyCode(KeyCode.Alpha0);
+			slots[10].SetKeyCode(KeyCode.Minus);
+			slots[11].SetKeyCode(KeyCode.Equals);
+
 			for (int i = 0; i < slots.Count; i++)
 			{
-				//Num 0-9
-				slots[i].Key.enabled = i < 10;
-				slots[i].Key.text = i < 10 ? (i + 1) < 10 ? (i + 1).ToString() : "0" : "";
-
+				slots[i].Key.enabled = slots[i].KeyCode != KeyCode.None;
 				slots[i].onClicked += OnClicked;
 				slots[i].onChanged += OnSlotChanged;
 			}
@@ -63,6 +75,20 @@ namespace Game.HUD
 			if (lastSkill != null)
 			{
 				lastSkill.onStatusChanged -= OnActiveSkillStatusChanged;
+			}
+		}
+
+		private void Update()
+		{
+			for (int i = 0; i < slots.Count; i++)
+			{
+				if (Input.GetKeyDown(slots[i].KeyCode))
+				{
+					if (!slots[i].IsEmpty)
+					{
+						slots[i].Action.Use();
+					}
+				}
 			}
 		}
 
@@ -111,7 +137,6 @@ namespace Game.HUD
 
 		private void OnActiveSkillStatusChanged(SkillStatus status)
 		{
-			Debug.LogError(lastSkill != null);
 			if (lastSkill == null) return;
 
 			if(status == SkillStatus.Preparing)
@@ -167,7 +192,7 @@ namespace Game.HUD
 		{
 			if (lastSkill != null)
 			{
-				EnableBlink(lastSkill, false);
+				EnableBlink(lastSkill, false);//bug, null lastSkill
 				lastSkill.onStatusChanged -= OnActiveSkillStatusChanged;
 			}
 

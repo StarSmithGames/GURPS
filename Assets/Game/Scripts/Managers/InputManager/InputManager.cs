@@ -12,10 +12,17 @@ namespace Game.Managers.InputManager
 	public class InputManager
 	{
 		private Dictionary<KeyAction, KeyCode> bindings;
+		private Dictionary<KeyCode, string> keyNames;
 
-		public InputManager(Dictionary<KeyAction, KeyCode> bindings)
+		public InputManager(Dictionary<KeyAction, KeyCode> bindings, Dictionary<KeyCode, string> keyNames)
 		{
 			this.bindings = bindings;
+			this.keyNames = keyNames;
+		}
+
+		public string GetKeyName(KeyCode code)
+		{
+			return keyNames.GetValueOrDefault(code);
 		}
 
 		public bool IsAnyKeyDown()

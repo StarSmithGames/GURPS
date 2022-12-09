@@ -2,6 +2,7 @@ using DG.Tweening;
 
 using FlowCanvas.Nodes;
 
+using Game.Managers.InputManager;
 using Game.Managers.PartyManager;
 using Game.Systems.CommandCenter;
 using Game.Systems.ContextMenu;
@@ -31,14 +32,18 @@ namespace Game.HUD
 		[field: SerializeField] public TMPro.TextMeshProUGUI Count { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Key { get; private set; }
 
+		public KeyCode KeyCode { get; private set; }
+
 		public IAction Action => Slot.action;
 
+		private InputManager inputManager;
 		private PartyManager partyManager;
 		private ContextMenuSystem contextMenuSystem;
 
 		[Inject]
-		private void Construct(PartyManager partyManager, ContextMenuSystem contextMenuSystem)
+		private void Construct(InputManager inputManager, PartyManager partyManager, ContextMenuSystem contextMenuSystem)
 		{
+			this.inputManager = inputManager;
 			this.partyManager = partyManager;
 			this.contextMenuSystem = contextMenuSystem;
 		}
@@ -77,6 +82,12 @@ namespace Game.HUD
 			onChanged?.Invoke(this);
 
 			return result;
+		}
+
+		public void SetKeyCode(KeyCode code)
+		{
+			KeyCode = code;
+			Key.text = inputManager.GetKeyName(KeyCode);
 		}
 
 		public override void Dispose()
