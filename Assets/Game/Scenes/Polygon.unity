@@ -364,7 +364,7 @@ GameObject:
   - component: {fileID: 31311993}
   - component: {fileID: 31311994}
   - component: {fileID: 31311995}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1930,7 +1930,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -5978,7 +5978,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -8380,7 +8380,7 @@ GameObject:
   - component: {fileID: 1148667615}
   - component: {fileID: 1148667614}
   - component: {fileID: 1148667613}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9604,7 +9604,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -10397,7 +10397,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -15528,7 +15528,7 @@ MonoBehaviour:
         shader: {fileID: 0}
         serializedProperties: []
   outlineTargets:
-  - IsVisible: 1
+  - IsVisible: 0
     CutoutMask: 8
     edgeDilateAmount: 5
     frontEdgeDilateAmount: 5
@@ -21050,13 +21050,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: AreaRadialDecal
       objectReference: {fileID: 0}
+    - target: {fileID: 4820780749166356201, guid: cc616efb6101ad346b0eaa16e033712c, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4820780749166356207, guid: cc616efb6101ad346b0eaa16e033712c, type: 3}
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4820780749166356207, guid: cc616efb6101ad346b0eaa16e033712c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.18
+      value: -12
       objectReference: {fileID: 0}
     - target: {fileID: 4820780749166356207, guid: cc616efb6101ad346b0eaa16e033712c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -21064,7 +21068,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4820780749166356207, guid: cc616efb6101ad346b0eaa16e033712c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 78.55
+      value: 78.52
       objectReference: {fileID: 0}
     - target: {fileID: 4820780749166356207, guid: cc616efb6101ad346b0eaa16e033712c, type: 3}
       propertyPath: m_LocalRotation.w
