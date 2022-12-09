@@ -1,5 +1,7 @@
 using Game.Systems.SheetSystem;
 
+using UnityEngine;
+
 namespace Game.UI
 {
     public class UIStatBar : UIBar
@@ -16,7 +18,7 @@ namespace Game.UI
             }
         }
 
-        public void SetStat(IStatBar stat, bool isImmortal = false)
+		public void SetStat(IStatBar stat, bool isImmortal = false)
         {
             if (CurrentStat != null)
             {
@@ -30,7 +32,10 @@ namespace Game.UI
             {
                 CurrentStat.onModifiersChanged += UpdateUI;
                 CurrentStat.onChanged += UpdateUI;
-            }
+
+				FillAmount = CurrentStat.PercentValue;
+				FillAmountWhite = FillAmount;
+			}
 
             UpdateUI();
         }

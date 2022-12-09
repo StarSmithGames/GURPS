@@ -1301,7 +1301,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9d50fceafab3c3c45875004544e7c7e6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 12661819bac38b943958f9e742b8e18b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1505,8 +1505,8 @@ MonoBehaviour:
   <CanvasGroup>k__BackingField: {fileID: 1005420108}
   <Back>k__BackingField: {fileID: 935156220}
   <Text>k__BackingField: {fileID: 546146713}
-  playerBackground: {fileID: 21300000, guid: 9d50fceafab3c3c45875004544e7c7e6, type: 3}
-  enemyBackground: {fileID: 21300000, guid: 327dba628dfbf684793d4ee4328db9d9, type: 3}
+  playerBackground: {fileID: 21300000, guid: 12661819bac38b943958f9e742b8e18b, type: 3}
+  enemyBackground: {fileID: 21300000, guid: bb0c59cf13368794fa9b58b701d96f31, type: 3}
 --- !u!1 &1121944715
 GameObject:
   m_ObjectHideFlags: 0
@@ -2491,7 +2491,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1440119136}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 61e68021e62228f4b9ffa032c6378abd, type: 3}
   m_Name: 
@@ -2499,6 +2499,7 @@ MonoBehaviour:
   isHasText: 0
   isTextShowOnHover: 0
   <PointerHandler>k__BackingField: {fileID: 0}
+  <WhiteBar>k__BackingField: {fileID: 0}
   <Bar>k__BackingField: {fileID: 872468839}
   <BarText>k__BackingField: {fileID: 0}
 --- !u!1 &1488623840

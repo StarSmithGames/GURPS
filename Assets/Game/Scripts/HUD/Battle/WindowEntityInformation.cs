@@ -35,9 +35,11 @@ namespace Game.HUD
             subCanvas.WindowsRegistrator.UnRegistrate(this);
         }
 
-        public void SetSheet(ISheet sheet)
+        public void SetSheet(ISheet s)
 		{
-            this.sheet = sheet;
+            if (sheet == s && sheet != null) return;
+
+            sheet = s;
 
             HealthBar.SetStat(sheet?.Stats.HitPoints, sheet?.Settings.isImmortal ?? false);
 

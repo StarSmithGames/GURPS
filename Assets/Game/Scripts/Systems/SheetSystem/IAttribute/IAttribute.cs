@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -120,7 +121,7 @@ namespace Game.Systems.SheetSystem
 	#region AttributeBar
 	public abstract partial class AttributeBar : Attribute, IBar
 	{
-		public override string Output => $"{CurrentValue} / {TotalValue}";
+		public override string Output => $"{Math.Round(CurrentValue)} / {Math.Round(TotalValue)}";
 
 		public override float CurrentValue
 		{
