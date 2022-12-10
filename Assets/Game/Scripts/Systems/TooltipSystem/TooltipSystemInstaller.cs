@@ -7,24 +7,22 @@ namespace Game.Systems.TooltipSystem
 	[CreateAssetMenu(fileName = "TooltipSystemInstaller", menuName = "Installers/TooltipSystemInstaller")]
 	public class TooltipSystemInstaller : ScriptableObjectInstaller<TooltipSystemInstaller>
 	{
-		public UIBattleTooltip battleTooltip;
-		public UITooltip uiTooltip;
+		public UIBattleTooltip battleTooltipPrefab;
+		public UIObjectTooltip objectTooltipPrefab;
 
 		public override void InstallBindings()
 		{
 			Container.BindInterfacesAndSelfTo<TooltipSystem>().AsSingle();
 
 			Container.Bind<UIBattleTooltip>()
-				.FromComponentInNewPrefab(battleTooltip)
+				.FromComponentInNewPrefab(battleTooltipPrefab)
 				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform)
-				.AsSingle()
-				.NonLazy();
+				.WhenInjectedInto<TooltipSystem>();
 
-			Container.Bind<UITooltip>()
-				.FromComponentInNewPrefab(uiTooltip)
+			Container.Bind<UIObjectTooltip>()
+				.FromComponentInNewPrefab(objectTooltipPrefab)
 				.UnderTransform(x => x.Container.Resolve<UISubCanvas>().transform)
-				.AsSingle()
-				.NonLazy();
+				.AsSingle().NonLazy();
 		}
 	}
 }

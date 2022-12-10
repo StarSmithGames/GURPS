@@ -294,6 +294,10 @@ namespace Game.Systems.NavigationSystem
 			Path = new List<Vector3>(path);
 		}
 
+		public void SetPath(Vector3[] path)
+		{
+			Path = new List<Vector3>(path);
+		}
 
 		public NavigationPath Copy()
 		{

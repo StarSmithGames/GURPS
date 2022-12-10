@@ -31,14 +31,14 @@ namespace Game.Systems.InventorySystem
 
 		private UISubCanvas subCanvas;
 		private UIDragItem dragItem;
-		private UITooltip tooltip;
+		private UIObjectTooltip tooltip;
 		private PartyManager partyManager;
 		private ContextMenuSystem contextMenuSystem;
 
 		public ContainerSlotHandler(
 			UISubCanvas subCanvas,
 			UIDragItem itemCursor,
-			UITooltip tooltip,
+			UIObjectTooltip tooltip,
 			PartyManager partyManager,
 			ContextMenuSystem contextMenuSystem)
 		{

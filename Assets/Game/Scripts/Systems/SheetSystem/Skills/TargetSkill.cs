@@ -35,6 +35,7 @@ namespace Game.Systems.SheetSystem.Skills
 		private bool clampOnTarget = true;
 		private Vector3 worldPosition;
 		private Plane plane = new Plane(Vector3.up, 0);
+		private NavigationPath path;
 		private OutlineData targetOutline;
 
 		private CinemachineBrain brain;
@@ -87,17 +88,17 @@ namespace Game.Systems.SheetSystem.Skills
 					worldPosition = currentTarget.MarkPoint.transform.position;
 				}
 
-				currentLine.DrawLine(new Vector3[] { startPoint.transform.position, worldPosition });
+				path.SetPath(new Vector3[] { startPoint.transform.position, worldPosition });
+				currentLine.DrawLine(path.Path.ToArray());
 				(character.Model.Controller as CharacterController3D).RotateTo(worldPosition);
 
 				if (!Range.IsIn(character.Model.Transform.position, worldPosition, TargetSkillData.range))
 				{
 					tooltipSystem.SetMessage(TooltipSystem.TooltipMessageType.OutOfRange);
-					tooltipSystem.EnableMessage(true);
 				}
 				else
 				{
-					tooltipSystem.EnableMessage(false);
+					tooltipSystem.SetMessage(TooltipSystem.TooltipMessageType.None);
 				}
 
 				if (Input.GetMouseButtonDown(0))
@@ -123,7 +124,10 @@ namespace Game.Systems.SheetSystem.Skills
 
 			cursorSystem.SetCursor(CursorType.Base);
 			cameraVision.IsCanMouseClick = false;
-			tooltipSystem.EnableRuler(true);
+			path = new NavigationPath();
+			tooltipSystem.SetRullerPath(path);
+			tooltipSystem.SetRuller(TooltipSystem.TooltipRulerType.CustomPath);
+			UpdateTooltipTargets();
 
 			character.Model.Freeze(true);
 
@@ -131,7 +135,7 @@ namespace Game.Systems.SheetSystem.Skills
 
 			currentArea = areaFactory.Create();
 			currentArea.SetRange(TargetSkillData.range);
-			currentArea.SetFade(0).FadeTo(1f);
+			currentArea.SetFade(0).FadeTo(0.8f);
 			currentArea.transform.position = character.Model.Transform.position + Vector3.up * 2;
 
 			base.BeginProcess();
@@ -175,6 +179,8 @@ namespace Game.Systems.SheetSystem.Skills
 
 			currentLine.SetState(LineTargetState.Targeted);
 
+			UpdateTooltipTargets();
+
 			if (targets.Count == TargetSkillData.targetCount)
 			{
 				AttackProcess();
@@ -206,8 +212,9 @@ namespace Game.Systems.SheetSystem.Skills
 			{
 				cursorSystem.SetCursor(CursorType.Hand);
 				cameraVision.IsCanMouseClick = true;
-				tooltipSystem.EnableRuler(false);
-				tooltipSystem.EnableMessage(false);
+				tooltipSystem.SetRuller(TooltipSystem.TooltipRulerType.None);
+				tooltipSystem.SetMessage(TooltipSystem.TooltipMessageType.None);
+				tooltipSystem.SetMessage("", TooltipSystem.TooltipAdditionalMessageType.None);
 
 				SetTarget(null);
 
@@ -247,6 +254,14 @@ namespace Game.Systems.SheetSystem.Skills
 
 			projectileCompletedCount = 0;
 			projectilesWithTargets.Clear();
+		}
+
+		private void UpdateTooltipTargets()
+		{
+			if (TargetSkillData.targetCount > 1)
+			{
+				tooltipSystem.SetMessage($"{targets.Count}/{TargetSkillData.targetCount}", TooltipSystem.TooltipAdditionalMessageType.Projectiles);
+			}
 		}
 
 		protected void OnProjectileCompleted(ProjectileVFX projectile)

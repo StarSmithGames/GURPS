@@ -1,12 +1,4 @@
-using Game.Managers.GameManager;
-using Game.Managers.PartyManager;
-using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
-using Game.UI;
-
-using NodeCanvas.Tasks.Actions;
-
-using System;
 
 using UnityEngine;
 
@@ -14,76 +6,48 @@ using Zenject;
 
 namespace Game.Systems.TooltipSystem
 {
-	public class TooltipSystem : IInitializable, IDisposable, ITickable
+	public class TooltipSystem : IInitializable, ITickable
 	{
 		public bool IsCanShowing { get; private set; }
-		public bool IsRulerShowing { get; private set; }
 		public bool IsMessageShowing { get; private set; }
 
-		private NavigationSystem.NavigationController leaderNavigation;
-
 		private SignalBus signalBus;
+		private UIObjectTooltip objectTooltip;
 		private UIBattleTooltip battleTooltip;
-		private PartyManager partyManager;
 		private CameraVisionLocation cameraVision;
 
-		public TooltipSystem(SignalBus signalBus, UIBattleTooltip battleTooltip,
-			PartyManager partyManager,
+		public TooltipSystem(SignalBus signalBus,
+			UIObjectTooltip objectTooltip,
+			UIBattleTooltip battleTooltip,
 			CameraVisionLocation cameraVision)
 		{
 			this.signalBus = signalBus;
+			this.objectTooltip = objectTooltip;
 			this.battleTooltip = battleTooltip;
-			this.partyManager = partyManager;
 			this.cameraVision = cameraVision;
 		}
 
 		public void Initialize()
 		{
-			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
-			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
-
-			EnableRuler(false);
-			EnableMessage(false);
-		}
-
-		public void Dispose()
-		{
-			signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
-			signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
+			DisableBattleTooltip();
 		}
 
 		public void Tick()
 		{
 			if(cameraVision.IsMouseHit && !cameraVision.IsUI)
 			{
-				if (IsRulerShowing)
-				{
-					battleTooltip.Ruler.text =
-						Math.Round(leaderNavigation.CurrentPath.Distance, 2) + SymbolCollector.METRE.ToString() + "-" +
-						Math.Round(leaderNavigation.FullPath.Distance, 2) + SymbolCollector.METRE.ToString(); ;
-				}
-
 				IsCanShowing = true;
 			}
 			else
 			{
 				if(IsCanShowing != false)
 				{
-					SetMessage(TooltipMessageType.None);
-					battleTooltip.Ruler.text = "";
+					DisableBattleTooltip();
 				}
 
 				IsCanShowing = false;
 			}
 
-			//Move
-			if (IsRulerShowing || IsMessageShowing)
-			{
-				Vector2 position = Input.mousePosition;
-				position += OffsetRightDown(battleTooltip.Tooltip);
-
-				battleTooltip.Tooltip.anchoredPosition = position;
-			}
 
 			//if (!leaderModel.IsInDialogue)
 			//{
@@ -139,85 +103,31 @@ namespace Game.Systems.TooltipSystem
 		//	}
 		//}
 
-
-		public void EnableRuler(bool trigger)
+		public void SetRuller(TooltipRulerType rulerType)
 		{
-			if (trigger)
-			{
-				battleTooltip.transform.SetAsLastSibling();
-			}
-			IsRulerShowing = trigger;
-			battleTooltip.Ruler.gameObject.SetActive(trigger);
+			battleTooltip.Ruller.SetType(rulerType);
 		}
 
-		public void EnableMessage(bool trigger)
+		public void SetRullerPath(NavigationSystem.NavigationPath path)
 		{
-			if (trigger)
-			{
-				battleTooltip.transform.SetAsLastSibling();
-			}
-			IsMessageShowing = trigger;
-			battleTooltip.Message.gameObject.SetActive(trigger);
+			battleTooltip.Ruller.SetCustomPath(path);
 		}
 
-		public void SetMessage(TooltipMessageType type)
+		public void SetMessage(TooltipMessageType messageType)
 		{
-			switch (type)
-			{
-				case TooltipMessageType.InvalidTarget:
-				{
-					battleTooltip.Message.text = "Invalid Target";
-					battleTooltip.Message.color = Color.red;
-					break;
-				}
-				case TooltipMessageType.NotEnoughMovement:
-				{
-					battleTooltip.Message.text = "Not Enough Movement";
-					battleTooltip.Message.color = Color.yellow;
-					break;
-				}
-				case TooltipMessageType.CanNotReachDesination:
-				{
-					battleTooltip.Message.text = "Can't Reach Destination";
-					battleTooltip.Message.color = Color.white;
-					break;
-				}
-				case TooltipMessageType.OutOfRange:
-				{
-					battleTooltip.Message.text = "OutOfRange";
-					battleTooltip.Message.color = Color.red;
-					break;
-				}
-				default:
-				{
-					battleTooltip.Message.text = "";
-					break;
-				}
-			}
+			battleTooltip.Message.SetMessage(messageType);
 		}
 
-		private Vector2 OffsetRightDown(RectTransform rectTransform) => new Vector2((rectTransform.sizeDelta.x / 2) * 1.5f, -(rectTransform.sizeDelta.y / 2) * 2.5f);
-	
-		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
+		public void SetMessage(string add, TooltipAdditionalMessageType messageType)
 		{
-			leaderNavigation = signal.leader.Model.Navigation;
+			battleTooltip.AdditionalMessage.SetMessage(add, messageType);
 		}
 
-		private void OnGameStateChanged(SignalGameStateChanged signal)
+		private void DisableBattleTooltip()
 		{
-			if(signal.newGameState == GameState.Gameplay)
-			{
-				leaderNavigation = partyManager.PlayerParty.LeaderParty.Model.Navigation;
-			}
+			SetRuller(TooltipRulerType.None);
+			SetMessage(TooltipMessageType.None);
+			SetMessage("", TooltipAdditionalMessageType.None);
 		}
-	}
-
-	public enum TooltipMessageType
-	{
-		None,
-		InvalidTarget,
-		NotEnoughMovement,
-		CanNotReachDesination,
-		OutOfRange,
 	}
 }

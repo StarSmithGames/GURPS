@@ -245,9 +245,9 @@ GameObject:
   - component: {fileID: 8275597069313804729}
   - component: {fileID: 1481700873124440772}
   - component: {fileID: 1082675776020976272}
-  - component: {fileID: 3022416949413785044}
+  - component: {fileID: 3497483390975855751}
   m_Layer: 5
-  m_Name: UITooltip
+  m_Name: ObjectTooltip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -335,7 +335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
---- !u!114 &3022416949413785044
+--- !u!114 &3497483390975855751
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -344,7 +344,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8856143723921972675}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d81023b4bbc6a479add25eedd46845, type: 3}
+  m_Script: {fileID: 11500000, guid: 27d0596b531bb944984b33dd5f3ad41d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   <CanvasGroup>k__BackingField: {fileID: 8275597069313804729}

@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Game.Systems.TooltipSystem
 {
-    public class UITooltip : WindowBase
+    public class UIObjectTooltip : WindowBase
     {
 		private RectTransform rectTransform;
 		private Canvas canvas;

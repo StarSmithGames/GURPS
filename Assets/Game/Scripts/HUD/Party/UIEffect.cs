@@ -25,10 +25,10 @@ namespace Game.HUD
 		private bool isInitialized = false;
 		private bool isCanBlink = false;
 
-		private UITooltip tooltip;
+		private UIObjectTooltip tooltip;
 
 		[Inject]
-		private void Construct(UITooltip tooltip)
+		private void Construct(UIObjectTooltip tooltip)
 		{
 			this.tooltip = tooltip;
 		}
