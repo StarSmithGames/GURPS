@@ -28,7 +28,7 @@ namespace Game.Systems.VFX
 		[SerializeField] protected bool attachAfterCollision = false;
 		[SerializeField] protected float colliderRadius = 0.5f;
 		[SerializeField] protected LayerMask layerMask;
-		[SerializeField] protected bool ignoreColliders = true;
+		[SerializeField] protected ColliderBehaviorType colliderBehaviorType = ColliderBehaviorType.OnlyTargetCollider;
 
 		//Muzzle effect
 		//Impact effect
@@ -108,7 +108,9 @@ namespace Game.Systems.VFX
 			RaycastHit raycastHit;
 			if (Physics.Raycast(root.position, direction, out raycastHit, distanceNextFrame + colliderRadius, layerMask))
 			{
-				if (target == null || ignoreColliders && target.root == raycastHit.transform.root || !ignoreColliders)
+				if (target == null ||
+					colliderBehaviorType == ColliderBehaviorType.OnlyTargetCollider && target.root == raycastHit.transform.root ||
+					colliderBehaviorType != ColliderBehaviorType.IgnoreColliders)
 				{
 					targetPosition = raycastHit.point - direction * colliderRadius;
 					Collision(raycastHit);
@@ -254,5 +256,11 @@ namespace Game.Systems.VFX
 		XZ,
 		YZ,
 		XYZ
+	}
+
+	public enum ColliderBehaviorType
+	{
+		OnlyTargetCollider,
+		IgnoreColliders,
 	}
 }

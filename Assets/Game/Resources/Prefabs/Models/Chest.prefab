@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e9cd2ab3c0163a45b7708e727bd0c89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <DamagePosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <DamagePosition>k__BackingField: {x: 0, y: 1.5, z: 0}
   <ContainerData>k__BackingField: {fileID: 11400000, guid: b0f6ad7a6bb1ce749b746081bfb299cf, type: 2}
 --- !u!114 &7241427450542474156
 MonoBehaviour:
@@ -227,7 +227,7 @@ MonoBehaviour:
   settings:
     maxRange: 3
     interaction: 0
-    position: {x: 0, y: 0, z: -1.72}
+    position: {x: 0, y: 0, z: 1.5}
     gizmosEditor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &7548737537099246685
 GameObject:
@@ -460,7 +460,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8597997546732523290}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.021, y: 0.5, z: 0.258}
+  m_LocalPosition: {x: -0, y: 0.673, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

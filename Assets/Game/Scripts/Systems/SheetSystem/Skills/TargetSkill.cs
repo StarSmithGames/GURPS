@@ -18,7 +18,7 @@ using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-    public abstract class TargetSkill : ActiveSkill
+    public abstract partial class TargetSkill : ActiveSkill
     {
 		protected MarkPoint startPoint;
 		protected List<IDamageable> targets = new List<IDamageable>();
@@ -84,33 +84,15 @@ namespace Game.Systems.SheetSystem.Skills
 
 				SetTarget(cameraVision.CurrentObserve as IDamageable);
 
-				if (currentTarget != null && clampOnTarget)
-				{
-					worldPosition = currentTarget.MarkPoint.transform.position;
-				}
-
 				path.SetPath(new Vector3[] { startPoint.transform.position, worldPosition });
 				currentLine.DrawLine(path.Path.ToArray());
 				(character.Model.Controller as CharacterController3D).RotateTo(worldPosition);
 
-				if (!Range.IsIn(character.Model.Transform.position, worldPosition, TargetSkillData.range))
-				{
-					tooltipSystem.SetMessage(TooltipSystem.TooltipMessageType.OutOfRange);
-				}
-				else
-				{
-					tooltipSystem.SetMessage(TooltipSystem.TooltipMessageType.None);
-				}
+				UpdateTooltipRange();
 
 				if (Input.GetMouseButtonDown(0))
 				{
-					if(currentTarget != null)
-					{
-						if (Range.IsIn(character.Model.Transform.position, currentTarget.MarkPoint.transform.position, TargetSkillData.range))
-						{
-							AddTarget(currentTarget);
-						}
-					}
+					AddTarget(currentTarget);
 				}
 				else if (Input.GetMouseButtonDown(1))
 				{
@@ -133,10 +115,8 @@ namespace Game.Systems.SheetSystem.Skills
 
 			AddLine();
 
-			currentArea = areaFactory.Create();
-			currentArea.SetRange(TargetSkillData.range);
-			currentArea.SetFade(0).FadeTo(0.8f);
-			currentArea.transform.position = character.Model.Transform.position + Vector3.up * 2;
+			isHasRange = TargetSkillData.range.rangeType == RangeType.Custom;
+			CreateRangeArea();
 
 			base.BeginProcess();
 		}
@@ -164,6 +144,8 @@ namespace Game.Systems.SheetSystem.Skills
 			//.Append(currentCombat.AttackAnimation)
 			//.Append(new TaskWaitAttack(character.Model.AnimatorController))
 			.Execute();
+
+			SetStatus(SkillStatus.Done);
 		}
 
 		private void AddLine()
@@ -175,6 +157,23 @@ namespace Game.Systems.SheetSystem.Skills
 		
 		private void AddTarget(IDamageable damageable)
 		{
+			if (damageable == null) return;
+
+			//Range Check
+			if (isHasRange)
+			{
+				if (!Range.IsIn(character.Model.Transform.position, currentTarget.MarkPoint.transform.position, TargetSkillData.range.range))
+					return;
+			}
+			else
+			{
+				if(TargetSkillData.range.rangeType == RangeType.None)
+				{
+					if (damageable != character.Model) return;
+				}
+			}
+			
+			//Add
 			targets.Add(damageable);
 
 			currentLine.SetState(LineTargetState.Targeted);
@@ -199,22 +198,48 @@ namespace Game.Systems.SheetSystem.Skills
 			}
 
 			lastTarget = currentTarget;
-			currentTarget = damageable != character.Model ? damageable : null;
-
-			if (currentTarget != lastTarget)
-			{
-				OnTargetChanged();
-			}
+			currentTarget = CheckTarget(damageable);
 
 			if (currentTarget != null)
 			{
 				currentTarget.Outline.SetData(targetOutline);
 			}
+
+			if (currentTarget != lastTarget && SkillStatus == SkillStatus.Preparing)
+			{
+				OnTargetChanged();
+			}
+
+			ClampTarget();
+		}
+
+		private IDamageable CheckTarget(IDamageable damageable)
+		{
+			if (TargetSkillData.isCanTargetSelf && damageable == character.Model ||
+				damageable != character.Model)
+			{
+				return damageable;
+			}
+
+			return null;
+		}
+
+		private void ClampTarget()
+		{
+			if (TargetSkillData.isCanClampOnTarget)
+			{
+				if (currentTarget != null && clampOnTarget)
+				{
+					worldPosition = currentTarget.MarkPoint.transform.position;
+				}
+			}
 		}
 
 		protected override void SetStatus(SkillStatus status)
 		{
-			if (status == SkillStatus.Canceled || status == SkillStatus.Faulted || status == SkillStatus.Successed)
+			base.SetStatus(status);
+
+			if (status == SkillStatus.Canceled || status == SkillStatus.Done)
 			{
 				cursorSystem.SetCursor(CursorType.Hand);
 				cameraVision.IsCanMouseClick = true;
@@ -230,9 +255,9 @@ namespace Game.Systems.SheetSystem.Skills
 				{
 					lines[i].FadeOut();
 				}
-				currentArea.FadeTo(0);
+				DisposeRangeArea();
 
-				if(status == SkillStatus.Canceled)
+				if (status == SkillStatus.Canceled)
 				{
 					ResetSkill();
 				}
@@ -243,10 +268,8 @@ namespace Game.Systems.SheetSystem.Skills
 				{
 					lines[i].FadeOut();
 				}
-				currentArea.FadeTo(0);
+				DisposeRangeArea();
 			}
-
-			base.SetStatus(status);
 		}
 
 		protected override void ResetSkill()
@@ -260,20 +283,6 @@ namespace Game.Systems.SheetSystem.Skills
 
 			projectileCompletedCount = 0;
 			projectilesWithTargets.Clear();
-		}
-
-		private void UpdateTooltipPath()
-		{
-			tooltipSystem.SetRullerPath(path);
-			tooltipSystem.SetRuller(TooltipSystem.TooltipRulerType.CustomPath);
-		}
-
-		private void UpdateTooltipTargets()
-		{
-			if (TargetSkillData.targetCount > 1)
-			{
-				tooltipSystem.SetMessage($"{targets.Count}/{TargetSkillData.targetCount}", TooltipSystem.TooltipAdditionalMessageType.Projectiles);
-			}
 		}
 
 		private void OnTargetChanged()
@@ -307,5 +316,59 @@ namespace Game.Systems.SheetSystem.Skills
 		}
 
 		protected abstract ProjectileVFX GetProjectile();
+	}
+
+
+	public partial class TargetSkill
+	{
+		private bool isHasRange = true;
+
+		private void CreateRangeArea()
+		{
+			if (isHasRange)
+			{
+				currentArea = areaFactory.Create();
+				currentArea.SetRange(TargetSkillData.range.range);
+				currentArea.SetFade(0).FadeTo(0.8f);
+				currentArea.transform.position = character.Model.Transform.position + Vector3.up * 2;
+			}
+		}
+
+		private void DisposeRangeArea()
+		{
+			if (isHasRange)
+			{
+				currentArea.FadeTo(0);
+			}
+		}
+
+		private void UpdateTooltipRange()
+		{
+			if (isHasRange)
+			{
+				if (!Range.IsIn(character.Model.Transform.position, worldPosition, TargetSkillData.range.range))
+				{
+					tooltipSystem.SetMessage(TooltipSystem.TooltipMessageType.OutOfRange);
+				}
+				else
+				{
+					tooltipSystem.SetMessage(TooltipSystem.TooltipMessageType.None);
+				}
+			}
+		}
+
+		private void UpdateTooltipPath()
+		{
+			tooltipSystem.SetRullerPath(path);
+			tooltipSystem.SetRuller(TooltipSystem.TooltipRulerType.CustomPath);
+		}
+
+		private void UpdateTooltipTargets()
+		{
+			if (TargetSkillData.targetCount > 1)
+			{
+				tooltipSystem.SetMessage($"{targets.Count}/{TargetSkillData.targetCount}", TooltipSystem.TooltipAdditionalMessageType.Projectiles);
+			}
+		}
 	}
 }

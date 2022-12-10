@@ -188,6 +188,7 @@ namespace Game.Systems.SheetSystem.Skills
 		Preparing,
 		Running,
 		Canceled,
+		Done,
 		Faulted,
 		Successed,
 	}

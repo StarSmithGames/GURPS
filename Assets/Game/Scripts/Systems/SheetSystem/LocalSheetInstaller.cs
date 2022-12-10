@@ -19,6 +19,9 @@ namespace Game.Systems.SheetSystem
 			Container
 				.BindFactory<ScorchingRayData, ICharacter, ScorchingRaySkill, ScorchingRaySkill.Factory>()
 				.FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+			Container
+				.BindFactory<GreaseData, ICharacter, GreaseSkill, GreaseSkill.Factory>()
+				.FromNewComponentOnNewGameObject().AsSingle().NonLazy();
 			//Container
 			//	.BindFactory<ICharacter, StunSkill, StunSkill.Factory>()
 			//	.FromNewComponentOnNewGameObject().AsSingle().NonLazy();

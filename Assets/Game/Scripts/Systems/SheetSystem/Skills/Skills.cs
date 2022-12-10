@@ -32,14 +32,18 @@ namespace Game.Systems.SheetSystem.Skills
 		private PassiveSkill.Factory passiveSkillFactory;
 		private BlitzBoltSkill.Factory blitzBoltFactory;
 		private ScorchingRaySkill.Factory scorchingRayFactory;
+		private GreaseSkill.Factory greaseFactory;
 
 		public Skills(ICharacterModel model, PassiveSkill.Factory passiveSkillFactory,
-			BlitzBoltSkill.Factory blitzBoltFactory, ScorchingRaySkill.Factory scorchingRayFactory)
+			BlitzBoltSkill.Factory blitzBoltFactory,
+			ScorchingRaySkill.Factory scorchingRayFactory,
+			GreaseSkill.Factory greaseFactory)
 		{
 			this.model = model;
 			this.passiveSkillFactory = passiveSkillFactory;
 			this.blitzBoltFactory = blitzBoltFactory;
 			this.scorchingRayFactory = scorchingRayFactory;
+			this.greaseFactory = greaseFactory;
 
 			character = model.Character;
 
@@ -116,6 +120,10 @@ namespace Game.Systems.SheetSystem.Skills
 				else if(data is ScorchingRayData scorchingRayData)
 				{
 					return scorchingRayFactory.Create(scorchingRayData, character);
+				}
+				else if(data is GreaseData greaseData)
+				{
+					return greaseFactory.Create(greaseData, character);
 				}
 			}
 

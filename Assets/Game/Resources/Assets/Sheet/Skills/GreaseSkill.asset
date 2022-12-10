@@ -9,18 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39a47ae3ad054ef42af10d44cb1e3097, type: 3}
-  m_Name: BlitzBoltActiveSkill
+  m_Script: {fileID: 11500000, guid: a442964ad818a3a4ab4f2a50ea330a60, type: 3}
+  m_Name: GreaseSkill
   m_EditorClassIdentifier: 
   information:
-    portrait: {fileID: 21300000, guid: 6d65a9ed35967134faf56f950b0c1b8f, type: 3}
+    portrait: {fileID: 21300000, guid: 66adb0ba712c9534bacdc8889707ede8, type: 3}
     name: 
     isNameId: 1
     description: 
     isDescriptionId: 1
-  requiredLevel: 1
-  baseCooldown: 3
-  duration: 1
+  requiredLevel: 0
+  baseCooldown: 0
+  duration: 0
   isHasLimitationsOnUse: 0
   limitations:
     isUseLimitOnBattle: 0
@@ -28,13 +28,13 @@ MonoBehaviour:
     isUseLimitToRest: 0
     maxCountToRest: 1
   range:
-    rangeType: 1
-    range: 10
+    rangeType: 2
+    range: 8
   savingThrows: 
   targetCount: 1
   isCanTargetSelf: 0
   isCanClampOnTarget: 1
-  isAoE: 0
+  isAoE: 1
   AoE:
     AoEType: 0
-    range: 0
+    range: 1
