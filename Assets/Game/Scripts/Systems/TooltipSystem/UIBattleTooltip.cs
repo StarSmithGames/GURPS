@@ -43,6 +43,6 @@ namespace Game.Systems.TooltipSystem
 			base.Show(callback);
 		}
 
-		private Vector2 OffsetRightDown(RectTransform rectTransform) => new Vector2((rectTransform.sizeDelta.x / 2) * 1.5f, -(rectTransform.sizeDelta.y / 2) * 2.5f);
+		private Vector2 OffsetRightDown(RectTransform rectTransform) => new Vector2((rectTransform.sizeDelta.x / 2) * 2f, -(rectTransform.sizeDelta.y / 2) * 1.5f);
 	}
 }

@@ -45,7 +45,7 @@ namespace Game.Systems.TooltipSystem
 
 		public void Update()
 		{
-			if (Type == TooltipRulerType.None) return;
+			if (Type == TooltipRulerType.None || Type == TooltipRulerType.Chance) return;
 
 			if (Type == TooltipRulerType.CharacterPath)
 			{
@@ -89,5 +89,6 @@ namespace Game.Systems.TooltipSystem
 		None,
 		CharacterPath,
 		CustomPath,
+		Chance,
 	}
 }

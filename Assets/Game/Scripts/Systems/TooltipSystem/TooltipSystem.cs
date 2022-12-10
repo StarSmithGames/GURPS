@@ -108,6 +108,12 @@ namespace Game.Systems.TooltipSystem
 			battleTooltip.Ruller.SetType(rulerType);
 		}
 
+		public void SetRullerChance(string chance)
+		{
+			battleTooltip.Ruller.SetType(TooltipRulerType.Chance);
+			battleTooltip.Ruller.Ruler.text = chance;
+		}
+
 		public void SetRullerPath(NavigationSystem.NavigationPath path)
 		{
 			battleTooltip.Ruller.SetCustomPath(path);

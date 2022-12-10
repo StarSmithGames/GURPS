@@ -26,6 +26,7 @@ namespace Game.Systems.SheetSystem.Skills
 
 		private ActiveTargetSkillData TargetSkillData => Data as ActiveTargetSkillData;
 		private IDamageable currentTarget;
+		private IDamageable lastTarget;
 		private LineTargetVFX currentLine;
 		private RadialAreaDecalVFX currentArea;
 
@@ -125,8 +126,7 @@ namespace Game.Systems.SheetSystem.Skills
 			cursorSystem.SetCursor(CursorType.Base);
 			cameraVision.IsCanMouseClick = false;
 			path = new NavigationPath();
-			tooltipSystem.SetRullerPath(path);
-			tooltipSystem.SetRuller(TooltipSystem.TooltipRulerType.CustomPath);
+			UpdateTooltipPath();
 			UpdateTooltipTargets();
 
 			character.Model.Freeze(true);
@@ -198,7 +198,13 @@ namespace Game.Systems.SheetSystem.Skills
 				currentTarget.Outline.ResetData();
 			}
 
+			lastTarget = currentTarget;
 			currentTarget = damageable != character.Model ? damageable : null;
+
+			if (currentTarget != lastTarget)
+			{
+				OnTargetChanged();
+			}
 
 			if (currentTarget != null)
 			{
@@ -256,11 +262,29 @@ namespace Game.Systems.SheetSystem.Skills
 			projectilesWithTargets.Clear();
 		}
 
+		private void UpdateTooltipPath()
+		{
+			tooltipSystem.SetRullerPath(path);
+			tooltipSystem.SetRuller(TooltipSystem.TooltipRulerType.CustomPath);
+		}
+
 		private void UpdateTooltipTargets()
 		{
 			if (TargetSkillData.targetCount > 1)
 			{
 				tooltipSystem.SetMessage($"{targets.Count}/{TargetSkillData.targetCount}", TooltipSystem.TooltipAdditionalMessageType.Projectiles);
+			}
+		}
+
+		private void OnTargetChanged()
+		{
+			if(currentTarget == null)
+			{
+				UpdateTooltipPath();
+			}
+			else
+			{
+				tooltipSystem.SetRullerChance("100%");
 			}
 		}
 
