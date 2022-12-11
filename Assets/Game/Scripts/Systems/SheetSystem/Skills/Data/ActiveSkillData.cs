@@ -1,7 +1,7 @@
+using Game.Systems.BattleSystem.TargetSystem;
+
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
-
-using UnityEditor.UIElements;
 
 using UnityEngine;
 
@@ -16,14 +16,14 @@ namespace Game.Systems.SheetSystem.Skills
 		public SkillLimitations limitations;
 		[HideLabel]
 		[BoxGroup("Range")]
-		public SkillRange range;
+		public TargetRange range;
 	}
 
 	public abstract class ActiveTargetSkillData : ActiveSkillData
 	{
 		[BoxGroup("Path")]
 		[HideLabel]
-		public SkillPath path;
+		public TargetPath path;
 
 		[BoxGroup("AoE")]
 		[LabelText("Is AoE")]
@@ -31,7 +31,7 @@ namespace Game.Systems.SheetSystem.Skills
 		[BoxGroup("AoE")]
 		[ShowIf("isAoE")]
 		[HideLabel]
-		public SkillAoE AoE;
+		public TargetAoE AoE;
 
 		[Min(1)]
 		public int targetCount = 1;
@@ -58,55 +58,8 @@ namespace Game.Systems.SheetSystem.Skills
 		public int maxCountToRest = 1;
 	}
 
-	[System.Serializable]
-	public class SkillRange
-	{
-		public RangeType rangeType = RangeType.None;
-
-		[Min(0)]
-		[SuffixLabel("m", true)]
-		[ShowIf("rangeType", RangeType.Custom)]
-		public float range;
-	}
-
-	[System.Serializable]
-	public class SkillPath
-	{
-		public bool drawPath = true;
-		public PathType pathType = PathType.Line;
-	}
-
-	[System.Serializable]
-	public class SkillAoE
-	{
-		[LabelText("AoE Type")]
-		public AoEType AoEType = AoEType.Circle;
-		[Min(1)]
-		[SuffixLabel("m", true)]
-		public float range = 1;
-	}
-
 	public enum ThrowsType
 	{
 		Willpower
-	}
-
-	public enum RangeType
-	{
-		None,
-		Max,
-		Custom,
-	}
-
-	public enum AoEType
-	{
-		Circle,
-	}
-
-	public enum PathType
-	{
-		Line,
-		Ballistic,
-		Custom
 	}
 }

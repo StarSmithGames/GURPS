@@ -11,6 +11,8 @@ using Game.Systems.SheetSystem.Skills;
 using Game.Systems.TooltipSystem;
 using Game.Systems.VFX;
 
+using Sirenix.OdinInspector;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,11 +31,15 @@ namespace Game.Systems.BattleSystem.TargetSystem
 		public Func<IDamageable, bool> onTargetValid;
 
 		public Vector3 LastWorldPosition { get; private set; }
+		public IDamageable CurrentTarget { get; private set; }
 		public IDamageable LastTarget { get; private set; }
+
+		private List<IDamageable> targets = new List<IDamageable>();
 
 		private ICharacter character;
 		private ActiveTargetSkillData data;
 
+		private Plane plane = new Plane(Vector3.up, 0);
 		private List<LineTargetVFX> lines = new List<LineTargetVFX>();
 		private List<RadialAreaDecalVFX> areas = new List<RadialAreaDecalVFX>();
 		private LineTargetVFX currentLine;
@@ -41,13 +47,6 @@ namespace Game.Systems.BattleSystem.TargetSystem
 		private RadialAreaDecalVFX rangeArea;
 		private OutlineData targetOutline;
 		private NavigationPath path;
-
-		private Plane plane = new Plane(Vector3.up, 0);
-		private IDamageable currentTarget;
-		private IDamageable lastTarget;
-
-		private bool isCanClampOnTarget = true;
-		private bool isHasRange = true;
 
 		private CinemachineBrain brain;
 		private CameraVisionLocation cameraVision;
@@ -86,9 +85,6 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			cursorSystem.SetCursor(CursorType.Base);
 			cameraVision.IsCanMouseClick = false;
 
-			isHasRange = this.data.range.rangeType == RangeType.Custom;
-			isCanClampOnTarget = this.data.isCanClampOnTarget;
-
 			//Visual
 			CreatePropsForTarget();
 			UpdateTooltipPath();
@@ -102,6 +98,10 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			tooltipSystem.SetRuller(TooltipRulerType.None);
 			tooltipSystem.SetMessage(TooltipMessageType.None);
 			tooltipSystem.SetMessage("", TooltipAdditionalMessageType.None);
+
+			CurrentTarget = null;
+			LastTarget = null;
+			targets.Clear();
 
 			lines.Clear();
 			areas.Clear();
@@ -119,7 +119,6 @@ namespace Game.Systems.BattleSystem.TargetSystem
 				LastWorldPosition = ray.GetPoint(distance);
 			}
 
-
 			SetTarget(cameraVision.CurrentObserve as IDamageable);
 
 			DrawProps();
@@ -129,18 +128,18 @@ namespace Game.Systems.BattleSystem.TargetSystem
 
 		public void AddTarget(IDamageable damageable)
 		{
-			if (damageable != null)
+			if (damageable == null) return;
+			if (targets.Count == data.targetCount) return;
+
+			currentLine?.SetState(LineTargetState.Targeted);
+			currentArea?.FadeTo(0.25f);
+			UpdateTooltipTargets();
+
+			targets.Add(damageable);
+
+			if (targets.Count != data.targetCount)
 			{
-				damageable.Outline.SetData(targetOutline);
-
-				currentLine?.SetState(LineTargetState.Targeted);
-				currentArea?.FadeTo(0.25f);
-				UpdateTooltipTargets();
-
-				if (lines.Count != data.targetCount)
-				{
-					CreatePropsForTarget();
-				}
+				CreatePropsForTarget();
 			}
 
 			onTargetChanged?.Invoke(damageable);
@@ -148,15 +147,15 @@ namespace Game.Systems.BattleSystem.TargetSystem
 
 		private void SetTarget(IDamageable damageable)
 		{
-			if (currentTarget != null)
+			if (CurrentTarget != null)
 			{
-				currentTarget.Outline.ResetData();
+				CurrentTarget.Outline.ResetData();
 			}
 
-			lastTarget = currentTarget;
-			currentTarget = (onTargetValid?.Invoke(damageable) ?? false) ? currentTarget : null;
+			LastTarget = CurrentTarget;
+			CurrentTarget = (onTargetValid?.Invoke(damageable) ?? true) ? InnerValidTarget(damageable) : null;
 
-			if (currentTarget != lastTarget)
+			if (CurrentTarget != LastTarget)
 			{
 				if (damageable == null)
 				{
@@ -164,6 +163,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 				}
 				else
 				{
+					damageable.Outline.SetData(targetOutline);
 					tooltipSystem.SetRullerChance("100%");
 				}
 			}
@@ -171,15 +171,41 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			ClampTarget();
 		}
 
-
-
 		private void ClampTarget()
 		{
-			if (currentTarget != null && isCanClampOnTarget)
+			if (CurrentTarget != null && data.isCanClampOnTarget)
 			{
-				LastWorldPosition = currentTarget.MarkPoint.transform.position;
+				LastWorldPosition = CurrentTarget.MarkPoint.transform.position;
 			}
 		}
+
+		private IDamageable InnerValidTarget(IDamageable damageable)
+		{
+			//Null Check
+			if (damageable == null) return null;
+
+			//Range Check
+			if (data.range.IsHasRange)
+			{
+				if (!Range.IsIn(character.Model.MarkPoint.transform.position, damageable.MarkPoint.transform.position, data.range.range)) return null;
+			}
+			else
+			{
+				if (data.range.rangeType == RangeType.None)
+				{
+					if (damageable != character.Model) return null;
+				}
+			}
+
+			//Self Check
+			if (damageable == character.Model)
+			{
+				if (!data.isCanTargetSelf) return null;
+			}
+
+			return damageable;
+		}
+
 
 		private void DrawProps()
 		{
@@ -213,7 +239,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 					areas[i].FadeTo(0);
 				}
 			}
-			if (isHasRange)
+			if (data.range.IsHasRange)
 			{
 				rangeArea.FadeTo(0);
 			}
@@ -239,7 +265,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 				areas.Add(currentArea);
 			}
 
-			if (isHasRange && rangeArea == null)
+			if (data.range.IsHasRange && rangeArea == null)
 			{
 				rangeArea = areaFactory.Create();
 				rangeArea.SetRange(data.range.range);
@@ -250,7 +276,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 
 		private void UpdateTooltipRange()
 		{
-			if (isHasRange)
+			if (data.range.IsHasRange)
 			{
 				if (!Range.IsIn(character.Model.Transform.position, LastWorldPosition, data.range.range))
 				{
@@ -266,15 +292,64 @@ namespace Game.Systems.BattleSystem.TargetSystem
 		private void UpdateTooltipPath()
 		{
 			tooltipSystem.SetRullerPath(path);
-			tooltipSystem.SetRuller(TooltipSystem.TooltipRulerType.CustomPath);
+			tooltipSystem.SetRuller(TooltipRulerType.CustomPath);
 		}
 
 		private void UpdateTooltipTargets()
 		{
 			if (data.targetCount > 1)
 			{
-				tooltipSystem.SetMessage($"{lines.Count}/{data.targetCount}", TooltipSystem.TooltipAdditionalMessageType.Projectiles);
+				tooltipSystem.SetMessage($"{lines.Count}/{data.targetCount}", TooltipAdditionalMessageType.Projectiles);
 			}
 		}
+	}
+
+	[System.Serializable]
+	public class TargetRange
+	{
+		public RangeType rangeType = RangeType.None;
+
+		[Min(0)]
+		[SuffixLabel("m", true)]
+		[ShowIf("rangeType", RangeType.Custom)]
+		public float range;
+
+		public bool IsHasRange => rangeType == RangeType.Custom;
+	}
+
+	[System.Serializable]
+	public class TargetPath
+	{
+		public bool drawPath = true;
+		public PathType pathType = PathType.Line;
+	}
+
+	[System.Serializable]
+	public class TargetAoE
+	{
+		[LabelText("AoE Type")]
+		public AoEType AoEType = AoEType.Circle;
+		[Min(1)]
+		[SuffixLabel("m", true)]
+		public float range = 1;
+	}
+
+	public enum RangeType
+	{
+		None,
+		Max,
+		Custom,
+	}
+
+	public enum AoEType
+	{
+		Circle,
+	}
+
+	public enum PathType
+	{
+		Line,
+		Ballistic,
+		Custom
 	}
 }

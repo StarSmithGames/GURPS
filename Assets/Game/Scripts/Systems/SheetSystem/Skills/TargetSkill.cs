@@ -1,8 +1,3 @@
-using Cinemachine;
-
-using EPOOutline;
-
-using Game.Entities.AI;
 using Game.Systems.BattleSystem.TargetSystem;
 using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
@@ -19,21 +14,16 @@ using UnityEngine.Events;
 
 using Zenject;
 
-using static UnityEngine.Networking.UnityWebRequest;
-
 namespace Game.Systems.SheetSystem.Skills
 {
     public abstract partial class TargetSkill : ActiveSkill
     {
-		protected MarkPoint startPoint;
+		protected ActiveTargetSkillData TargetSkillData => Data as ActiveTargetSkillData;
 
-		private ActiveTargetSkillData TargetSkillData => Data as ActiveTargetSkillData;
+		protected List<IDamageable> targets = new List<IDamageable>();
 
-		private List<IDamageable> targets = new List<IDamageable>();
-
-		private Dictionary<ProjectileVFX, IDamageable> projectilesWithTargets = new Dictionary<ProjectileVFX, IDamageable>();
-		private int projectileCompletedCount = 0;
-		private bool isHasRange = true;
+		protected Dictionary<ProjectileVFX, IDamageable> projectilesWithTargets = new Dictionary<ProjectileVFX, IDamageable>();
+		protected int projectileCompletedCount = 0;
 
 		private TargetController targetController;
 		private CombatFactory combatFactory;
@@ -41,7 +31,6 @@ namespace Game.Systems.SheetSystem.Skills
 		[Inject]
 		private void Construct(TargetController targetController, CombatFactory combatFactory)
 		{
-			this.startPoint = character.Model.MarkPoint;
 			this.targetController = targetController;
 			this.combatFactory = combatFactory;
 		}
@@ -59,7 +48,7 @@ namespace Game.Systems.SheetSystem.Skills
 
 				if (Input.GetMouseButtonDown(0))
 				{
-					targetController.AddTarget(targetController.LastTarget);
+					targetController.AddTarget(targetController.CurrentTarget);
 				}
 				else if (Input.GetMouseButtonDown(1))
 				{
@@ -75,7 +64,6 @@ namespace Game.Systems.SheetSystem.Skills
 			targetController.onTargetChanged += OnTargetChanged;
 			targetController.onTargetValid += OnTargetValid;
 			targetController.Begin(character, TargetSkillData);
-			isHasRange = TargetSkillData.range.rangeType == RangeType.Custom;
 
 			base.BeginProcess();
 		}
@@ -95,7 +83,7 @@ namespace Game.Systems.SheetSystem.Skills
 					projectilesWithTargets.Add(projectile, targets[i]);
 
 					projectile
-						.SetStart(startPoint.transform.position, startPoint.transform.forward)
+						.SetStart(character.Model.MarkPoint.transform.position, character.Model.MarkPoint.transform.forward)
 						.SetTarget(targets[i].MarkPoint.transform)
 						.Launch(OnProjectileCompleted);
 				}
@@ -113,9 +101,11 @@ namespace Game.Systems.SheetSystem.Skills
 
 			if (status == SkillStatus.Canceled || status == SkillStatus.Done)
 			{
-				character.Model.Freeze(false);
-
+				targetController.onTargetChanged -= OnTargetChanged;
+				targetController.onTargetValid -= OnTargetValid;
 				targetController.FadeOutProps();
+				
+				character.Model.Freeze(false);
 
 				if (status == SkillStatus.Canceled)
 				{
@@ -134,34 +124,13 @@ namespace Game.Systems.SheetSystem.Skills
 
 			projectileCompletedCount = 0;
 			projectilesWithTargets.Clear();
+			targets.Clear();
 
 			targetController.End();
 		}
 
 		private bool OnTargetValid(IDamageable damageable)
 		{
-			//Null Check
-			if (damageable == null) return false;
-
-			//Range Check
-			if (isHasRange)
-			{
-				if (!Range.IsIn(character.Model.Transform.position, damageable.MarkPoint.transform.position, TargetSkillData.range.range)) return false;
-			}
-			else
-			{
-				if (TargetSkillData.range.rangeType == RangeType.None)
-				{
-					if (damageable != character.Model) return false;
-				}
-			}
-
-			//Self Check
-			if (damageable == character.Model)
-			{
-				if (!TargetSkillData.isCanTargetSelf) return false;
-			}
-
 			return true;
 		}
 
