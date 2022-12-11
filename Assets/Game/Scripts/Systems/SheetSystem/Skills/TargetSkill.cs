@@ -1,22 +1,16 @@
 using Game.Systems.BattleSystem.TargetSystem;
-using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
-using Game.Systems.CursorSystem;
-using Game.Systems.InteractionSystem;
 using Game.Systems.NavigationSystem;
 using Game.Systems.VFX;
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
 using Zenject;
 
 namespace Game.Systems.SheetSystem.Skills
 {
-    public abstract partial class TargetSkill : ActiveSkill
+    public abstract class TargetSkill : ActiveSkill
     {
 		protected ActiveTargetSkillData TargetSkillData => Data as ActiveTargetSkillData;
 
@@ -104,7 +98,8 @@ namespace Game.Systems.SheetSystem.Skills
 				targetController.onTargetChanged -= OnTargetChanged;
 				targetController.onTargetValid -= OnTargetValid;
 				targetController.FadeOutProps();
-				
+				targetController.End();
+
 				character.Model.Freeze(false);
 
 				if (status == SkillStatus.Canceled)
@@ -125,8 +120,6 @@ namespace Game.Systems.SheetSystem.Skills
 			projectileCompletedCount = 0;
 			projectilesWithTargets.Clear();
 			targets.Clear();
-
-			targetController.End();
 		}
 
 		private bool OnTargetValid(IDamageable damageable)

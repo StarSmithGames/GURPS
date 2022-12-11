@@ -225,6 +225,6 @@ MonoBehaviour:
       skills: []
     abilities:
       abilities: []
-    isImmortal: 0
+    isImmortal: 1
   isNPC: 1
   prefab: {fileID: 0}

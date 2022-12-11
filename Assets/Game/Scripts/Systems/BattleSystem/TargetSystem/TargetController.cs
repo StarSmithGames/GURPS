@@ -25,7 +25,7 @@ using Zenject;
 
 namespace Game.Systems.BattleSystem.TargetSystem
 {
-	public class TargetController
+	public partial class TargetController
 	{
 		public UnityAction<IDamageable> onTargetChanged;
 		public Func<IDamageable, bool> onTargetValid;
@@ -126,6 +126,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			UpdateTooltipRange();
 		}
 
+
 		public void AddTarget(IDamageable damageable)
 		{
 			if (damageable == null) return;
@@ -205,8 +206,10 @@ namespace Game.Systems.BattleSystem.TargetSystem
 
 			return damageable;
 		}
+	}
 
-
+	public partial class TargetController
+	{
 		private void DrawProps()
 		{
 			pointer.SetPosition(LastWorldPosition);

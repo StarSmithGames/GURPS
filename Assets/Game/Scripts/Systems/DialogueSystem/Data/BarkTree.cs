@@ -1,7 +1,7 @@
 using NodeCanvas.DialogueTrees;
-using NodeCanvas.Editor;
 
 #if UNITY_EDITOR
+using NodeCanvas.Editor;
 using UnityEditor;
 #endif
 

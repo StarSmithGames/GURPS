@@ -90,7 +90,9 @@ public class I2Texts<T> where T : I2Text, new()
 		LocalizationManager.UpdateSources();
 		var langs = LocalizationManager.GetAllLanguages(true);
 
+#if UNITY_EDITOR
 		ResizeTexts(langs);
+#endif
 
 		if (texts.Count > 0)
 		{

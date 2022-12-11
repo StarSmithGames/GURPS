@@ -47,7 +47,6 @@ public static class Search
         return path;
     }
 }
-#endif
 
 public class SearchProvider : ScriptableObject, ISearchWindowProvider
 {
@@ -137,3 +136,4 @@ public class SearchLeaf
     public string path;
     public object data;
 }
+#endif

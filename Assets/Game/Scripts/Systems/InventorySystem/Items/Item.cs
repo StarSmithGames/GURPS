@@ -3,14 +3,12 @@ using UnityEngine.Events;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 using Sirenix.OdinInspector;
-using Game.Managers.StorageManager;
 using Game.Systems.SheetSystem;
-using Sirenix.OdinInspector.Editor;
-using Sirenix.Utilities.Editor;
-using Sirenix.Utilities;
 
 #if UNITY_EDITOR
 using UnityEditor;
+using Sirenix.OdinInspector.Editor;
+using Sirenix.Utilities.Editor;
 #endif
 
 namespace Game.Systems.InventorySystem

@@ -31,12 +31,30 @@ namespace Game.Systems.SheetSystem
         [HideLabel]
         public bool isDescriptionId = true;
 
-        public virtual string GetName() => isNameId ? (!name.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(name, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "") : name;
-        public virtual string GetDescription() => isDescriptionId ? (!description.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(description, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Description") : description;
-
         public bool IsHasPortrait => portrait != null;
 
-        private string NameLabel => isNameId ? "Name Id" : "Name";
+        public virtual string GetName()
+        {
+#if UNITY_EDITOR
+            if (isNameId)
+            {
+                return (!name.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(name, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "");
+			}
+#endif
+			return name;
+        }
+        public virtual string GetDescription()
+        {
+#if UNITY_EDITOR
+            if (isNameId)
+            {
+                return (!description.IsEmpty() ? LocalizationSystem.LocalizationSystem.TranslateStatic(description, LocalizationSystem.LocalizationSystem.CurrentLocaleStatic) : "NULL Description");
+            }
+#endif
+            return description;
+        }
+
+		private string NameLabel => isNameId ? "Name Id" : "Name";
         private string DescriptionLabel => isDescriptionId ? "Description Id" : "Description";
     }
 

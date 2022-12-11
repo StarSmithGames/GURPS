@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using UnityEditor.Localization;
-
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Localization.Settings;
@@ -11,6 +9,10 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 using Zenject;
 using System.Linq;
+
+#if UNITY_EDITOR
+using UnityEditor.Localization;
+#endif
 
 namespace Game.Systems.LocalizationSystem
 {
