@@ -159,9 +159,6 @@ namespace Game.Systems.CameraSystem
 			leaderModel = leader.Model;
 
 			IsCanHoldMouse = leaderModel.InBattle ? false : settings.isCanHoldMouse;
-
-			leaderModel.Markers.SplineMarker.Enable(false);
-			leaderModel.Markers.AdditionalSplineMarker.Enable(false);
 		}
 
 		protected override void OnHoverObserveChanged()
@@ -248,8 +245,8 @@ namespace Game.Systems.CameraSystem
 					if (leaderModel.IsWithRangedWeapon && CurrentObserve != leaderModel)
 					{
 						//leaderModel.Controller.RotateTo(point);
-						leaderModel.Markers.SplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
-						leaderModel.Markers.AdditionalSplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
+						//leaderModel.Markers.SplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
+						//leaderModel.Markers.AdditionalSplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
 					}
 					else if (CurrentObserve is ICombatable combatable)
 					{
@@ -317,8 +314,6 @@ namespace Game.Systems.CameraSystem
 		{
 			if (CurrentObserve == null || CurrentObserve == leaderModel)
 			{
-				leaderModel.Markers.SplineMarker.Enable(false);
-				leaderModel.Markers.AdditionalSplineMarker.Enable(false);
 			}
 			else
 			{
@@ -326,8 +321,8 @@ namespace Game.Systems.CameraSystem
 				{
 					leaderModel.SetTarget(leaderModel.Transform.position);//hide target
 
-					leaderModel.Markers.AdditionalSplineMarker.Enable(true);
-					leaderModel.Markers.SplineMarker.Enable(true);
+					//leaderModel.Markers.AdditionalSplineMarker.Enable(true);
+					//leaderModel.Markers.SplineMarker.Enable(true);
 
 					//leaderModel.Markers.AreaDecal.Radius = leaderModel.CharacterRange;
 					//leaderModel.Markers.AreaDecal.Enable(true);

@@ -10,9 +10,6 @@ namespace Game.Entities
 	{
 		[field: SerializeField] public DecalVFX FollowDecal { get; private set; }
 		[field: SerializeField] public DecalVFX TargetDecal { get; private set; }
-		[field: SerializeField] public LineRendererSplineVFX SplineMarker { get; private set; }
-		[field: SerializeField] public LineRendererSplineVFX AdditionalSplineMarker { get; private set; }
-		[field: Space]
 		[field: SerializeField] public LineRendererLineVFX LineMarker { get; private set; }
 		[Space]
 		[SerializeField] private List<Color> colors = new List<Color>();
@@ -47,9 +44,6 @@ namespace Game.Entities
 
 			markers.TargetDecal.transform.parent = null;
 			markers.TargetDecal.Enable(false);
-
-			markers.SplineMarker.Enable(false);
-			markers.AdditionalSplineMarker.Enable(false);
 
 			markers.LineMarker.Enable(false);
 
