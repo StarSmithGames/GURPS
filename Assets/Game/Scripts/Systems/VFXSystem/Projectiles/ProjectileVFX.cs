@@ -101,19 +101,23 @@ namespace Game.Systems.VFX
 			}
 			if (distance <= colliderRadius)
 			{
-				Collision(new RaycastHit());//>:c
+				Collision(new RaycastHit(), Vector3.zero);//>:c
 			}
 
 			var direction = (targetPosition - root.position).normalized;
 			RaycastHit raycastHit;
 			if (Physics.Raycast(root.position, direction, out raycastHit, distanceNextFrame + colliderRadius, layerMask))
 			{
-				if (target == null ||
-					(colliderBehaviorType == ColliderBehaviorType.OnlyTargetCollider && target.root == raycastHit.transform.root) ||
-					colliderBehaviorType != ColliderBehaviorType.IgnoreColliders)
+				if(colliderBehaviorType == ColliderBehaviorType.OnlyTargetCollider)
 				{
-					targetPosition = raycastHit.point - direction * colliderRadius;
-					Collision(raycastHit);
+					if(target.root == raycastHit.transform.root)
+					{
+						Collision(raycastHit, direction);
+					}
+				}
+				else if (colliderBehaviorType != ColliderBehaviorType.IgnoreColliders)
+				{
+					Collision(raycastHit, direction);
 				}
 			}
 		}
@@ -173,9 +177,11 @@ namespace Game.Systems.VFX
 			return this;
 		}
 
-		protected virtual void Collision(RaycastHit hit)
+		protected virtual void Collision(RaycastHit hit, Vector3 direction)
 		{
 			isCanMove = false;
+
+			targetPosition = hit.point - direction * colliderRadius;
 
 			if (attachAfterCollision)
 				root.parent = hit.transform == null ? target : hit.transform;

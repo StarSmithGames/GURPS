@@ -23,7 +23,7 @@ namespace Game.Systems.VFX
 			explotion.Stop(true);
 		}
 
-		protected override void Collision(RaycastHit hit)
+		protected override void Collision(RaycastHit hit, Vector3 direction)
 		{
 			projectile.Stop(true);
 			explotion.Play(true);
@@ -35,7 +35,7 @@ namespace Game.Systems.VFX
 				.AppendInterval(2.5f)
 				.AppendCallback(() => DespawnIt());
 
-			base.Collision(hit);
+			base.Collision(hit, direction);
 		}
 
 		public override void OnDespawned()
