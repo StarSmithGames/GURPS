@@ -51,7 +51,7 @@ MonoBehaviour:
     inventory:
       useRandomItems: 0
       isDynamicRows: 0
-      inventorySize: -1
+      inventorySize: 1
       items: []
       randomSettings:
         isUnique: 0

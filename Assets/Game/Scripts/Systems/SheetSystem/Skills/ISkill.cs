@@ -139,7 +139,7 @@ namespace Game.Systems.SheetSystem.Skills
 
 		protected void StartCooldown()
 		{
-			Cooldown.Total = (Data as ActiveSkillData).baseCooldown;
+			Cooldown.Total = (Data as ActiveSkillData).limitations.baseCooldown;
 			Cooldown.Reset();
 			isCooldown = true;
 		}

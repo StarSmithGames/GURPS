@@ -109,7 +109,7 @@ namespace Game.Systems.VFX
 			if (Physics.Raycast(root.position, direction, out raycastHit, distanceNextFrame + colliderRadius, layerMask))
 			{
 				if (target == null ||
-					colliderBehaviorType == ColliderBehaviorType.OnlyTargetCollider && target.root == raycastHit.transform.root ||
+					(colliderBehaviorType == ColliderBehaviorType.OnlyTargetCollider && target.root == raycastHit.transform.root) ||
 					colliderBehaviorType != ColliderBehaviorType.IgnoreColliders)
 				{
 					targetPosition = raycastHit.point - direction * colliderRadius;

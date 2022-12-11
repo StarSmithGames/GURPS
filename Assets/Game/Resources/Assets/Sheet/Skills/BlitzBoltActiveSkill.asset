@@ -19,10 +19,10 @@ MonoBehaviour:
     description: 
     isDescriptionId: 1
   requiredLevel: 1
-  baseCooldown: 3
-  duration: 1
-  isHasLimitationsOnUse: 0
+  savingThrows: 
   limitations:
+    baseCooldown: 1
+    duration: 0
     isUseLimitOnBattle: 0
     maxCountInBattle: 1
     isUseLimitToRest: 0
@@ -30,11 +30,13 @@ MonoBehaviour:
   range:
     rangeType: 1
     range: 10
-  savingThrows: 
-  targetCount: 1
-  isCanTargetSelf: 0
-  isCanClampOnTarget: 1
+  path:
+    drawPath: 1
+    pathType: 0
   isAoE: 0
   AoE:
     AoEType: 0
     range: 0
+  targetCount: 1
+  isCanTargetSelf: 0
+  isCanClampOnTarget: 1

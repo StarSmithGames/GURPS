@@ -1,4 +1,6 @@
 using Game.UI.CanvasSystem;
+using Game.UI.Windows;
+
 using UnityEngine;
 using Zenject;
 
@@ -10,6 +12,7 @@ namespace Game.Systems.VFX
 		public Pointer3D pointer3DPrefab;
 		public Pointer2D pointer2DPrefab;
 		[Header("Lines")]
+		public PointerVFX pointerPrefab;
 		public LineTargetVFX lineTargetPrefab;
 		[Header("Areas")]
 		public RadialAreaDecalVFX radialAreaDecalPrefab;
@@ -19,14 +22,23 @@ namespace Game.Systems.VFX
 
 		public override void InstallBindings()
 		{
-			Container.BindFactory<Pointer3D, Pointer3D.Factory>()
-					.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(0)
-					.FromComponentInNewPrefab(pointer3DPrefab));
+			Container
+				.BindFactory<Pointer3D, Pointer3D.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(0)
+				.FromComponentInNewPrefab(pointer3DPrefab));
 
-			Container.BindFactory<Pointer2D, Pointer2D.Factory>()
-					.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
-					.FromComponentInNewPrefab(pointer2DPrefab)
-					.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().VFXIndicators));
+			Container
+				.BindFactory<Pointer2D, Pointer2D.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
+				.FromComponentInNewPrefab(pointer2DPrefab)
+				.UnderTransform((x) => x.Container.Resolve<UISubCanvas>().VFXIndicators));
+
+			Container
+				.Bind<PointerVFX>()
+				.FromComponentInNewPrefab(pointerPrefab)
+				.AsSingle()
+				.NonLazy();
+
 			BindLines();
 			BindAreas();
 			BindProjectiles();

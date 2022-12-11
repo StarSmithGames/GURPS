@@ -23,12 +23,14 @@ namespace Game.Systems.SheetSystem.Skills
 		protected MarkPoint startPoint;
 		protected List<IDamageable> targets = new List<IDamageable>();
 		protected List<LineTargetVFX> lines = new List<LineTargetVFX>();
+		protected List<RadialAreaDecalVFX> areas = new List<RadialAreaDecalVFX>();
+		protected LineTargetVFX currentLine;
+		protected RadialAreaDecalVFX currentArea;
+		protected RadialAreaDecalVFX rangeArea;
 
 		private ActiveTargetSkillData TargetSkillData => Data as ActiveTargetSkillData;
 		private IDamageable currentTarget;
 		private IDamageable lastTarget;
-		private LineTargetVFX currentLine;
-		private RadialAreaDecalVFX currentArea;
 
 		private Dictionary<ProjectileVFX, IDamageable> projectilesWithTargets = new Dictionary<ProjectileVFX, IDamageable>();
 		private int projectileCompletedCount = 0;
@@ -42,6 +44,7 @@ namespace Game.Systems.SheetSystem.Skills
 		private CinemachineBrain brain;
 		private CameraVisionLocation cameraVision;
 		private CursorSystem.CursorSystem cursorSystem;
+		private PointerVFX pointer;
 		private LineTargetVFX.Factory lineTargetFactory;
 		private RadialAreaDecalVFX.Factory areaFactory;
 		private CombatFactory combatFactory;
@@ -51,6 +54,7 @@ namespace Game.Systems.SheetSystem.Skills
 		private void Construct(CinemachineBrain brain,
 			CameraVisionLocation cameraVision,
 			CursorSystem.CursorSystem cursorSystem,
+			PointerVFX pointer,
 			LineTargetVFX.Factory lineTargetFactory,
 			RadialAreaDecalVFX.Factory areaFactory,
 			CombatFactory combatFactory,
@@ -61,6 +65,7 @@ namespace Game.Systems.SheetSystem.Skills
 			this.brain = brain;
 			this.cameraVision = cameraVision;
 			this.cursorSystem = cursorSystem;
+			this.pointer = pointer;
 			this.lineTargetFactory = lineTargetFactory;
 			this.areaFactory = areaFactory;
 			this.combatFactory = combatFactory;
@@ -83,9 +88,8 @@ namespace Game.Systems.SheetSystem.Skills
 				}
 
 				SetTarget(cameraVision.CurrentObserve as IDamageable);
-
-				path.SetPath(new Vector3[] { startPoint.transform.position, worldPosition });
-				currentLine.DrawLine(path.Path.ToArray());
+				DrawProps();
+				
 				(character.Model.Controller as CharacterController3D).RotateTo(worldPosition);
 
 				UpdateTooltipRange();
@@ -103,20 +107,18 @@ namespace Game.Systems.SheetSystem.Skills
 
 		public override void BeginProcess()
 		{
+			path = new NavigationPath();
+
 			targetOutline = GlobalDatabase.Instance.allOutlines.Find((x) => x.outlineType == OutlineType.Target);
 
 			cursorSystem.SetCursor(CursorType.Base);
 			cameraVision.IsCanMouseClick = false;
-			path = new NavigationPath();
-			UpdateTooltipPath();
-			UpdateTooltipTargets();
-
 			character.Model.Freeze(true);
 
-			AddLine();
-
-			isHasRange = TargetSkillData.range.rangeType == RangeType.Custom;
-			CreateRangeArea();
+			//Visual
+			CreatePropsForTarget();
+			UpdateTooltipPath();
+			UpdateTooltipTargets();
 
 			base.BeginProcess();
 		}
@@ -148,13 +150,6 @@ namespace Game.Systems.SheetSystem.Skills
 			SetStatus(SkillStatus.Done);
 		}
 
-		private void AddLine()
-		{
-			currentLine = lineTargetFactory.Create();
-			currentLine.SetState(LineTargetState.Target);
-			lines.Add(currentLine);
-		}
-		
 		private void AddTarget(IDamageable damageable)
 		{
 			if (damageable == null) return;
@@ -175,9 +170,10 @@ namespace Game.Systems.SheetSystem.Skills
 			
 			//Add
 			targets.Add(damageable);
-
-			currentLine.SetState(LineTargetState.Targeted);
-
+			
+			//Visual
+			currentLine?.SetState(LineTargetState.Targeted);
+			currentArea?.FadeTo(0.25f);
 			UpdateTooltipTargets();
 
 			if (targets.Count == TargetSkillData.targetCount)
@@ -186,7 +182,7 @@ namespace Game.Systems.SheetSystem.Skills
 			}
 			else
 			{
-				AddLine();
+				CreatePropsForTarget();
 			}
 		}
 
@@ -251,11 +247,7 @@ namespace Game.Systems.SheetSystem.Skills
 
 				character.Model.Freeze(false);
 
-				for (int i = 0; i < lines.Count; i++)
-				{
-					lines[i].FadeOut();
-				}
-				DisposeRangeArea();
+				FadeOutProps();
 
 				if (status == SkillStatus.Canceled)
 				{
@@ -264,11 +256,7 @@ namespace Game.Systems.SheetSystem.Skills
 			}
 			else if (status == SkillStatus.Running)
 			{
-				for (int i = 0; i < lines.Count; i++)
-				{
-					lines[i].FadeOut();
-				}
-				DisposeRangeArea();
+				FadeOutProps();
 			}
 		}
 
@@ -279,7 +267,9 @@ namespace Game.Systems.SheetSystem.Skills
 			currentTarget = null;
 			targets.Clear();
 			lines.Clear();
+			areas.Clear();
 			currentArea = null;
+			rangeArea = null;
 
 			projectileCompletedCount = 0;
 			projectilesWithTargets.Clear();
@@ -323,22 +313,71 @@ namespace Game.Systems.SheetSystem.Skills
 	{
 		private bool isHasRange = true;
 
-		private void CreateRangeArea()
+		private void DrawProps()
 		{
+			pointer.SetPosition(worldPosition);
+
+			path.SetPath(new Vector3[] { startPoint.transform.position, worldPosition });
+
+			if (TargetSkillData.path.pathType == PathType.Line)
+			{
+				currentLine?.DrawLine(path.Path.ToArray());//TargetSkillData.path.drawPath
+			}
+			else if(TargetSkillData.path.pathType == PathType.Ballistic)
+			{
+				currentLine?.DrawLine(KinematicBallistic.GetTraectory(character.Model.MarkPoint.transform.position, worldPosition));
+			}
+
+			currentArea?.DrawDecal(worldPosition);//TargetSkillData.isAoE
+		}
+
+		private void FadeOutProps()
+		{
+			pointer.Enable(false);
+			for (int i = 0; i < lines.Count; i++)
+			{
+				lines[i].FadeOut();
+			}
+			if (TargetSkillData.isAoE)
+			{
+				for (int i = 0; i < areas.Count; i++)
+				{
+					areas[i].FadeTo(0);
+				}
+			}
 			if (isHasRange)
 			{
-				currentArea = areaFactory.Create();
-				currentArea.SetRange(TargetSkillData.range.range);
-				currentArea.SetFade(0).FadeTo(0.8f);
-				currentArea.transform.position = character.Model.Transform.position + Vector3.up * 2;
+				rangeArea.FadeTo(0);
 			}
 		}
 
-		private void DisposeRangeArea()
+		private void CreatePropsForTarget()
 		{
-			if (isHasRange)
+			pointer.Enable(true);
+
+			if (TargetSkillData.path.drawPath)
 			{
-				currentArea.FadeTo(0);
+				//Line
+				currentLine = lineTargetFactory.Create();
+				currentLine.SetState(LineTargetState.Target);
+				lines.Add(currentLine);
+			}
+			if (TargetSkillData.isAoE)
+			{
+				//Area
+				currentArea = areaFactory.Create();
+				currentArea.SetRange(TargetSkillData.AoE.range);
+				currentArea.SetFade(0).FadeTo(0.8f);
+				areas.Add(currentArea);
+			}
+
+			isHasRange = TargetSkillData.range.rangeType == RangeType.Custom;
+			if (isHasRange && rangeArea == null)
+			{
+				rangeArea = areaFactory.Create();
+				rangeArea.SetRange(TargetSkillData.range.range);
+				rangeArea.SetFade(0).FadeTo(0.8f);
+				rangeArea.DrawDecal(character.Model.Transform.position);
 			}
 		}
 

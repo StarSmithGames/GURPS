@@ -24,6 +24,11 @@ namespace Game.Systems.VFX
 			projector.enabled = IsEnabled;
 		}
 
+		public void DrawDecal(Vector3 position)
+		{
+			transform.position = position + Vector3.up * 2;
+		}
+
 		public DecalVFX SetFade(float value)
 		{
 			projector.fadeFactor = value;

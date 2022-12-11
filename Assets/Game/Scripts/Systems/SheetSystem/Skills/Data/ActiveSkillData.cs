@@ -1,47 +1,52 @@
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 
+using UnityEditor.UIElements;
+
 using UnityEngine;
 
 namespace Game.Systems.SheetSystem.Skills
 {
 	public abstract class ActiveSkillData : SkillData
 	{
-		[Min(1)]
-		public float baseCooldown;
-		[Min(0)]
-		public int duration;//turns
-		public bool isHasLimitationsOnUse = false;
-		[ShowIf("isHasLimitationsOnUse")]
-		public SkillLimitations limitations;
-		[Space]
-		[HideLabel]
-		public SkillRange range;
 		[Space]
 		public List<ThrowsType> savingThrows;//or
+		[HideLabel]
+		[BoxGroup("Limitations")]
+		public SkillLimitations limitations;
+		[HideLabel]
+		[BoxGroup("Range")]
+		public SkillRange range;
 	}
 
 	public abstract class ActiveTargetSkillData : ActiveSkillData
 	{
-		[Space]
-		[Min(1)]
-		public int targetCount = 1;
-		public bool isCanTargetSelf = false;
+		[BoxGroup("Path")]
+		[HideLabel]
+		public SkillPath path;
 
-		[Space]
-		public bool isCanClampOnTarget = true;
-
-		[Space]
+		[BoxGroup("AoE")]
 		[LabelText("Is AoE")]
 		public bool isAoE = false;
+		[BoxGroup("AoE")]
 		[ShowIf("isAoE")]
 		[HideLabel]
 		public SkillAoE AoE;
+
+		[Min(1)]
+		public int targetCount = 1;
+		public bool isCanTargetSelf = false;
+		public bool isCanClampOnTarget = true;
+		//calculate collider
 	}
 
 	[System.Serializable]
 	public class SkillLimitations
 	{
+		[Min(1)]
+		public float baseCooldown;
+		[Min(0)]
+		public int duration;//turns
 		public bool isUseLimitOnBattle = false;
 		[ShowIf("isUseLimitOnBattle")]
 		[Min(1)]
@@ -62,6 +67,13 @@ namespace Game.Systems.SheetSystem.Skills
 		[SuffixLabel("m", true)]
 		[ShowIf("rangeType", RangeType.Custom)]
 		public float range;
+	}
+
+	[System.Serializable]
+	public class SkillPath
+	{
+		public bool drawPath = true;
+		public PathType pathType = PathType.Line;
 	}
 
 	[System.Serializable]
@@ -89,5 +101,12 @@ namespace Game.Systems.SheetSystem.Skills
 	public enum AoEType
 	{
 		Circle,
+	}
+
+	public enum PathType
+	{
+		Line,
+		Ballistic,
+		Custom
 	}
 }
