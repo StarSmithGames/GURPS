@@ -26,7 +26,7 @@ namespace Game.UI.CanvasSystem
 
 		private void OnDestroy()
 		{
-			signalBus?.Unsubscribe<SignalSaveStorage>(OnSaveStorage);
+			signalBus?.TryUnsubscribe<SignalSaveStorage>(OnSaveStorage);
 		}
 
 		private void OnSaveStorage(SignalSaveStorage signal)

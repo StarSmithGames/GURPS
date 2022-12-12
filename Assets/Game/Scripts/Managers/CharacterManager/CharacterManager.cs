@@ -1,21 +1,25 @@
 using Game.Entities;
 
+using UnityEngine;
+
 namespace Game.Managers.CharacterManager
 {
 	public class CharacterManager : Registrator<ICharacter>
 	{
 		public ICharacter Player { get; private set; }
 
+		private GlobalDatabase globalDatabase;
 		private Character.Factory characterFactory;
 
-		public CharacterManager(Character.Factory characterFactory)
+		public CharacterManager(GlobalDatabase globalDatabase, Character.Factory characterFactory)
 		{
+			this.globalDatabase = globalDatabase;
 			this.characterFactory = characterFactory;
 		}
 
 		public void CreatePlayer()
 		{
-			Player = characterFactory.Create(GlobalDatabase.Instance.player);
+			Player = characterFactory.Create(globalDatabase.player);
 			Registrate(Player);
 		}
 

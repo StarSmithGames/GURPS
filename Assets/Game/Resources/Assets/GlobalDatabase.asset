@@ -33,3 +33,23 @@ MonoBehaviour:
   HumanoidMesh: {fileID: 2959467708922500008, guid: fd56313c710324a4a8ac2e098912804b, type: 3}
   Stand: {fileID: -2124705421725058983, guid: ef5dc5a6583e8594b9e25edc274826e3, type: 3}
   Material: {fileID: 2100000, guid: 4c19ff0c854abe241af6a43c056a7724, type: 2}
+  data:
+    player: {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
+    allCharacters:
+    - {fileID: 11400000, guid: ce9a2e14e38a0524bbe071b2238f3529, type: 2}
+    - {fileID: 11400000, guid: 8428b7e128d1d9e4cb7f112f2fa30288, type: 2}
+    - {fileID: 11400000, guid: 4b4f6b172b0188c418c94fcc03e43afc, type: 2}
+    - {fileID: 11400000, guid: cfb8e78f85231eb4fab2bf87d164e5fb, type: 2}
+    - {fileID: 11400000, guid: 28e573d452c69444b9e739843eefe3ad, type: 2}
+    - {fileID: 11400000, guid: 3d0965b4c2f5ded48a4313efa89b19ea, type: 2}
+    - {fileID: 11400000, guid: f59df6427c58bf54ba8e111580501bb0, type: 2}
+    allContainers: []
+    allOutlines:
+    - {fileID: 11400000, guid: c1f6fbbf015f03040a2807c58f4d2757, type: 2}
+    - {fileID: 11400000, guid: 62ef047229344544d94fb2d24626b0ba, type: 2}
+    - {fileID: 11400000, guid: 2090a748b884fba4da463904d3569e3d, type: 2}
+    - {fileID: 11400000, guid: 8da6cbd86700e1c4eb39d1e1bf3cf740, type: 2}
+    - {fileID: 11400000, guid: e1aef224e7a47ad458afc3a8dc6c2f28, type: 2}
+    HumanoidMesh: {fileID: 2959467708922500008, guid: fd56313c710324a4a8ac2e098912804b, type: 3}
+    Stand: {fileID: -2124705421725058983, guid: ef5dc5a6583e8594b9e25edc274826e3, type: 3}
+    Material: {fileID: 2100000, guid: 4c19ff0c854abe241af6a43c056a7724, type: 2}

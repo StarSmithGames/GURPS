@@ -51,12 +51,12 @@ namespace Game.Editor
         {
             var tree = new OdinMenuTree();
 
-            GlobalDatabase.Instance.UpdateCharacterOverview();
-            GlobalDatabase.Instance.UpdateModelOverview();
-            GlobalDatabase.Instance.UpdateContainerOverview();
-            tree.Add("Characters",          new CharacterDataTable(GlobalDatabase.Instance.allCharacters));
-			//tree.Add("Models",              new ModelDataTable(GlobalDatabase.Instance.allModels));
-			tree.Add("Models/Containers",   new ContainerDataTable(GlobalDatabase.Instance.allContainers));
+            //GlobalDatabase.Instance.UpdateCharacterOverview();
+            //GlobalDatabase.Instance.UpdateModelOverview();
+            //GlobalDatabase.Instance.UpdateContainerOverview();
+            //tree.Add("Characters", new CharacterDataTable(GlobalDatabase.Instance.allCharacters));
+            //tree.Add("Models", new ModelDataTable(GlobalDatabase.Instance.allModels));
+            //tree.Add("Models/Containers", new ContainerDataTable(GlobalDatabase.Instance.allContainers));
 
             tree.AddAllAssetsAtPath("Characters", CharactersPath, typeof(CharacterData), true);
             tree.AddAllAssetsAtPath("Models", ModelsPath, typeof(ModelData), true);

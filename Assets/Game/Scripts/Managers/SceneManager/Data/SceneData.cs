@@ -57,7 +57,8 @@ namespace Game.Managers.SceneManager
 	{
 		Menu	= 0,
 		Empty	= 1,
-		Map		= 2,
-		Polygon = 3,
+		Game	= 2,
+		Map		= 3,
+		Polygon = 4,
 	}
 }

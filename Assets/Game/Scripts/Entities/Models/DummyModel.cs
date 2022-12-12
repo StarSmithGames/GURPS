@@ -5,6 +5,7 @@ using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
+using Game.Systems.InventorySystem;
 using Game.Systems.SheetSystem;
 
 using Sirenix.OdinInspector;
@@ -25,7 +26,7 @@ namespace Game.Entities.Models
 		[field: SerializeField] public Faction Faction { get; private set; }
 		[field: SerializeField] public CameraPivot CameraPivot { get; private set; }
 
-		public ModelData data;
+		public CharacterData data;
 
 		public override ISheet Sheet
 		{

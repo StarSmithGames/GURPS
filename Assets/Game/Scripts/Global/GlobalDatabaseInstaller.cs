@@ -1,38 +1,34 @@
 using EPOOutline;
-
 using Game.Entities;
 using Game.Systems.InventorySystem;
-
 using Sirenix.OdinInspector;
-using Sirenix.Utilities;
-
 using System.Collections.Generic;
 using System.Linq;
 
-using UnityEditor;
-
 using UnityEngine;
+using Zenject;
+using Sirenix.Utilities;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Game
 {
-    [GlobalConfig("Game/Resources/Assets")]
-    public class GlobalDatabase : GlobalConfig<GlobalDatabase>
-    {
-        [ReadOnly] public CharacterData player;
-        [ReadOnly] public CharacterData[] allCharacters;
-        //[ReadOnly] public ModelData[] allModels;
-        [Header("Inventory")]
-        [ReadOnly] public ContainerData[] allContainers;
-        [Header("Visual")]
-        public List<OutlineData> allOutlines = new List<OutlineData>();
-		[Header("Debug")]
-        public Mesh HumanoidMesh;
-        public Mesh Stand;
-        public Material Material;
+	[GlobalConfig("Game/Resources/Assets")]
+	[CreateAssetMenu(fileName = "GlobalDatabase", menuName = "GlobalDatabase")]
+    public class GlobalDatabaseInstaller : GlobalConfigInstaller<GlobalDatabaseInstaller>
+	{
+        [HideLabel]
+        public GlobalDatabase data;
+
+		public override void InstallBindings()
+		{
+            Container.BindInstance(data);
+		}
 
 #if UNITY_EDITOR
-
-        [Button(ButtonSizes.Medium, DirtyOnClick = true), PropertyOrder(-99)]
+		[Button(ButtonSizes.Medium, DirtyOnClick = true), PropertyOrder(-99)]
         public void UpdateAll()
         {
             UpdateCharacterOverview();
@@ -46,9 +42,9 @@ namespace Game
         [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-98)]
         public void UpdateCharacterOverview()
         {
-            allCharacters = LoadAssets<CharacterData>();
-            player = allCharacters.Where((x) => x.name == "Player").FirstOrDefault() as CharacterData;
-        }
+            data.allCharacters = LoadAssets<CharacterData>();
+			data.player = data.allCharacters.Where((x) => x.name == "Player").FirstOrDefault() as CharacterData;
+		}
 
         [Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-97)]
         public void UpdateModelOverview()
@@ -64,7 +60,7 @@ namespace Game
 		[Button(ButtonSizes.Small, DirtyOnClick = true), PropertyOrder(-95)]
 		public void UpdateOutlines()
 		{
-			allOutlines = LoadAssets<OutlineData>().ToList();
+			data.allOutlines = LoadAssets<OutlineData>().ToList();
 		}
 
 		public static T[] LoadAssets<T>(bool orderByName = true) where T : ScriptableObject
@@ -77,4 +73,19 @@ namespace Game
         }
 #endif
     }
+	[System.Serializable]
+	public class GlobalDatabase
+	{
+		public CharacterData player;
+		public CharacterData[] allCharacters;
+		//[ReadOnly] public ModelData[] allModels;
+		[Header("Inventory")]
+		public ContainerData[] allContainers;
+		[Header("Visual")]
+		public List<OutlineData> allOutlines = new List<OutlineData>();
+		[Header("Debug")]
+		public Mesh HumanoidMesh;
+		public Mesh Stand;
+		public Material Material;
+	}
 }

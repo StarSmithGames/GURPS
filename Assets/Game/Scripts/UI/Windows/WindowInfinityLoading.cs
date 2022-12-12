@@ -116,10 +116,12 @@ namespace Game.UI.Windows
 		{
 			transitionManager
 				.TransitionIn(transitionsIn,
-				() => {
+				() =>
+				{
 					Show();
 					//start progress
 					isProgressing = true;
+
 					asyncManager.StartCoroutine(LoadScene(scene, callback));
 				});
 		}

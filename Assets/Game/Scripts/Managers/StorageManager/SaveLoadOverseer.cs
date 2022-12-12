@@ -79,7 +79,7 @@ namespace Game.Managers.StorageManager
 
 			FastStorage.Clear();
 
-			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(Scenes.Map, transitionIn, transitionOut);
+			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(Scenes.Polygon, transitionIn, transitionOut);
 		}
 
 		/// <param name="callback">Вызывается до появления кнопки.</param>

@@ -19,7 +19,7 @@ namespace Game
 			Container.BindInstance(gameCanvas);
 			Container.BindInstance(brainCamera);
 
-			Container.BindInterfacesAndSelfTo<GamePipeline>().AsSingle();
+			Container.BindInterfacesAndSelfTo<GamePipeline>().AsSingle().NonLazy();
 
 			CharacterManagerInstaller.Install(Container);
 			PartyManagerInstaller.Install(Container);

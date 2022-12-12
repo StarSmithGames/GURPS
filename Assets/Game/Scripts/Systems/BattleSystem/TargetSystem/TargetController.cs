@@ -50,6 +50,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 
 		private CinemachineBrain brain;
 		private CameraVisionLocation cameraVision;
+		private GlobalDatabase globalDatabase;
 		private PointerVFX pointer;
 		private LineTargetVFX.Factory lineTargetFactory;
 		private RadialAreaDecalVFX.Factory areaFactory;
@@ -59,6 +60,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 		public TargetController(
 			CinemachineBrain brain,
 			CameraVisionLocation cameraVision,
+			GlobalDatabase globalDatabase,
 			PointerVFX pointer,
 			LineTargetVFX.Factory lineTargetFactory,
 			RadialAreaDecalVFX.Factory areaFactory,
@@ -67,6 +69,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 		{
 			this.brain = brain;
 			this.cameraVision = cameraVision;
+			this.globalDatabase = globalDatabase;
 			this.pointer = pointer;
 			this.lineTargetFactory = lineTargetFactory;
 			this.areaFactory = areaFactory;
@@ -80,7 +83,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			this.data = data;
 
 			path = new NavigationPath();
-			targetOutline = GlobalDatabase.Instance.allOutlines.Find((x) => x.outlineType == OutlineType.Target);
+			targetOutline = globalDatabase.allOutlines.Find((x) => x.outlineType == OutlineType.Target);
 
 			cursorSystem.SetCursor(CursorType.Base);
 			cameraVision.IsCanMouseClick = false;

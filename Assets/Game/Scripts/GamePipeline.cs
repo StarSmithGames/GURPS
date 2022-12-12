@@ -54,9 +54,9 @@ namespace Game.Managers.GameManager
 		private IEnumerator Pipeline()
 		{
 			Debug.Log("[GamePipeline] Pipeline Start");
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
 			//Profile == null ? generate player
-			if (!saveLoad.GetStorage().IsHasProfile)
+			//if (!saveLoad.GetStorage().IsHasProfile)
 			{
 				characterManager.CreatePlayer();
 				partyManager.CreatePlayerParty();
@@ -68,7 +68,7 @@ namespace Game.Managers.GameManager
 			{
 				yield return SpawnProcess();
 			}
-#endif
+//#endif
 			gameManager.ChangeState(GameState.Gameplay);
 
 			Debug.Log("[GamePipeline] Pipeline End");

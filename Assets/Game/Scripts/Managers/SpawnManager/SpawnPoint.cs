@@ -20,13 +20,15 @@ namespace Game.Systems.SpawnManager
 		private Coroutine spawnCoroutine = null;
 
 		private DiContainer container;
+		private GlobalDatabase globalDatabase;
 		private SpawnManager spawnManager;
 		private PartyManager partyManager;
 
 	   [Inject]
-		private void Construct(DiContainer container, SpawnManager spawnManager, PartyManager partyManager)
+		private void Construct(DiContainer container, GlobalDatabase globalDatabase, SpawnManager spawnManager, PartyManager partyManager)
 		{
 			this.container = container;
+			this.globalDatabase = globalDatabase;
 			this.spawnManager = spawnManager;
 			this.partyManager = partyManager;
 		}
@@ -89,11 +91,14 @@ namespace Game.Systems.SpawnManager
 
 		private void Draw()
 		{
-			bool isValid = GlobalDatabase.Instance.HumanoidMesh && GlobalDatabase.Instance.Stand && GlobalDatabase.Instance.Material;
+#if UNITY_EDITOR
+			globalDatabase = GlobalDatabaseInstaller.Instance.data;
+#endif
+			bool isValid = globalDatabase.HumanoidMesh && globalDatabase.Stand && globalDatabase.Material;
 
 			if (isValid)
 			{
-				var material = new Material(GlobalDatabase.Instance.Material);
+				var material = new Material(globalDatabase.Material);
 
 				if (settings.spawnType == SpawnType.Party)
 				{
@@ -117,8 +122,8 @@ namespace Game.Systems.SpawnManager
 
 			void DrawCharacter(Material material, Vector3 offset)
 			{
-				Graphics.DrawMesh(GlobalDatabase.Instance.Stand, transform.position + offset, transform.rotation * Quaternion.Euler(-90f, 0, 0), material, gameObject.layer);
-				Graphics.DrawMesh(GlobalDatabase.Instance.HumanoidMesh, transform.position + new Vector3(0, 0.05f, 0) + offset, transform.rotation * Quaternion.Euler(-90f, 0, 0), material, gameObject.layer);
+				Graphics.DrawMesh(globalDatabase.Stand, transform.position + offset, transform.rotation * Quaternion.Euler(-90f, 0, 0), material, gameObject.layer);
+				Graphics.DrawMesh(globalDatabase.HumanoidMesh, transform.position + new Vector3(0, 0.05f, 0) + offset, transform.rotation * Quaternion.Euler(-90f, 0, 0), material, gameObject.layer);
 			}
 		}
 

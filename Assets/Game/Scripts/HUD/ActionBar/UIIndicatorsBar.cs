@@ -1,3 +1,4 @@
+using Game.Managers.GameManager;
 using Game.Managers.PartyManager;
 using Game.Systems.SheetSystem;
 using Game.UI;
@@ -32,9 +33,16 @@ namespace Game.HUD
 			this.actionPointFactory = actionPointFactory;
 		}
 
+		private void Start()
+		{
+			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
+		}
+
 		private void OnDestroy()
 		{
 			signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+			signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
 
 			if (actionStat != null)
 			{
@@ -42,12 +50,6 @@ namespace Game.HUD
 			}
 		}
 
-		private void Start()
-		{
-			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
-
-			SetEntity(partyManager.PlayerParty.LeaderParty);
-		}
 
 		private void SetEntity(ISheetable sheetable)
 		{
@@ -98,6 +100,14 @@ namespace Game.HUD
 		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
 		{
 			SetEntity(signal.leader);
+		}
+
+		private void OnGameStateChanged(SignalGameStateChanged signal)
+		{
+			if(signal.newGameState == GameState.Gameplay)
+			{
+				SetEntity(partyManager.PlayerParty.LeaderParty);
+			}
 		}
 	}
 }

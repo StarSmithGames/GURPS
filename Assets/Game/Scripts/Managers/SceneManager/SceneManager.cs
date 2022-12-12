@@ -148,7 +148,24 @@ namespace Game.Managers.SceneManager
 			BuildProgressHandle handle = new BuildProgressHandle();
 			ProgressHandle = handle;
 
-			handle.AsyncOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(CurrentScene, LoadSceneMode.Single);
+			//Load Game
+			bool finded = false;
+			for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+			{
+				if (UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).name == SceneStorage.GetSceneName(Scenes.Game))
+				{
+					finded = true;
+					break;
+				}
+			}
+
+			if (!finded)
+			{
+				yield return LoadGameScene();
+			}
+
+			//Load Scene
+			handle.AsyncOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(CurrentScene, CurrentScene == "Menu" ? LoadSceneMode.Single : LoadSceneMode.Additive);
 			handle.AsyncOperation.allowSceneActivation = allow;
 
 			yield return handle.AsyncOperation;
@@ -163,7 +180,6 @@ namespace Game.Managers.SceneManager
 				Debug.LogError("REJECT Scene no loaded");
 			}
 		}
-
 
 		public AsyncOperation UnloadCurrentScene()
 		{
@@ -181,6 +197,15 @@ namespace Game.Managers.SceneManager
 		}
 
 
+		private AsyncOperation LoadGameScene()
+		{
+			BuildProgressHandle handle = new BuildProgressHandle();
+			handle.AsyncOperation = UnityEngine.SceneManagement.SceneManager.LoadSceneAsync(SceneStorage.GetSceneName(Scenes.Game), LoadSceneMode.Single);
+			handle.AsyncOperation.allowSceneActivation = true;
+
+			return handle.AsyncOperation;
+		}
+
 		private void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
 		{
 			var currentActiveScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
@@ -193,6 +218,7 @@ namespace Game.Managers.SceneManager
 		public static Dictionary<Scenes, string> scenes = new Dictionary<Scenes, string>()
 		{
 			{ Scenes.Menu,      "Menu" },
+			{ Scenes.Game,      "Game" },	
 			{ Scenes.Map,       "Map" },
 			{ Scenes.Polygon,   "Polygon" }
 		};

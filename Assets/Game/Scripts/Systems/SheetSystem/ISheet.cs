@@ -6,6 +6,8 @@ using Game.Systems.SheetSystem.Effects;
 using Game.Systems.SheetSystem.Skills;
 using Sirenix.OdinInspector;
 
+using UnityEngine;
+
 using Zenject;
 
 namespace Game.Systems.SheetSystem
@@ -151,6 +153,11 @@ namespace Game.Systems.SheetSystem
 
 		public ISheet Create(ModelData data)
 		{
+            if(data == null)
+            {
+                throw new System.NullReferenceException();
+            }
+
             if(data is CharacterData characterData)
             {
                 return characterSheetFactory.Create(characterData);
