@@ -118,11 +118,11 @@ namespace Game.Entities.Models
 	//IBattlable implementation
 	public partial class DummyModel
 	{
+		public event UnityAction onBattleChanged;
+
 		public bool InBattle => CurrentBattle != null;
 		public bool InAction { get; }
 		public BattleExecutor CurrentBattle { get; private set; }
-
-		public event UnityAction onBattleChanged;
 
 		public bool JoinBattle(BattleExecutor battle)
 		{
@@ -137,6 +137,8 @@ namespace Game.Entities.Models
 			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
 			CurrentBattle.onBattleOrderChanged += OnBattleOrderChanged;
 
+			onBattleChanged?.Invoke();
+
 			return true;
 		}
 
@@ -145,9 +147,12 @@ namespace Game.Entities.Models
 			if (CurrentBattle != null)
 			{
 				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
+				CurrentBattle.LeaveBattle(this);
+				CurrentBattle = null;
+
+				onBattleChanged?.Invoke();
 			}
 
-			CurrentBattle = null;
 			return true;
 		}
 
@@ -186,6 +191,12 @@ namespace Game.Entities.Models
 		public bool CombatWith(IDamageable damageable)
 		{
 			return false;
+		}
+
+		public override void Die()
+		{
+			LeaveBattle();
+			base.Die();
 		}
 	}
 }

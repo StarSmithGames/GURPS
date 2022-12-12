@@ -121,6 +121,62 @@ namespace Game.Systems.BattleSystem
 			}
 		}
 
+		
+		public void LeaveBattle(IBattlable entity)
+		{
+			if (CurrentState == BattleExecutorState.EndBattle) return;
+
+			if (Entities.Contains(entity))
+			{
+				//foreach (var round in Battle.FSM.Rounds)
+				//{
+				//	for (int i = round.Turns.Count - 1; i >= 0; i--)
+				//	{
+				//		var turn = round.Turns[i];
+
+				//		if (turn.Initiator == entity)
+				//		{
+				//			if (Battle.FSM.CurrentTurn == turn)
+				//			{
+				//				Battle.NextTurn();
+				//			}
+
+				//			if (round.Remove(turn))
+				//			{
+				//				Battle.onBattleUpdated?.Invoke();
+				//			}
+				//		}
+				//	}
+				//}
+
+				Entities.Remove(entity);
+
+				if(Entities.Count < 2)
+				{
+					TerminateBattle();
+				}
+			}
+		}
+
+		public void SkipTurn()
+		{
+			isSkipTurn = true;
+			onBattleTurnSkipped?.Invoke(CurrentInitiator);
+		}
+
+		public void TerminateBattle()
+		{
+			SetState(BattleExecutorState.EndBattle);
+			Stop();
+			Dispose();
+
+			if (statCoroutine != null)
+			{
+				asyncManager.StopCoroutine(statCoroutine);
+				statCoroutine = null;
+			}
+		}
+
 
 		private IEnumerator BattleProcess()
 		{
@@ -201,6 +257,11 @@ namespace Game.Systems.BattleSystem
 			Battle.NextTurn();
 		}
 
+
+		private void IsEnemyLeft()
+		{
+
+		}
 
 		private void UpdateStates()
 		{
@@ -291,41 +352,16 @@ namespace Game.Systems.BattleSystem
 			{
 				//if (!settings.isInfinityMoveStat)//required cheat
 				{
-					asyncManager.StartCoroutine(InitiatorSpendMove());
+					if(statCoroutine != null)
+					{
+						asyncManager.StopCoroutine(statCoroutine);
+						statCoroutine = null;
+					}
+
+					statCoroutine = asyncManager.StartCoroutine(InitiatorSpendMove());
 				}
 			}
 		}
-
-		private void OnDied(IEntityModel entity)
-		{
-			//if (Entities.Contains(entity))
-			//{
-			//	foreach (var round in BattleFSM.Rounds)
-			//	{
-			//		for (int i = round.Turns.Count - 1; i >= 0; i--)
-			//		{
-			//			var turn = round.Turns[i];
-
-			//			if (turn.Initiator == entity)
-			//			{
-			//				if (BattleFSM.CurrentTurn == turn)
-			//				{
-			//					NextTurn();
-			//				}
-
-			//				if (round.Remove(turn))
-			//				{
-			//					onBattleUpdated?.Invoke();
-			//				}
-			//			}
-			//		}
-			//	}
-
-			//	Entities.Remove(entity as IBattlable);
-			//	onEntitiesChanged?.Invoke();
-			//}
-		}
-
 
 		public class Settings
 		{
@@ -340,29 +376,11 @@ namespace Game.Systems.BattleSystem
 		public class Factory : PlaceholderFactory<Settings, BattleExecutor> { }
 	}
 
-	//Skip
-	partial class BattleExecutor
-	{
-		//public bool IsSkipProcess => skipCoroutine != null;
-		//private Coroutine skipCoroutine = null;
-
-		public void SkipTurn()
-		{
-			isSkipTurn = true;
-			onBattleTurnSkipped?.Invoke(CurrentInitiator);
-		}
-
-		public void TerminateBattle()
-		{
-			SetState(BattleExecutorState.EndBattle);
-			Stop();
-			Dispose();
-		}
-	}
-
 	//Sheet
 	partial class BattleExecutor
 	{
+		private Coroutine statCoroutine;
+
 		private IEnumerator InitiatorSpendMove()
 		{
 			IStat stat = (CurrentInitiator as ISheetable).Sheet.Stats.Move;

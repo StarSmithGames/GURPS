@@ -6,6 +6,7 @@ using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
@@ -84,6 +85,8 @@ namespace Game.Entities.Models
 
 	public abstract class DamageableModel : Model, ISheetable, IDamageable, IDieable
 	{
+		public event UnityAction<IDieable> onDied;
+
 		[field: SerializeField] public Vector3 DamagePosition { get; protected set; }
 		public virtual InteractionPoint BattlePoint { get; protected set; }
 		public virtual MarkPoint MarkPoint { get; protected set; }
@@ -103,6 +106,8 @@ namespace Game.Entities.Models
 		public virtual void Die()
 		{
 			gameObject.SetActive(false);
+
+			onDied?.Invoke(this);
 		}
 	}
 }

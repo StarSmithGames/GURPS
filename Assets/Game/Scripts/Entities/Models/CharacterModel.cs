@@ -317,10 +317,14 @@ namespace Game.Entities.Models
 
 		public virtual bool LeaveBattle()
 		{
-			CurrentBattle = null;
+			if(CurrentBattle != null)
+			{
+				CurrentBattle.LeaveBattle(this);
+				CurrentBattle = null;
 
-			signalBus?.Fire(new SignalLeaveBattleLocal());
-			onBattleChanged?.Invoke();
+				signalBus?.Fire(new SignalLeaveBattleLocal());
+				onBattleChanged?.Invoke();
+			}
 
 			return true;
 		}
@@ -329,6 +333,8 @@ namespace Game.Entities.Models
 	//ICombatable implementation
 	partial class CharacterModel
 	{
+		public event UnityAction<IDieable> onDied;
+
 		[field: SerializeField] public Vector3 DamagePosition { get; private set; }
 		[field: SerializeField] public InteractionPoint BattlePoint { get; private set; }
 		[field: SerializeField] public InteractionPoint OpportunityPoint { get; private set; }
@@ -390,6 +396,13 @@ namespace Game.Entities.Models
 		{
 			Controller.Enable(false);
 			AnimatorController.Death();
+
+			if (InBattle)
+			{
+				LeaveBattle();
+			}
+
+			onDied?.Invoke(this);
 		}
 
 		protected Vector2 GetDamageFromTable()

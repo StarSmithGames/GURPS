@@ -13,7 +13,7 @@ using UnityEditor;
 
 namespace Game.Systems.InventorySystem
 {
-	public class ContainerModel : DamageableModel, IContainer, IDestructible
+	public class ContainerModel : DamageableModel, IContainer
 	{
 		public bool IsOpened => window?.IsShowing ?? false;
 		public bool IsLocked => data.isLocked;
@@ -103,16 +103,6 @@ namespace Game.Systems.InventorySystem
 			}
 		}
 
-
-		public override void Die()
-		{
-			Destruct();
-		}
-
-		public void Destruct()
-		{
-			gameObject.SetActive(false);
-		}
 
 		#region UnLock Open Close Dispose
 		public void UnLock(IInteractable interactor)

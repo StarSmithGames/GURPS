@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Zenject;
 using Game.UI.CanvasSystem;
 using Game.Systems.BattleSystem;
+using Game.Managers.PartyManager;
 
 namespace Game.HUD
 {
@@ -20,12 +21,14 @@ namespace Game.HUD
 
 		private SignalBus signalBus;
 		private UISubCanvas subCanvas;
+		private PartyManager partyManager;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, UISubCanvas subCanvas)
+		private void Construct(SignalBus signalBus, UISubCanvas subCanvas, PartyManager partyManager)
 		{
 			this.signalBus = signalBus;
 			this.subCanvas = subCanvas;
+			this.partyManager = partyManager;
 		}
 
 		private void Start()
@@ -142,7 +145,9 @@ namespace Game.HUD
 		{
 			RunAway.interactable = false;
 
-			currentBattleExecutor.TerminateBattle();
+			partyManager.PlayerParty.LeaderParty.Model.LeaveBattle();
+
+			//currentBattleExecutor.TerminateBattle();
 		}
 	}
 }
