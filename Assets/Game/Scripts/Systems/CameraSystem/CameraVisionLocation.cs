@@ -244,9 +244,7 @@ namespace Game.Systems.CameraSystem
 				{
 					if (leaderModel.IsWithRangedWeapon && CurrentObserve != leaderModel)
 					{
-						//leaderModel.Controller.RotateTo(point);
-						//leaderModel.Markers.SplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
-						//leaderModel.Markers.AdditionalSplineMarker.Path(leaderModel.Outfit.LeftHandPivot.position, point);
+
 					}
 					else if (CurrentObserve is ICombatable combatable)
 					{
@@ -289,7 +287,6 @@ namespace Game.Systems.CameraSystem
 				}
 				else//Free space
 				{
-					
 					SetDestination();
 				}
 			}
@@ -320,13 +317,6 @@ namespace Game.Systems.CameraSystem
 				if (leaderModel.IsWithRangedWeapon)
 				{
 					leaderModel.SetTarget(leaderModel.Transform.position);//hide target
-
-					//leaderModel.Markers.AdditionalSplineMarker.Enable(true);
-					//leaderModel.Markers.SplineMarker.Enable(true);
-
-					//leaderModel.Markers.AreaDecal.Radius = leaderModel.CharacterRange;
-					//leaderModel.Markers.AreaDecal.Enable(true);
-					//leaderModel.Markers.AreaDecal.DrawCircle();
 				}
 			}
 		}

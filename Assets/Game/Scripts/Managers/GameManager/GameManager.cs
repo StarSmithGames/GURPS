@@ -10,7 +10,7 @@ namespace Game.Managers.GameManager
 
         public GameLocation CurrentGameLocation { get; private set; }
 
-        private SignalBus signalBus;
+		private SignalBus signalBus;
 
         public GameManager(SignalBus signalBus)
 		{
@@ -62,10 +62,5 @@ namespace Game.Managers.GameManager
         None,
         Map,
         Location,
-	}
-
-    public enum GameplayType
-	{
-        //battle
 	}
 }

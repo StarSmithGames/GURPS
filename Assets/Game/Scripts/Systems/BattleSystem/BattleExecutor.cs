@@ -24,6 +24,7 @@ namespace Game.Systems.BattleSystem
 		/// </summary>
 		public UnityAction<BattleExecutorState, BattleExecutorState> onBattleStateChanged;
 		public UnityAction<BattleOrder> onBattleOrderChanged;
+		public UnityAction<IBattlable> onBattleTurnSkipped;
 
 		public bool InitiatorCanAct { get; private set; }
 		public bool IsPlayerTurn { get; private set; }
@@ -126,7 +127,6 @@ namespace Game.Systems.BattleSystem
 			while (!terminateBattle)
 			{
 				UpdateStates();
-				//UpdateInitiatorTurn();
 
 				if (!InitiatorCanAct)
 				{
@@ -349,6 +349,7 @@ namespace Game.Systems.BattleSystem
 		public void SkipTurn()
 		{
 			isSkipTurn = true;
+			onBattleTurnSkipped?.Invoke(CurrentInitiator);
 		}
 
 		public void TerminateBattle()

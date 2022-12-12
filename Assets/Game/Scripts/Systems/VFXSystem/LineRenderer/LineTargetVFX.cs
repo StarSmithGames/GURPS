@@ -5,19 +5,17 @@ using System.Collections.Generic;
 
 namespace Game.Systems.VFX
 {
-	public class LineTargetVFX : PoolableObject
+	public class LineTargetVFX : LineVFX
 	{
-		[field: SerializeField] public LineRenderer BaseLine { get; private set; }
 		[field: SerializeField] public LineRenderer AboveAnimatedLine { get; private set; }
 		[Space]
 		[SerializeField] private Gradient stateTarget;
 		[SerializeField] private Gradient stateTargeted;
 
-		public void DrawLine(Vector3[] points)
+		public override void DrawLine(Vector3[] points)
 		{
-			if (points == null) return;
+			base.DrawLine(points);
 
-			DrawLine(BaseLine, points);
 			DrawLine(AboveAnimatedLine, points);
 		}
 
@@ -36,47 +34,6 @@ namespace Game.Systems.VFX
 			}
 
 			return this;
-		}
-
-		public void FadeOut()
-		{
-			Color startColor = BaseLine.startColor;
-			Color endColor = BaseLine.endColor;
-
-			DOTween.To(() => startColor.a,
-			x => {
-				startColor.a = x;
-				endColor.a = x;
-
-				BaseLine.startColor = startColor;
-				BaseLine.endColor = endColor;
-			},
-			0f, 0.25f)
-			.OnComplete(DespawnIt);
-		}
-
-		public override void OnSpawned(IMemoryPool pool)
-		{
-			Color startColor = BaseLine.startColor;
-			Color endColor = BaseLine.endColor;
-
-			startColor.a = 1f;
-			endColor.a = 1f;
-
-			BaseLine.startColor = startColor;
-			BaseLine.endColor = endColor;
-
-			base.OnSpawned(pool);
-		}
-
-		private void DrawLine(LineRenderer line, Vector3[] points)
-		{
-			line.loop = false;
-			line.useWorldSpace = true;
-
-			line.positionCount = points.Length;
-
-			line.SetPositions(points);
 		}
 
 		public class Factory : PlaceholderFactory<LineTargetVFX> { }

@@ -16,6 +16,9 @@ MonoBehaviour:
   pointer2DPrefab: {fileID: 3591282316941683730, guid: a71730313e2e8c949bb4a78656ccddfa, type: 3}
   pointerPrefab: {fileID: 6700676064161337029, guid: 2666572bdf228d54fa358e510e8f2ae5, type: 3}
   lineTargetPrefab: {fileID: 2617022102928383705, guid: 6e5bdb3ab4cb8ad4da2d5fdb705bea3e, type: 3}
+  linePathPrefab: {fileID: 4199741864394814087, guid: e8d916cc58f82e54792c1384adba3613, type: 3}
+  targetDecalPrefab: {fileID: 3550985447988768777, guid: ce9861538a4da8847aa80fa59af4a03b, type: 3}
+  folowDecalPrefab: {fileID: 3550985447988768777, guid: ce9861538a4da8847aa80fa59af4a03b, type: 3}
   radialAreaDecalPrefab: {fileID: 4820780749166356202, guid: cc616efb6101ad346b0eaa16e033712c, type: 3}
   electricBallPrefab: {fileID: 2495577799142579280, guid: 5bc38ce8b83624f4d94844c673c128c6, type: 3}
   electricBall2Prefab: {fileID: 2495577799142579280, guid: 0c99a33e796b03c449c59618792539ab, type: 3}

@@ -1,8 +1,7 @@
 using Cinemachine;
-
 using EPOOutline;
-
-using Game.Entities;
+using Game.Managers.GameManager;
+using Game.Managers.PartyManager;
 using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.CursorSystem;
@@ -10,25 +9,23 @@ using Game.Systems.NavigationSystem;
 using Game.Systems.SheetSystem.Skills;
 using Game.Systems.TooltipSystem;
 using Game.Systems.VFX;
-
 using Sirenix.OdinInspector;
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-
 using UnityEngine;
 using UnityEngine.Events;
 
 using Zenject;
 
-namespace Game.Systems.BattleSystem.TargetSystem
+namespace Game.Entities
 {
-	public partial class TargetController
+	public partial class TargetController : IInitializable, IDisposable
 	{
+		public UnityAction onCastChanged;
 		public UnityAction<IDamageable> onTargetChanged;
 		public Func<IDamageable, bool> onTargetValid;
+
+		public bool IsEnabled { get; private set; }
 
 		public Vector3 LastWorldPosition { get; private set; }
 		public IDamageable CurrentTarget { get; private set; }
@@ -36,7 +33,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 
 		private List<IDamageable> targets = new List<IDamageable>();
 
-		private ICharacter character;
+		private ICharacter currentCharacter;
 		private ActiveTargetSkillData data;
 
 		private Plane plane = new Plane(Vector3.up, 0);
@@ -48,25 +45,30 @@ namespace Game.Systems.BattleSystem.TargetSystem
 		private OutlineData targetOutline;
 		private NavigationPath path;
 
+		private SignalBus signalBus;
+		private PartyManager partyManager;
 		private CinemachineBrain brain;
 		private CameraVisionLocation cameraVision;
 		private GlobalDatabase globalDatabase;
 		private PointerVFX pointer;
 		private LineTargetVFX.Factory lineTargetFactory;
 		private RadialAreaDecalVFX.Factory areaFactory;
-		private TooltipSystem.TooltipSystem tooltipSystem;
-		private CursorSystem.CursorSystem cursorSystem;
+		private TooltipSystem tooltipSystem;
+		private CursorSystem cursorSystem;
 
-		public TargetController(
+		public TargetController(SignalBus signalBus,
+			PartyManager partyManager,
 			CinemachineBrain brain,
 			CameraVisionLocation cameraVision,
 			GlobalDatabase globalDatabase,
 			PointerVFX pointer,
 			LineTargetVFX.Factory lineTargetFactory,
 			RadialAreaDecalVFX.Factory areaFactory,
-			TooltipSystem.TooltipSystem tooltipSystem,
-			CursorSystem.CursorSystem cursorSystem)
+			TooltipSystem tooltipSystem,
+			CursorSystem cursorSystem)
 		{
+			this.signalBus = signalBus;
+			this.partyManager = partyManager;
 			this.brain = brain;
 			this.cameraVision = cameraVision;
 			this.globalDatabase = globalDatabase;
@@ -77,27 +79,41 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			this.cursorSystem = cursorSystem;
 		}
 
-		public void Begin(ICharacter character, ActiveTargetSkillData data)
+		public void Initialize()
 		{
-			this.character = character;
+			signalBus?.Subscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+			signalBus?.Subscribe<SignalGameStateChanged>(OnGameStateChanged);
+		}
+
+		public void Dispose()
+		{
+			signalBus?.Unsubscribe<SignalLeaderPartyChanged>(OnLeaderPartyChanged);
+			signalBus?.Unsubscribe<SignalGameStateChanged>(OnGameStateChanged);
+		}
+
+
+		public void BeginCastSkill(ActiveTargetSkillData data)
+		{
 			this.data = data;
 
 			path = new NavigationPath();
 			targetOutline = globalDatabase.allOutlines.Find((x) => x.outlineType == OutlineType.Target);
 
 			cursorSystem.SetCursor(CursorType.Base);
-			cameraVision.IsCanMouseClick = false;
 
 			//Visual
 			CreatePropsForTarget();
 			UpdateTooltipPath();
 			UpdateTooltipTargets();
+
+			IsEnabled = true;
+
+			onCastChanged?.Invoke();
 		}
 
 		public void End()
 		{
 			cursorSystem.SetCursor(CursorType.Hand);
-			cameraVision.IsCanMouseClick = true;
 			tooltipSystem.SetRuller(TooltipRulerType.None);
 			tooltipSystem.SetMessage(TooltipMessageType.None);
 			tooltipSystem.SetMessage("", TooltipAdditionalMessageType.None);
@@ -110,6 +126,10 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			areas.Clear();
 			currentArea = null;
 			rangeArea = null;
+
+			IsEnabled = false;
+
+			onCastChanged?.Invoke();
 		}
 
 		public void Tick()
@@ -191,23 +211,41 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			//Range Check
 			if (data.range.IsHasRange)
 			{
-				if (!Range.IsIn(character.Model.MarkPoint.transform.position, damageable.MarkPoint.transform.position, data.range.range)) return null;
+				if (!Range.IsIn(currentCharacter.Model.MarkPoint.transform.position, damageable.MarkPoint.transform.position, data.range.range)) return null;
 			}
 			else
 			{
 				if (data.range.rangeType == RangeType.None)
 				{
-					if (damageable != character.Model) return null;
+					if (damageable != currentCharacter.Model) return null;
 				}
 			}
 
 			//Self Check
-			if (damageable == character.Model)
+			if (damageable == currentCharacter.Model)
 			{
 				if (!data.isCanTargetSelf) return null;
 			}
 
 			return damageable;
+		}
+
+		private void SetLeader(ICharacter character)
+		{
+			currentCharacter = character;
+		}
+
+		private void OnLeaderPartyChanged(SignalLeaderPartyChanged signal)
+		{
+			SetLeader(signal.leader);
+		}
+
+		private void OnGameStateChanged(SignalGameStateChanged signal)
+		{
+			if (signal.newGameState == GameState.Gameplay)
+			{
+				SetLeader(partyManager.PlayerParty.LeaderParty);
+			}
 		}
 	}
 
@@ -217,7 +255,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 		{
 			pointer.SetPosition(LastWorldPosition);
 
-			path.SetPath(new Vector3[] { character.Model.MarkPoint.transform.position, LastWorldPosition });
+			path.SetPath(new Vector3[] { currentCharacter.Model.MarkPoint.transform.position, LastWorldPosition });
 
 			if (data.path.pathType == PathType.Line)
 			{
@@ -225,7 +263,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			}
 			else if (data.path.pathType == PathType.Ballistic)
 			{
-				currentLine?.DrawLine(KinematicBallistic.GetTraectory(character.Model.MarkPoint.transform.position, LastWorldPosition));
+				currentLine?.DrawLine(KinematicBallistic.GetTraectory(currentCharacter.Model.MarkPoint.transform.position, LastWorldPosition));
 			}
 
 			currentArea?.DrawDecal(LastWorldPosition);//TargetSkillData.isAoE
@@ -236,18 +274,18 @@ namespace Game.Systems.BattleSystem.TargetSystem
 			pointer.Enable(false);
 			for (int i = 0; i < lines.Count; i++)
 			{
-				lines[i].FadeOut();
+				lines[i].FadeTo(0, true);
 			}
 			if (data.isAoE)
 			{
 				for (int i = 0; i < areas.Count; i++)
 				{
-					areas[i].FadeTo(0);
+					areas[i].FadeTo(0, despawnItOnEnd: true);
 				}
 			}
 			if (data.range.IsHasRange)
 			{
-				rangeArea.FadeTo(0);
+				rangeArea.FadeTo(0, despawnItOnEnd: true);
 			}
 		}
 
@@ -276,7 +314,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 				rangeArea = areaFactory.Create();
 				rangeArea.SetRange(data.range.range);
 				rangeArea.SetFade(0).FadeTo(0.8f);
-				rangeArea.DrawDecal(character.Model.Transform.position);
+				rangeArea.DrawDecal(currentCharacter.Model.Transform.position);
 			}
 		}
 
@@ -284,7 +322,7 @@ namespace Game.Systems.BattleSystem.TargetSystem
 		{
 			if (data.range.IsHasRange)
 			{
-				if (!Range.IsIn(character.Model.Transform.position, LastWorldPosition, data.range.range))
+				if (!Range.IsIn(currentCharacter.Model.Transform.position, LastWorldPosition, data.range.range))
 				{
 					tooltipSystem.SetMessage(TooltipMessageType.OutOfRange);
 				}

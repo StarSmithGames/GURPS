@@ -8,10 +8,6 @@ namespace Game.Entities
 {
 	public partial class Markers : MonoBehaviour
 	{
-		[field: SerializeField] public DecalVFX FollowDecal { get; private set; }
-		[field: SerializeField] public DecalVFX TargetDecal { get; private set; }
-		[field: SerializeField] public LineRendererLineVFX LineMarker { get; private set; }
-		[Space]
 		[SerializeField] private List<Color> colors = new List<Color>();
 
 		[field: Space]
@@ -21,18 +17,11 @@ namespace Game.Entities
 		private void Start()
 		{
 			Assert.AreEqual(colors.Count, Enum.GetValues(typeof(MaterialType)).Length, "Colors count are not equal enum");
-
-			TargetDecal.transform.parent = null;
 		}
 
 		public void SetFollowMaterial(MaterialType type)
 		{
-			FollowDecal.SetColor(colors[(int)type]);
-		}
-
-		public void EnableSingleTargetLine(bool trigger)
-		{
-			LineMarker.Enable(trigger);
+			//FollowDecal.SetColor(colors[(int)type]);
 		}
 	}
 
@@ -40,13 +29,6 @@ namespace Game.Entities
 	{
 		public static void Reset(this Markers markers)
 		{
-			markers.FollowDecal.Enable(false);
-
-			markers.TargetDecal.transform.parent = null;
-			markers.TargetDecal.Enable(false);
-
-			markers.LineMarker.Enable(false);
-
 			markers.Exclamation.Enable(false);
 			markers.Question.Enable(false);
 		}

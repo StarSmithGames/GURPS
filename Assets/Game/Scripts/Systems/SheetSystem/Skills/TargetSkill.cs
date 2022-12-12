@@ -1,4 +1,5 @@
-using Game.Systems.BattleSystem.TargetSystem;
+using Game.Entities;
+using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.NavigationSystem;
 using Game.Systems.VFX;
@@ -21,12 +22,14 @@ namespace Game.Systems.SheetSystem.Skills
 
 		private TargetController targetController;
 		private CombatFactory combatFactory;
+		private CameraVisionLocation cameraVision;
 
 		[Inject]
-		private void Construct(TargetController targetController, CombatFactory combatFactory)
+		private void Construct(TargetController targetController, CombatFactory combatFactory, CameraVisionLocation cameraVision)
 		{
 			this.targetController = targetController;
 			this.combatFactory = combatFactory;
+			this.cameraVision = cameraVision;
 		}
 
 		protected override void Update()
@@ -57,7 +60,9 @@ namespace Game.Systems.SheetSystem.Skills
 
 			targetController.onTargetChanged += OnTargetChanged;
 			targetController.onTargetValid += OnTargetValid;
-			targetController.Begin(character, TargetSkillData);
+			targetController.BeginCastSkill(TargetSkillData);
+
+			cameraVision.IsCanMouseClick = false;
 
 			base.BeginProcess();
 		}
@@ -100,6 +105,11 @@ namespace Game.Systems.SheetSystem.Skills
 				targetController.FadeOutProps();
 				targetController.End();
 
+				if (!character.Model.InBattle)
+				{
+					cameraVision.IsCanMouseClick = true;
+				}
+
 				character.Model.Freeze(false);
 
 				if (status == SkillStatus.Canceled)
@@ -110,6 +120,13 @@ namespace Game.Systems.SheetSystem.Skills
 			else if (status == SkillStatus.Running)
 			{
 				targetController.FadeOutProps();
+			}
+			else if(status == SkillStatus.Successed)
+			{
+				if (character.Model.InBattle)
+				{
+					cameraVision.IsCanMouseClick = true;
+				}
 			}
 		}
 

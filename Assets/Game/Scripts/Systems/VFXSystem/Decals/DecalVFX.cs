@@ -37,7 +37,7 @@ namespace Game.Systems.VFX
 			return this;
 		}
 
-		public void FadeTo(float end, float duration = 0.25f, UnityAction callback = null)
+		public void FadeTo(float end, float duration = 0.25f, bool despawnItOnEnd = false, UnityAction callback = null)
 		{
 			Enable(true);
 
@@ -48,7 +48,10 @@ namespace Game.Systems.VFX
 					.OnComplete(() =>
 					{
 						Enable(false);
-						DespawnIt();
+						if (despawnItOnEnd)
+						{
+							DespawnIt();
+						}
 						callback?.Invoke();
 					});
 			}
@@ -56,7 +59,14 @@ namespace Game.Systems.VFX
 			{
 				DOTween
 					.To(() => projector.fadeFactor, x => projector.fadeFactor = x, end, duration)
-					.OnComplete(() => { callback?.Invoke(); });
+					.OnComplete(() =>
+					{
+						if (despawnItOnEnd)
+						{
+							DespawnIt();
+						}
+						callback?.Invoke();
+					});
 			}
 		}
 

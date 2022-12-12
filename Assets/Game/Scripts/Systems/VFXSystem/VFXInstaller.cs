@@ -14,7 +14,10 @@ namespace Game.Systems.VFX
 		[Header("Lines")]
 		public PointerVFX pointerPrefab;
 		public LineTargetVFX lineTargetPrefab;
-		[Header("Areas")]
+		public LinePathVFX linePathPrefab;
+		[Header("Decals")]
+		public DecalVFX targetDecalPrefab;
+		public DecalVFX folowDecalPrefab;
 		public RadialAreaDecalVFX radialAreaDecalPrefab;
 		[Header("Projectiles")]
 		public ElectricBallProjectileVFX electricBallPrefab;
@@ -40,20 +43,34 @@ namespace Game.Systems.VFX
 				.NonLazy();
 
 			BindLines();
-			BindAreas();
+			BindDecals();
 			BindProjectiles();
 		}
 
 		private void BindLines()
 		{
 			Container
+				.BindFactory<LinePathVFX, LinePathVFX.Factory>()
+				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
+				.FromComponentInNewPrefab(linePathPrefab));
+
+			Container
 				.BindFactory<LineTargetVFX, LineTargetVFX.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)
 				.FromComponentInNewPrefab(lineTargetPrefab));
 		}
 
-		private void BindAreas()
+		private void BindDecals()
 		{
+			Container
+				.Bind<DecalVFX>()
+				.WithId("TargetDecal")
+				.FromComponentInNewPrefab(targetDecalPrefab).AsTransient();
+			Container
+				.Bind<DecalVFX>()
+				.WithId("FolowDecal")
+				.FromComponentInNewPrefab(folowDecalPrefab).AsTransient();
+
 			Container
 				.BindFactory<RadialAreaDecalVFX, RadialAreaDecalVFX.Factory>()
 				.FromMonoPoolableMemoryPool((x) => x.WithInitialSize(1)

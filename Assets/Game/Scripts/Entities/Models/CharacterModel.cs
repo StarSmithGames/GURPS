@@ -6,9 +6,9 @@ using Game.Systems.CombatDamageSystem;
 using Game.Systems.DialogueSystem;
 using Game.Systems.InteractionSystem;
 using Game.Systems.SheetSystem;
-using Game.Systems.SheetSystem.Skills;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 using Zenject;
 
@@ -41,6 +41,7 @@ namespace Game.Entities.Models
 
 		public CharacterOutfit Outfit { get; private set; }
 		public AnimatorController AnimatorController { get; private set; }
+		public Markers Markers { get; protected set; }
 		public CameraPivot CameraPivot { get; private set; }
 		public MarkPoint MarkPoint { get; protected set; }
 
@@ -75,15 +76,9 @@ namespace Game.Entities.Models
 			Outline.enabled = false;
 			Markers.Reset();
 
-			InitializePersonality();
 			AnimatorController.Initialize();
 			
 			yield return null;
-
-			//equipment = (Sheet as CharacterSheet).Equipment;
-
-			Controller.onReachedDestination += OnReachedDestination;
-			//equipment.WeaponCurrent.onEquipWeaponChanged += OnEquipWeaponChanged;
 
 			signalBus?.Subscribe<SignalStartDialogue>(OnDialogueStarted);
 			signalBus?.Subscribe<SignalEndDialogue>(OnDialogueEnded);
@@ -97,71 +92,7 @@ namespace Game.Entities.Models
 			signalBus?.Unsubscribe<SignalStartDialogue>(OnDialogueStarted);
 			signalBus?.Unsubscribe<SignalEndDialogue>(OnDialogueEnded);
 
-			Controller.onReachedDestination -= OnReachedDestination;
-
 			base.OnDestroy();
-
-			//if (equipment != null)
-			//{
-			//	equipment.WeaponCurrent.onEquipWeaponChanged -= OnEquipWeaponChanged;
-			//}
-		}
-
-		private void Update()
-		{
-			Markers.TargetDecal.transform.position = Navigation.CurrentNavMeshDestination;
-
-			if (InBattle)
-			{
-				BattleTick();
-			}
-		}
-
-		protected virtual void InitializePersonality()
-		{
-			//Character = new Character(this, data);
-		}
-
-		public override void SetDestination(Vector3 destination, float maxPathDistance = -1)
-		{
-			if (!InBattle)
-			{
-				base.SetDestination(destination, maxPathDistance);
-
-				//Fade-In TargetMarker
-				if (Controller.IsHasTarget)
-				{
-					if (!Markers.TargetDecal.IsEnabled)
-					{
-						Markers.TargetDecal.FadeTo(1f, 0.25f);
-					}
-				}
-			}
-			else
-			{
-				SetDestinationInBattle(destination, maxPathDistance);
-			}
-		}
-
-		private void OnReachedDestination()
-		{
-			if (!InBattle)
-			{
-				//Fade-Out TargetMarker
-				if (Markers.TargetDecal.IsEnabled)
-				{
-					Markers.TargetDecal.FadeTo(0, 0.2f);
-				}
-			}
-			else
-			{
-				OnReachedDestinationInBattle();
-			}
-		}
-
-		private void OnEquipWeaponChanged()
-		{
-			//IsWithRangedWeapon = equipment.WeaponCurrent.Main.CurrentItem?.IsRangedWeapon ?? false;
 		}
 
 		public Data GetData()
@@ -181,60 +112,6 @@ namespace Game.Entities.Models
 		{
 			public DefaultTransform transform;
 		}
-	}
-
-	//Visual
-	partial class CharacterModel
-	{
-		public Markers Markers { get; protected set; }
-
-		public bool IsLineAnimationProcess => LineAnimationCoroutine != null;
-		private Coroutine LineAnimationCoroutine = null;
-
-		private IEnumerator LineAnimation()
-		{
-			while (Navigation.NavMeshInvertedPercentRemainingDistance < 0.99f)
-			{
-				var path = Navigation.CurrentPath.Path;
-				var point = Navigation.FindPointAlongPath(Navigation.CurrentPath, Navigation.NavMeshInvertedPercentRemainingDistance);
-
-				float minDistance = float.MaxValue;
-				int index = -1;
-				for (int i = 0; i < path.Count; i++)
-				{
-					var distance = Vector3.Distance(point, path[i]);
-					if (distance < minDistance)
-					{
-						minDistance = distance;
-						index = i;
-					}
-				}
-
-				if (index != -1)
-				{
-					path[index] = point;
-
-					if (index > 0)
-					{
-						for (int i = 0; i < index; i++)
-						{
-							path.Remove(path[i]);
-						}
-					}
-				}
-
-				Markers.LineMarker.DrawLine(path.ToArray());
-				yield return null;
-			}
-
-			LineAnimationCoroutine = null;
-		}
-	}
-
-	//
-	partial class CharacterModel
-	{
-
 	}
 
 	//IActor implementation
@@ -421,126 +298,31 @@ namespace Game.Entities.Models
 	//IBattlable, Battle & Animations implementation
 	partial class CharacterModel
 	{
+		public event UnityAction onBattleChanged;
+
 		public bool InBattle => CurrentBattle != null;
 		public BattleExecutor CurrentBattle { get; private set; }
 
 		public bool IsCanBattleMove => Sheet.Stats.Move.CurrentValue >= 0.1f;
-		private bool IsMoveAvailable => InBattle && isMineTurn && IsCanBattleMove;
-
-		private bool isMineTurn = false;
-
-		protected virtual void BattleTick()
-		{
-			if (isMineTurn)
-			{
-				if (IsHasTarget)
-				{
-					//if (!IsLineAnimationProcess)
-					//{
-					//	LineAnimationCoroutine = StartCoroutine(LineAnimation());
-					//}
-				}
-				else
-				{
-					Markers.LineMarker.DrawLine(Navigation.CurrentPath.Path.ToArray());
-				}
-			}
-		}
 
 		public virtual bool JoinBattle(BattleExecutor battle)
 		{
-			BattleUnsubscribe();
-
 			CurrentBattle = battle;
 
-			BattleSubscribe();
-
 			signalBus?.Fire(new SignalJoinBattleLocal());
+			onBattleChanged?.Invoke();
 
 			return true;
 		}
 
 		public virtual bool LeaveBattle()
 		{
-			BattleUnsubscribe();
 			CurrentBattle = null;
 
 			signalBus?.Fire(new SignalLeaveBattleLocal());
+			onBattleChanged?.Invoke();
 
 			return true;
-		}
-
-		
-		private void SetDestinationInBattle(Vector3 destination, float maxPathDistance)
-		{
-			base.SetDestination(destination, maxPathDistance);
-
-			Markers.LineMarker.DrawLine(Navigation.CurrentPath.Path.ToArray());//redraw last choice destination
-			Markers.LineMarker.SetMaterialSpeed(0);//stop line
-		}
-
-		private void OnReachedDestinationInBattle()
-		{
-			Markers.LineMarker.EnableOut(() =>
-			{
-				Markers.LineMarker.Clear();
-				Markers.LineMarker.SetMaterialSpeedToDefault();
-
-				if (IsMoveAvailable)
-				{
-					Markers.LineMarker.EnableIn();
-				}
-			});
-		}
-
-		private void OnBattleStateChanged(BattleExecutorState oldState, BattleExecutorState newState)
-		{
-			if(newState == BattleExecutorState.PreBattle)
-			{
-				Markers.FollowDecal.Enable(true);
-				Markers.TargetDecal.Enable(false);
-			}
-			else if(newState == BattleExecutorState.EndBattle)
-			{
-				Markers.Reset();
-			}
-		}
-
-		private void OnBattleOrderChanged(BattleOrder order)
-		{
-			if (order == BattleOrder.Turn)//update turn
-			{
-				isMineTurn = CurrentBattle.CurrentInitiator as Object == this;
-
-				if (IsMoveAvailable)
-				{
-					Markers.LineMarker.EnableIn();
-				}
-				else
-				{
-					if (Markers.LineMarker.IsEnabled)
-					{
-						Markers.LineMarker.EnableOut();
-					}
-				}
-
-				Markers.TargetDecal.Enable(IsMoveAvailable);
-			}
-		}
-	
-		private void BattleSubscribe()
-		{
-			CurrentBattle.onBattleOrderChanged += OnBattleOrderChanged;
-			CurrentBattle.onBattleStateChanged += OnBattleStateChanged;
-		}
-
-		private void BattleUnsubscribe()
-		{
-			if (CurrentBattle != null)
-			{
-				CurrentBattle.onBattleOrderChanged -= OnBattleOrderChanged;
-				CurrentBattle.onBattleStateChanged -= OnBattleStateChanged;
-			}
 		}
 	}
 

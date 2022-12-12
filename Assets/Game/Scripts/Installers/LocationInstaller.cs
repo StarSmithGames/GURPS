@@ -1,5 +1,6 @@
 using Cinemachine;
 
+using Game.Entities;
 using Game.Systems.CameraSystem;
 using Game.Systems.CombatDamageSystem;
 using Game.Systems.SheetSystem.Skills;
@@ -25,6 +26,9 @@ namespace Game
 			BindCameras();
 
 			CombatDamageSystemInstaller.Install(Container);
+
+			Container.BindInterfacesAndSelfTo<TargetController>().AsSingle().NonLazy();
+			Container.BindInterfacesAndSelfTo<PathController>().AsSingle().NonLazy();
 		}
 
 		private void BindCameras()

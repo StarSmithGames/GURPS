@@ -1,4 +1,4 @@
-using Game.Systems.BattleSystem.TargetSystem;
+using Game.Entities;
 
 using Sirenix.OdinInspector;
 using System.Collections.Generic;

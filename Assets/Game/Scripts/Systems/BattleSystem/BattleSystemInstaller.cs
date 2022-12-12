@@ -1,5 +1,3 @@
-using Game.Systems.BattleSystem.TargetSystem;
-
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -18,7 +16,6 @@ namespace Game.Systems.BattleSystem
 			Container.BindFactory< List <IBattlable>, Battle, Battle.Factory>().WhenInjectedInto<BattleExecutor>();
 			Container.BindFactory<BattleExecutor.Settings, BattleExecutor, BattleExecutor.Factory>().WhenInjectedInto<BattleSystem>();
 			Container.BindInterfacesAndSelfTo<BattleSystem>().AsSingle().NonLazy();
-			Container.BindInterfacesAndSelfTo<TargetController>().AsSingle().NonLazy();
 		}
 	}
 
