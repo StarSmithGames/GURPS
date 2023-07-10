@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 using Zenject;
 
-namespace Game.UI
+namespace Game.Menu
 {
 	public class UICommit : PoolableObject
 	{

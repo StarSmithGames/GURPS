@@ -1,20 +1,12 @@
 using Game.Managers.GameManager;
-using Game.Managers.SceneManager;
 using Game.Managers.StorageManager;
-using Game.Managers.TransitionManager;
 using Game.UI.CanvasSystem;
-using Game.UI.Windows;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using UnityEngine;
 using UnityEngine.UI;
 
 using Zenject;
 
-namespace Game.UI.Windows
+namespace Game.Menu
 {
 	public class WindowMainMenuScreen : MonoBehaviour
 	{
@@ -26,16 +18,18 @@ namespace Game.UI.Windows
 
 		private SignalBus signalBus;
 		private ISaveLoad saveLoad;
-		private SaveLoadOverseer saveLoadOverseer;
+		private LoadingController loadingController;
 		private UISubCanvas subCanvas;
+		private GameManager gameManager;
 
 		[Inject]
-		private void Construct(SignalBus signalBus, ISaveLoad saveLoad, UISubCanvas subCanvas, SaveLoadOverseer saveLoadOverseer)
+		private void Construct(SignalBus signalBus, ISaveLoad saveLoad, UISubCanvas subCanvas, GameManager gameManager, LoadingController loadingController)
 		{
 			this.signalBus = signalBus;
 			this.subCanvas = subCanvas;
 			this.saveLoad = saveLoad;
-			this.saveLoadOverseer = saveLoadOverseer;
+			this.gameManager = gameManager;
+			this.loadingController = loadingController;
 		}
 
 		private void Start()
@@ -46,8 +40,11 @@ namespace Game.UI.Windows
 			NewGame.onClick.AddListener(OnNewGameClick);
 			Load.onClick.AddListener(OnLoadClick);
 			Preferences.onClick.AddListener(OnPreferencesClick);
+			Exit.onClick.AddListener(OnExit);
 
 			signalBus?.Subscribe<SignalStorageCleared>(OnStorageCleared);
+
+			gameManager.ChangeState(GameState.Menu);
 		}
 
 		private void OnDestroy()
@@ -58,6 +55,7 @@ namespace Game.UI.Windows
 			NewGame?.onClick.RemoveAllListeners();
 			Load?.onClick.RemoveAllListeners();
 			Preferences?.onClick.RemoveAllListeners();
+			Exit?.onClick.RemoveAllListeners();
 		}
 
 		private void RefreshMenu()
@@ -71,14 +69,14 @@ namespace Game.UI.Windows
 		{
 			Continue.enabled = false;
 
-			saveLoadOverseer.LoadLastGame();
+			loadingController.LoadLastGame();
 		}
 
 		private void OnNewGameClick()
 		{
 			NewGame.enabled = false;
 
-			saveLoadOverseer.LoadNewGame();
+			loadingController.LoadNewGame();
 		}
 
 		private void OnLoadClick()
@@ -91,6 +89,11 @@ namespace Game.UI.Windows
 		private void OnPreferencesClick()
 		{
 			subCanvas.WindowsRegistrator.Show<WindowPreferences>();
+		}
+
+		private void OnExit()
+		{
+			loadingController.ExitGame();
 		}
 
 		private void OnStorageCleared(SignalStorageCleared signal)

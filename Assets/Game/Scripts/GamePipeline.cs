@@ -1,11 +1,10 @@
+using DG.Tweening.Core.Easing;
+
 using Game.Managers.SceneManager;
 using Game.Managers.StorageManager;
 using Game.Systems.SpawnManager;
-using Game.UI;
-using Game.UI.CanvasSystem;
-using Game.UI.Windows;
-
 using System.Collections;
+using System.Reflection;
 
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -14,12 +13,10 @@ using Zenject;
 
 namespace Game.Managers.GameManager
 {
-	public class GamePipeline : IInitializable
+	public class GamePipeline
 	{
 		private SignalBus signalBus;
 		private AsyncManager asyncManager;
-		private ISaveLoad saveLoad;
-		private SceneManager.SceneManager sceneManager;
 		private CharacterManager.CharacterManager characterManager;
 		private PartyManager.PartyManager partyManager;
 		private GameManager gameManager;
@@ -27,8 +24,6 @@ namespace Game.Managers.GameManager
 
 		public GamePipeline(SignalBus signalBus,
 			AsyncManager asyncManager,
-			ISaveLoad saveLoad,
-			SceneManager.SceneManager sceneManager,
 			CharacterManager.CharacterManager characterManager,
 			PartyManager.PartyManager partyManager,
 			GameManager gameManager,
@@ -36,19 +31,12 @@ namespace Game.Managers.GameManager
 		{
 			this.signalBus = signalBus;
 			this.asyncManager = asyncManager;
-			this.saveLoad = saveLoad;
-			this.sceneManager = sceneManager;
 			this.characterManager = characterManager;
 			this.partyManager = partyManager;
 			this.gameManager = gameManager;
 			this.spawnManager = spawnManager;
-		}
 
-		public void Initialize()
-		{
-			signalBus?.Subscribe<SignalSceneChanged>(OnSceneChanged);
-
-			asyncManager.StartCoroutine(Pipeline());
+			signalBus?.Subscribe<SignalGameLocationChanged>(OnGameLocationChanged);//required editor
 		}
 
 		private IEnumerator Pipeline()
@@ -61,8 +49,6 @@ namespace Game.Managers.GameManager
 				characterManager.CreatePlayer();
 				partyManager.CreatePlayerParty();
 			}
-
-			gameManager.ChangeLocation(sceneManager.GetSceneLocation());
 
 			if (gameManager.CurrentGameLocation == GameLocation.Location)
 			{
@@ -86,16 +72,11 @@ namespace Game.Managers.GameManager
 			yield return new WaitWhile(() => spawnManager.IsSpawnProcess);
 		}
 
-
-		private void OnSceneChanged(SignalSceneChanged signal)
+		private void OnGameLocationChanged(SignalGameLocationChanged signal)
 		{
-			if (signal.data.gameLocation == GameLocation.Map)
+			if (signal.newGameLocation == GameLocation.Location)
 			{
-				gameManager.ChangeLocation(GameLocation.Map);
-			}
-			else if (signal.data.gameLocation == GameLocation.Location)
-			{
-				gameManager.ChangeLocation(GameLocation.Location);
+				asyncManager.StartCoroutine(Pipeline());
 			}
 		}
 	}

@@ -14,15 +14,26 @@ using UnityEngine.Events;
 using Game.Entities;
 using Game.Managers.PartyManager;
 using Game.UI.CanvasSystem;
+using Game.Menu;
+using UnityEngine;
 
 namespace Game.Managers.StorageManager
 {
-	//Attached on Scene Context
-	public class SaveLoadOverseer : IInitializable, IDisposable
+	public class LoadingController : IInitializable, IDisposable
 	{
+		private WindowInfinityLoading WindowInfinityLoading
+		{
+			get
+			{
+				if(windowInfinityLoading == null)
+				{
+					windowInfinityLoading = globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>();
+				}
 
-		private Transitions transitionIn = Transitions.Fade;
-		private Transitions transitionOut = Transitions.Fade;
+				return windowInfinityLoading;
+			}
+		}
+		private WindowInfinityLoading windowInfinityLoading;
 
 		private SignalBus signalBus;
 		private DiContainer container;
@@ -31,7 +42,7 @@ namespace Game.Managers.StorageManager
 		private SceneManager.SceneManager sceneManager;
 		private UIGlobalCanvas globalCanvas;
 
-		public SaveLoadOverseer(SignalBus signalBus, DiContainer container, ISaveLoad saveLoad,
+		public LoadingController(SignalBus signalBus, DiContainer container, ISaveLoad saveLoad,
 			GameManager.GameManager gameManager,
 			SceneManager.SceneManager sceneManager,
 			UIGlobalCanvas globalCanvas)
@@ -52,6 +63,11 @@ namespace Game.Managers.StorageManager
 		public void Dispose()
 		{
 			signalBus?.Unsubscribe<SignalSaveStorage>(OnSaveStorage);
+		}
+
+		public void LoadScene(SceneName sceneName)
+		{
+			WindowInfinityLoading.Show(sceneName.GetScene());
 		}
 
 		public void LoadLastGame()
@@ -79,13 +95,13 @@ namespace Game.Managers.StorageManager
 
 			FastStorage.Clear();
 
-			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(Scenes.Polygon, transitionIn, transitionOut);
+			WindowInfinityLoading.Show(SceneStorage.GetSceneName(Scenes.Polygon));
 		}
 
 		/// <param name="callback">Вызывается до появления кнопки.</param>
 		public void LoadGame(Commit commit, UnityAction callback = null)
 		{
-			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(commit.data.lastScene, transitionIn, transitionOut, () =>
+			WindowInfinityLoading.Show(commit.data.lastScene, () =>
 			{
 				callback?.Invoke();
 
@@ -98,6 +114,11 @@ namespace Game.Managers.StorageManager
 
 				callback?.Invoke();
 			});
+		}
+
+		public void ExitGame()
+		{
+			Application.Quit();
 		}
 
 		//For Save

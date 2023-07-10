@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4782882782683009421}
   m_RootOrder: 0
@@ -53,6 +54,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -186,6 +188,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 30.08, y: 2.59, z: 13.32}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3356387452235280692}
   m_Father: {fileID: 0}
@@ -221,7 +224,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6803bcbd31d29e241bdfda10c96f73fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  model: {fileID: 2918518144747270437}
   outline: {fileID: 1156124145701943517}
+  interactionPoint: {fileID: 1696273997275826972}
+  markPoint: {fileID: 0}
 --- !u!135 &2863160275546947672
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -247,7 +253,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23e28261d958e4f45898b7aa3799f630, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <InteractionPoint>k__BackingField: {fileID: 1696273997275826972}
   sceneName:
     useCustom: 1
     name: Map
@@ -270,3 +275,4 @@ MonoBehaviour:
     maxRange: 2.5
     interaction: 0
     position: {x: 0, y: 0, z: 0}
+    gizmosEditor: {r: 0, g: 0, b: 0, a: 0}

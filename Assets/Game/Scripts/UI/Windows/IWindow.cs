@@ -8,6 +8,8 @@ namespace Game.UI.Windows
 {
 	public interface IWindow : IUI
 	{
+		bool IsInTransition { get; }
+
 		void Show(UnityAction callback = null);
 		void Hide(UnityAction callback = null);
 	}
@@ -15,11 +17,14 @@ namespace Game.UI.Windows
 	public abstract class WindowBase : MonoBehaviour, IWindow
 	{
 		public virtual bool IsShowing { get; protected set; }
+		public virtual bool IsInTransition { get; protected set; }
 
 		[field: SerializeField] public CanvasGroup CanvasGroup { get; protected set; }
 
 		public virtual void Show(UnityAction callback = null)
 		{
+			IsInTransition = true;
+
 			CanvasGroup.alpha = 0f;
 			CanvasGroup.Enable(true, false);
 			IsShowing = true;
@@ -28,11 +33,17 @@ namespace Game.UI.Windows
 
 			sequence
 				.Append(CanvasGroup.DOFade(1f, 0.2f))
-				.AppendCallback(() => callback?.Invoke());
+				.AppendCallback(() =>
+				{
+					callback?.Invoke();
+					IsInTransition = false;
+				});
 		}
 
 		public virtual void Hide(UnityAction callback = null)
 		{
+			IsInTransition = true;
+
 			Sequence sequence = DOTween.Sequence();
 
 			sequence
@@ -42,6 +53,8 @@ namespace Game.UI.Windows
 					CanvasGroup.Enable(false);
 					IsShowing = false;
 					callback?.Invoke();
+
+					IsInTransition = false;
 				});
 		}
 
@@ -61,6 +74,7 @@ namespace Game.UI.Windows
 	public abstract class WindowBasePoolable : PoolableObject, IWindow
 	{
 		public virtual bool IsShowing { get; protected set; }
+		public virtual bool IsInTransition { get; protected set; }
 
 		public virtual void Show(UnityAction callback = null)
 		{
@@ -85,7 +99,6 @@ namespace Game.UI.Windows
 
 	public abstract class WindowAnimatedPoolable : WindowBasePoolable
 	{
-		public bool IsInProcess { get; private set; }
 		public TransformPopup Popup { get; private set; }
 
 
@@ -98,20 +111,20 @@ namespace Game.UI.Windows
 
 		public void ShowPopup(UnityAction callback = null)
 		{
-			IsInProcess = true;
+			IsInTransition = true;
 			Enable(true);
-			Popup.PopIn(callback, () => IsInProcess = false);
+			Popup.PopIn(callback, () => IsInTransition = false);
 		}
 
 		public void HidePopup(UnityAction callback = null)
 		{
-			IsInProcess = true;
+			IsInTransition = true;
 
 			Popup.PopOut(onComplete: () =>
 			{
 				Enable(false);
 				DespawnIt();
-				IsInProcess = false;
+				IsInTransition = false;
 				callback?.Invoke();
 			});
 		}

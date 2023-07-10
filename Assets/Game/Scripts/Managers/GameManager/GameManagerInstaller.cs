@@ -9,7 +9,7 @@ namespace Game.Managers.GameManager
 			Container.DeclareSignal<SignalGameStateChanged>();
 			Container.DeclareSignal<SignalGameLocationChanged>();
 
-			Container.BindInterfacesAndSelfTo<GameManager>().AsSingle();
+			Container.BindInterfacesAndSelfTo<GameManager>().AsSingle().NonLazy();
 		}
 	}
 }

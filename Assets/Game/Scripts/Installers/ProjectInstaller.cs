@@ -51,7 +51,7 @@ namespace Game
 			Container.BindInstance(defaultData).WhenInjectedInto<PlayerPrefsSaveLoad>();
 
 			Container.BindInterfacesTo<PlayerPrefsSaveLoad>().AsSingle();
-			Container.BindInterfacesAndSelfTo<SaveLoadOverseer>().AsSingle().NonLazy();
+			Container.BindInterfacesAndSelfTo<LoadingController>().AsSingle().NonLazy();
 		}
 	}
 }

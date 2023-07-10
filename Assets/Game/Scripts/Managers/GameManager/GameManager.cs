@@ -1,9 +1,15 @@
+using DG.Tweening.Core.Easing;
+
+using Game.Managers.SceneManager;
+
+using System;
+
 using UnityEngine;
 using Zenject;
 
 namespace Game.Managers.GameManager
 {
-    public class GameManager
+    public class GameManager : IDisposable
     {
         public GameState CurrentGameState { get; private set; }
         public GameState PreviousGameState { get; private set; }
@@ -11,13 +17,22 @@ namespace Game.Managers.GameManager
         public GameLocation CurrentGameLocation { get; private set; }
 
 		private SignalBus signalBus;
+        private SceneManager.SceneManager sceneManager;
 
-        public GameManager(SignalBus signalBus)
+		public GameManager(SignalBus signalBus, SceneManager.SceneManager sceneManager)
 		{
             this.signalBus = signalBus;
-        }
+            this.sceneManager = sceneManager;
 
-        public void ChangeState(GameState gameState)
+			signalBus?.Subscribe<SignalSceneChanged>(OnSceneChanged);//required editor(scene Game)
+		}
+
+		public void Dispose()
+		{
+			signalBus?.Unsubscribe<SignalSceneChanged>(OnSceneChanged);
+		}
+
+		public void ChangeState(GameState gameState)
         {
             if (CurrentGameState != gameState)
             {
@@ -38,16 +53,29 @@ namespace Game.Managers.GameManager
 
         public void ChangeLocation(GameLocation gameLocation)
         {
-            if (CurrentGameLocation != gameLocation)
-            {
-                CurrentGameLocation = gameLocation;
+            CurrentGameLocation = gameLocation;
 
-                signalBus.Fire(new SignalGameLocationChanged
-                {
-                    newGameLocation = CurrentGameLocation,
-                });
-            }
+            signalBus.Fire(new SignalGameLocationChanged
+            {
+                newGameLocation = CurrentGameLocation,
+            });
         }
+
+		private void OnSceneChanged(SignalSceneChanged signal)
+		{
+            if(signal.data == null)
+            {
+                ChangeLocation(GameLocation.None);
+            }
+            else if (signal.data.gameLocation == GameLocation.Map)
+            {
+				ChangeLocation(GameLocation.Map);
+			}
+			else if (signal.data.gameLocation == GameLocation.Location)
+            {
+				ChangeLocation(GameLocation.Location);
+			}
+		}
 	}
     public enum GameState
     {

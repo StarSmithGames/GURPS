@@ -1,7 +1,6 @@
+using Game.Menu;
 using Game.Systems.BattleSystem;
 using Game.Systems.CameraSystem;
-using Game.UI.Windows;
-
 using UnityEngine;
 
 namespace Game

@@ -21,6 +21,7 @@ namespace Game.Managers.SceneManager
 		private const string ScenesPath = "Assets/Scenes";
 
 		public string CurrentScene { get; private set; }
+		public string PreviousScene { get; private set; }
 		public IProgressHandle ProgressHandle { get; private set; }
 
 		private List<SceneData> scenes = new List<SceneData>();
@@ -41,28 +42,29 @@ namespace Game.Managers.SceneManager
 		{
 			CurrentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
-			//editor set active scene Game
+			scenes = Resources.LoadAll<SceneData>(ScenesPath).ToList();
+
+			UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
+
 #if UNITY_EDITOR
+			//editor set active scene Game
 			if (CurrentScene == "Game")
 			{
 				for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
 				{
 					var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
 
-					if(scene.name != "Game")
+					if (scene.name != "Game")
 					{
 						CurrentScene = scene.name;
 						UnityEngine.SceneManagement.SceneManager.SetActiveScene(scene);
-						
+
+						signalBus?.Fire(new SignalSceneChanged() { data = scenes.FirstOrDefault((x) => x.sceneName.name == CurrentScene) });
 						break;
 					}
 				}
 			}
 #endif
-
-			scenes = Resources.LoadAll<SceneData>(ScenesPath).ToList();
-
-			UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
 		}
 
 		public void Dispose()
@@ -86,24 +88,12 @@ namespace Game.Managers.SceneManager
 			return scenes.FirstOrDefault((x) => x.sceneName.name == CurrentScene)?.gameLocation ?? GameLocation.None;
 		}
 
-		public void SwitchScene(string sceneName, bool allow = true, UnityAction callback = null)
-		{
-			SetCurrentSceneAsync(sceneName, allow, callback);
-		}
-
 		//LoadFromEditor
 		//LoadFromBuild
 		//LoadFromAddresables
-		private void SetCurrentSceneAsync(string sceneName, bool allow = true, UnityAction callback = null)
+		public void SwitchScene(string sceneName, bool allow = true, bool unloadPrevious = true, UnityAction callback = null)
 		{
-			//if (Application.isEditor)
-			//{
-			//	asyncManager.StartCoroutine(LoadFromEditor(sceneName));
-			//}
-			//else
-			{
-				asyncManager.StartCoroutine(LoadFromBuild(sceneName, allow, callback));
-			}
+			asyncManager.StartCoroutine(LoadFromBuild(sceneName, allow, unloadPrevious, callback));
 		}
 
         private IEnumerator LoadFromEditor(string sceneName, UnityAction callback = null)
@@ -142,8 +132,17 @@ namespace Game.Managers.SceneManager
 #endif
         }
 
-        private IEnumerator LoadFromBuild(string sceneName, bool allow = true, UnityAction callback = null)
+        private IEnumerator LoadFromBuild(string sceneName, bool allow = true, bool unloadPrevious = true, UnityAction callback = null)
 		{
+			PreviousScene = CurrentScene;
+			if (unloadPrevious)
+			{
+				if (!PreviousScene.IsEmpty())
+				{
+					UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(PreviousScene, UnloadSceneOptions.None);
+				}
+			}
+			
 			CurrentScene = sceneName;
 			BuildProgressHandle handle = new BuildProgressHandle();
 			ProgressHandle = handle;

@@ -85,7 +85,7 @@ namespace Game.Systems.InventorySystem
 		{
 			if (IsOpened)
 			{
-				if (!window.IsInProcess)
+				if (!window.IsInTransition)
 				{
 					if (inputManager.GetKeyDown(KeyAction.InGameMenu))
 					{

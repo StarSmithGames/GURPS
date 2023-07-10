@@ -9,16 +9,14 @@ using DG.Tweening;
 
 using Zenject;
 using UnityEngine.Events;
-using System.Collections.Generic;
 using Game.UI.CanvasSystem;
+using Game.UI.Windows;
+using Game.Managers.GameManager;
 
-namespace Game.UI.Windows
+namespace Game.Menu
 {
-	public class WindowInfinityLoading : MonoBehaviour, IWindow
+	public class WindowInfinityLoading : WindowBase
 	{
-		public bool IsShowing { get; private set; }
-
-		[field: SerializeField] public CanvasGroup CanvasGroup { get; private set; }
 		[field: SerializeField] public Image Ilustratration { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Text { get; private set; }
 		[field: SerializeField] public TMPro.TextMeshProUGUI Progress { get; private set; }
@@ -31,16 +29,20 @@ namespace Game.UI.Windows
 
 		private UIGlobalCanvas globalCanvas;
 		private SceneManager sceneManager;
+		private GameManager gameManager;
 		private TransitionManager transitionManager;
 		private AsyncManager asyncManager;
 		private Settings settings;
 
 		[Inject]
-		public void Construct(UIGlobalCanvas globalCanvas, SceneManager sceneManager,
+		public void Construct(UIGlobalCanvas globalCanvas,
+			SceneManager sceneManager,
+			GameManager gameManager,
 			TransitionManager transitionManager, AsyncManager asyncManager, GlobalSettings settings)
 		{
 			this.globalCanvas = globalCanvas;
 			this.sceneManager = sceneManager;
+			this.gameManager = gameManager;
 			this.transitionManager = transitionManager;
 			this.asyncManager = asyncManager;
 			this.settings = settings.infinityLoadingSettings;
@@ -48,11 +50,11 @@ namespace Game.UI.Windows
 
 		private void Start()
 		{
-			CanvasGroup.Enable(false);
+			Enable(false);
 
 			globalCanvas.WindowsRegistrator.Registrate(this);
 
-			Continue.onClick.AddListener(Click);
+			Continue.onClick.AddListener(OnClick);
 		}
 
 		private void OnDestroy()
@@ -62,58 +64,14 @@ namespace Game.UI.Windows
 			Continue?.onClick.RemoveAllListeners();
 		}
 
-		public void Enable(bool trigger)
+		public void Show(string sceneName, UnityAction callback = null)
 		{
-			CanvasGroup.alpha = trigger ? 1f : 0f; 
+			this.transitionsIn = Transitions.Fade;
+			this.transitionOut = Transitions.Fade;
 
-			CanvasGroup.blocksRaycasts = trigger;
-			CanvasGroup.interactable = trigger;
-		}
+			gameManager.ChangeState(GameState.Loading);
 
-		public void Show(Scenes scene, Transitions transitionsIn, Transitions transitionOut)
-		{
-			this.transitionsIn = transitionsIn;
-			this.transitionOut = transitionOut;
-
-			ShowAfterTransition(SceneStorage.GetSceneName(scene));
-		}
-
-		public void Show(string sceneName, Transitions transitionsIn, Transitions transitionOut, UnityAction callback = null)
-		{
-			this.transitionsIn = transitionsIn;
-			this.transitionOut = transitionOut;
-
-			ShowAfterTransition(sceneName, callback);
-		}
-
-		public void Show(UnityAction callback = null)
-		{
-			transform.SetAsLastSibling();
-
-			CanvasGroup.blocksRaycasts = true;
-			CanvasGroup.interactable = true;
-
-			Progress.enabled = true;
-
-			Continue.gameObject.SetActive(false);
-			CanvasGroup.DOFade(1, 0.2f)
-				.OnComplete(() => callback?.Invoke());
-		}
-
-		public void Hide(UnityAction callback = null)
-		{
-			CanvasGroup.DOFade(0, 0.1f)
-				.OnComplete(() =>
-				{
-					CanvasGroup.blocksRaycasts = false;
-					CanvasGroup.interactable = false;
-
-					callback?.Invoke();
-				});
-		}
-
-		private void ShowAfterTransition(string scene, UnityAction callback = null)
-		{
+			//show after transition
 			transitionManager
 				.TransitionIn(transitionsIn,
 				() =>
@@ -122,15 +80,18 @@ namespace Game.UI.Windows
 					//start progress
 					isProgressing = true;
 
-					asyncManager.StartCoroutine(LoadScene(scene, callback));
+					asyncManager.StartCoroutine(LoadScene(sceneName, callback));
 				});
 		}
-
 
 		private IEnumerator LoadScene(string scene, UnityAction callback = null)
 		{
 			float targetValue;
 			float currentValue = 0f;
+
+			ContinueCanvasGroup.alpha = 0f;
+			Continue.enabled = false;
+			Progress.enabled = true;
 
 			sceneManager.SwitchScene(scene, settings.allowScene);
 
@@ -156,10 +117,8 @@ namespace Game.UI.Windows
 						//end progress
 						isProgressing = false;
 
-						ContinueCanvasGroup.alpha = 0f;
 						Progress.enabled = false;
 						Continue.enabled = true;
-						Continue.gameObject.SetActive(true);
 						ContinueCanvasGroup.DOFade(1, 0.2f);
 					}
 
@@ -170,7 +129,7 @@ namespace Game.UI.Windows
 			yield return null;
 		}
 
-		private void Click()
+		private void OnClick()
 		{
 			Continue.enabled = false;
 

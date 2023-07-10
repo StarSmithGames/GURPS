@@ -1,5 +1,6 @@
 using CodeStage.AdvancedFPSCounter;
 
+using Game.Menu;
 using Game.UI.Windows;
 
 using UnityEngine;

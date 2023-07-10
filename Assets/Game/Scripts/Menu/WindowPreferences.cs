@@ -1,6 +1,7 @@
 using Game.Managers.InputManager;
 using Game.Managers.StorageManager;
 using Game.UI.CanvasSystem;
+using Game.UI.Windows;
 
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 
 using Zenject;
 
-namespace Game.UI.Windows
+namespace Game.Menu
 {
 	public class WindowPreferences : WindowBase
 	{

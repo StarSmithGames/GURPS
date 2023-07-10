@@ -9,8 +9,10 @@ using Game.Managers.StorageManager;
 using Game.Managers.InputManager;
 using FlowCanvas.Nodes;
 using Game.UI.CanvasSystem;
+using Game.UI.Windows;
+using Game.UI;
 
-namespace Game.UI.Windows
+namespace Game.Menu
 {
 	public class WindowLoadingCommit : WindowBase
 	{
@@ -37,17 +39,21 @@ namespace Game.UI.Windows
 		private UISubCanvas subCanvas;
 		private UICommit.Factory commitFactory;
 		private ISaveLoad saveLoad;
-		private SaveLoadOverseer saveLoadOverseer;
+		private LoadingController loadingController;
 		private InputManager inputManager;
 
 		[Inject]
-		private void Construct(UICommit.Factory commitFactory, UIGlobalCanvas globalCanvas, UISubCanvas subCanvas, ISaveLoad saveLoad, SaveLoadOverseer saveLoadOverseer, InputManager inputManager)
+		private void Construct(UICommit.Factory commitFactory, UIGlobalCanvas globalCanvas,
+			UISubCanvas subCanvas,
+			ISaveLoad saveLoad,
+			LoadingController loadingController,
+			InputManager inputManager)
 		{
 			this.globalCanvas = globalCanvas;
 			this.subCanvas = subCanvas;
 			this.commitFactory = commitFactory;
 			this.saveLoad = saveLoad;
-			this.saveLoadOverseer = saveLoadOverseer;
+			this.loadingController = loadingController;
 			this.inputManager = inputManager;
 		}
 
@@ -201,7 +207,7 @@ namespace Game.UI.Windows
 				CanvasGroup.interactable = false;
 				Background.IsInteractable = false;
 
-				saveLoadOverseer.LoadGame(lastCommit.Commit);
+				loadingController.LoadGame(lastCommit.Commit);
 			}
 			else//rewrite
 			{

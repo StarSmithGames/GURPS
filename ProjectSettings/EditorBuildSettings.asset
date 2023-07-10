@@ -23,6 +23,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Game/Scenes/Room.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
+  - enabled: 1
+    path: Assets/Game/Scenes/Polygon2.unity
+    guid: c82dae8942063e148850f3786254c340
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 8712efbc87a682e429e73a531d8ef9c6, type: 2}
     com.unity.localization.settings: {fileID: 11400000, guid: 5f46ab384c7ea924d9300d4b3d9fe38b, type: 2}

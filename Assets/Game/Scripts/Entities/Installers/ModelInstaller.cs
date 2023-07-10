@@ -21,7 +21,10 @@ public class ModelInstaller : MonoInstaller
 	{
 		Container.BindInstance(outline);
 		Container.BindInstance(interactionPoint);
-		Container.BindInstance(markPoint);
+		if (markPoint != null)
+		{
+			Container.BindInstance(markPoint);
+		}
 		BindModel();
 	}
 

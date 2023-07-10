@@ -1,5 +1,6 @@
 using Game.Managers.SceneManager;
 using Game.Managers.TransitionManager;
+using Game.Menu;
 using Game.UI.CanvasSystem;
 using Game.UI.Windows;
 
@@ -16,9 +17,6 @@ namespace Game.UI
 	{
 		[HideLabel]
 		public SceneName sceneName;
-
-		[field: SerializeField] public Transitions In { get; private set; }
-		[field: SerializeField] public Transitions Out { get; private set; }
 
 		private UIGlobalCanvas globalCanvas;
 
@@ -40,7 +38,7 @@ namespace Game.UI
 
 		private void Click()
 		{
-			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene(), In, Out);
+			globalCanvas.WindowsRegistrator.GetAs<WindowInfinityLoading>().Show(sceneName.GetScene());
 		}
 	}
 }
