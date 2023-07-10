@@ -8,7 +8,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using I2.Loc;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -57,7 +56,6 @@ namespace Game.Systems.DialogueSystem
 #if UNITY_EDITOR
         protected override void OnNodeInspectorGUI()
         {
-            LocalizationManager.LanguagesGUI();
             base.OnNodeInspectorGUI();
 
             CheckStatement();

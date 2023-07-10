@@ -1,7 +1,5 @@
 using FlowCanvas.Nodes;
 
-using I2.Loc;
-
 using NodeCanvas.DialogueTrees;
 using NodeCanvas.Framework;
 
@@ -215,7 +213,6 @@ namespace Game.Systems.DialogueSystem.Nodes
 
         protected override void OnNodeInspectorGUI()
         {
-            LocalizationManager.LanguagesGUI();
             base.OnNodeInspectorGUI();
 
 			if (GUILayout.Button("Add Choice"))

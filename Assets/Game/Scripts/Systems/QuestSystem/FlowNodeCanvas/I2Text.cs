@@ -1,5 +1,3 @@
-using I2.Loc;
-
 using NodeCanvas.DialogueTrees;
 
 using ParadoxNotion;
@@ -87,11 +85,9 @@ public class I2Texts<T> where T : I2Text, new()
 
 	public T GetCurrent()
 	{
-		LocalizationManager.UpdateSources();
-		var langs = LocalizationManager.GetAllLanguages(true);
 
 #if UNITY_EDITOR
-		ResizeTexts(langs);
+		//ResizeTexts(langs);
 #endif
 
 		if (texts.Count > 0)
